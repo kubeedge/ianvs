@@ -1,0 +1,15 @@
+algorithm:
+  paradigm: "singletasklearning"
+  initial_model_url: "/ianvs/initial_model/model.zip"
+  modules:
+    - kind: "basemodel"
+      name: "estimator"
+      url:  "./examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_singletask_learning/basemodel.py"
+      hyperparameters:
+        - momentum:
+            values:
+              - 0.8
+              - 0.1
+        - other_hyperparameters:
+            values:
+              -  "./examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_singletask_learning/fpn_hyperparameter.yaml"
