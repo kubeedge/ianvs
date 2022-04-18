@@ -1,1 +1,1 @@
-PyYAML~=6.0
+prettytable~=2.5.0
