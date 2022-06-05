@@ -7,28 +7,28 @@ This proposal provides a basic benchmark suite for distributed synergy AI, so th
 
 ## Goals
 For developers or end users of distributed synergy AI solutions, the goals of the distributed synergy AI framework are: 
-- facilitating efficient development for developers by preparing
+- Facilitating efficient development for developers by preparing
     - test cases including dataset and corresponding tools
     - benchmarking tools including simulation and hyper-parameter searching
-- revealing best practices for developers and end users
+- Revealing best practices for developers and end users
     - presentaion tools including leaderboards and test reports
 
 
 ## Proposal
-The distributed synergy AI benchmarking toolkits Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. Its scope includes:
-- Provide end-to-end benchmarks across devices, edge nodes and cloud nodes based on typical distributed-synergy AI paradigms and applications. 
+The distributed synergy AI benchmarking Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. Its scope includes:
+- Provide end-to-end benchmark toolkits across devices, edge nodes and cloud nodes based on typical distributed-synergy AI paradigms and applications. 
     - Tools for Test Environment Management. For example, it would be necessary to support the CRUD (Create, Read, Update and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration 
     - Tools for Test-case Preparation. Typical examples include paradigm templates, simulation tools, and hyper-parameter-based preparation tools.
     - Tools for Benchmark Presentation, e.g., leaderboard and test report generation.  
-- Establish comprehensive benchmarks and developed related applications via cooperation with other communities, which can include but are not limited to 
+- Cooperation with other communities, e.g., in KubeEdge SIG AI, to establish comprehensive benchmarks and developed related applications, which can include but are not limited to 
     - Dataset collection, re-organization, and publication
-    - Formalized Specifications, e.g., Standards 
-    - Holding Competitions or Coding Events, e.g., Open Source Promotion Plan
-    - Maintaining Solution Leaderboards or Certifications for Commercial Usage 
+    - Formalized specifications, e.g., standards 
+    - Holding competitions or coding events, e.g., open source promotion plan
+    - Maintaining solution leaderboards or certifications for commercial usage 
 
 Targeting users
-- Developers: Build and publish edge-cloud collaborative AI solutions efficiently from scratch
-- End users: View and compare distributed synergy AI capabilities of solutions
+- Developers: build and publish edge-cloud collaborative AI solutions efficiently from scratch
+- End users: view and compare distributed synergy AI capabilities of solutions
 
 
 ## Design Details
