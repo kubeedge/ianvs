@@ -15,8 +15,10 @@ For developers or end users of distributed synergy AI solutions, the goals of th
 
 
 ## Proposal
-The distributed synergy AI benchmarking Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. Its scope includes:
-- Provide end-to-end benchmark toolkits across devices, edge nodes and cloud nodes based on typical distributed-synergy AI paradigms and applications. 
+The distributed synergy AI benchmarking Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. 
+
+The scope of ianvs includes
+- Providing end-to-end benchmark toolkits across devices, edge nodes and cloud nodes based on typical distributed-synergy AI paradigms and applications. 
     - Tools for Test Environment Management. For example, it would be necessary to support the CRUD (Create, Read, Update and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration 
     - Tools for Test-case Preparation. Typical examples include paradigm templates, simulation tools, and hyper-parameter-based preparation tools.
     - Tools for Benchmark Presentation, e.g., leaderboard and test report generation.  
@@ -30,6 +32,11 @@ Targeting users
 - Developers: build and publish edge-cloud collaborative AI solutions efficiently from scratch
 - End users: view and compare distributed synergy AI capabilities of solutions
 
+The scope of ianvs does NOT include to
+- Re-invent existing edge platform, i.e., kubeedge, etc.
+- Re-invent existing AI framework, i.e., tensorflow, pytorch, mindspore, etc. 
+- Re-invent existing distributed synergy AI framework, i.e., kubeedge-sedna, etc.
+- Re-invent existing UI or GUI toolkits, i.e., prometheus, grafana, matplotlib, etc.
 
 ## Design Details
 ### User flow
