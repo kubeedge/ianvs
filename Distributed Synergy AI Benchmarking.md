@@ -89,7 +89,7 @@ The concept definition of modules has been shown in the Architecture Section. In
 - ``Attribute (Attr.) of Test Case``: Attributes or descriptors of a test case, e.g., id, name, and time stamp.   
 - ``Algorithm Paradigm``: acknowledged AI process which usually includes quite a few modules that can be implemented with replaceable algorithms, e.g., federated learning which includes modules of local train and global aggregation.  
 - ``Algorithm Module``: the component of the algorithm paradigm, e.g., the global aggregation module of the federated learning paradigm.  
-- ``Leaderboard (LDB)/ test report (TR)``: the ranking of the test object under a specific test environment. 
+- ``Leaderboard (LDB)/ Test Report (TR)``: the ranking of the test object under a specific test environment. 
     - The local node holds the local leaderboard for private usage. 
     - The local leaderboard can be uploaded to a shared space (e.g., GitHub) as the global leaderboard. 
 
