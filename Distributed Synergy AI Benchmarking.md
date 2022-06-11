@@ -17,12 +17,12 @@ For developers or end users of distributed synergy AI solutions, the goals of th
 ## Proposal
 The distributed synergy AI benchmarking Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. 
 
-The scope of ianvs includes
+The scope of Ianvs includes
 - Providing end-to-end benchmark toolkits across devices, edge nodes and cloud nodes based on typical distributed-synergy AI paradigms and applications. 
-    - Tools for Test Environment Management. For example, it would be necessary to support the CRUD (Create, Read, Update and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration 
+    - Tools for Test Environment Management. For example, it would be necessary to support the CRUD (Create, Read, Update and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration.  
     - Tools for Test-case Preparation. Typical examples include paradigm templates, simulation tools, and hyper-parameter-based preparation tools.
-    - Tools for Benchmark Presentation, e.g., leaderboard and test report generation.  
-- Cooperation with other communities, e.g., in KubeEdge SIG AI, to establish comprehensive benchmarks and developed related applications, which can include but are not limited to 
+    - Tools for Benchmark Presentation, e.g., leaderboard and test report generation. 
+- Cooperation with other organizations or communities, e.g., in KubeEdge SIG AI, to establish comprehensive benchmarks and developed related applications, which can include but are not limited to 
     - Dataset collection, re-organization, and publication
     - Formalized specifications, e.g., standards 
     - Holding competitions or coding events, e.g., open source promotion plan
@@ -32,7 +32,7 @@ Targeting users
 - Developers: build and publish edge-cloud collaborative AI solutions efficiently from scratch
 - End users: view and compare distributed synergy AI capabilities of solutions
 
-The scope of ianvs does NOT include to
+The scope of Ianvs does NOT include to
 - Re-invent existing edge platform, i.e., kubeedge, etc.
 - Re-invent existing AI framework, i.e., tensorflow, pytorch, mindspore, etc. 
 - Re-invent existing distributed synergy AI framework, i.e., kubeedge-sedna, etc.
@@ -40,10 +40,13 @@ The scope of ianvs does NOT include to
 
 ## Design Details
 ### User flow
-The user flow for the algorithm developer is as follows. 
-1. Ianvs Compilation: Prepare executable file for Ianvs. 
-    - An algorithm developer can compile Ianvs in his/her own machine to adapt to the local environment, e.g., with TPU. 
-    - Or directly download the pre-compiled executable file if the local environment is following default settings.
+The user flow for an algorithm developer is as follows. 
+1. Ianvs Preparation: Prepare executable files for Ianvs. An algorithm developer can
+    - either interpret/ compile the code of Ianvs in his/her own machine to adapt to the local environment, e.g., with TPU. 
+        1. download/ clone the code of Ianvs
+        2. install required packages specified in requirement files
+        3. run interpreter/ compiler on the code of Ianvs  
+    - or directly download the pre-compiled executable files/ wheels if the local environment is following default settings.
 1. Test Case Preparation 
     - Dataset. Datasets can be large. To avoid over-size projects, the Ianvs executable file and code base do not include origin datasets and developers can download datasets from source links (e.g., from Kaggle) given by Ianvs. 
     - Algorithm Interface. The tested algorithm should follow the Ianvs interface to ensure functional benchmarking.
@@ -57,10 +60,10 @@ The user flow for the algorithm developer is as follows.
 
 ### Architecture and Modules
 The Ianvs is designed to run within a single node. The architectures and related concepts are shown in the below figure. Critical components include
-- Test Environment Management: the CRUD of test environments serving for global usage
+- Test Environment Manager: the CRUD of test environments serving for global usage
 - Test Case Controller: control the runtime behavior of test cases like instance generation and vanish 
 - Test Case Preparation: test case generation based on certain rules or constraints, e.g., the range of parameters 
-- Story Management: the output management and presentation of the test case, e.g., leaderboards
+- Story Manager: the output management and presentation of the test case, e.g., leaderboards
 - Simulation Controller: control the simulation process of edge-cloud synergy AI, including the instance generation and vanish of simulation containers
 
 ![](images/ianvs_arch.png)
@@ -83,7 +86,7 @@ The concept definition of modules has been shown in the Architecture Section. In
 ### Details of Modules
 
 The proposal includes Test Environment Management, Test-case Preparation and Benchmark Presentation in the Distributed Synergy AI benchmarking toolkits, where
-1. Test Environment Management supports the CRUD of Test environments, which include
+1. Test Environment Manager supports the CRUD of Test environments, which basically includes
     - Algorithm-wise configuration
         - Public datasets
         - Pre-processing algorithms
@@ -94,11 +97,11 @@ The proposal includes Test Environment Management, Test-case Preparation and Ben
         - System constraints or budgets
             - End-to-end cross-node 
             - Per node
-1. Test-case Preparation which includes
+1. Test-case Preparation, which includes but not limited to 
     - Templates of common distributed-synergy-AI paradigms, which can help the developer to prepare their test case without too much effort. Such paradigms include edge-cloud synergy joint inference, incremental learning, federated learning, and lifelong learning. 
     - Simulation tools. Develop simulated test environments for test cases
     - Other test-case preparation tools. For instance, prepare test cases based on a given range of hyper-parameters. 
-1. Benchmark Presentation which includes
+1. Story Manager, which includes but not limited to 
     - Leaderboard generation
     - Test report generation
 
