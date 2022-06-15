@@ -19,7 +19,8 @@ Ianvs also revealing best practices for developers and end users with presentati
     :maxdepth: 1
     :caption: GUIDEs
 
-    guides/quick-start
+    Quick Start <guides/quick-start>
+    Detailed Introduction of Ianvs <distributed-synergy-ai-benchmarking>
     guides/how-to-install-ianvs
     guides/how-to-contribute-test-environments
     guides/how-to-test-algorithms
