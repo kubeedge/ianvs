@@ -57,7 +57,7 @@ The user flow for an algorithm developer is as follows.
 1. ianvs Presentation: View the benchmarking result of the targeted algorithms
 1. Repeat Step 3 - 6 until the targeted algorithm is satisfactory
 
-![](images/user_flow.png)
+![](_statics/user_flow.png)
 
 ### Architecture and Modules
 The architectures and related concepts are shown in the below figure. The ianvs is designed to run within a single node. Critical components include
@@ -68,12 +68,12 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 - Story Manager: the output management and presentation of the test case, e.g., leaderboards
 
 
-![](images/ianvs_arch.png)
+![](_statics/ianvs_arch.png)
 
 ### Definitions of Instances
 
 Quite a few terms exist in ianvs, which include the detailed modules and instances. To facilitate easier concept understanding, we show a hierarchical table of terms in the following figures.  
-![](images/ianvs_concept.png)
+![](_statics/ianvs_concept.png)
 
 The concept definition of modules has been shown in the Architecture Section. In the following, we introduce the concepts of instances for easier understanding. 
 - ``Benchmark``: standardized evaluation process recognized by the academic or industry.  
