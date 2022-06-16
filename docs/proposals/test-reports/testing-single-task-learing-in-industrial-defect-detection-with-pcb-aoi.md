@@ -1,0 +1,1 @@
+# Testing single task learning in industrial defect detection

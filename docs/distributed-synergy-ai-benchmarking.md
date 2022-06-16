@@ -48,12 +48,12 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 - Story Manager: the output management and presentation of the test case, e.g., leaderboards
 
 
-![](_statics/ianvs_arch.png)
+![](_static/ianvs_arch.png)
 
 ### Definitions of Instances
 
 Quite a few terms exist in ianvs, which include the detailed modules and instances. To facilitate easier concept understanding, we show a hierarchical table of terms in the following figures.  
-![](_statics/ianvs_concept.png)
+![](_static/ianvs_concept.png)
 
 The concept definition of modules has been shown in the Architecture Section. In the following, we introduce the concepts of instances for easier understanding. 
 - ``Benchmark``: standardized evaluation process recognized by the academic or industry.  

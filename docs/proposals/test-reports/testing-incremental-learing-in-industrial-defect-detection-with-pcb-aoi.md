@@ -1,0 +1,1 @@
+# Testing incremental learning in industrial defect detection
