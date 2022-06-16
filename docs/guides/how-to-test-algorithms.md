@@ -1,16 +1,18 @@
 # How to test algorithms with Ianvs
 
 With Ianvs installed and related environment prepared, an algorithm developer is then able to test his/her own targeted algorithm using the following steps. 
+If you are testing an algorithm summitted in Ianvs repository, e.g., FPN for single task learning, the test environment and the test case are both ready to use and you can directly refer to [Quick Start](./quick-start.md). Otherwise, if the user has a test algorithm which is new to Ianvs repository, i.e., the test environment and the test case are not ready for the targeted algorithm, you might test the algorithm in Ianvs following the next steps from scratch.
 
 ## Step 1. Test Environment Preparation
   
-First, we prepare the dataset according to the targeted scenario. In this document, we are using [the PCB-AoI dataset](https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi) released by KubeEdge SIG AI members on Kaggle. 
+First, the user need to prepare the dataset according to the targeted scenario, from source links (e.g., from Kaggle) provided by Ianvs. Scenarios with dataset are  available [here](../proposals/scenarios/). As an example in this document, we are using [the PCB-AoI dataset](https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi) released by KubeEdge SIG AI members on Kaggle. 
   
-Why not put the dataset on Github: Datasets can be large. To avoid over-size projects in the Github repository of Ianvs, the Ianvs code base do not include origin datasets and developers might want to download datasets from source links (e.g., from Kaggle) provided by Ianvs. 
+You might wonder why not put the dataset on Github repository of Ianvs: Datasets can be large. To avoid over-size projects in the Github repository of Ianvs, the Ianvs code base do not include origin datasets and developers might want to download uneeded datasets . 
 
-The URL address of this dataset then should be filled in the configuration file in the following Step 3. 
+The URL address of this dataset then should be filled in the configuration file ``testenv.yaml``. 
 
 ``` yaml
+# testenv.yaml
 testenv:
   dataset:
     url: "/ianvs/pcb-aoi/dataset/trainData.txt"
@@ -31,7 +33,11 @@ testenv:
   incremental_rounds: 1
 ```
 
-The URL address of this test environment, i.e., testenv.yaml, then should be filled in the configuration file in the following Step 3. 
+The URL address of this test environment, i.e., testenv.yaml, then should be filled in the configuration file in the following Step 3. For example,  
+``` yaml
+# benchmarkingJob.yaml
+  testenv: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testenv/testenv.yaml"
+```
 
 ## Step 2. Test Case Preparation
 
@@ -138,50 +144,51 @@ algorithm:
 ```
 
 
-The URL address of this algorithm then should be filled in the configuration file in the following Step 3. 
-
-
-## Step 3. ianvs Configuration
-
-Fill configuration files for ianvs
-
-测试工作空间，保存本地多个测试工作的输出， 字符串类型，可选，默认值是 "./workspace/"
-``` yaml
-  workspace: "/ianvs/pcb-aoi/workspace/"
-```
-
-测试环境配置（考卷）, 字符串类型，必选， 默认值是 “”；
-``` yaml
-  testenv: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testenv/testenv.yaml"
-```
-
-测试算法列表
+The URL address of this algorithm then should be filled in the configuration file of ``benchmarkingJob.yaml`` in the following Step 3. Two examples are as follows: 
 ``` yaml
   algorithms:
     - name: "fpn_singletask_learning"
       url: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_singletask_learning/fpn_algorithm.yaml"
-  #    - name: "fpn_incremental_learning"
-  #      url: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_incremental_learning/fpn_algorithm.yaml"
 ```
 
-排行榜的排序规则，列表类型，可选，默认值是 []；
-列表的元素详解：字典类型，其中key是ianvs评估的指标计算方法，字符串类型，
-              value是排序方式，当前支持 “ascend" 和 ”descend" ；
-排行榜的排序优先级按照列表中元素从前往后依次排列而定，比如 "sampe"的优先级要高于"max_error_rate"；
+or 
 
-可视化模式，字符串类型，可选，当前支持 "off"和 "selected_only"，默认值是 "selected_only"；
-可视化方法，字符串类型，可选，当前支持"print_table"，默认值是 "print_table"；
-
-白名单，通过范式、基础模型和超参列表来筛选元素可视化，字典类型，可选， 默认值是 {}，
-范式名字，列表类型，可选，当前支持"lifelonglearning"和"all", 默认值是 ""；
-基础模型名字，列表类型，可选，当前支持"all", 默认值是 ""；
-超参列表，列表类型，可选，当前支持"all"及相关超参数，默认值是[]；
-指标列表，列表类型，可选，当前支持"all"，默认值是[]；
-保存模式，列表类型，可选，当前支持 "off", "selected_only", "selected_and_all"，默认值是 "selected_and_all"；
 ``` yaml
+  algorithms:
+    - name: "fpn_incremental_learning"
+      url: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_incremental_learning/fpn_algorithm.yaml"
+```
+
+## Step 3. ianvs Configuration
+
+Now we comes to the final configuration on ``benchmarkingJob.yaml'' before running ianvs. 
+
+First, the user can configure the workspace to reserve the output of tests. 
+``` yaml
+# benchmarkingJob.yaml
+  workspace: "/ianvs/pcb-aoi/workspace/"
+```
+
+Then, the user fill in the test environment and algorithm configured in previous steps. 
+``` yaml
+# benchmarkingJob.yaml
+  testenv: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testenv/testenv.yaml"
+```
+``` yaml
+  algorithms:
+    - name: "fpn_incremental_learning"
+      url: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_incremental_learning/fpn_algorithm.yaml"
+```
+
+As the final leaderboard, the user can configure how to rank the leaderboard with the specific metric and order. 
+``` yaml
+# benchmarkingJob.yaml
     rank:
         sort_by: [ { "f1_score": "descend" } ]
+```
 
+There are quite a few possible dataitems in the leaderboard. Not all of them can be shown simultaneously on the screen. In the leaderboard, we provide the ``selected_only`` mode for the user to configure what is shown or is not shown. The user can add his/her interested dataitems in terms of ``paradigms``, ``modules``, ``hyperparameters`` and ``metrics``, so that the selected columns will be shown.
+``` yaml
     visualization:
       mode: "selected_only"
       method: "print_table"
@@ -198,6 +205,6 @@ Fill configuration files for ianvs
 
 ## Step 4. Execution and Presentation
 
-Run the executable file of ianvs for benchmarking
+Finally, the user can run ianvs for benchmarking. 
 
-View the benchmarking result of the targeted algorithms
+The benchmarking result of the targeted algorithms will be shown after evaluation is done. Leaderboard examples can be found [here](../proposals/leaderboards).
