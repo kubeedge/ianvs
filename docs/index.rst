@@ -12,17 +12,17 @@ in order to facilitate more efficient and effective development. More detailedly
 but also benchmarking tools including simulation and hyper-parameter searching. 
 Ianvs also revealing best practices for developers and end users with presentation tools including leaderboards and test reports. 
 
-
 .. toctree::
     :maxdepth: 1
-    :caption: INTRODUCTION
+    :caption: Introduction
+
     Introduction to Ianvs <distributed-synergy-ai-benchmarking>
     guides/quick-start
-    roadmap
 
 .. toctree::
     :maxdepth: 1
     :caption: GUIDEs
+
     guides/how-to-install-ianvs
     guides/how-to-contribute-test-environments
     guides/how-to-test-algorithms
@@ -32,15 +32,29 @@ Ianvs also revealing best practices for developers and end users with presentati
 .. toctree::
     :maxdepth: 1
     :caption: SCENARIOs
+    
     Industrial Defect Detection: PCB-AoI <proposals/scenarios/industrial-defect-detection/pcb-aoi>
 
 .. toctree::
     :maxdepth: 1
     :titlesonly:
     :glob:
+    :caption: Stories
+
+    Leaderboard: Single Task Learning on PCB-AoI <proposals/leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning>
+    Leaderboard: Incremental Learning on PCB-AoI <proposals/leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-incremental-learning>
+    Test Report: Single Task Learning on PCB-AoI <proposals/test-reports/testing-single-task-learing-in-industrial-defect-detection-with-pcb-aoi>
+    Test Report: Incremental Learning on PCB-AoI <proposals/test-reports/testing-incremental-learing-in-industrial-defect-detection-with-pcb-aoi>
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+    :glob:
     :caption: ALGORITHMs
+
     Single Task Learning: FPN <proposals/algorithms/single-task-learning/fpn>
     Incremental Learning: BasicIL-FPN <proposals/algorithms/incremental-learning/basicIL-fpn>
+
 
 .. toctree::
     :maxdepth: 1
@@ -52,6 +66,11 @@ Ianvs also revealing best practices for developers and end users with presentati
     Python API <autoapi/lib/ianvs/index>
 
 
+.. toctree::
+    :maxdepth: 1
+    :caption: ROADMAP
+
+    roadmap
 
 
 RELATED LINKs
