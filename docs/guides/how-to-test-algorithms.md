@@ -5,7 +5,7 @@ If you are testing an algorithm summitted in Ianvs repository, e.g., FPN for sin
 
 ## Step 1. Test Environment Preparation
   
-First, the user need to prepare the dataset according to the targeted scenario, from source links (e.g., from Kaggle) provided by Ianvs. Scenarios with dataset are  available [here](../proposals/scenarios/). As an example in this document, we are using [the PCB-AoI dataset](https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi) released by KubeEdge SIG AI members on Kaggle. 
+First, the user need to prepare the dataset according to the targeted scenario, from source links (e.g., from Kaggle) provided by Ianvs. Scenarios with dataset are  available [here](../proposals/scenarios/). As an example in this document, we are using [the PCB-AoI dataset](https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi) released by KubeEdge SIG AI members on Kaggle. See [this link](../proposals/scenarios/../../scenarios/industrial-defect-detection/pcb-aoi.md) for more information of this dataset. 
   
 You might wonder why not put the dataset on Github repository of Ianvs: Datasets can be large. To avoid over-size projects in the Github repository of Ianvs, the Ianvs code base do not include origin datasets and developers might want to download uneeded datasets . 
 
