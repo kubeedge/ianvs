@@ -1,3 +1,0 @@
-# 此文件各超参数仅支持单个值
-learning_rate: 0.1
-momentum: 0.9

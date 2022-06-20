@@ -1,3 +1,17 @@
+# Copyright 2022 The KubeEdge Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 import tempfile
 
@@ -9,43 +23,67 @@ from core.common.constant import DatasetFormat
 
 class Dataset:
     def __init__(self):
-        self.url: str = ""
+        self.train_url: str = ""
+        self.test_url: str = ""
         self.label: str = ""
-        self.train_ratio: float = 0.8
-        self.splitting_method: str = "default"
 
     def check_fields(self):
-        if not self.url:
-            raise ValueError(f"not found dataset url({self.url}).")
+        self._check_dataset_url(self.train_url)
+        self._check_dataset_url(self.test_url)
 
-    def process_dataset(self, output_dir):
-        if not utils.is_local_file(self.url):
-            raise ValueError(f"dataset file({self.url}) is not the local file.")
+    def _check_dataset_url(self, url):
+        if not utils.is_local_file(url) and not os.path.isabs(url):
+            raise ValueError(f"dataset file({url}) is not a local file and not a absolute path.")
 
-        file_format = utils.get_file_format(self.url)
+        file_format = utils.get_file_format(url)
         if file_format not in [v.value for v in DatasetFormat.__members__.values()]:
-            raise ValueError(f"dataset file({self.url})'s format({file_format}) is not supported.")
+            raise ValueError(f"dataset file({url})'s format({file_format}) is not supported.")
 
-        self.format = file_format
+    def _process_txt_index_file(self, file_url):
+        flag = False
+        new_file = file_url
+        with open(file_url, "r") as f:
+            lines = f.readlines()
+            for line in lines:
+                if not os.path.isabs(line.split(" ")[0]):
+                    flag = True
+                    break
+        if flag:
+            root = os.path.dirname(file_url)
+            tmp_file = os.path.join(tempfile.mkdtemp(), "index.txt")
+            with open(tmp_file, "w") as f:
+                for line in lines:
+                    front, back = line.split(" ")
+                    f.writelines(
+                        f"{os.path.abspath(os.path.join(root, front))} {os.path.abspath(os.path.join(root, back))}")
 
-        self.output_dir = os.path.join(output_dir, "dataset")
-        all_output_dir = os.path.join(self.output_dir, "all")
-        if not os.path.exists(all_output_dir):
-            os.makedirs(all_output_dir)
+            new_file = tmp_file
+
+        return new_file
+
+    def _process_index_file(self, file_url):
+        file_format = utils.get_file_format(file_url)
+        if file_format == DatasetFormat.TXT.value:
+            return self._process_txt_index_file(file_url)
+
+    def process_dataset(self):
+        self.train_url = self._process_index_file(self.train_url)
+        self.test_url = self._process_index_file(self.test_url)
+
+    def splitting_dataset(self, dataset_url, dataset_format, ratio, method="default", output_dir=None, times=1):
         try:
-            if self.splitting_method == "default":
-                self._default_splitting_method(self.url, file_format, self.train_ratio, all_output_dir)
+            if method == "default":
+                return self._splitting_more_times(dataset_url,
+                                                  dataset_format,
+                                                  ratio,
+                                                  output_dir=output_dir,
+                                                  times=times)
             else:
-                raise ValueError(f"dataset splitting method({self.splitting_method}) is unvaild.")
+                raise ValueError(f"dataset splitting method({method}) is unvaild.")
         except Exception as err:
             raise Exception(f"split dataset failed, error:{err}")
 
-    def _default_splitting_method(self, dataset_url, dataset_format, train_ratio, output_dir):
-        dataset_files = self.splitting_more_times(dataset_url, dataset_format, train_ratio, output_dir)
-        if len(dataset_files) == 1:
-            self.train_dataset, self.eval_dataset = dataset_files[0]
-
-    def splitting_more_times(self, dataset_url, dataset_format, ratio, output_dir=None, times=1):
+    def _splitting_more_times(self, dataset_url, dataset_format, ratio, output_dir=None, times=1):
         if not output_dir:
             output_dir = tempfile.mkdtemp()
 

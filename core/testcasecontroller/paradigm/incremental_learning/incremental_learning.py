@@ -1,3 +1,17 @@
+# Copyright 2022 The KubeEdge Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import copy
 import os
 
@@ -5,6 +19,7 @@ from core.testcasecontroller.paradigm.base import ParadigmBase
 from core.testenvmanager.testenv import TestEnv
 from core.testcasecontroller.algorithm import Algorithm
 from core.testcasecontroller.metrics import get_metric_func
+from core.common.utils import get_file_format
 
 
 class IncrementalLearning(ParadigmBase):
@@ -12,12 +27,15 @@ class IncrementalLearning(ParadigmBase):
 
     def __init__(self, test_env: TestEnv, algorithm: Algorithm, workspace: str):
         super(IncrementalLearning, self).__init__(test_env, algorithm, workspace)
+        self.train_dataset_ratio = algorithm.incremental_learning_data_setting.get("train_ratio")
+        self.train_dataset_format = get_file_format(self.dataset.train_url)
+        self.splitting_dataset_method = algorithm.incremental_learning_data_setting.get("splitting_method")
 
     def run(self):
         rounds = self.test_env.incremental_rounds
 
         try:
-            dataset_files = self.preprocess_dataset(splitting_times=rounds)
+            dataset_files = self._preprocess_dataset(splitting_dataset_times=rounds)
         except Exception as err:
             raise Exception(f"preprocess dataset failed, error: {err}.")
 
@@ -42,8 +60,8 @@ class IncrementalLearning(ParadigmBase):
             operator_info = model_eval_info
             if self._trigger_deploy(eval_results, metric_name, operator_info):
                 current_model_url = new_model_path
-            current_model_url = "/home/yj/core/examples/pcb-aoi/workspace/pcb-algorithm-test/test-algorithm/5856ba58-ebdc-11ec-83c3-53ead20896e4/output/train/1/model.zip"
-            inference_dataset = self.load_data(self.dataset.eval_dataset, "inference", feature_process=feature_process)
+
+            inference_dataset = self.load_data(self.dataset.test_url, "inference", feature_process=feature_process)
             inference_output_dir = os.path.join(self.workspace, f"output/inference/{r}")
             os.environ["INFERENCE_OUTPUT_DIR"] = inference_output_dir
             os.environ["MODEL_URL"] = current_model_url
@@ -78,3 +96,11 @@ class IncrementalLearning(ParadigmBase):
 
         metric_delta = metric_values[0] - metric_values[1]
         return operator_func(metric_delta, threshold)
+
+    def _preprocess_dataset(self, splitting_dataset_times=1):
+        return self.dataset.splitting_dataset(self.dataset.train_url,
+                                              self.train_dataset_format,
+                                              self.train_dataset_ratio,
+                                              method=self.splitting_dataset_method,
+                                              output_dir=self.dataset_output_dir(),
+                                              times=splitting_dataset_times)
