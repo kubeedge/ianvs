@@ -46,8 +46,8 @@ python setup.py install
 ```
 mkdir -p /ianvs/dataset/   
 cd /ianvs/dataset/  
-wget https://kubeedge.obs.cn-north-1.myhuaweicloud.com:443/ianvs/pcb-aoi/pcb_imgs.tar.gz
-tar -zxvf pcb_imgs.tar.gz
+wget https://kubeedge.obs.cn-north-1.myhuaweicloud.com:443/ianvs/pcb-aoi/dataset.zip
+unzip dataset.zip
 
 mkdir -p /ianvs/initial_model/   
 cd /ianvs/initial_model/
@@ -64,10 +64,19 @@ python -m pip install examples/resources/algorithms/FPN_TensorFlow-0.1-py3-none-
 
 ```
 cd /ianvs/project/ianvs/
-ianvs -f examples/pcb-aoi/benchmarkingjob/benchmarkingjob.yaml
+ianvs -f examples/pcb-aoi/singletask_learning_bench/benchmarkingjob.yaml
 ```
 
 **step4: check result of benchmarking**  
 
-you can check the result of benchmarking in the output path(e.g. `/ianvs/workspace`) defined in the
+you can check the result of benchmarking in the output path(e.g. `/ianvs/singletask_learning_bench/workspace`) defined in the
 benchmarking config file(e.g. `benchmarkingjob.yaml`).
+
+### API
+todo
+
+### Contributing
+todo
+
+### Community
+todo
