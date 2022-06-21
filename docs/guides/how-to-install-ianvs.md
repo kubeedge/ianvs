@@ -25,17 +25,13 @@ Python 3.6.9
 ## Install ianvs on Linux
 
 
-### create virtualenv
+### Create virtualenv
 ```shell
 sudo apt install -y virtualenv
 mkdir ~/venv 
 virtualenv -p python3 ~/venv/ianvs
 source ~/venv/ianvs/bin/activate
 ```
-
-python -m pip install -r requirements.txt
-python setup.py install
-
 
 ### Download ianvs project
 ```
