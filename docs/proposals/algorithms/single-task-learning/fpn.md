@@ -168,3 +168,5 @@ After registration, you only need to change the name of the STL and parameters i
 
 
 [FPN]: https://github.com/DetectionTeamUCAS/FPN_Tensorflow
+[examples directory]: ../../../../examples
+[Sedna repository]: https://github.com/kubeedge/sedna
