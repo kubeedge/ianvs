@@ -1,13 +1,21 @@
+[Quick Start]: ./quick-start.md  
+[Links of scenarios]: ../proposals/scenarios/
+[the PCB-AoI public dataset]: https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi
+[details of PCB-AoI dataset]: ../proposals/scenarios/industrial-defect-detection/pcb-aoi.md
+
 # How to test algorithms with Ianvs
 
 With Ianvs installed and related environment prepared, an algorithm developer is then able to test his/her own targeted algorithm using the following steps. 
-If you are testing an algorithm summitted in Ianvs repository, e.g., FPN for single task learning, the test environment and the test case are both ready to use and you can directly refer to [Quick Start](./quick-start.md). Otherwise, if the user has a test algorithm which is new to Ianvs repository, i.e., the test environment and the test case are not ready for the targeted algorithm, you might test the algorithm in Ianvs following the next steps from scratch.
+
+Note that:
+- If you are testing an algorithm summitted in Ianvs repository, e.g., FPN for single task learning, the test environment and the test case are both ready to use and you can directly refer to [Quick Start]. 
+- Otherwise, if the user has a test algorithm which is new to Ianvs repository, i.e., the test environment and the test case are not ready for the targeted algorithm, you might test the algorithm in Ianvs following the next steps from scratch.
 
 ## Step 1. Test Environment Preparation
   
-First, the user need to prepare the dataset according to the targeted scenario, from source links (e.g., from Kaggle) provided by Ianvs. Scenarios with dataset are  available [here](../proposals/scenarios/). As an example in this document, we are using [the PCB-AoI dataset](https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi) released by KubeEdge SIG AI members on Kaggle. See [this link](../proposals/scenarios/../../scenarios/industrial-defect-detection/pcb-aoi.md) for more information of this dataset. 
-  
-You might wonder why not put the dataset on Github repository of Ianvs: Datasets can be large. To avoid over-size projects in the Github repository of Ianvs, the Ianvs code base do not include origin datasets and developers might want to download uneeded datasets . 
+First, the user need to prepare the dataset according to the targeted scenario, from source links (e.g., from Kaggle) provided by Ianvs. Scenarios with dataset are  available [Links of scenarios]. As an example in this document, we are using [the PCB-AoI Public Dataset] released by KubeEdge SIG AI members on Kaggle. See [details of PCB-AoI dataset] for more information of this dataset. 
+
+You might wonder why not put the dataset on Github repository of Ianvs: Datasets can be large. To avoid over-size projects in the Github repository of Ianvs, the Ianvs code base do not include origin datasets and developers might want to download uneeded datasets. 
 
 The URL address of this dataset then should be filled in the configuration file ``testenv.yaml``. 
 
