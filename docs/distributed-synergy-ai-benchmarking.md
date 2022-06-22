@@ -14,7 +14,7 @@ For developers or end users of distributed synergy AI solutions, the goals of th
     - presentation tools including leaderboards and test reports
 
 
-## Proposal
+## Scope
 The distributed synergy AI benchmarking ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. 
 
 The scope of ianvs includes
