@@ -32,6 +32,8 @@ virtualenv -p python3 ~/venv/ianvs
 source ~/venv/ianvs/bin/activate
 ```
 
+> If you prefer conda, you can create a python environment by referring to the [creating steps](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) provided by conda. 
+
 ### Download ianvs project
 ```
 cd ~
