@@ -1,8 +1,6 @@
 # How to Contribute Test Environments
 
 
-## When a new test environment is needed?
-
 The following is a typical testenv: 
 ```yaml
 testenv:
@@ -30,7 +28,7 @@ That means, if you want to test on different dataset, different model or differe
 
 
 
-## How to add a new test environment?
+## Add a new test environment
 
 Please refer to the examples directory, [pcb-aoi] is a scenario for testing.
 We can regard it as a subject for a student that need to take an exam, the test env is like examination paper,
