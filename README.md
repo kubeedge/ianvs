@@ -70,9 +70,11 @@ Example PCB-AoI-2：[Testing incremental learning in industrial defect detection
 
 ## Meeting
 
-Regular Community Meeting:
-- Pacific Time: **Thursday at 10:00-11:00 Beijing Time** (weekly, starting from Nov. 12th 2020).
-([Convert to your timezone](https://www.thetimezoneconverter.com/?t=10%3A00&tz=GMT%2B8&))
+Regular Community Meeting for KubeEdge SIG AI:
+- Europe Time: **Thursdays at 16:30-17:30 Beijing Time** (biweekly, starting from Feb. 2022).
+([Convert to your timezone.](https://www.thetimezoneconverter.com/?t=16%3A30&tz=GMT%2B8&))
+- Pacific Time: **Thursdays at 10:00-11:00 Beijing Time** (biweekly, starting from Feb. 2022).
+([Convert to your timezone.](https://www.thetimezoneconverter.com/?t=10%3A00&tz=GMT%2B8&))
 
 Resources:
 - [Meeting notes and agenda](https://docs.google.com/document/d/12n3kGUWTkAH4q2Wv5iCVGPTA_KRWav_eakbFrF9iAww/edit)
