@@ -3,7 +3,7 @@ Edge computing emerges as a promising technical framework to overcome the challe
 
 Nevertheless, distributed synergy AI is at its initial stage. For the time being, the comprehensive evaluation standard is not yet available for scenarios with various AI paradigms on all three layers of edge computing systems. According to the landing challenge survey 2022, developers suffer from the lack of support on related datasets and algorithms; while end users are lost in the sea of mismatched solutions. That limits the wide application of related techniques and hinders a prosperous ecosystem of distributed synergy AI. A comprehensive end-to-end distributed synergy AI benchmark suite is thus needed to measure and optimize the systems and applications. 
 
-This proposal provides a basic benchmark suite for distributed synergy AI, so that AI developers and end users can benefit from efficient development support and best practice discovery.
+Ianvs thus provides a basic benchmark suite for distributed synergy AI, so that AI developers and end users can benefit from efficient development support and best practice discovery.
 
 ## Goals
 For developers or end users of distributed synergy AI solutions, the goals of the distributed synergy AI framework are: 
@@ -76,7 +76,7 @@ The concept definition of modules has been shown in the Architecture Section. In
 
 ### Details of Modules
 
-The proposal includes Test-Environment Management, Test-case Controller and Story Manager in the Distributed Synergy AI benchmarking toolkits, where
+Ianvs includes Test-Environment Management, Test-case Controller and Story Manager in the Distributed Synergy AI benchmarking toolkits, where
 1. Test-Environment Manager supports the CRUD of Test environments, which basically includes
     - Algorithm-wise configuration
         - Public datasets

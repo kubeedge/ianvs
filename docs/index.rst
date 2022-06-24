@@ -43,8 +43,8 @@ Ianvs also revealing best practices for developers and end users with presentati
 
     Leaderboard: Single Task Learning on PCB-AoI <proposals/leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning>
     Leaderboard: Incremental Learning on PCB-AoI <proposals/leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-incremental-learning>
-    Test Report: Single Task Learning on PCB-AoI <proposals/test-reports/testing-single-task-learing-in-industrial-defect-detection-with-pcb-aoi>
-    Test Report: Incremental Learning on PCB-AoI <proposals/test-reports/testing-incremental-learing-in-industrial-defect-detection-with-pcb-aoi>
+    Test Report: Single Task Learning on PCB-AoI <proposals/test-reports/testing-single-task-learning-in-industrial-defect-detection-with-pcb-aoi>
+    Test Report: Incremental Learning on PCB-AoI <proposals/test-reports/testing-incremental-learning-in-industrial-defect-detection-with-pcb-aoi>
 
 .. toctree::
     :maxdepth: 1
