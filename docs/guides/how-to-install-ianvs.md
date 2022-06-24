@@ -61,6 +61,6 @@ If the version information is printed, Ianvs is installed successful.
 
 
 
-## Install ianvs on Windows
+## About Windows
 
-TODO
+If you are used to develop on Windows, it is still suggested that you run ianvs on Linux to reduce dependency installation time, and get better running efficiency. 
