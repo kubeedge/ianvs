@@ -1,5 +1,15 @@
 # Incremental learning: BasicIL-FPN
 
+Traditionally, the data is collected manually and periodically retrained on the cloud to improve the model effect. However, data is continuously generated on the edge side. Traditional method wastes a lot of human resources, and the model update frequency is slow.  
+
+Incremental learning allows users to continuously monitor the newly generated data and by configuring some triggering rules to determine whether to start training, evaluation, and deployment automatically, and continuously improve the model performance.
+
+Its goals include:
+* Automatically retrains, evaluates, and updates models based on the data generated at the edge.
+* Support time trigger, sample size trigger, and precision-based trigger.
+* Support manual triggering of training, evaluation, and model update.
+* Support hard sample discovering of unlabeled data,  for reducing the manual labeling workload. 
+
 Here we will show how to implement a single task learning algorithm for testing in ianvs, based on an opensource algorithm [FPN].
 
 For test of your own algorithm, FPN is not required. It can be replaced to any algorithm, as long as it complies the requirement of ianvs interface.
