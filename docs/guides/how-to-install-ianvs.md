@@ -65,4 +65,6 @@ If the version information is printed, Ianvs is installed successful.
 
 ## About Windows
 
-If you are used to develop on Windows, it is still suggested that you run ianvs on Linux to reduce dependency installation time, and get better running efficiency. 
+At the time being, package requirements of Ianvs is only applicable for Linux, to ensure comprehensive support from Linux ecosystem and to ease the burden of manual installation for users in Windows.
+
+If you are more used to develop on Windows, you can still do so with remote connections like SSH from Windows connecting to a Linux machine with ianvs installed. Such remote connection is already supported in common Python coding tools like VScode, Pycharm etc. By doing so, it helps to provide efficient installation and robust functionality of Ianvs.
