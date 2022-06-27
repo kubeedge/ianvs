@@ -41,16 +41,16 @@ The scope of ianvs does NOT include to
 ## Design Details
 ### Architecture and Modules
 The architectures and related concepts are shown in the below figure. The ianvs is designed to run within a single node. Critical components include
-- Test Environment Manager: the CRUD of test environments serving for global usage
-- Test Case Controller: control the runtime behavior of test cases like instance generation and vanish 
-    - Generation Assistant: assist users to generate test cases based on certain rules or constraints, e.g., the range of parameters 
-    - Simulation Controller: control the simulation process of edge-cloud synergy AI, including the instance generation and vanishment of simulation containers
-- Story Manager: the output management and presentation of the test case, e.g., leaderboards
+- ``Test Environment Manager``: the CRUD of test environments serving for global usage
+- ``Test Case Controller``: control the runtime behavior of test cases like instance generation and vanish 
+    - ``Generation Assistant``: assist users to generate test cases based on certain rules or constraints, e.g., the range of parameters 
+    - ``Simulation Controller``: control the simulation process of edge-cloud synergy AI, including the instance generation and vanishment of simulation containers
+- ``Story Manager``: the output management and presentation of the test case, e.g., leaderboards
 
 ![](_static/ianvs_arch.png)
 
 Ianvs includes Test-Environment Management, Test-case Controller and Story Manager in the Distributed Synergy AI benchmarking toolkits, where
-1. Test-Environment Manager supports the CRUD of Test environments, which basically includes
+1. Test-Environment Manager basically includes
     - Algorithm-wise configuration
         - Public datasets
         - Pre-processing algorithms
@@ -61,11 +61,13 @@ Ianvs includes Test-Environment Management, Test-case Controller and Story Manag
         - System constraints or budgets
             - End-to-end cross-node 
             - Per node
-1. Test-case Controller, which includes but is not limited to the following components 
+2. Test-case Controller includes but is not limited to the following components 
     - Templates of common distributed-synergy-AI paradigms, which can help the developer to prepare their test case without too much effort. Such paradigms include edge-cloud synergy joint inference, incremental learning, federated learning, and lifelong learning. 
     - Simulation tools. Develop simulated test environments for test cases
+      - Note that simulation tools are not yet available in early versions until v0.5
+      - It is NOT in scope of this open-sourced Ianvs to simulate different hardware devices, e.g., simulating NPU with GPU and even CPU
     - Other tools to assist test-case generation. For instance, prepare test cases based on a given range of hyper-parameters. 
-1. Story Manager, which includes but is not limited to the following components
+3. Story Manager includes but is not limited to the following components
     - Leaderboard generation
     - Test report generation
 
