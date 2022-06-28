@@ -169,7 +169,7 @@ or
 
 ## Step 3. ianvs Configuration
 
-Now we comes to the final configuration on ``benchmarkingJob.yaml'' before running ianvs. 
+Now we comes to the final configuration on ``benchmarkingJob.yaml`` before running ianvs. 
 
 First, the user can configure the workspace to reserve the output of tests. 
 ``` yaml
