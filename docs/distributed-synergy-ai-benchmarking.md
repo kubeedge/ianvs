@@ -47,7 +47,7 @@ The architectures and related concepts are shown in the below figure. The ianvs 
     - ``Simulation Controller``: control the simulation process of edge-cloud synergy AI, including the instance generation and vanishment of simulation containers
 - ``Story Manager``: the output management and presentation of the test case, e.g., leaderboards
 
-![](_static/ianvs_arch.png)
+![](guides/images/ianvs_arch.png)
 
 Ianvs includes Test-Environment Management, Test-case Controller and Story Manager in the Distributed Synergy AI benchmarking toolkits, where
 1. Test-Environment Manager basically includes
@@ -75,7 +75,7 @@ Ianvs includes Test-Environment Management, Test-case Controller and Story Manag
 ### Definitions of Objects
 
 Quite a few terms exist in ianvs, which include the detailed modules and objects. To facilitate easier concept understanding, we show a hierarchical table of terms in the following figures, where the top item contains the items below it.  
-![](_static/ianvs_concept.png)
+![](guides/images/ianvs_concept.png)
 
 The concept definition of modules has been shown in the Architecture Section. In the following, we introduce the concepts of objects for easier understanding. 
 - ``Benchmark``: standardized evaluation process recognized by the academic or industry.  
