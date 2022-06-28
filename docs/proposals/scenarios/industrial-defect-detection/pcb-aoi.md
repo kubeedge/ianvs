@@ -1,6 +1,6 @@
 # Industrial defect detection: the PCB-AoI dataset 
 
-Download link: [Kaggle](https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi)
+Download link: [Kaggle](https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi), [Huawei OBS](https://kubeedge.obs.cn-north-1.myhuaweicloud.com:443/ianvs/pcb-aoi/dataset.zip)
 
 ## Authors
 - China Telcom Research Institute: Dongdong Li, Dan Liu, Yun Shen, Yaqi Song 
@@ -17,7 +17,7 @@ Below shows two example figures in the dataset.
 
 
 ## Data Explorer
-In this dataset, more than 230 boards are collected and the number of images is enhanced to more than 1200. Detailedly, the train set includes 173 boards while the test set includes 60 boards. That is, the train-test ratio is around 3:1 in terms of PCB boards. Data augmentation is conducted, boosting the train-test ratio to 1211:60 (about 20:1) in term of images.
+In this dataset, more than 230 boards are collected and the number of images is enhanced to more than 1200. Detailedly, the dataset include two parts, i.e., the train and the test set. The train set includes 173 boards while the test set includes 60 boards. That is, the train-test ratio is around 3:1 in terms of PCB boards. Data augmentation is conducted, boosting the train-test ratio to 1211:60 (about 20:1) in term of images. Both directories of train_data and test_data include the ``index`` file which recodes the mapping between the raw images and the label of annotation. 
 
 The directories of this dataset is as follows: 
 ```
@@ -25,7 +25,9 @@ The directories of this dataset is as follows:
 │   ├── train_data
 │       ├── Annotation
 │       ├── JPEGImages
+│       ├── Index
 │   ├── test_data
 │       ├── Annotation
 │       ├── JPEGImages
+│       ├── Index
 ```
