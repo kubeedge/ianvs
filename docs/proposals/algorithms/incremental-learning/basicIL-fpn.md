@@ -12,16 +12,24 @@ Its goals include:
 * Support manual triggering of training, evaluation, and model update.
 * Support hard sample discovering of unlabeled data,  for reducing the manual labeling workload. 
 
+![](incremental_learning.png)
+
+As shown in the above figure, the incremental learning works as following procedures: 
+1. Developer establishes the incremental learning algorithm. 
+2. Developer deploys the app. and launches incremental learning. 
+3. The APP runs, detects hard samples and uploads hard sample to the cloud.
+4. Labeling service labels the hard samples. 
+5. Incremental training online learns the hard samples to generate a new model. 
+6. Model evaluation is conducted and updates the model if qualified. 
+
+## Implementation
 Here we will show how to implement a single task learning algorithm for testing in ianvs, based on an opensource algorithm [FPN].
 
-For test of your own algorithm, FPN is not required. It can be replaced to any algorithm, as long as it complies the requirement of ianvs interface.
+For test of your own algorithm, the base model of FPN is not necessary: It can be replaced with any algorithm complying the requirement of ianvs interface.
 
-
-Before start, it should be known that Ianvs testing algorithm development depends on Sedna Lib. The following is recommended development workflow:
-1. Develop by yourself: put the algorithm implementation to ianvs [examples directory] locally, for testing.
-2. Publish to everyone: submit the algorithm implementation to [Sedna repository], for sharing, then everyone can test and use your algorithm.
-
-## Customize algorithm
+Ianvs testing algorithm development, at present, are using Sedna Lib. The following is recommended development workflow:
+1. Algorithm Development: put the algorithm implementation to ianvs [examples directory] locally, for testing.
+2. Algorithm Submission: submit the algorithm implementation to [Sedna repository], for sharing, then everyone can test and use your algorithm.
 
 Sedna provides a class called `class_factory.py` in `common` package, in which only a few lines of changes are required to become a module of sedna.
 
