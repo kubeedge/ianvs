@@ -19,6 +19,7 @@ import tempfile
 import time
 import zipfile
 import cv2
+import logging
 
 import numpy as np
 import tensorflow as tf
@@ -26,7 +27,6 @@ import tensorflow.contrib.slim as slim
 from sedna.common.config import Context
 from sedna.common.class_factory import ClassType, ClassFactory
 from FPN_TensorFlow.help_utils.help_utils import draw_box_cv
-from FPN_TensorFlow.tools import restore_model
 from FPN_TensorFlow.libs.label_name_dict.label_dict import NAME_LABEL_MAP
 from FPN_TensorFlow.data.io.read_tfrecord import next_batch_for_tasks, convert_labels
 from FPN_TensorFlow.data.io import image_preprocess
@@ -39,11 +39,16 @@ from FPN_TensorFlow.libs.rpn import build_rpn
 
 FLAGS = get_flags_byname(cfgs.NET_NAME)
 
+# avoid the conflict: 1. tf parses flags with sys.argv; 2. test system also parses flags .
+tf.flags.DEFINE_string("benchmarking_config_file", "", "ignore")
+
+# close tf warning log
+logging.disable(logging.WARNING)
+
 __all__ = ["BaseModel"]
 
 # set backend
 os.environ['BACKEND_TYPE'] = 'TENSORFLOW'
-
 
 @ClassFactory.register(ClassType.GENERAL, alias="estimator")
 class BaseModel:
@@ -52,14 +57,13 @@ class BaseModel:
         """
         initialize logging configuration
         """
-        sess_config = tf.ConfigProto(allow_soft_placement=True)
-        sess_config.gpu_options.allow_growth = True
-        self.graph = tf.Graph()
-        self.session = tf.Session(
-            config=sess_config, graph=self.graph)
 
-        self.restorer = None
-        self.checkpoint_path = self.load(Context.get_parameters("base_model_url"))
+        self.has_load = False
+
+        self._init_tf_graph()
+
+        self.predict_fast_rcnn = None
+
         self.temp_dir = tempfile.mkdtemp()
         if not os.path.isdir(self.temp_dir):
             mkdir(self.temp_dir)
@@ -70,9 +74,6 @@ class BaseModel:
         cfgs.MAX_ITERATION = kwargs.get("max_iteration", 5)
 
     def train(self, train_data, valid_data=None, **kwargs):
-        """
-        train
-        """
 
         if train_data is None or train_data.x is None or train_data.y is None:
             raise Exception("Train data is None.")
@@ -227,16 +228,16 @@ class BaseModel:
                 tf.local_variables_initializer()
             )
 
-            restorer, restore_ckpt = restore_model.get_restorer(test=False, checkpoint_path=self.checkpoint_path)
+            restorer = self._get_restorer()
             saver = tf.train.Saver(max_to_keep=3)
+            self.checkpoint_path = self.load(Context.get_parameters("base_model_url"))
 
             config = tf.ConfigProto()
-            config.gpu_options.per_process_gpu_memory_fraction = 0.95
-            config.gpu_options.allow_growth = True
+            config.gpu_options.allow_growth = False
             with tf.Session(config=config) as sess:
                 sess.run(init_op)
-                if not restorer is None:
-                    restorer.restore(sess, restore_ckpt)
+                if self.checkpoint_path:
+                    restorer.restore(sess, self.checkpoint_path)
                     print('restore model')
                 coord = tf.train.Coordinator()
                 threads = tf.train.start_queue_runners(sess, coord)
@@ -284,7 +285,6 @@ class BaseModel:
                 coord.request_stop()
                 coord.join(threads)
 
-        print('Training finish.')
         return self.checkpoint_path
 
     def save(self, model_path):
@@ -308,104 +308,30 @@ class BaseModel:
         return model_path
 
     def predict(self, data, input_shape=None, **kwargs):
-
         if data is None:
             raise Exception("Predict data is None")
 
-        inference_output_dir = os.getenv("INFERENCE_OUTPUT_DIR")
+        inference_output_dir = os.getenv("RESULT_SAVED_URL")
 
-        with tf.Graph().as_default():
+        with self.tf_graph.as_default():
+            if not self.predict_fast_rcnn:
+                self.predict_fast_rcnn = self._get_predict_fast_rcnn()
 
-            img_plac = tf.placeholder(shape=[None, None, 3], dtype=tf.uint8)
+            fast_rcnn_decode_boxes, fast_rcnn_score, num_of_objects, detection_category = self.predict_fast_rcnn.fast_rcnn_predict()
+            restorer = self._get_restorer()
 
-            img_tensor = tf.cast(img_plac, tf.float32) - tf.constant([103.939, 116.779, 123.68])
-            img_batch = image_preprocess.short_side_resize_for_inference_data(img_tensor,
-                                                                              target_shortside_len=cfgs.SHORT_SIDE_LEN,
-                                                                              is_resize=True)
-
-            # ***********************************************************************************************
-            # *                                         share net                                           *
-            # ***********************************************************************************************
-            _, share_net = get_network_byname(net_name=cfgs.NET_NAME,
-                                              inputs=img_batch,
-                                              num_classes=None,
-                                              is_training=True,
-                                              output_stride=None,
-                                              global_pool=False,
-                                              spatial_squeeze=False)
-            # ***********************************************************************************************
-            # *                                            RPN                                              *
-            # ***********************************************************************************************
-            rpn = build_rpn.RPN(net_name=cfgs.NET_NAME,
-                                inputs=img_batch,
-                                gtboxes_and_label=None,
-                                is_training=False,
-                                share_head=cfgs.SHARE_HEAD,
-                                share_net=share_net,
-                                stride=cfgs.STRIDE,
-                                anchor_ratios=cfgs.ANCHOR_RATIOS,
-                                anchor_scales=cfgs.ANCHOR_SCALES,
-                                scale_factors=cfgs.SCALE_FACTORS,
-                                base_anchor_size_list=cfgs.BASE_ANCHOR_SIZE_LIST,  # P2, P3, P4, P5, P6
-                                level=cfgs.LEVEL,
-                                top_k_nms=cfgs.RPN_TOP_K_NMS,
-                                rpn_nms_iou_threshold=cfgs.RPN_NMS_IOU_THRESHOLD,
-                                max_proposals_num=cfgs.MAX_PROPOSAL_NUM,
-                                rpn_iou_positive_threshold=cfgs.RPN_IOU_POSITIVE_THRESHOLD,
-                                rpn_iou_negative_threshold=cfgs.RPN_IOU_NEGATIVE_THRESHOLD,
-                                rpn_mini_batch_size=cfgs.RPN_MINIBATCH_SIZE,
-                                rpn_positives_ratio=cfgs.RPN_POSITIVE_RATE,
-                                remove_outside_anchors=False,  # whether remove anchors outside
-                                rpn_weight_decay=cfgs.WEIGHT_DECAY[cfgs.NET_NAME])
-
-            # rpn predict proposals
-            rpn_proposals_boxes, rpn_proposals_scores = rpn.rpn_proposals()  # rpn_score shape: [300, ]
-
-            # ***********************************************************************************************
-            # *                                         Fast RCNN                                           *
-            # ***********************************************************************************************
-            fast_rcnn = build_fast_rcnn.FastRCNN(img_batch=img_batch,
-                                                 feature_pyramid=rpn.feature_pyramid,
-                                                 rpn_proposals_boxes=rpn_proposals_boxes,
-                                                 rpn_proposals_scores=rpn_proposals_scores,
-                                                 img_shape=tf.shape(img_batch),
-                                                 roi_size=cfgs.ROI_SIZE,
-                                                 scale_factors=cfgs.SCALE_FACTORS,
-                                                 roi_pool_kernel_size=cfgs.ROI_POOL_KERNEL_SIZE,
-                                                 gtboxes_and_label=None,
-                                                 fast_rcnn_nms_iou_threshold=cfgs.FAST_RCNN_NMS_IOU_THRESHOLD,
-                                                 fast_rcnn_maximum_boxes_per_img=100,
-                                                 fast_rcnn_nms_max_boxes_per_class=cfgs.FAST_RCNN_NMS_MAX_BOXES_PER_CLASS,
-                                                 show_detections_score_threshold=cfgs.FINAL_SCORE_THRESHOLD,
-                                                 # show detections which score >= 0.6
-                                                 num_classes=cfgs.CLASS_NUM,
-                                                 fast_rcnn_minibatch_size=cfgs.FAST_RCNN_MINIBATCH_SIZE,
-                                                 fast_rcnn_positives_ratio=cfgs.FAST_RCNN_POSITIVE_RATE,
-                                                 fast_rcnn_positives_iou_threshold=cfgs.FAST_RCNN_IOU_POSITIVE_THRESHOLD,
-                                                 use_dropout=False,
-                                                 weight_decay=cfgs.WEIGHT_DECAY[cfgs.NET_NAME],
-                                                 is_training=False,
-                                                 level=cfgs.LEVEL)
-
-            fast_rcnn_decode_boxes, fast_rcnn_score, num_of_objects, detection_category = \
-                fast_rcnn.fast_rcnn_predict()
-
+            config = tf.ConfigProto()
             init_op = tf.group(
                 tf.global_variables_initializer(),
                 tf.local_variables_initializer()
             )
 
-            restorer, restore_ckpt = restore_model.get_restorer(checkpoint_path=self.checkpoint_path)
-
-            config = tf.ConfigProto()
-            config.gpu_options.allow_growth = True
-
             with tf.Session(config=config) as sess:
                 sess.run(init_op)
-
-                if restorer is not None:
-                    restorer.restore(sess, restore_ckpt)
-                    print('restore model')
+                if not self.has_load:
+                    print('reload model')
+                    restorer.restore(sess, self.checkpoint_path)
+                    self.has_load = True
 
                 coord = tf.train.Coordinator()
                 threads = tf.train.start_queue_runners(sess, coord)
@@ -419,8 +345,9 @@ class BaseModel:
                     start = time.time()
 
                     _img_batch, _fast_rcnn_decode_boxes, _fast_rcnn_score, _detection_category = \
-                        sess.run([img_batch, fast_rcnn_decode_boxes, fast_rcnn_score, detection_category],
-                                 feed_dict={img_plac: img})
+                        sess.run(
+                            [self.img_batch, fast_rcnn_decode_boxes, fast_rcnn_score, detection_category],
+                            feed_dict={self.img_plac: img})
                     end = time.time()
 
                     # predict box dict
@@ -468,7 +395,6 @@ class BaseModel:
                 ckpt_name = ckpt_name[:index + 4]
             self.checkpoint_path = os.path.join(model_dir, ckpt_name)
 
-            print(f"load {model_url} to {self.checkpoint_path}")
         else:
             raise Exception(f"model url is None")
 
@@ -485,6 +411,89 @@ class BaseModel:
         if callable(metric):
             return {"f1_score": metric(data.y, predict_dict)}
         return {"f1_score": f1_score(data.y, predict_dict)}
+
+    def _get_restorer(self):
+        model_variables = slim.get_model_variables()
+        restore_variables = [var for var in model_variables if not var.name.startswith(
+            'Fast_Rcnn')] + [tf.train.get_or_create_global_step()]
+        return tf.train.Saver(restore_variables)
+
+    def _init_tf_graph(self):
+        self.tf_graph = tf.Graph()
+        with self.tf_graph.as_default():
+            self.img_plac = tf.placeholder(shape=[None, None, 3], dtype=tf.uint8)
+
+            self.img_tensor = tf.cast(self.img_plac, tf.float32) - tf.constant([103.939, 116.779, 123.68])
+            self.img_batch = image_preprocess.short_side_resize_for_inference_data(self.img_tensor,
+                                                                                   target_shortside_len=cfgs.SHORT_SIDE_LEN,
+                                                                                   is_resize=True)
+
+    def _get_predict_fast_rcnn(self):
+        with self.tf_graph.as_default():
+            # ***********************************************************************************************
+            # *                                         share net                                           *
+            # ***********************************************************************************************
+            _, share_net = get_network_byname(net_name=cfgs.NET_NAME,
+                                              inputs=self.img_batch,
+                                              num_classes=None,
+                                              is_training=True,
+                                              output_stride=None,
+                                              global_pool=False,
+                                              spatial_squeeze=False)
+            # ***********************************************************************************************
+            # *                                            RPN                                              *
+            # ***********************************************************************************************
+            rpn = build_rpn.RPN(net_name=cfgs.NET_NAME,
+                                inputs=self.img_batch,
+                                gtboxes_and_label=None,
+                                is_training=False,
+                                share_head=cfgs.SHARE_HEAD,
+                                share_net=share_net,
+                                stride=cfgs.STRIDE,
+                                anchor_ratios=cfgs.ANCHOR_RATIOS,
+                                anchor_scales=cfgs.ANCHOR_SCALES,
+                                scale_factors=cfgs.SCALE_FACTORS,
+                                base_anchor_size_list=cfgs.BASE_ANCHOR_SIZE_LIST,  # P2, P3, P4, P5, P6
+                                level=cfgs.LEVEL,
+                                top_k_nms=cfgs.RPN_TOP_K_NMS,
+                                rpn_nms_iou_threshold=cfgs.RPN_NMS_IOU_THRESHOLD,
+                                max_proposals_num=cfgs.MAX_PROPOSAL_NUM,
+                                rpn_iou_positive_threshold=cfgs.RPN_IOU_POSITIVE_THRESHOLD,
+                                rpn_iou_negative_threshold=cfgs.RPN_IOU_NEGATIVE_THRESHOLD,
+                                rpn_mini_batch_size=cfgs.RPN_MINIBATCH_SIZE,
+                                rpn_positives_ratio=cfgs.RPN_POSITIVE_RATE,
+                                remove_outside_anchors=False,  # whether remove anchors outside
+                                rpn_weight_decay=cfgs.WEIGHT_DECAY[cfgs.NET_NAME])
+
+            # rpn predict proposals
+            rpn_proposals_boxes, rpn_proposals_scores = rpn.rpn_proposals()  # rpn_score shape: [300, ]
+
+            # ***********************************************************************************************
+            # *                                         Fast RCNN                                           *
+            # ***********************************************************************************************
+            fast_rcnn = build_fast_rcnn.FastRCNN(img_batch=self.img_batch,
+                                                 feature_pyramid=rpn.feature_pyramid,
+                                                 rpn_proposals_boxes=rpn_proposals_boxes,
+                                                 rpn_proposals_scores=rpn_proposals_scores,
+                                                 img_shape=tf.shape(self.img_batch),
+                                                 roi_size=cfgs.ROI_SIZE,
+                                                 scale_factors=cfgs.SCALE_FACTORS,
+                                                 roi_pool_kernel_size=cfgs.ROI_POOL_KERNEL_SIZE,
+                                                 gtboxes_and_label=None,
+                                                 fast_rcnn_nms_iou_threshold=cfgs.FAST_RCNN_NMS_IOU_THRESHOLD,
+                                                 fast_rcnn_maximum_boxes_per_img=100,
+                                                 fast_rcnn_nms_max_boxes_per_class=cfgs.FAST_RCNN_NMS_MAX_BOXES_PER_CLASS,
+                                                 show_detections_score_threshold=cfgs.FINAL_SCORE_THRESHOLD,
+                                                 # show detections which score >= 0.6
+                                                 num_classes=cfgs.CLASS_NUM,
+                                                 fast_rcnn_minibatch_size=cfgs.FAST_RCNN_MINIBATCH_SIZE,
+                                                 fast_rcnn_positives_ratio=cfgs.FAST_RCNN_POSITIVE_RATE,
+                                                 fast_rcnn_positives_iou_threshold=cfgs.FAST_RCNN_IOU_POSITIVE_THRESHOLD,
+                                                 use_dropout=False,
+                                                 weight_decay=cfgs.WEIGHT_DECAY[cfgs.NET_NAME],
+                                                 is_training=False,
+                                                 level=cfgs.LEVEL)
+            return fast_rcnn
 
 
 def f1_score(y_true, y_pred):
@@ -508,13 +517,12 @@ def f1_score(y_true, y_pred):
         recall = 0 if rec.shape[0] == 0 else rec[-1]
         precision = 0 if prec.shape[0] == 0 else prec[-1]
         F_measure = 0 if not (recall + precision) else (2 * precision * recall / (recall + precision))
-        print('\n{}\tR:{}\tP:{}\tap:{}\tF:{}'.format(label, recall, precision, ap, F_measure))
         R.append(recall)
         P.append(precision)
         AP.append(ap)
         F.append(F_measure)
         num.append(box_num)
-    print("num:", num)
+
     R = np.array(R)
     P = np.array(P)
     AP = np.array(AP)
@@ -524,6 +532,6 @@ def f1_score(y_true, y_pred):
     Precision = np.sum(P) / 2
     mAP = np.sum(AP) / 2
     F_measure = np.sum(F) / 2
-    print('\n{}\tR:{}\tP:{}\tmAP:{}\tF:{}'.format('Final', Recall, Precision, mAP, F_measure))
+    print('\n{}\tR:{}\tP:{}\tmAP:{}\tF1_SCORE:{}'.format('Final', Recall, Precision, mAP, F_measure))
 
     return F_measure
