@@ -1,4 +1,8 @@
 # Ianvs
+[![CI](https://github.com/kubeedge-sedna/ianvs/workflows/CI/badge.svg?branch=v0.1)](https://github.com/kubeedge/sedna/actions)
+[![LICENSE SCAN](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkubeedge-sedna%2Fianvs.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkubeedge-sedna%2Fianvs?ref=badge_shield)
+[![LICENSE](https://img.shields.io/github/license/kubeedge-sedna/ianvs.svg)](/LICENSE)
+
 Ianvs is a distributed synergy AI benchmarking project incubated in KubeEdge SIG AI. Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. More detailedly, Ianvs prepares not only test cases with datasets and corresponding algorithms, but also benchmarking tools including simulation and hyper-parameter searching. Ianvs also revealing best practices for developers and end users with presentation tools including leaderboards and test reports. 
 
 ## Scope
