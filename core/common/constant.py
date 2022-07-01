@@ -12,12 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Base constant"""
+
 from enum import Enum
 
 
 class DatasetFormat(Enum):
     """
-    dataset format
+    File format of inputting dataset.
+    Currently, file formats are as follows: txt, csv.
     """
     CSV = "csv"
     TXT = "txt"
@@ -25,7 +28,22 @@ class DatasetFormat(Enum):
 
 class ParadigmKind(Enum):
     """
-    paradigm kind
+    Algorithm paradigm kind.
     """
-    SingleTaskLearning = "singletasklearning"
-    IncrementalLearning = "incrementallearning"
+    SINGLE_TASK_LEARNING = "singletasklearning"
+    INCREMENTAL_LEARNING = "incrementallearning"
+
+
+class ModuleKind(Enum):
+    """
+    Algorithm module kind.
+    """
+    BASEMODEL = "basemodel"
+    HARD_EXAMPLE_MINING = "hard_example_mining"
+
+
+class SystemMetricKind(Enum):
+    """
+    System metric kind of ianvs.
+    """
+    DATA_TRANSFER_COUNT_RATIO = "data_transfer_count_ratio"

@@ -12,26 +12,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Dataset"""
+
 import os
 import tempfile
 
 import pandas as pd
+from sedna.datasources import CSVDataParse, TxtDataParse
 
 from core.common import utils
 from core.common.constant import DatasetFormat
 
 
 class Dataset:
-    def __init__(self):
+    """
+    Data:
+    provide the configuration and handle functions of dataset.
+
+    Parameters
+    ----------
+    config : dict
+         config of dataset, include: train url, test url and label, etc.
+    """
+
+    def __init__(self, config):
         self.train_url: str = ""
         self.test_url: str = ""
         self.label: str = ""
+        self._parse_config(config)
 
-    def check_fields(self):
+    def _check_fields(self):
         self._check_dataset_url(self.train_url)
         self._check_dataset_url(self.test_url)
 
-    def _check_dataset_url(self, url):
+    def _parse_config(self, config):
+        for attr, value in config.items():
+            if attr in self.__dict__:
+                self.__dict__[attr] = value
+
+        self._check_fields()
+
+    @classmethod
+    def _check_dataset_url(cls, url):
         if not utils.is_local_file(url) and not os.path.isabs(url):
             raise ValueError(f"dataset file({url}) is not a local file and not a absolute path.")
 
@@ -39,11 +61,15 @@ class Dataset:
         if file_format not in [v.value for v in DatasetFormat.__members__.values()]:
             raise ValueError(f"dataset file({url})'s format({file_format}) is not supported.")
 
-    def _process_txt_index_file(self, file_url):
+    @classmethod
+    def _process_txt_index_file(cls, file_url):
+        """
+        convert the index info of data from relative path to absolute path in txt index file
+        """
         flag = False
         new_file = file_url
-        with open(file_url, "r") as f:
-            lines = f.readlines()
+        with open(file_url, "r", encoding="utf-8") as file:
+            lines = file.readlines()
             for line in lines:
                 if not os.path.isabs(line.split(" ")[0]):
                     flag = True
@@ -51,11 +77,12 @@ class Dataset:
         if flag:
             root = os.path.dirname(file_url)
             tmp_file = os.path.join(tempfile.mkdtemp(), "index.txt")
-            with open(tmp_file, "w") as f:
+            with open(tmp_file, "w", encoding="utf-8") as file:
                 for line in lines:
                     front, back = line.split(" ")
-                    f.writelines(
-                        f"{os.path.abspath(os.path.join(root, front))} {os.path.abspath(os.path.join(root, back))}")
+                    file.writelines(
+                        f"{os.path.abspath(os.path.join(root, front))} "
+                        f"{os.path.abspath(os.path.join(root, back))}")
 
             new_file = tmp_file
 
@@ -66,82 +93,164 @@ class Dataset:
         if file_format == DatasetFormat.TXT.value:
             return self._process_txt_index_file(file_url)
 
+        return None
+
     def process_dataset(self):
+        """
+        process dataset:
+        process train dataset and test dataset for testcase;
+        e.g.: convert the index info of data from relative path to absolute path
+              in the index file(e.g.: txt index file).
+
+        """
+
         self.train_url = self._process_index_file(self.train_url)
         self.test_url = self._process_index_file(self.test_url)
 
-    def splitting_dataset(self, dataset_url, dataset_format, ratio, method="default", output_dir=None, times=1):
-        try:
-            if method == "default":
-                return self._splitting_more_times(dataset_url,
-                                                  dataset_format,
-                                                  ratio,
-                                                  output_dir=output_dir,
-                                                  times=times)
-            else:
-                raise ValueError(f"dataset splitting method({method}) is unvaild.")
-        except Exception as err:
-            raise Exception(f"split dataset failed, error:{err}")
+    # pylint: disable=too-many-arguments
+    def split_dataset(self, dataset_url, dataset_format, ratio, method="default",
+                      dataset_types=None, output_dir=None, times=1):
+        """
+        split dataset:
+            step1: divide all data N(N = times) times to generate N pieces of data.
+            step2: divide every pieces of data 1 time using the special method.
 
-    def _splitting_more_times(self, dataset_url, dataset_format, ratio, output_dir=None, times=1):
+        Parameters:
+        -----------
+        dataset_url: str
+            the address url of dataset.
+        dataset_format: str
+            the format of dataset, e.g.: txt and csv.
+        ratio: float
+            the float of splitting dataset
+        method: string
+            the method of splitting dataset.
+            default value is "default": divide the data equally and proportionally.
+        dataset_types: tuple
+            divide every pieces of data 1 time to generate 2 small pieces of  data
+            for special types of tasks.
+            e.g.: ("train", "eval")
+        output_dir: str
+            the output dir of splitting dataset.
+        times: int
+            the times of dividing all data in step1.
+
+        Returns
+        -------
+        list
+            the result of splitting dataset.
+            e.g.: [("/dataset/train.txt", "/dataset/eval.txt")]
+
+        """
+
+        if method == "default":
+            return self._splitting_more_times(dataset_url, dataset_format, ratio,
+                                              data_types=dataset_types,
+                                              output_dir=output_dir,
+                                              times=times)
+
+        raise ValueError(f"dataset splitting method({method}) is not supported,"
+                         f"currently, method supports 'default'.")
+
+    @classmethod
+    def _get_file_url(cls, output_dir, dataset_type, dataset_id, file_format):
+        return os.path.join(output_dir, f"{dataset_type}-{dataset_id}.{file_format}")
+
+    @classmethod
+    def _write_data_file(cls, data, data_file, data_format):
+        if data_format == DatasetFormat.TXT.value:
+            with open(data_file, "w", encoding="utf-8") as file:
+                for line in data:
+                    file.writelines(line + "\n")
+        if data_format == DatasetFormat.CSV.value:
+            data.to_csv(data_file, index=None)
+
+    @classmethod
+    def _read_data_file(cls, data_file, data_format):
+        data = None
+
+        if data_format == DatasetFormat.TXT.value:
+            with open(data_file, "r", encoding="utf-8") as file:
+                data = [line.strip() for line in file.readlines()]
+
+        if data_format == DatasetFormat.CSV.value:
+            data = pd.read_csv(data_file)
+
+        return data
+
+    def _get_dataset_file(self, data, output_dir, dataset_type, index, dataset_format):
+        data_file = self._get_file_url(output_dir, dataset_type, index, dataset_format)
+
+        self._write_data_file(data, data_file, dataset_format)
+
+        return data_file
+
+    def _splitting_more_times(self, data_file, data_format, ratio,
+                              data_types=None, output_dir=None, times=1):
+        if not data_types:
+            data_types = ("train", "eval")
+
         if not output_dir:
             output_dir = tempfile.mkdtemp()
 
-        def get_file_url(type, id, format):
-            return os.path.join(output_dir, f"dataset-{type}-{id}.{format}")
+        all_data = self._read_data_file(data_file, data_format)
 
-        dataset_files = []
-        if dataset_format == DatasetFormat.CSV.value:
-            df = pd.read_csv(dataset_url)
-            all_num = len(df)
-            step = int(all_num / times)
-            index = 1
-            while index <= times:
-                if index == times:
-                    new_df = df[step * (index - 1):]
-                else:
-                    new_df = df[step * (index - 1):step * index]
+        data_files = []
 
-                new_num = len(new_df)
-                train_data = new_df[:int(new_num * ratio)]
-                train_data_file = get_file_url("train", index, dataset_format)
-                train_data.to_csv(train_data_file, index=None)
+        all_num = len(all_data)
+        step = int(all_num / times)
+        index = 1
+        while index <= times:
+            if index == times:
+                new_dataset = all_data[step * (index - 1):]
+            else:
+                new_dataset = all_data[step * (index - 1):step * index]
 
-                eval_data = new_df[int(new_num * ratio):]
-                eval_data_file = get_file_url("eval", index, dataset_format)
-                eval_data.to_csv(eval_data_file, index=None)
-                dataset_files.append((train_data_file, eval_data_file))
+            new_num = len(new_dataset)
 
-                index += 1
-        elif dataset_format == DatasetFormat.TXT.value:
-            with open(dataset_url, "r") as f:
-                dataset = [line.strip() for line in f.readlines()]
-                dataset.append(f.readline())
+            data_files.append((
+                self._get_dataset_file(new_dataset[:int(new_num * ratio)], output_dir,
+                                       data_types[0], index, data_format),
+                self._get_dataset_file(new_dataset[int(new_num * ratio):], output_dir,
+                                       data_types[1], index, data_format)))
 
-            all_num = len(dataset)
-            step = int(all_num / times)
-            index = 1
+            index += 1
 
-            while index <= times:
-                if index == times:
-                    new_dataset = dataset[step * (index - 1):]
-                else:
-                    new_dataset = dataset[step * (index - 1):step * index]
+        return data_files
 
-                new_num = len(new_dataset)
-                train_data = new_dataset[:int(new_num * ratio)]
-                eval_data = new_dataset[int(new_num * ratio):]
+    @classmethod
+    def load_data(cls, file: str, data_type: str, label=None, use_raw=False, feature_process=None):
+        """
+        load data
 
-                def write_to_file(data, file):
-                    with open(file, "w") as f:
-                        for line in data:
-                            f.writelines(line + "\n")
+        Parameters
+        ---------
+        file: str
+            the address url of data file.
+        data_type: str
+            the type of data for special type task.
+        label: str
+            specify label of data.
+        use_raw: bool
+            if true, use all of raw data.
+        feature_process: function
+            feature processing on all of raw data.
 
-                train_data_file = get_file_url("train", index, dataset_format)
-                write_to_file(train_data, train_data_file)
-                eval_data_file = get_file_url("eval", index, dataset_format)
-                write_to_file(eval_data, eval_data_file)
-                dataset_files.append((train_data_file, eval_data_file))
+        Returns
+        -------
+        instance
+            e.g.: TxtDataParse, CSVDataParse.
 
-                index += 1
-        return dataset_files
+        """
+        data_format = utils.get_file_format(file)
+
+        data = None
+        if data_format == DatasetFormat.CSV.value:
+            data = CSVDataParse(data_type=data_type, func=feature_process)
+            data.parse(file, label=label)
+
+        if data_format == DatasetFormat.TXT.value:
+            data = TxtDataParse(data_type=data_type, func=feature_process)
+            data.parse(file, use_raw=use_raw)
+
+        return data

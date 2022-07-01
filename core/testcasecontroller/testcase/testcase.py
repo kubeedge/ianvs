@@ -12,31 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Test Case"""
+
 import os
 import uuid
 
-from core.testcasecontroller.paradigm import Paradigm
+from core.common.constant import SystemMetricKind
+from core.testcasecontroller.metrics import get_metric_func
 
 
 class TestCase:
+    """
+    Test Case:
+    Consists of a test environment and a test algorithm
+
+    Parameters
+    ----------
+    test_env : instance
+        The test environment of  benchmarking,
+        including dataset, Post-processing algorithms like metric computation.
+    algorithm : instance
+        Typical distributed-synergy AI algorithm paradigm.
+    """
+
     def __init__(self, test_env, algorithm):
-        """
-        Distributed collaborative AI algorithm in certain test environment
-        Parameters
-        ----------
-        test_env : instance
-            The test environment of  distributed collaborative AI benchmark
-            including samples, dataset setting, metrics
-        algorithm : instance
-            Distributed collaborative AI algorithm
-        """
+        # pylint: disable=C0103
+        self.id = uuid.uuid1()
         self.test_env = test_env
         self.algorithm = algorithm
-
-    def prepare(self, metrics, workspace):
-        self.id = self._get_id()
-        self.output_dir = self._get_output_dir(workspace)
-        self.metrics = metrics
+        self.output_dir = None
 
     def _get_output_dir(self, workspace):
         output_dir = os.path.join(workspace, self.algorithm.name)
@@ -47,13 +51,69 @@ class TestCase:
                 flag = False
         return output_dir
 
-    def _get_id(self):
-        return uuid.uuid1()
+    def run(self, workspace):
+        """
+        Run the test case
 
-    def run(self):
+        Returns
+        -------
+        test result: dict
+            e.g.: {"f1_score": 0.89}
+        """
+
         try:
-            paradigm = Paradigm(self.algorithm.paradigm, self.test_env, self.algorithm, self.output_dir)
-            res = paradigm.run()
+            dataset = self.test_env.dataset
+            test_env_config = {}
+            # pylint: disable=C0103
+            for k, v in self.test_env.__dict__.items():
+                test_env_config[k] = v
+
+            self.output_dir = self._get_output_dir(workspace)
+            paradigm = self.algorithm.paradigm(workspace=self.output_dir,
+                                               **test_env_config)
+            res, system_metric_info = paradigm.run()
+            test_result = self.compute_metrics(res, dataset, **system_metric_info)
+
         except Exception as err:
-            raise Exception(f"(paradigm={self.algorithm.paradigm}) pipeline runs failed, error: {err}")
-        return res
+            paradigm_kind = self.algorithm.paradigm_kind
+            raise Exception(
+                f"(paradigm={paradigm_kind}) pipeline runs failed, error: {err}") from err
+        return test_result
+
+    def compute_metrics(self, paradigm_result, dataset, **kwargs):
+        """
+        Compute metrics of paradigm result
+
+        Parameters
+        ----------
+        paradigm_result: numpy.ndarray
+        dataset: instance
+        kwargs: dict
+            information needed to compute system metrics.
+
+        Returns
+        -------
+        dict
+            e.g.: {"f1_score": 0.89}
+        """
+
+        metric_funcs = {}
+        for metric_dict in self.test_env.metrics:
+            metric_name, metric_func = get_metric_func(metric_dict=metric_dict)
+            if callable(metric_func):
+                metric_funcs.update({metric_name: metric_func})
+
+        test_dataset_file = dataset.test_url
+        test_dataset = dataset.load_data(test_dataset_file,
+                                         data_type="eval overall",
+                                         label=dataset.label)
+
+        metric_res = {}
+        system_metric_kinds = [e.value for e in SystemMetricKind.__members__.values()]
+        for metric_name, metric_func in metric_funcs.items():
+            if metric_name in system_metric_kinds:
+                metric_res[metric_name] = metric_func(kwargs)
+            else:
+                metric_res[metric_name] = metric_func(test_dataset.y, paradigm_result)
+
+        return metric_res

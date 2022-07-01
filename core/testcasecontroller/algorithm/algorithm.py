@@ -12,94 +12,125 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from sedna.common.class_factory import ClassFactory, ClassType
+"""Algorithm"""
 
-from core.common import utils
+import copy
+
 from core.common.constant import ParadigmKind
+from core.testcasecontroller.algorithm.module import Module
+from core.testcasecontroller.algorithm.paradigm import SingleTaskLearning, IncrementalLearning
+from core.testcasecontroller.generation_assistant import get_full_combinations
 
-
-class Module:
-    def __init__(self):
-        self.kind: str = ""
-        self.name: str = ""
-        self.url: str = ""
-        self.hyperparameters: dict = {}
-
-    def check_fields(self):
-        if not self.kind and not isinstance(self.kind, str):
-            raise ValueError(f"the field of module kind({self.kind}) is unvaild.")
-        if not self.name and not isinstance(self.name, str):
-            raise ValueError(f"the field of module name({self.name}) is unvaild.")
-        if not isinstance(self.url, str):
-            raise ValueError(f"the field of module url({self.url}) is unvaild.")
-        if not isinstance(self.hyperparameters, dict):
-            raise ValueError(f"the field of module hyperparameters({self.hyperparameters}) is unvaild.")
-
-
+# pylint: disable=too-few-public-methods
 class Algorithm:
-    def __init__(self):
-        self.name: str = ""
-        self.paradigm: str = ""
+    """
+    Algorithm:
+    typical distributed-synergy AI algorithm paradigm.
+
+    Parameters
+    ----------
+    name : string
+        name of the algorithm paradigm
+    config : dict
+         config of the algorithm paradigm, includes: paradigm kind, modules, etc.
+    """
+
+    def __init__(self, name, config):
+        self.name = name
+        self.paradigm_kind: str = ""
         self.incremental_learning_data_setting: dict = {
             "train_ratio": 0.8,
             "splitting_method": "default"
         }
         self.initial_model_url: str = ""
-        self.modules: dict = {}
+        self.modules: list = []
+        self.modules_list = None
+        self._parse_config(config)
 
-    def check_fields(self):
+    def paradigm(self, workspace: str, **kwargs):
+        """
+        get test process of AI algorithm paradigm.
+
+        Parameters:
+        ----------
+        workspace: string
+            the output of test
+        kwargs: dict
+            config required for the test process of AI algorithm paradigm.
+
+        Returns:
+        -------
+        the process of AI algorithm paradigm: instance
+
+        """
+
+        config = kwargs
+        # pylint: disable=C0103
+        for k, v in self.__dict__.items():
+            config.update({k: v})
+
+        if self.paradigm_kind == ParadigmKind.SINGLE_TASK_LEARNING.value:
+            return SingleTaskLearning(workspace, **config)
+
+        if self.paradigm_kind == ParadigmKind.INCREMENTAL_LEARNING.value:
+            return IncrementalLearning(workspace, **config)
+
+        return None
+
+    def _check_fields(self):
         if not self.name and not isinstance(self.name, str):
-            raise ValueError(f"the field of algorithm name({self.name}) is unvaild.")
-        if not self.paradigm and not isinstance(self.paradigm, str):
-            raise ValueError(f"the field of algorithm paradigm({self.paradigm}) is unvaild.")
+            raise ValueError(f"algorithm name({self.name}) must be provided and be string type.")
+
+        if not self.paradigm_kind and not isinstance(self.paradigm_kind, str):
+            raise ValueError(
+                f"algorithm paradigm({self.paradigm_kind}) must be provided and be string type.")
+
+        paradigm_kinds = [e.value for e in ParadigmKind.__members__.values()]
+        if self.paradigm_kind not in paradigm_kinds:
+            raise ValueError(f"not support paradigm({self.paradigm_kind})."
+                             f"the following paradigms can be selected: {paradigm_kinds}")
+
         if not isinstance(self.incremental_learning_data_setting, dict):
             raise ValueError(
-                f"the field of algorithm incremental_learning_data_setting({self.incremental_learning_data_setting})"
-                f" is unvaild.")
+                f"algorithm incremental_learning_data_setting"
+                f"({self.incremental_learning_data_setting} must be dictionary type.")
+
         if not isinstance(self.initial_model_url, str):
-            raise ValueError(f"the field of algorithm initial_model_url({self.initial_model_url}) is unvaild.")
-        for m in self.modules:
-            m.check_fields()
+            raise ValueError(
+                f"algorithm initial_model_url({self.initial_model_url}) must be string type.")
 
-    def build(self):
-        feature_process = None
-        basemodel_object = None
-        for module in self.modules:
-            if module.kind == "basemodel":
-                self.basemodel = module
-                basemodel_object = self._get_basemodel(module)
-            elif module.kind == "feature_process":
-                feature_process = self._get_feature_process_func(module)
-        job = basemodel_object
+    def _parse_config(self, config):
+        config_dict = config[str.lower(Algorithm.__name__)]
+        # pylint: disable=C0103
+        for k, v in config_dict.items():
+            if k == str.lower(Module.__name__ + "s"):
+                self.modules_list = self._parse_modules_config(v)
+            if k in self.__dict__:
+                self.__dict__[k] = v
+        self._check_fields()
 
-        if self.paradigm == ParadigmKind.IncrementalLearning.value:
-            from sedna.core.incremental_learning import IncrementalLearning
-            job = IncrementalLearning(estimator=basemodel_object)
+    @classmethod
+    def _parse_modules_config(cls, config):
+        modules = []
+        for module_config in config:
+            module = Module(module_config)
+            modules.append(module)
 
-        return job, feature_process
+        modules_list = []
+        for module in modules:
+            hps_list = module.hyperparameters_list
+            if not hps_list:
+                modules_list.append((module.kind, None))
+                continue
 
-    def _get_basemodel(self, module: Module):
-        if not module.url and isinstance(module.url, str):
-            raise ValueError(f"the field of module({module.kind}) url({module.url}) is unvaild.")
+            module_list = []
+            for hps in hps_list:
+                new_module = copy.deepcopy(module)
+                new_module.hyperparameters = hps
+                module_list.append(new_module)
 
-        utils.load_module(module.url)
-        try:
-            basemodel = ClassFactory.get_cls(type_name=ClassType.GENERAL, t_cls_name=module.name)(
-                **module.hyperparameters)
-        except Exception as err:
-            raise Exception(f"basemodel module loads class(name={module.name}) failed, error: {err}.")
+            modules_list.append((module.kind, module_list))
 
-        return basemodel
+        module_combinations_list = get_full_combinations(modules_list)
 
-    def _get_feature_process_func(self, module: Module):
-        if not module.url and isinstance(module.url, str):
-            raise ValueError(f"the field of module({module.kind}) url({module.url}) is unvaild.")
-
-        utils.load_module(module.url)
-        try:
-            features_process_func = ClassFactory.get_cls(type_name=ClassType.GENERAL,
-                                                         t_cls_name=module.name)
-        except Exception as err:
-            raise Exception(f"feature_process module loads function(name={module.name}) failed, error: {err}.")
-
-        return features_process_func
+        return module_combinations_list

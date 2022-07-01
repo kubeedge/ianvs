@@ -13,4 +13,4 @@
 # limitations under the License.
 
 # pylint: disable=missing-module-docstring
-from .benchmarkingjob import BenchmarkingJob
+from .module import Module

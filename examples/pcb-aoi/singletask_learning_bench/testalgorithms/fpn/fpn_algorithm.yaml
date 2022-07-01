@@ -3,7 +3,7 @@ algorithm:
   # currently the options of value are as follows:
   #   1> "singletasklearning"
   #   2> "incrementallearning"
-  paradigm: "singletasklearning"
+  paradigm_kind: "singletasklearning"
   # the url address of initial model; string type; optional;
   initial_model_url: "/ianvs/initial_model/model.zip"
 

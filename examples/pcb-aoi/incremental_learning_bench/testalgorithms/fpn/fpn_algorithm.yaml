@@ -1,5 +1,5 @@
 algorithm:
-  paradigm: "incrementallearning"
+  paradigm_kind: "incrementallearning"
   incremental_learning_data_setting:
     # ratio of training dataset; float type;
     train_ratio: 0.8
@@ -14,7 +14,7 @@ algorithm:
   modules:
     # kind of algorithm module; string type;
     # currently the options of value are as follows:
-    #   1> "basemodel": contains important interfaces such as train°¢ eval°¢ predict and more; required module;
+    #   1> "basemodel": contains important interfaces such as train„ÄÅ eval„ÄÅ predict and more; required module;
     - kind: "basemodel"
       # name of python module; string type;
       # example: basemodel.py has BaseModel module that the alias is "estimator" for this benchmarking;
@@ -30,7 +30,7 @@ algorithm:
             # types of the value are string/int/float/boolean/list/dictionary
             values:
               - 0.95
-              - 0.3
+              - 0.5
           # hyperparameters configuration files; dictionary type;
         - other_hyperparameters:
             # the url addresses of hyperparameters configuration files; list type;
@@ -49,8 +49,8 @@ algorithm:
         # threshold of image; value is [0, 1]
         - threshold_img:
             values:
-              - 0.8
+              - 0.9
         # predict box of image; value is [0, 1]
         - threshold_box:
             values:
-              - 0.98
+              - 0.99

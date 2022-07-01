@@ -12,31 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""This script contains some common tools."""
+
 import importlib
 import os
 import sys
 import time
-import yaml
+
 from importlib import import_module
 from inspect import getfullargspec
+import yaml
 
 
 def is_local_file(url):
-    """ check if the url is a file and already exists locally """
-    if not os.path.isfile(url):
-        return False
-    if not os.path.exists(url):
-        return False
-    return True
+    """Check if the url is a file and already exists locally."""
+    return os.path.isfile(url)
+
+
+def is_local_dir(url):
+    """Check if the url is a dir and already exists locally."""
+    return os.path.isdir(url)
 
 
 def get_file_format(url):
-    """ get format of file """
+    """Get file format of the url."""
     return os.path.splitext(url)[-1][1:]
 
 
 def parse_kwargs(func, **kwargs):
-    """ get valid parameters in kwargs """
+    """Get valid parameters of the func in kwargs."""
     if not callable(func):
         return kwargs
     need_kw = getfullargspec(func)
@@ -46,12 +50,12 @@ def parse_kwargs(func, **kwargs):
 
 
 def get_local_time():
-    """ get local time """
+    """Get local time."""
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
 
 def py2dict(url):
-    """ convert py file to the dict """
+    """Convert py file to the dict."""
     if url.endswith('.py'):
         module_name = os.path.basename(url)[:-3]
         config_dir = os.path.dirname(url)
@@ -64,23 +68,25 @@ def py2dict(url):
             if not name.startswith('__')
         }
         sys.modules.pop(module_name)
-    else:
-        raise Exception('config file must be the py format')
-    return raw_dict
+
+        return raw_dict
+
+    raise Exception('config file must be the py format')
 
 
 def yaml2dict(url):
-    """ convert yaml file to the dict """
+    """Convert yaml file to the dict."""
     if url.endswith('.yaml') or url.endswith('.yml'):
-        with open(url, "rb") as f:
-            raw_dict = yaml.load(f, Loader=yaml.SafeLoader)
-    else:
-        raise Exception('config file must be the yaml format')
-    return raw_dict
+        with open(url, "rb") as file:
+            raw_dict = yaml.load(file, Loader=yaml.SafeLoader)
+
+        return raw_dict
+
+    raise Exception('config file must be the yaml format')
 
 
 def load_module(url):
-    """ load python module"""
+    """Load python module."""
     module_path, module_name = os.path.split(url)
     if os.path.isfile(url):
         module_name = module_name.split(".")[0]
@@ -90,5 +96,4 @@ def load_module(url):
         importlib.import_module(module_name)
         sys.path.pop(0)
     except Exception as err:
-        raise Exception(
-            f"load module(url={url}) failed, error: {err}")
+        raise Exception(f"load module(url={url}) failed, error: {err}") from err

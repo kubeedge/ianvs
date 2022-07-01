@@ -98,7 +98,6 @@ setup(
     packages=find_packages(exclude=["tests", "*.tests",
                                     "*.tests.*", "tests.*"]),
     author=_infos.owners,
-    author_email="yangjin39@huawei.com",
     maintainer=_infos.owners,
     maintainer_email="",
     include_package_data=True,
