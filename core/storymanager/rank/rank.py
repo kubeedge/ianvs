@@ -110,6 +110,22 @@ class Rank:
             hps.update(**module.hyperparameters)
         return hps
 
+    def _get_all_module_kinds(cls, test_cases) -> list:
+        all_module_kinds = []
+        for test_case in test_cases:
+            modules = test_case.algorithm.modules
+            for module_kind in modules.keys():
+                if module_kind not in all_module_kinds:
+                    all_module_kinds.append(module_kind)
+        return all_module_kinds
+
+    @classmethod
+    def _get_algorithm_hyperparameters(cls, algorithm):
+        hps = {}
+        for module in algorithm.modules.values():
+            hps.update(**module.hyperparameters)
+        return hps
+
     def _get_all_hps_names(self, test_cases) -> list:
         all_hps_names = []
         for test_case in test_cases:
@@ -153,6 +169,11 @@ class Rank:
             # fill module columns of algorithm
             for module_type, module in algorithm.modules.items():
                 all_df.loc[i][module_type] = module.name
+            all_df.loc[i]["paradigm"] = algorithm.paradigm_kind
+
+            # fill module columns of algorithm
+            for module_kind, module in algorithm.modules.items():
+                all_df.loc[i][module_kind] = module.name
 
             # fill hyperparameters columns of algorithm modules
             hps = self._get_algorithm_hyperparameters(algorithm)
@@ -187,7 +208,7 @@ class Rank:
         if metric_names == ["all"]:
             metric_names = self._get_all_metric_names(test_results)
 
-        header = ["algorithm", *metric_names, "paradigm", *module_types, *hps_names, "time", "url"]
+        header = ["algorithm", *metric_names, "paradigm", *module_kinds, *hps_names, "time", "url"]
 
         all_df = copy.deepcopy(self.all_df)
         selected_df = pd.DataFrame(all_df, columns=header)

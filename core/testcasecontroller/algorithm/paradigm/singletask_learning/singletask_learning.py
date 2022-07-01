@@ -35,7 +35,6 @@ class SingleTaskLearning(ParadigmBase):
           (sedna docs: https://sedna.readthedocs.io/en/latest/api/lib/index.html),
           and module implementation pls refer to `examples' test algorithms`,
           e.g., basemodel.py, hard_example_mining.py.
-
     Parameters
     ---------
     workspace: string
@@ -43,7 +42,6 @@ class SingleTaskLearning(ParadigmBase):
     kwargs: dict
         config required for the test process of single task learning paradigm,
         e.g.: algorithm modules, dataset, initial model, etc.
-
     """
 
     def __init__(self, workspace, **kwargs):
@@ -53,13 +51,11 @@ class SingleTaskLearning(ParadigmBase):
     def run(self):
         """
         run the test flow of single task learning paradigm.
-
         Returns
         ------
         test result: numpy.ndarray
         system metric info: dict
             information needed to compute system metrics.
-
         """
 
         job = self.build_paradigm_job(ParadigmType.SINGLE_TASK_LEARNING.value)
