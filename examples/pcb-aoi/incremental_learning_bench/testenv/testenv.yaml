@@ -28,6 +28,7 @@ testenv:
     - name: "f1_score"
       # the url address of python file
       url: "./examples/pcb-aoi/incremental_learning_bench/testenv/f1_score.py"
+    - name: "data_transfer_count_ratio"
 
   # incremental rounds setting of incremental learning; int type; default value is 2;
   incremental_rounds: 2

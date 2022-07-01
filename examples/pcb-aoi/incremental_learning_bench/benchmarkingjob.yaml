@@ -20,7 +20,7 @@ benchmarkingjob:
   rank:
     # rank leaderboard with metric of test case's evaluation and order ; list type;
     # the sorting priority is based on the sequence of metrics in the list from front to back;
-    sort_by: [ { "f1_score": "descend" } ]
+    sort_by: [ { "f1_score": "descend" }, { "data_transfer_count_ratio": "ascend" } ]
 
     # visualization configuration
     visualization:
@@ -52,7 +52,7 @@ benchmarkingjob:
       # currently the options of value are as follows:
       #   1> "all": select all metrics in the leaderboard;
       #   2> metrics in the leaderboard, e.g., "f1_score"
-      metrics: [ "f1_score" ]
+      metrics: [ "f1_score", "data_transfer_count_ratio" ]
 
     # model of save selected and all dataitems in workspace; string type;
     # currently the options of value are as follows:
