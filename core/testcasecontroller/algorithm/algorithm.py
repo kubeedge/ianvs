@@ -37,7 +37,6 @@ class Algorithm:
           (sedna docs: https://sedna.readthedocs.io/en/latest/api/lib/index.html),
           and module implementation pls refer to `examples' test algorithms`,
           e.g., basemodel.py, hard_example_mining.py.
-
     Parameters
     ----------
     name : string
