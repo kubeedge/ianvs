@@ -12,45 +12,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""main"""
+
 import argparse
 
 from core.common.log import LOGGER
 from core.common import utils
 from core.cmd.obj.benchmarkingjob import BenchmarkingJob
+from core.__version__ import __version__
 
 
 def main():
-    args = parse_args()
+    """ main command-line interface to ianvs"""
     try:
-        if args.benchmarking_config_file:
-            config = utils.yaml2dict(args.benchmarking_config_file)
-    except Exception as err:
-        LOGGER.exception(f"load config file(url={args.config_file} failed, error: {err}.")
+        parser = _generate_parser()
+        args = parser.parse_args()
+        config_file = args.benchmarking_config_file
+        if not utils.is_local_file(config_file):
+            raise SystemExit(f"not found benchmarking config({config_file}) file in local")
 
-    try:
+        config = utils.yaml2dict(args.benchmarking_config_file)
         job = BenchmarkingJob(config[str.lower(BenchmarkingJob.__name__)])
-    except ValueError as err:
-        LOGGER.exception(f"init test job failed, error: {err}")
-        return
-
-    try:
         job.run()
+
+        LOGGER.info("benchmarkingjob runs successfully.")
     except Exception as err:
-        LOGGER.exception(f"test job(name={job.name}) runs failed, error: {err}.")
-        return
-
-    LOGGER.info(f"test job(name={job.name}) runs successfully!")
+        raise Exception(f"benchmarkingjob runs failed, error: {err}.") from err
 
 
-def parse_args():
+def _generate_parser():
     parser = argparse.ArgumentParser(description='AI Benchmarking Tool')
-    parser.add_argument("-f", "--benchmarking_config_file",
-                        nargs="?", default="~/benchmarking_config_file.yaml",
+    parser.prog = "ianvs"
+
+    parser.add_argument("-f",
+                        "--benchmarking_config_file",
+                        nargs="?",
                         type=str,
                         help="the benchmarking config file must be yaml/yml file")
-    parser.add_argument("-v",  help="the version of tool")
-    args = parser.parse_args()
-    return args
+
+    parser.add_argument('-v',
+                        '--version',
+                        action='version',
+                        version=__version__,
+                        help='show program version info and exit.')
+
+    return parser
 
 
 if __name__ == '__main__':
