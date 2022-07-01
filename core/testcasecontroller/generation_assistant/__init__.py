@@ -13,4 +13,4 @@
 # limitations under the License.
 
 # pylint: disable=missing-module-docstring
-from .benchmarkingjob import BenchmarkingJob
+from .generation_assistant import get_full_combinations

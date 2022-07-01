@@ -12,16 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Visualization"""
+
 import sys
+
 from prettytable import from_csv
 
 
 def print_table(rank_file):
     """ print rank of the test"""
-    fp = open(rank_file, "r")
-    table = from_csv(fp)
-    print(table)
-    fp.close()
+    with open(rank_file, "r", encoding="utf-8") as file:
+        table = from_csv(file)
+        print(table)
 
 
 def get_visualization_func(mode):

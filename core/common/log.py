@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Base logger"""
+
 import logging
 import colorlog
 
 
+# pylint: disable=too-few-public-methods
 class Logger:
     """
     Deafult logger in ianvs
@@ -34,8 +37,7 @@ class Logger:
         self.handler.setFormatter(self.format)
 
         self.logger.addHandler(self.handler)
-        self.logLevel = 'INFO'
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(level=logging.INFO)
         self.logger.propagate = False
 
 

@@ -1,1 +1,1 @@
-prettytable~=2.5.0
+prettytable~=2.5.0 # Copyright (c) 2009-2014 Luke Maurits <luke@maurits.id.au>

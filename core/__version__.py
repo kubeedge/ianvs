@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""ianvs version information."""
+"""Ianvs version information"""
 
-__version__ = "0.1.0"
+# follow Semantic Versioning (https://semver.org/)
+_MAJOR_V = '0'
+_MINOR_V = '1'
+_PATCH_V = '0'
+
+__version__ = '.'.join([_MAJOR_V, _MINOR_V, _PATCH_V])
