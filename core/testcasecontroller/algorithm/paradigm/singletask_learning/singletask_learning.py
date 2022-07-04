@@ -16,7 +16,7 @@
 
 import os
 
-from core.common.constant import ParadigmKind
+from core.common.constant import ParadigmType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 
 
@@ -51,7 +51,7 @@ class SingleTaskLearning(ParadigmBase):
 
         """
 
-        job = self.build_paradigm_job(ParadigmKind.SINGLE_TASK_LEARNING.value)
+        job = self.build_paradigm_job(ParadigmType.SINGLE_TASK_LEARNING.value)
 
         trained_model = self._train(job, self.initial_model)
 

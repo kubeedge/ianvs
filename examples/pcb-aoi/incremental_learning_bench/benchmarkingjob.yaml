@@ -10,7 +10,7 @@ benchmarkingjob:
 
   # test algorithm configuration files; list type;
   algorithms:
-      # algorithm name; string type;
+    # algorithm name; string type;
     - name: "fpn_incremental_learning"
       # the url address of test algorithm configuration file; string type;
       # the file format supports yaml/yml
@@ -54,7 +54,7 @@ benchmarkingjob:
       #   2> metrics in the leaderboard, e.g., "f1_score"
       metrics: [ "f1_score", "data_transfer_count_ratio" ]
 
-    # model of save selected and all dataitems in workspace; string type;
+    # model of save selected and all dataitems in workspace `./rank` ; string type;
     # currently the options of value are as follows:
     #  1> "selected_and_all": save selected and all dataitems;
     #  2> "selected_only": save selected dataitems;
