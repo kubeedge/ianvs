@@ -68,5 +68,5 @@ For potential maintainers,
 [kubeedge]: https://kubeedge.io/en/docs/
 [kubeedge-k8s-compatibility]: https://github.com/kubeedge/kubeedge#kubernetes-compatibility
 [Ianvs Setup]: how-to-install-ianvs.md
-[leaderboard]: ../proposals/leaderboards/
+[leaderboard]: ../leaderboards/
 [Ianvs Owners]: ../../OWNERS
