@@ -42,7 +42,14 @@ FLAGS = get_flags_byname(cfgs.NET_NAME)
 # avoid the conflict: 1. tf parses flags with sys.argv; 2. test system also parses flags .
 tf.flags.DEFINE_string("benchmarking_config_file", "", "ignore")
 
-# close tf warning log
+# close global warning log
+# reason: during the running of tensorflow, a large number of warning logs will be printed
+#         and these will submerge some important logs and increase inference latency.
+# After disable the global warning job, that will not affect the running of application.
+# if you want to open the global warning log, please comment(e.g: #) the statement.
+# todo: 1. disable the local warning log instead of the global warning log.
+#          e.g.: only to disable tensorflow warning log.
+
 logging.disable(logging.WARNING)
 
 __all__ = ["BaseModel"]
