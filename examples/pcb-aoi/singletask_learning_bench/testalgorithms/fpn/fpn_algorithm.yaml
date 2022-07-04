@@ -3,7 +3,7 @@ algorithm:
   # currently the options of value are as follows:
   #   1> "singletasklearning"
   #   2> "incrementallearning"
-  paradigm_kind: "singletasklearning"
+  paradigm_type: "singletasklearning"
   # the url address of initial model; string type; optional;
   initial_model_url: "/ianvs/initial_model/model.zip"
 
@@ -12,7 +12,7 @@ algorithm:
       # kind of algorithm module; string type;
       # currently the options of value are as follows:
       #   1> "basemodel"
-    - kind: "basemodel"
+    - type: "basemodel"
       # name of python module; string type;
       # example: basemodel.py has BaseModel module that the alias is "estimator" for this benchmarking;
       name: "estimator"

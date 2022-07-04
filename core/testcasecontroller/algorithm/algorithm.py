@@ -16,10 +16,11 @@
 
 import copy
 
-from core.common.constant import ParadigmKind
+from core.common.constant import ParadigmType
 from core.testcasecontroller.algorithm.module import Module
 from core.testcasecontroller.algorithm.paradigm import SingleTaskLearning, IncrementalLearning
 from core.testcasecontroller.generation_assistant import get_full_combinations
+
 
 # pylint: disable=too-few-public-methods
 class Algorithm:
@@ -32,12 +33,12 @@ class Algorithm:
     name : string
         name of the algorithm paradigm
     config : dict
-         config of the algorithm paradigm, includes: paradigm kind, modules, etc.
+         config of the algorithm paradigm, includes: paradigm type, modules, etc.
     """
 
     def __init__(self, name, config):
         self.name = name
-        self.paradigm_kind: str = ""
+        self.paradigm_type: str = ""
         self.incremental_learning_data_setting: dict = {
             "train_ratio": 0.8,
             "splitting_method": "default"
@@ -69,10 +70,10 @@ class Algorithm:
         for k, v in self.__dict__.items():
             config.update({k: v})
 
-        if self.paradigm_kind == ParadigmKind.SINGLE_TASK_LEARNING.value:
+        if self.paradigm_type == ParadigmType.SINGLE_TASK_LEARNING.value:
             return SingleTaskLearning(workspace, **config)
 
-        if self.paradigm_kind == ParadigmKind.INCREMENTAL_LEARNING.value:
+        if self.paradigm_type == ParadigmType.INCREMENTAL_LEARNING.value:
             return IncrementalLearning(workspace, **config)
 
         return None
@@ -81,14 +82,14 @@ class Algorithm:
         if not self.name and not isinstance(self.name, str):
             raise ValueError(f"algorithm name({self.name}) must be provided and be string type.")
 
-        if not self.paradigm_kind and not isinstance(self.paradigm_kind, str):
+        if not self.paradigm_type and not isinstance(self.paradigm_type, str):
             raise ValueError(
-                f"algorithm paradigm({self.paradigm_kind}) must be provided and be string type.")
+                f"algorithm paradigm({self.paradigm_type}) must be provided and be string type.")
 
-        paradigm_kinds = [e.value for e in ParadigmKind.__members__.values()]
-        if self.paradigm_kind not in paradigm_kinds:
-            raise ValueError(f"not support paradigm({self.paradigm_kind})."
-                             f"the following paradigms can be selected: {paradigm_kinds}")
+        paradigm_types = [e.value for e in ParadigmType.__members__.values()]
+        if self.paradigm_type not in paradigm_types:
+            raise ValueError(f"not support paradigm({self.paradigm_type})."
+                             f"the following paradigms can be selected: {paradigm_types}")
 
         if not isinstance(self.incremental_learning_data_setting, dict):
             raise ValueError(
@@ -120,7 +121,7 @@ class Algorithm:
         for module in modules:
             hps_list = module.hyperparameters_list
             if not hps_list:
-                modules_list.append((module.kind, None))
+                modules_list.append((module.type, None))
                 continue
 
             module_list = []
@@ -129,7 +130,7 @@ class Algorithm:
                 new_module.hyperparameters = hps
                 module_list.append(new_module)
 
-            modules_list.append((module.kind, module_list))
+            modules_list.append((module.type, module_list))
 
         module_combinations_list = get_full_combinations(modules_list)
 

@@ -18,7 +18,7 @@ import sys
 
 from sedna.common.class_factory import ClassFactory, ClassType
 
-from core.common.constant import SystemMetricKind
+from core.common.constant import SystemMetricType
 from core.common.utils import load_module
 
 
@@ -38,7 +38,7 @@ def data_transfer_count_ratio(system_metric_info: dict):
 
     """
 
-    info = system_metric_info.get(SystemMetricKind.DATA_TRANSFER_COUNT_RATIO.value)
+    info = system_metric_info.get(SystemMetricType.DATA_TRANSFER_COUNT_RATIO.value)
     inference_num = 0
     transfer_num = 0
     for inference_data, transfer_data in info:

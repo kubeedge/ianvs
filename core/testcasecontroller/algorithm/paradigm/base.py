@@ -18,7 +18,7 @@ import os
 
 from sedna.core.incremental_learning import IncrementalLearning
 
-from core.common.constant import ModuleKind, ParadigmKind
+from core.common.constant import ModuleType, ParadigmType
 
 
 class ParadigmBase:
@@ -59,33 +59,33 @@ class ParadigmBase:
 
     def _get_module_funcs(self):
         module_funcs = {}
-        for module_kind, module in self.modules.items():
-            func = module.get_module_func(module_kind)
+        for module_type, module in self.modules.items():
+            func = module.get_module_func(module_type)
             if callable(func):
-                module_funcs.update({module_kind: func})
+                module_funcs.update({module_type: func})
         return module_funcs
 
-    def build_paradigm_job(self, paradigm_kind):
+    def build_paradigm_job(self, paradigm_type):
         """
-        build paradigm job instance according to paradigm kind.
+        build paradigm job instance according to paradigm type.
         this job instance provides the test flow of some algorithm modules.
 
         Parameters
         ---------
-        paradigm_kind: str
+        paradigm_type: str
 
         Returns
         -------
         instance
 
         """
-        if paradigm_kind == ParadigmKind.SINGLE_TASK_LEARNING.value:
-            return self.modules_funcs.get(ModuleKind.BASEMODEL.value)()
+        if paradigm_type == ParadigmType.SINGLE_TASK_LEARNING.value:
+            return self.modules_funcs.get(ModuleType.BASEMODEL.value)()
 
-        if paradigm_kind == ParadigmKind.INCREMENTAL_LEARNING.value:
+        if paradigm_type == ParadigmType.INCREMENTAL_LEARNING.value:
             return IncrementalLearning(
-                estimator=self.modules_funcs.get(ModuleKind.BASEMODEL.value)(),
+                estimator=self.modules_funcs.get(ModuleType.BASEMODEL.value)(),
                 hard_example_mining=self.modules_funcs.get(
-                    ModuleKind.HARD_EXAMPLE_MINING.value)())
+                    ModuleType.HARD_EXAMPLE_MINING.value)())
 
         return None

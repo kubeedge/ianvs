@@ -1,5 +1,5 @@
 algorithm:
-  paradigm_kind: "incrementallearning"
+  paradigm_type: "incrementallearning"
   incremental_learning_data_setting:
     # ratio of training dataset; float type;
     train_ratio: 0.8
@@ -12,10 +12,10 @@ algorithm:
 
   # algorithm module configuration in the paradigm; list type;
   modules:
-    # kind of algorithm module; string type;
+    # type of algorithm module; string type;
     # currently the options of value are as follows:
     #   1> "basemodel": contains important interfaces such as train、 eval、 predict and more; required module;
-    - kind: "basemodel"
+    - type: "basemodel"
       # name of python module; string type;
       # example: basemodel.py has BaseModel module that the alias is "estimator" for this benchmarking;
       name: "estimator"
@@ -38,7 +38,7 @@ algorithm:
             values:
               - "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/fpn_hyperparameter.yaml"
       #  2> "hard_example_mining": check hard example when predict ; optional module;
-    - kind: "hard_example_mining"
+    - type: "hard_example_mining"
       # name of python module; string type;
       name: "IBT"
       # the url address of python module; string type;
