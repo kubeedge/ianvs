@@ -21,7 +21,7 @@ from sedna.common.class_factory import ClassType, ClassFactory
 __all__ = ["f1_score"]
 
 
-@ClassFactory.register(ClassType.GENERAL, "f1_score")
+@ClassFactory.register(ClassType.GENERAL, alias="f1_score")
 def f1_score(y_true, y_pred):
     predict_dict = {}
 

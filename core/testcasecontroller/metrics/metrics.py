@@ -22,9 +22,10 @@ from core.common.constant import SystemMetricType
 from core.common.utils import load_module
 
 
-def data_transfer_count_ratio(system_metric_info: dict):
+def samples_transfer_ratio_func(system_metric_info: dict):
     """
-    compute data transfer count ratio
+    compute samples transfer ratio:
+        ratio = nums of all inference samples / nums of all transfer samples
 
     Parameters
     ----------
@@ -38,7 +39,7 @@ def data_transfer_count_ratio(system_metric_info: dict):
 
     """
 
-    info = system_metric_info.get(SystemMetricType.DATA_TRANSFER_COUNT_RATIO.value)
+    info = system_metric_info.get(SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
     inference_num = 0
     transfer_num = 0
     for inference_data, transfer_data in info:
@@ -73,4 +74,5 @@ def get_metric_func(metric_dict: dict):
         except Exception as err:
             raise Exception(f"get metric func(url={url}) failed, error: {err}.") from err
 
-    return name, getattr(sys.modules[__name__], name)
+    return name, getattr(sys.modules[__name__], str.lower(name) + "_func")
+

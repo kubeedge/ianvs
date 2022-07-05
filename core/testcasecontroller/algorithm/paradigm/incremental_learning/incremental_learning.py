@@ -52,7 +52,7 @@ class IncrementalLearning(ParadigmBase):
         self.incremental_rounds = kwargs.get("incremental_rounds", 2)
         self.model_eval_config = kwargs.get("model_eval")
 
-        self.system_metric_info = {SystemMetricType.DATA_TRANSFER_COUNT_RATIO.value: []}
+        self.system_metric_info = {SystemMetricType.SAMPLES_TRANSFER_RATIO.value: []}
 
     def run(self):
         """
@@ -67,8 +67,8 @@ class IncrementalLearning(ParadigmBase):
         """
 
         rounds = self.incremental_rounds
-        data_transfer_count_ratio_info = self.system_metric_info.get(
-            SystemMetricType.DATA_TRANSFER_COUNT_RATIO.value)
+        samples_transfer_ratio_info = self.system_metric_info.get(
+            SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
         dataset_files = self._preprocess_dataset(splitting_dataset_times=rounds)
         current_model = self.initial_model
 
@@ -80,7 +80,7 @@ class IncrementalLearning(ParadigmBase):
                                                                inference_dataset_file,
                                                                r)
 
-            data_transfer_count_ratio_info.append((inference_results, hard_examples))
+            samples_transfer_ratio_info.append((inference_results, hard_examples))
 
             # If no hard examples in the first round, starting the next round
             if len(hard_examples) <= 0:
@@ -96,7 +96,7 @@ class IncrementalLearning(ParadigmBase):
                 current_model = new_model
 
         test_res, hard_examples = self._inference(current_model, self.dataset.test_url, "test")
-        data_transfer_count_ratio_info.append((test_res, hard_examples))
+        samples_transfer_ratio_info.append((test_res, hard_examples))
 
         return test_res, self.system_metric_info
 

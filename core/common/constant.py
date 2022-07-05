@@ -46,4 +46,4 @@ class SystemMetricType(Enum):
     """
     System metric type of ianvs.
     """
-    DATA_TRANSFER_COUNT_RATIO = "data_transfer_count_ratio"
+    SAMPLES_TRANSFER_RATIO = "samples_transfer_ratio"
