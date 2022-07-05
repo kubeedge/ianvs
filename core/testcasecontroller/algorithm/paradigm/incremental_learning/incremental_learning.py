@@ -29,8 +29,18 @@ from core.common.utils import get_file_format, is_local_dir
 class IncrementalLearning(ParadigmBase):
     """
     IncrementalLearning
-
     provide the flow of incremental learning paradigm.
+    Notes:
+          1. Ianvs serves as testing tools for test objects, e.g., algorithms.
+          2. Ianvs does NOT include code directly on test object.
+          3. Algorithms serve as typical test objects in Ianvs
+          and detailed algorithms are thus NOT included in this Ianvs python file.
+          4. As for the details of example test objects, e.g., algorithms,
+          please refer to third party packages in Ianvs example.
+          For example, AI workflow and interface pls refer to sedna
+          (sedna docs: https://sedna.readthedocs.io/en/latest/api/lib/index.html),
+          and module implementation pls refer to `examples' test algorithms`,
+          e.g., basemodel.py, hard_example_mining.py.
 
     Parameters
     ---------
