@@ -47,3 +47,9 @@ class SystemMetricType(Enum):
     System metric type of ianvs.
     """
     SAMPLES_TRANSFER_RATIO = "samples_transfer_ratio"
+
+class TestObjectType(Enum):
+    """
+    Test object type of ianvs.
+    """
+    ALGORITHMS = "algorithms"

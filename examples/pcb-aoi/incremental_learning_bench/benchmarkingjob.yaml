@@ -8,13 +8,18 @@ benchmarkingjob:
   # the file format supports yaml/yml;
   testenv: "./examples/pcb-aoi/incremental_learning_bench/testenv/testenv.yaml"
 
-  # test algorithm configuration files; list type;
-  algorithms:
-    # algorithm name; string type;
-    - name: "fpn_incremental_learning"
-      # the url address of test algorithm configuration file; string type;
-      # the file format supports yaml/yml
-      url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/fpn_algorithm.yaml"
+  # the configuration of test object
+  test_object:
+    # test type; string type;
+    # currently the option of value is "algorithms",the others will be added in succession.
+    type: "algorithms"
+    # test algorithm configuration files; list type;
+    algorithms:
+      # algorithm name; string type;
+      - name: "fpn_incremental_learning"
+        # the url address of test algorithm configuration file; string type;
+        # the file format supports yaml/yml
+        url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/fpn_algorithm.yaml"
 
   # the configuration of ranking leaderboard
   rank:
