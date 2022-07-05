@@ -17,6 +17,8 @@
 import copy
 
 from core.common import utils
+from core.common.constant import TestObjectType
+from core.testcasecontroller.algorithm import Algorithm
 from core.testcasecontroller.testcase import TestCase
 
 
@@ -29,15 +31,17 @@ class TestCaseController:
     def __init__(self):
         self.test_cases = []
 
-    def build_testcases(self, test_env, algorithms):
+    def build_testcases(self, test_env, test_object):
         """
         Build multiple test cases by Using a test environment and multiple test algorithms.
         """
-        for algorithm in algorithms:
-            for modules in algorithm.modules_list:
-                new_algorithm = copy.deepcopy(algorithm)
-                new_algorithm.modules = modules
-                self.test_cases.append(TestCase(test_env, new_algorithm))
+
+        test_object_type = test_object.get("type")
+        test_object_config = test_object.get(test_object_type)
+        if test_object_type == TestObjectType.ALGORITHMS.value:
+            algorithms = self._parse_algorithms_config(test_object_config)
+            for algorithm in algorithms:
+                self.test_cases.append(TestCase(test_env, algorithm))
 
     def run_testcases(self, workspace):
         """
@@ -55,3 +59,29 @@ class TestCaseController:
             succeed_testcases.append(testcase)
 
         return succeed_testcases, succeed_results
+
+    @classmethod
+    def _parse_algorithms_config(cls, config):
+        algorithms = []
+        for algorithm_config in config:
+            name = algorithm_config.get("name")
+            config_file = algorithm_config.get("url")
+            if not utils.is_local_file(config_file):
+                raise Exception(f"not found algorithm config file({config_file}) in local")
+
+            try:
+                config = utils.yaml2dict(config_file)
+                algorithm = Algorithm(name, config)
+                algorithms.append(algorithm)
+            except Exception as err:
+                raise Exception(f"algorithm config file({config_file} is not supported, "
+                                f"error: {err}") from err
+
+        new_algorithms = []
+        for algorithm in algorithms:
+            for modules in algorithm.modules_list:
+                new_algorithm = copy.deepcopy(algorithm)
+                new_algorithm.modules = modules
+                new_algorithms.append(new_algorithm)
+
+        return new_algorithms

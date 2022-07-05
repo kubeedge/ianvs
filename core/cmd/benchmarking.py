@@ -18,7 +18,7 @@ import argparse
 
 from core.common.log import LOGGER
 from core.common import utils
-from core.cmd.obj.benchmarkingjob import BenchmarkingJob
+from core.cmd.obj import BenchmarkingJob
 from core.__version__ import __version__
 
 

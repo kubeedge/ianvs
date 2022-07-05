@@ -16,11 +16,12 @@
 
 import os
 
-from core.testcasecontroller.algorithm import Algorithm
-from core.storymanager.rank import Rank
 from core.common import utils
-from core.testcasecontroller.testcasecontroller import TestCaseController
+from core.common.constant import TestObjectType
 from core.testenvmanager.testenv import TestEnv
+from core.storymanager.rank import Rank
+from core.testcasecontroller.testcasecontroller import TestCaseController
+
 
 # pylint: disable=too-few-public-methods
 class BenchmarkingJob:
@@ -39,7 +40,7 @@ class BenchmarkingJob:
     def __init__(self, config):
         self.name: str = ""
         self.workspace: str = "./workspace"
-        self.algorithms: list = []
+        self.test_object: dict = {}
         self.rank = None
         self.test_env = None
         self.testcase_controller = TestCaseController()
@@ -54,6 +55,21 @@ class BenchmarkingJob:
         if not isinstance(self.workspace, str):
             raise ValueError(f"benchmarkingjob's workspace({self.workspace}) must be string type.")
 
+        if not self.test_object and not isinstance(self.test_object, dict):
+            raise ValueError(f"benchmarkingjob's test_object({self.test_object})"
+                             f" must be dict type.")
+
+        test_object_types = [e.value for e in TestObjectType.__members__.values()]
+        test_object_type = self.test_object.get("type")
+        if test_object_type not in test_object_types:
+            raise ValueError(
+                f"benchmarkingjob' test_object doesn't support the type({test_object_type}), "
+                f"the following test object types can be selected: {test_object_types}.")
+
+        if not self.test_object.get(test_object_type):
+            raise ValueError(f"benchmarkingjob' test_object doesn't find"
+                             f" the field({test_object_type}).")
+
     def run(self):
         """
         run a end-to-end benchmarking job,
@@ -66,7 +82,8 @@ class BenchmarkingJob:
 
         self.test_env.prepare()
 
-        self.testcase_controller.build_testcases(test_env=self.test_env, algorithms=self.algorithms)
+        self.testcase_controller.build_testcases(test_env=self.test_env,
+                                                 test_object=self.test_object)
 
         succeed_testcases, test_results = self.testcase_controller.run_testcases(self.workspace)
 
@@ -79,8 +96,6 @@ class BenchmarkingJob:
         for k, v in config.items():
             if k == str.lower(TestEnv.__name__):
                 self._parse_testenv_config(v)
-            elif k == str.lower(Algorithm.__name__ + "s"):
-                self._parse_algorithms_config(v)
             elif k == str.lower(Rank.__name__):
                 self._parse_rank_config(v)
             else:
@@ -102,19 +117,3 @@ class BenchmarkingJob:
 
     def _parse_rank_config(self, config):
         self.rank = Rank(config)
-
-    def _parse_algorithms_config(self, config):
-        self.algorithms = []
-        for algorithm_config in config:
-            name = algorithm_config.get("name")
-            config_file = algorithm_config.get("url")
-            if not utils.is_local_file(config_file):
-                raise Exception(f"not found algorithm config file({config_file}) in local")
-
-            try:
-                config = utils.yaml2dict(config_file)
-                algorithm = Algorithm(name, config)
-                self.algorithms.append(algorithm)
-            except Exception as err:
-                raise Exception(f"algorithm config file({config_file} is not supported, "
-                                f"error: {err}") from err
