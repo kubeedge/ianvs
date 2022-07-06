@@ -1,16 +1,17 @@
 # How to contributrbute an algorithm to Ianvs
 
+Ianvs serves as testing tools for test objects, e.g., algorithms. Ianvs does NOT include code directly on test object. Algorithms serve as typical test objects in Ianvs and detailed algorithms are thus NOT included in this Ianvs python file. As for the details of example test objects, e.g., algorithms, please refer to third party packages in Ianvs example. For example, AI workflow and interface please refer to sedna and module implementation please refer to third party package like FPN_TensorFlow and Sedna IBT algorithm.
 
 
-Before start, it should be known that Ianvs testing algorithm development depends on [Sedna Lib]. The following is recommended contribute workflow:
-1. Develop by yourself: put the algorithm implementation to ianvs [examples directory] locally, for testing.  
- Here are two examples show how to development algorithm for testing in Ianvs.
-   * [incremental-learning]
-   * [single-task-learning]
-2. Publish to everyone: submit the algorithm implementation to [Sedna repository], for sharing, then everyone can test and use your algorithm.
+For algorithm contributors, you can:
+1. Release a repo independent of ianvs, but interface should still follow the SIG AI algorithm interface to launch ianvs.
+   Here are two examples show how to development algorithm for testing in Ianvs.
+    * [incremental-learning]
+    * [single-task-learning]
+2. Integrated the targeted algorithm into sedna so that ianvs can use directly. in this case, you can connect sedna owners for help.
 
 
-Also, if new Algorithm has already beed integrated to Sedna, it can be used in Ianvs directly. 
+Also, if new algorithm has already bee integrated to Sedna, it can be used in Ianvs directly. 
 
 
 
