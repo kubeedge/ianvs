@@ -12,9 +12,6 @@ in order to facilitate more efficient and effective development. More detailedly
 but also benchmarking tools including simulation and hyper-parameter searching. 
 Ianvs also revealing best practices for developers and end users with presentation tools including leaderboards and test reports. 
 
-## Scope
-The distributed synergy AI benchmarking Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. 
-
 The scope of Ianvs includes
 - Providing end-to-end benchmark toolkits across devices, edge nodes and cloud nodes based on typical distributed-synergy AI paradigms and applications. 
     - Tools to manage test environment. For example, it would be necessary to support the CRUD (Create, Read, Update and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration.  
