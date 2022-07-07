@@ -45,7 +45,7 @@ def samples_transfer_ratio_func(system_metric_info: dict):
     for inference_data, transfer_data in info:
         inference_num += len(inference_data)
         transfer_num += len(transfer_data)
-    return float(transfer_num) / inference_num
+    return round(float(transfer_num) / inference_num, 4)
 
 
 def get_metric_func(metric_dict: dict):
@@ -75,4 +75,3 @@ def get_metric_func(metric_dict: dict):
             raise Exception(f"get metric func(url={url}) failed, error: {err}.") from err
 
     return name, getattr(sys.modules[__name__], str.lower(name) + "_func")
-

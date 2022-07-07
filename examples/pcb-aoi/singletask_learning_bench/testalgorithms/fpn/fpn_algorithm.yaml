@@ -14,8 +14,8 @@ algorithm:
       #   1> "basemodel"
     - type: "basemodel"
       # name of python module; string type;
-      # example: basemodel.py has BaseModel module that the alias is "estimator" for this benchmarking;
-      name: "estimator"
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "FPN"
       # the url address of python module; string type;
       url: "./examples/pcb-aoi/singletask_learning_bench/testalgorithms/fpn/basemodel.py"
 

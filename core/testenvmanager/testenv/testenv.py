@@ -16,6 +16,7 @@
 
 from core.testenvmanager.dataset import Dataset
 
+
 # pylint: disable=too-few-public-methods
 class TestEnv:
     """
@@ -47,6 +48,10 @@ class TestEnv:
     def _check_fields(self):
         if not self.metrics:
             raise ValueError(f"not found testenv metrics({self.metrics}).")
+
+        if not isinstance(self.incremental_rounds, int) or self.incremental_rounds < 2:
+            raise ValueError(f"testenv incremental_rounds(value={self.incremental_rounds})"
+                             f" must be int type and not less than 2.")
 
     def _parse_config(self, config):
         config_dict = config[str.lower(TestEnv.__name__)]
