@@ -257,4 +257,3 @@ class Rank:
                 raise Exception(
                     f"process visualization(method={method}) of "
                     f"rank file({self.selected_rank_file}) failed, error: {err}.") from err
-

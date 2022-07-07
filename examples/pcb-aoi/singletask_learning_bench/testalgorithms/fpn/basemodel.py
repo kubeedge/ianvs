@@ -48,6 +48,7 @@ tf.flags.DEFINE_string("benchmarking_config_file", "", "ignore")
 # if you want to open the global warning log, please comment(e.g: #) the statement.
 # todo: 1. disable the local warning log instead of the global warning log.
 #          e.g.: only to disable tensorflow warning log.
+
 logging.disable(logging.WARNING)
 
 __all__ = ["BaseModel"]
@@ -56,18 +57,17 @@ __all__ = ["BaseModel"]
 os.environ['BACKEND_TYPE'] = 'TENSORFLOW'
 
 
-@ClassFactory.register(ClassType.GENERAL, alias="estimator")
+@ClassFactory.register(ClassType.GENERAL, alias="FPN")
 class BaseModel:
 
     def __init__(self, **kwargs):
         """
         initialize logging configuration
         """
-        self.has_load = False
+
+        self.has_fast_rcnn_predict = False
 
         self._init_tf_graph()
-
-        self.predict_fast_rcnn = None
 
         self.temp_dir = tempfile.mkdtemp()
         if not os.path.isdir(self.temp_dir):
@@ -313,17 +313,16 @@ class BaseModel:
         return model_path
 
     def predict(self, data, input_shape=None, **kwargs):
-
         if data is None:
             raise Exception("Predict data is None")
 
         inference_output_dir = os.getenv("RESULT_SAVED_URL")
 
         with self.tf_graph.as_default():
-            if not self.predict_fast_rcnn:
-                self.predict_fast_rcnn = self._get_predict_fast_rcnn()
+            if not self.has_fast_rcnn_predict:
+                self._fast_rcnn_predict()
+                self.has_fast_rcnn_predict = True
 
-            fast_rcnn_decode_boxes, fast_rcnn_score, num_of_objects, detection_category = self.predict_fast_rcnn.fast_rcnn_predict()
             restorer = self._get_restorer()
 
             config = tf.ConfigProto()
@@ -334,10 +333,8 @@ class BaseModel:
 
             with tf.Session(config=config) as sess:
                 sess.run(init_op)
-                if not self.has_load:
-                    print('reload model')
-                    restorer.restore(sess, self.checkpoint_path)
-                    self.has_load = True
+
+                restorer.restore(sess, self.checkpoint_path)
 
                 coord = tf.train.Coordinator()
                 threads = tf.train.start_queue_runners(sess, coord)
@@ -352,7 +349,8 @@ class BaseModel:
 
                     _img_batch, _fast_rcnn_decode_boxes, _fast_rcnn_score, _detection_category = \
                         sess.run(
-                            [self.img_batch, fast_rcnn_decode_boxes, fast_rcnn_score, detection_category],
+                            [self.img_batch, self.fast_rcnn_decode_boxes, self.fast_rcnn_score,
+                             self.detection_category],
                             feed_dict={self.img_plac: img})
                     end = time.time()
 
@@ -412,11 +410,11 @@ class BaseModel:
 
         self.load(model_path)
         predict_dict = self.predict(data.x)
-
-        metric = kwargs.get("metric")
-        if callable(metric):
-            return {"f1_score": metric(data.y, predict_dict)}
-        return {"f1_score": f1_score(data.y, predict_dict)}
+        metric_name, metric_func = kwargs.get("metric")
+        if callable(metric_func):
+            return {"f1_score": metric_func(data.y, predict_dict)}
+        else:
+            raise Exception(f"not found model metric func(name={metric_name}) in model eval phase")
 
     def _get_restorer(self):
         model_variables = slim.get_model_variables()
@@ -434,7 +432,7 @@ class BaseModel:
                                                                                    target_shortside_len=cfgs.SHORT_SIDE_LEN,
                                                                                    is_resize=True)
 
-    def _get_predict_fast_rcnn(self):
+    def _fast_rcnn_predict(self):
         with self.tf_graph.as_default():
             # ***********************************************************************************************
             # *                                         share net                                           *
@@ -499,45 +497,6 @@ class BaseModel:
                                                  weight_decay=cfgs.WEIGHT_DECAY[cfgs.NET_NAME],
                                                  is_training=False,
                                                  level=cfgs.LEVEL)
-            return fast_rcnn
 
-
-def f1_score(y_true, y_pred):
-    predict_dict = {}
-
-    for k, v in y_pred.items():
-        k = f"b'{k}'"
-        if not predict_dict.get(k):
-            predict_dict[k] = v
-
-    gtboxes_dict = convert_labels(y_true)
-
-    R, P, AP, F, num = [], [], [], [], []
-
-    for label in NAME_LABEL_MAP.keys():
-        if label == 'back_ground':
-            continue
-
-        rboxes, gboxes = get_single_label_dict(predict_dict, gtboxes_dict, label)
-        rec, prec, ap, box_num = single_label_eval(rboxes, gboxes, 0.3, False)
-        recall = 0 if rec.shape[0] == 0 else rec[-1]
-        precision = 0 if prec.shape[0] == 0 else prec[-1]
-        F_measure = 0 if not (recall + precision) else (2 * precision * recall / (recall + precision))
-        R.append(recall)
-        P.append(precision)
-        AP.append(ap)
-        F.append(F_measure)
-        num.append(box_num)
-
-    R = np.array(R)
-    P = np.array(P)
-    AP = np.array(AP)
-    F = np.array(F)
-
-    Recall = np.sum(R) / 2
-    Precision = np.sum(P) / 2
-    mAP = np.sum(AP) / 2
-    F_measure = np.sum(F) / 2
-    print('\n{}\tR:{}\tP:{}\tmAP:{}\tF1_SCORE:{}'.format('Final', Recall, Precision, mAP, F_measure))
-
-    return F_measure
+            self.fast_rcnn_decode_boxes, self.fast_rcnn_score, self.num_of_objects, self.detection_category = \
+                fast_rcnn.fast_rcnn_predict()

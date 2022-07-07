@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
 from FPN_TensorFlow.libs.label_name_dict.label_dict import NAME_LABEL_MAP
 from FPN_TensorFlow.data.io.read_tfrecord import convert_labels
 from FPN_TensorFlow.help_utils.tools import get_single_label_dict, single_label_eval
@@ -32,7 +31,7 @@ def f1_score(y_true, y_pred):
 
     gtboxes_dict = convert_labels(y_true)
 
-    R, P, AP, F, num = [], [], [], [], []
+    f1_score_list = []
 
     for label in NAME_LABEL_MAP.keys():
         if label == 'back_ground':
@@ -42,23 +41,14 @@ def f1_score(y_true, y_pred):
         rec, prec, ap, box_num = single_label_eval(rboxes, gboxes, 0.3, False)
         recall = 0 if rec.shape[0] == 0 else rec[-1]
         precision = 0 if prec.shape[0] == 0 else prec[-1]
-        F_measure = 0 if not (recall + precision) else (2 * precision * recall / (recall + precision))
-        print('\n{}\tR:{}\tP:{}\tap:{}\tF:{}'.format(label, recall, precision, ap, F_measure))
-        R.append(recall)
-        P.append(precision)
-        AP.append(ap)
-        F.append(F_measure)
-        num.append(box_num)
-    print("num:", num)
-    R = np.array(R)
-    P = np.array(P)
-    AP = np.array(AP)
-    F = np.array(F)
+        f1_score = 0 if not (recall + precision) else (2 * precision * recall / (recall + precision))
 
-    Recall = np.sum(R) / 2
-    Precision = np.sum(P) / 2
-    mAP = np.sum(AP) / 2
-    F_measure = np.sum(F) / 2
-    print('\n{}\tR:{}\tP:{}\tmAP:{}\tF:{}'.format('Final', Recall, Precision, mAP, F_measure))
+        f1_score_list.append(f1_score)
 
-    return F_measure
+    f1_score_avg = 0
+    if f1_score_list:
+        f1_score_avg = round(float(sum(f1_score_list)) / len(f1_score_list), 4)
+
+    print(f"f1_score_avg: {f1_score_avg}")
+
+    return f1_score_avg

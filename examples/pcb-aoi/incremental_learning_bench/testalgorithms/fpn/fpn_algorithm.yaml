@@ -17,8 +17,8 @@ algorithm:
     #   1> "basemodel": contains important interfaces such as train、 eval、 predict and more; required module;
     - type: "basemodel"
       # name of python module; string type;
-      # example: basemodel.py has BaseModel module that the alias is "estimator" for this benchmarking;
-      name: "estimator"
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "FPN"
       # the url address of python module; string type;
       url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/basemodel.py"
 
@@ -53,4 +53,4 @@ algorithm:
         # predict box of image; value is [0, 1]
         - threshold_box:
             values:
-              - 0.99
+              - 0.9
