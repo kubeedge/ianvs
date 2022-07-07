@@ -1,4 +1,7 @@
 # Configuration file for the Sphinx documentation builder.
+# This script is only used for Ianvs documents maintainer,
+# who can use this script to configure the page display effect.
+# It can be ignored for Ianvs User and Developer.
 #
 # This file only contains a selection of the most common options. For a full
 # list see the documentation:
@@ -125,7 +128,9 @@ def ultimateReplace(app, docname, source):
     """
     path = app.env.doc2path(docname)  # get current path
 
+    # INLINE_LINK_EXAMPLE: [Ianvs repository](https://github.com/kubeedge/ianvs)
     INLINE_LINK_RE = re.compile(r'\[[^\]]+\]\(([^)]+)\)')
+    # FOOTNOTE_LINK_EXAMPLE: [Ianvs repository]: https://github.com/kubeedge/ianvs
     FOOTNOTE_LINK_URL_RE = re.compile(r'\[[^\]]+\](?:\s+)?:(?:\s+)?(\S+)')
     if path.endswith('.md'):
         new_line = []
@@ -167,6 +172,12 @@ def ultimateReplace(app, docname, source):
                     )
                     break
 
+                # If relative path looks like:
+                # `docs/path/`
+                # those paths will change to `docs/path.html`
+                # So it is suggested to give absolute github address if the path is directory.
+                # `docs/path/file.md`
+                # those paths will change to `docs/path/file.html`
                 if _relpath.startswith(docs_url) and (
                         os.path.isdir(_relpath) or
                         os.path.splitext(_relpath)[-1].lower().startswith(
@@ -199,5 +210,8 @@ def ultimateReplace(app, docname, source):
 
 def setup(app):
     app.add_config_value('ultimate_replacements', {}, True)
+    # Emitted when a source file has been read.
+    # The source argument is a list whose single element is the contents of the source file.
+    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-source-read
     app.connect('source-read', ultimateReplace)
     app.add_css_file('css/custom.css')

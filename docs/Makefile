@@ -1,5 +1,7 @@
 # Minimal makefile for Sphinx documentation
-#
+# This script is only used for Ianvs documents maintainer,
+# who can use this script to generate Sphinx html for local preview.
+# It can be ignored for Ianvs User and Developer.
 
 # You can set these variables from the command line, and also
 # from the environment for the first two.
@@ -24,7 +26,6 @@ clean:
 
 api:
 	rm -rf ./source/api/*
-	@$(SPHINXAPIDOC) -M -o ./lib-api/joint_inference ../lib/sedna/joint_inference
 
 html:
 	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
