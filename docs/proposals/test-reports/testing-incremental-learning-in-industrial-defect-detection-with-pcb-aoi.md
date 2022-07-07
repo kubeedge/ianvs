@@ -24,8 +24,9 @@ Its goals include:
 * Automatically retrains, evaluates, and updates models based on the data generated at the edge.
 * Support time trigger, sample size trigger, and precision-based trigger.
 * Support manual triggering of training, evaluation, and model update.
-* Support hard sample discovering of unlabeled data,  for reducing the manual labeling workload. 
+* Support hard example discovering of unlabeled data,  for reducing the manual labeling workload. 
 
+This report is testing the basic incremental algorithm based on FPN and interested readers can refer to [the basicIL-fpn](../algorithms/incremental-learning/basicIL-fpn.md) for more details.
 
 ## Benchmark Setting
 

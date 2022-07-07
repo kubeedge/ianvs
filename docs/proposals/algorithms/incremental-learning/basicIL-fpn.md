@@ -10,17 +10,18 @@ Its goals include:
 * Automatically retrains, evaluates, and updates models based on the data generated at the edge.
 * Support time trigger, sample size trigger, and precision-based trigger.
 * Support manual triggering of training, evaluation, and model update.
-* Support hard sample discovering of unlabeled data,  for reducing the manual labeling workload. 
+* Support hard example discovering of unlabeled data,  for reducing the manual labeling workload. 
 
 ![](incremental_learning.png)
 
 As shown in the above figure, the incremental learning works as following procedures: 
-1. Developer establishes the incremental learning algorithm. 
-2. Developer deploys the app. and launches incremental learning. 
-3. The APP runs, detects hard samples and uploads hard sample to the cloud.
-4. Labeling service labels the hard samples. 
-5. Incremental training online learns the hard samples to generate a new model. 
+1. Developer implements and deploys the application based on incremental learning. 
+2. The application runs and launches incremental learning. It can also return the inference result to the application. 
+3. The system detects hard examples and uploads hard examples to the cloud.
+4. Labeling service labels the hard examples. 
+5. Incremental training online learns the hard examples to generate a new model. 
 6. Model evaluation is conducted and updates the model if qualified. 
+7. The model outputs the inference result given test samples and continue as Step 3.
 
 ## Implementation
 Here we will show how to implement a single task learning algorithm for testing in ianvs, based on an opensource algorithm [FPN].
