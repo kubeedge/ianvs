@@ -30,43 +30,128 @@ This report is testing the basic incremental algorithm based on FPN and interest
 
 ## Benchmark Setting
 
-Key settings of the test environment to incremental learning are as follows: 
+Key settings of the test environment to incremental learning are as follows:
+
 ``` yaml
 # testenv.yaml
 testenv:
+  # dataset configuration
   dataset:
-    train_ratio: 0.8
+    # the url address of train dataset index; string type;
+    train_url: "/ianvs/dataset/train_data/index.txt"
+    # the url address of test dataset index; string type;
+    test_url: "/ianvs/dataset/test_data/index.txt"
+
+  # model eval configuration of incremental learning;
   model_eval:
+    # metric used for model evaluation
     model_metric:
+      # metric name; string type;
       name: "f1_score"
-    threshold: 0
+      # the url address of python file
+      url: "./examples/pcb-aoi/incremental_learning_bench/testenv/f1_score.py"
+
+    # condition of triggering inference model to update
+    # threshold of the condition; types are float/int
+    threshold: 0.01
+    # operator of the condition; string type;
+    # values are ">=", ">", "<=", "<" and "=";
     operator: ">="
+
+  # metrics configuration for test case's evaluation; list type;
   metrics:
+      # metric name; string type;
     - name: "f1_score"
+      # the url address of python file
+      url: "./examples/pcb-aoi/incremental_learning_bench/testenv/f1_score.py"
+    - name: "samples_transfer_ratio"
+
+  # incremental rounds setting for incremental learning paradigm.; int type; default value is 2;
   incremental_rounds: 2
 ```
 
-Key settings of the algorithm to incremental learning are as follows: 
+Key settings of the algorithm to incremental learning are as follows:
+
 ```yaml
 # algorithm.yaml
 algorithm:
-  paradigm: "incrementallearning"
-  dataset_train_ratio: 0.8
+  # paradigm type; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  paradigm_type: "incrementallearning"
+  incremental_learning_data_setting:
+    # ratio of training dataset; float type.
+    # the default value is 0.8.
+    train_ratio: 0.8
+    # the method of splitting dataset; string type; optional;
+    # currently the options of value are as follows:
+    #   1> "default": the dataset is evenly divided based train_ratio;
+    splitting_method: "default"
+  # the url address of initial model for model pre-training; string url;
+  initial_model_url: "/ianvs/initial_model/model.zip"
+
+  # algorithm module configuration in the paradigm; list type;
   modules:
-    - kind: "basemodel"
-      name: "estimator"
+    # type of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel": contains important interfaces such as train¡¢ eval¡¢ predict and more; required module;
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "FPN"
+      # the url address of python module; string type;
+      url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/basemodel.py"
+
+      # hyperparameters configuration for the python module; list type;
       hyperparameters:
+        # name of the hyperparameter; string type;
         - momentum:
+            # values of the hyperparameter; list type;
+            # types of the value are string/int/float/boolean/list/dictionary
             values:
-              - 0.8
-              - 0.6
+              - 0.95
+              - 0.5
+          # hyperparameters configuration files; dictionary type;
         - other_hyperparameters:
+            # the url addresses of hyperparameters configuration files; list type;
+            # type of the value is string;
             values:
-              learning_rate: 0.1
+              - "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/fpn_hyperparameter.yaml"
+      #  2> "hard_example_mining": check hard example when predict ; optional module;
+    - type: "hard_example_mining"
+      # name of python module; string type;
+      name: "IBT"
+      # the url address of python module; string type;
+      url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/hard_example_mining.py"
+      # hyperparameters configuration for the python module; list type;
+      hyperparameters:
+        # name of the hyperparameter; string type;
+        # threshold of image; value is [0, 1]
+        - threshold_img:
+            values:
+              - 0.9
+        # predict box of image; value is [0, 1]
+        - threshold_box:
+            values:
+              - 0.9
 
 ```
-<!-- momentum: 0.9 -->
 
-## Benchmark Result 
+## Benchmark Result
 
-We release the leaderboard [here](/docs/leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning.md).
+We release the
+leaderboard [here](../leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-incremental-learning.md)
+.
+
+## Effect Display
+
+The pcb image has 8 bad defects. See [label file](./images/20170316-SPI-AOI-19.xml) for details.
+
+* Before incremental learning, `7` the bad defects have been detected.
+
+![](./images/before_increment_20170316-SPI-AOI-19.jpeg_fpn.jpg)
+
+* After incremental learning, `8` the bad defects have been detected.
+
+![](./images/after_increment_20170316-SPI-AOI-19.jpeg_fpn.jpg)
