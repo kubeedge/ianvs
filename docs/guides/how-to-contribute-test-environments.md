@@ -1,6 +1,20 @@
 # How to Contribute Test Environments
 
 
+## Overall contribution workflow
+
+1. Apply for a topic.   
+   Once you have new idea about test environment, you can apply for a topic to discuss it on [SIG AI weekly meeting](http://github.com/kubeedge/ianvs.git).
+2. Submit proposal.
+   After the idea is fully discussed, the former proposal PR is needed to submit to [Ianvs repository](http://github.com/kubeedge/ianvs.git).
+3. Fix proposal review comments.  
+   If other Ianvs maintainer leave review comments to the PR, you need fix them and get at least 2 reviewers' `/lgtm`, and 1 approver's `/approve`.
+4. Submit code.
+   Then you can implement your code, and good code style is encouraged.
+5. Fix code review comments.  
+   Besides the merge requirements of proposal,  CI passing is needed before review in this step.
+
+
 The following is a typical testenv: 
 ```yaml
 testenv:
