@@ -27,41 +27,64 @@ Key settings of the test environment to single task learning are as follows:
 testenv:
   # dataset configuration
   dataset:
-    train_ratio: 0.8
+    # the url address of train dataset index; string type;
+    train_url: "/ianvs/dataset/train_data/index.txt"
+    # the url address of test dataset index; string type;
+    test_url: "/ianvs/dataset/test_data/index.txt"
+
   # metrics configuration for test case's evaluation; list type;
   metrics:
+    # metric name; string type;
     - name: "f1_score"
+      # the url address of python file
+      url: "./examples/pcb-aoi/singletask_learning_bench/testenv/f1_score.py"
 ```
 
-Key settings of the algorithm to single learning are as follows: 
+Key settings of the algorithm to single learning are as follows:
+
 ```yaml
 # algorithm.yaml
 algorithm:
-  # paradigm name; string type;
-  paradigm: "singletasklearning"
+  # paradigm type; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  paradigm_type: "singletasklearning"
+  # the url address of initial model; string type; optional;
+  initial_model_url: "/ianvs/initial_model/model.zip"
+
   # algorithm module configuration in the paradigm; list type;
   modules:
-      # kind of algorithm module; string type;
-    - kind: "basemodel"
+    # kind of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel"
+    - type: "basemodel"
       # name of python module; string type;
-      name: "estimator"
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "FPN"
+      # the url address of python module; string type;
+      url: "./examples/pcb-aoi/singletask_learning_bench/testalgorithms/fpn/basemodel.py"
 
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
-          # name of the hyperparameter; string type;
+        # name of the hyperparameter; string type;
         - momentum:
             # values of the hyperparameter; list type;
+            # types of the value are string/int/float/boolean/list/dictionary
             values:
-              - 0.7
+              - 0.95
               - 0.5
           # hyperparameters configuration files; dictionary type;
         - other_hyperparameters:
+            # the url addresses of hyperparameters configuration files; list type;
+            # type of the value is string;
             values:
-              learning_rate: 0.1
+              - "./examples/pcb-aoi/singletask_learning_bench/testalgorithms/fpn/fpn_hyperparameter.yaml"
 
 ```
 
+## Benchmark Result
 
-## Benchmark Result 
-
-We release the leaderboard [here](../../leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning.md).
+We release the
+leaderboard [here](../leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning.md)
+.
