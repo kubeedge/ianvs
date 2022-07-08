@@ -25,9 +25,22 @@ The directories of this dataset is as follows:
 │   ├── train_data
 │       ├── Annotation
 │       ├── JPEGImages
-│       ├── Index
+│       ├── index.txt
 │   ├── test_data
 │       ├── Annotation
 │       ├── JPEGImages
-│       ├── Index
+│       ├── index.txt
 ```
+
+
+The following is part of `index.txt` 
+
+```
+./JPEGImages/20161019-SPI-AOI-1.jpeg ./Annotations/20161019-SPI-AOI-1.xml
+./JPEGImages/20161020-SPI-AOI-5.jpeg ./Annotations/20161020-SPI-AOI-5.xml
+./JPEGImages/20161021-SPI-AOI-13.jpeg ./Annotations/20161021-SPI-AOI-13.xml
+./JPEGImages/20161021-SPI-AOI-14.jpeg ./Annotations/20161021-SPI-AOI-14.xml
+./JPEGImages/20161021-SPI-AOI-15.jpeg ./Annotations/20161021-SPI-AOI-15.xml
+```
+
+Column 1 stands for the file path of the raw image, and column 2 is the file path of corresponding annotation file.In this dataset, the xml annotation follows Pascal VOC XML format.  you can find more description of Pascal VOC XML at [here](https://roboflow.com/formats/pascal-voc-xml).
