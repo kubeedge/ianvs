@@ -45,7 +45,7 @@ git clone https://github.com/JimmyYang20/ianvs.git
 sudo apt update
 sudo apt install libgl1-mesa-glx -y
 cd ~/ianvs
-python -m pip install third_party/*
+python -m pip install ./examples/resources/third_party/*
 python -m pip install -r requirements.txt
 ```
 

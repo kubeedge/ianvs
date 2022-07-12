@@ -41,20 +41,19 @@ Two classes are defined in `class_factory.py`, namely `ClassType` and `ClassFact
 The following code is just to show the overall structure of a basicIL-fpn BaseModel, not the complete version. The complete code can be found [here](https://github.com/JimmyYang20/ianvs/tree/main/examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn).
 
 ```python
-@ClassFactory.register(ClassType.GENERAL, "estimator")
+
+@ClassFactory.register(ClassType.GENERAL, alias="FPN")
 class BaseModel:
+
     def __init__(self, **kwargs):
         """
         initialize logging configuration
         """
-        sess_config = tf.ConfigProto(allow_soft_placement=True)
-        sess_config.gpu_options.allow_growth = True
-        self.graph = tf.Graph()
-        self.session = tf.Session(
-            config=sess_config, graph=self.graph)
 
-        self.restorer = None
-        self.checkpoint_path = self.load(Context.get_parameters("base_model_url"))
+        self.has_fast_rcnn_predict = False
+
+        self._init_tf_graph()
+
         self.temp_dir = tempfile.mkdtemp()
         if not os.path.isdir(self.temp_dir):
             mkdir(self.temp_dir)
@@ -65,16 +64,13 @@ class BaseModel:
         cfgs.MAX_ITERATION = kwargs.get("max_iteration", 5)
 
     def train(self, train_data, valid_data=None, **kwargs):
-        """
-        train
-        """
 
         if train_data is None or train_data.x is None or train_data.y is None:
             raise Exception("Train data is None.")
 
         with tf.Graph().as_default():
 
-            img_name_batch, train_data, gtboxes_and_label_batch, num_objects_batch, data_num =
+            img_name_batch, train_data, gtboxes_and_label_batch, num_objects_batch, data_num = \
                 next_batch_for_tasks(
                     (train_data.x, train_data.y),
                     dataset_name=cfgs.DATASET_NAME,
@@ -83,10 +79,10 @@ class BaseModel:
                     is_training=True,
                     save_name="train"
                 )
-        
-        # ... ...
-        # several lines are omitted here. 
-        
+
+            # ... ...
+            # several lines are omitted here. 
+
         return self.checkpoint_path
 
     def save(self, model_path):
@@ -110,25 +106,30 @@ class BaseModel:
         return model_path
 
     def predict(self, data, input_shape=None, **kwargs):
-
         if data is None:
             raise Exception("Predict data is None")
 
-        inference_output_dir = os.getenv("INFERENCE_OUTPUT_DIR")
+        inference_output_dir = os.getenv("RESULT_SAVED_URL")
 
-        with tf.Graph().as_default():
+        with self.tf_graph.as_default():
+            if not self.has_fast_rcnn_predict:
+                self._fast_rcnn_predict()
+                self.has_fast_rcnn_predict = True
 
-            img_plac = tf.placeholder(shape=[None, None, 3], dtype=tf.uint8)
+            restorer = self._get_restorer()
 
-            img_tensor = tf.cast(img_plac, tf.float32) - tf.constant([103.939, 116.779, 123.68])
-            img_batch = image_preprocess.short_side_resize_for_inference_data(img_tensor,
-                                                                              target_shortside_len=cfgs.SHORT_SIDE_LEN,
-                                                                              is_resize=True)
+            config = tf.ConfigProto()
+            init_op = tf.group(
+                tf.global_variables_initializer(),
+                tf.local_variables_initializer()
+            )
 
+            with tf.Session(config=config) as sess:
+                sess.run(init_op)
 
         # ... ...
         # several lines are omitted here. 
-        
+
         return predict_dict
 
     def load(self, model_url=None):
@@ -141,32 +142,10 @@ class BaseModel:
                 ckpt_name = ckpt_name[:index + 4]
             self.checkpoint_path = os.path.join(model_dir, ckpt_name)
 
-            print(f"load {model_url} to {self.checkpoint_path}")
         else:
             raise Exception(f"model url is None")
 
         return self.checkpoint_path
-
-    def test(self, valid_data, **kwargs):
-        '''
-        output the test results and groudtruth
-        while this function is not in sedna's incremental learning interfaces
-        '''
-
-        checkpoint_path = kwargs.get("checkpoint_path")
-        img_name_batch = kwargs.get("img_name_batch")
-        gtboxes_and_label_batch = kwargs.get("gtboxes_and_label_batch")
-        num_objects_batch = kwargs.get("num_objects_batch")
-        graph = kwargs.get("graph")
-        data_num = kwargs.get("data_num")
-
-        test.fpn_test(validate_data=valid_data,
-                      checkpoint_path=checkpoint_path,
-                      graph=graph,
-                      img_name_batch=img_name_batch,
-                      gtboxes_and_label_batch=gtboxes_and_label_batch,
-                      num_objects_batch=num_objects_batch,
-                      data_num=data_num)
 
     def evaluate(self, data, model_path, **kwargs):
         if data is None or data.x is None or data.y is None:
@@ -174,11 +153,11 @@ class BaseModel:
 
         self.load(model_path)
         predict_dict = self.predict(data.x)
-
-        metric = kwargs.get("metric")
-        if callable(metric):
-            return {"f1_score": metric(data.y, predict_dict)}
-        return {"f1_score": f1_score(data.y, predict_dict)}
+        metric_name, metric_func = kwargs.get("metric")
+        if callable(metric_func):
+            return {"f1_score": metric_func(data.y, predict_dict)}
+        else:
+            raise Exception(f"not found model metric func(name={metric_name}) in model eval phase")
 ```
 
 After registration, you only need to change the name of the basicIL and parameters in the yaml file, and then the corresponding class will be automatically called according to the name.

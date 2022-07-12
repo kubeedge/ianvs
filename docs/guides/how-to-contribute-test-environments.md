@@ -18,20 +18,39 @@
 The following is a typical testenv: 
 ```yaml
 testenv:
-  dataset:  
-    url: "/ianvs/pcb-aoi/dataset/trainData.txt"
-    train_ratio: 0.8
-    splitting_method: "default"
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_url: "/ianvs/dataset/train_data/index.txt"
+    # the url address of test dataset index; string type;
+    test_url: "/ianvs/dataset/test_data/index.txt"
+
+  # model eval configuration of incremental learning;
   model_eval:
+    # metric used for model evaluation
     model_metric:
+      # metric name; string type;
       name: "f1_score"
-      url: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testenv/f1_score.py"
-    threshold: 0
+      # the url address of python file
+      url: "./examples/pcb-aoi/incremental_learning_bench/testenv/f1_score.py"
+
+    # condition of triggering inference model to update
+    # threshold of the condition; types are float/int
+    threshold: 0.01
+    # operator of the condition; string type;
+    # values are ">=", ">", "<=", "<" and "=";
     operator: ">="
+
+  # metrics configuration for test case's evaluation; list type;
   metrics:
+      # metric name; string type;
     - name: "f1_score"
-      url: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testenv/f1_score.py"
-  incremental_rounds: 1
+      # the url address of python file
+      url: "./examples/pcb-aoi/incremental_learning_bench/testenv/f1_score.py"
+    - name: "samples_transfer_ratio"
+
+  # incremental rounds setting for incremental learning paradigm.; int type; default value is 2;
+  incremental_rounds: 2
 ```
 It can be found that, for a test we need to setup the three fields: 
 - dataset
