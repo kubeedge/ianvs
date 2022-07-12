@@ -22,23 +22,39 @@ The URL address of this dataset then should be filled in the configuration file 
 ``` yaml
 # testenv.yaml
 testenv:
+  # dataset configuration
   dataset:
-    url: "/ianvs/pcb-aoi/dataset/trainData.txt"
-    train_ratio: 0.8
-    splitting_method: "default"
+    # the url address of train dataset index; string type;
+    train_url: "/ianvs/dataset/train_data/index.txt"
+    # the url address of test dataset index; string type;
+    test_url: "/ianvs/dataset/test_data/index.txt"
 
+  # model eval configuration of incremental learning;
   model_eval:
+    # metric used for model evaluation
     model_metric:
+      # metric name; string type;
       name: "f1_score"
-      url: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testenv/f1_score.py"
-    threshold: 0
+      # the url address of python file
+      url: "./examples/pcb-aoi/incremental_learning_bench/testenv/f1_score.py"
+
+    # condition of triggering inference model to update
+    # threshold of the condition; types are float/int
+    threshold: 0.01
+    # operator of the condition; string type;
+    # values are ">=", ">", "<=", "<" and "=";
     operator: ">="
 
+  # metrics configuration for test case's evaluation; list type;
   metrics:
+      # metric name; string type;
     - name: "f1_score"
-      url: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testenv/f1_score.py"
+      # the url address of python file
+      url: "./examples/pcb-aoi/incremental_learning_bench/testenv/f1_score.py"
+    - name: "samples_transfer_ratio"
 
-  incremental_rounds: 1
+  # incremental rounds setting for incremental learning paradigm.; int type; default value is 2;
+  incremental_rounds: 2
 ```
 
 The URL address of this test environment, i.e., testenv.yaml, then should be filled in the configuration file in the following Step 3. For example,  
@@ -95,41 +111,126 @@ def Threshold-based-HEM(infer_result=None):
 ### Example 2. Testing a neural-network-based modeling algorithm in incremental learning
 
 As the second example, we describe how to test a neural network `FPN` for HEM (Hard Example Mining) module in incremental learning. 
-For this new algorithm in `ClassType.HEM`, the code in the algorithm file is as follows: 
+For this new algorithm in `ClassType.GENERAL`, the code in the algorithm file is as follows: 
 
-``` python
-from FPN_TensorFlow.interface import Estimator as Model
+```python
 
-def parse_kwargs(func, **kwargs):
-    """ get valid parameters in kwargs """
-    if not callable(func):
-        return kwargs
-    need_kw = getfullargspec(func)
-    if need_kw.varkw == 'kwargs':
-        return kwargs
-    return {k: v for k, v in kwargs.items() if k in need_kw.args}
-
-@ClassFactory.register(ClassType.GENERAL, "estimator")
+@ClassFactory.register(ClassType.GENERAL, alias="FPN")
 class BaseModel:
+
     def __init__(self, **kwargs):
-        varkw = parse_kwargs(Model, **kwargs)
-        self.model = Model(**varkw)
+        """
+        initialize logging configuration
+        """
+
+        self.has_fast_rcnn_predict = False
+
+        self._init_tf_graph()
+
+        self.temp_dir = tempfile.mkdtemp()
+        if not os.path.isdir(self.temp_dir):
+            mkdir(self.temp_dir)
+
+        os.environ["MODEL_NAME"] = "model.zip"
+        cfgs.LR = kwargs.get("learning_rate", 0.0001)
+        cfgs.MOMENTUM = kwargs.get("momentum", 0.9)
+        cfgs.MAX_ITERATION = kwargs.get("max_iteration", 5)
 
     def train(self, train_data, valid_data=None, **kwargs):
-        return self.model.train(train_data, **kwargs)
 
-    def predict(self, data, **kwargs):
-        # data -> image urls
-        return self.model.predict(data, **kwargs)
+        if train_data is None or train_data.x is None or train_data.y is None:
+            raise Exception("Train data is None.")
 
-    def load(self, model_url):
-        self.model.load(model_url)
+        with tf.Graph().as_default():
+
+            img_name_batch, train_data, gtboxes_and_label_batch, num_objects_batch, data_num = \
+                next_batch_for_tasks(
+                    (train_data.x, train_data.y),
+                    dataset_name=cfgs.DATASET_NAME,
+                    batch_size=cfgs.BATCH_SIZE,
+                    shortside_len=cfgs.SHORT_SIDE_LEN,
+                    is_training=True,
+                    save_name="train"
+                )
+
+            # ... ...
+            # several lines are omitted here. 
+
+        return self.checkpoint_path
 
     def save(self, model_path):
-        return self.model.save(model_path)
+        if not model_path:
+            raise Exception("model path is None.")
 
-    def evaluate(self, data, **kwargs):
-        return self.model.evaluate(data, **kwargs)
+        model_dir, model_name = os.path.split(self.checkpoint_path)
+        models = [model for model in os.listdir(model_dir) if model_name in model]
+
+        if os.path.splitext(model_path)[-1] != ".zip":
+            model_path = os.path.join(model_path, "model.zip")
+
+        if not os.path.isdir(os.path.dirname(model_path)):
+            os.makedirs(os.path.dirname(model_path))
+
+        with zipfile.ZipFile(model_path, "w") as f:
+            for model_file in models:
+                model_file_path = os.path.join(model_dir, model_file)
+                f.write(model_file_path, model_file, compress_type=zipfile.ZIP_DEFLATED)
+
+        return model_path
+
+    def predict(self, data, input_shape=None, **kwargs):
+        if data is None:
+            raise Exception("Predict data is None")
+
+        inference_output_dir = os.getenv("RESULT_SAVED_URL")
+
+        with self.tf_graph.as_default():
+            if not self.has_fast_rcnn_predict:
+                self._fast_rcnn_predict()
+                self.has_fast_rcnn_predict = True
+
+            restorer = self._get_restorer()
+
+            config = tf.ConfigProto()
+            init_op = tf.group(
+                tf.global_variables_initializer(),
+                tf.local_variables_initializer()
+            )
+
+            with tf.Session(config=config) as sess:
+                sess.run(init_op)
+
+        # ... ...
+        # several lines are omitted here. 
+
+        return predict_dict
+
+    def load(self, model_url=None):
+        if model_url:
+            model_dir = os.path.split(model_url)[0]
+            with zipfile.ZipFile(model_url, "r") as f:
+                f.extractall(path=model_dir)
+                ckpt_name = os.path.basename(f.namelist()[0])
+                index = ckpt_name.find("ckpt")
+                ckpt_name = ckpt_name[:index + 4]
+            self.checkpoint_path = os.path.join(model_dir, ckpt_name)
+
+        else:
+            raise Exception(f"model url is None")
+
+        return self.checkpoint_path
+
+    def evaluate(self, data, model_path, **kwargs):
+        if data is None or data.x is None or data.y is None:
+            raise Exception("Prediction data is None")
+
+        self.load(model_path)
+        predict_dict = self.predict(data.x)
+        metric_name, metric_func = kwargs.get("metric")
+        if callable(metric_func):
+            return {"f1_score": metric_func(data.y, predict_dict)}
+        else:
+            raise Exception(f"not found model metric func(name={metric_name}) in model eval phase")
 ```
 
 With the above algorithm interface, one may develop the targeted algorithm of FPN as usual in the same algorithm file. 
@@ -138,33 +239,97 @@ The ``FPN_TensorFlow`` is also open sourced. For those interested in ``FPN_Tenso
 Then we can fill the ``algorithm.yaml``: 
 ``` yaml
 algorithm:
-  paradigm: "incrementallearning"
-  dataset_train_ratio: 0.8
-  initial_model_url: "/ianvs/pcb-aoi/initial_model/model.zip"
+  # paradigm type; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  paradigm_type: "incrementallearning"
+  incremental_learning_data_setting:
+    # ratio of training dataset; float type;
+    # the default value is 0.8.
+    train_ratio: 0.8
+    # the method of splitting dataset; string type; optional;
+    # currently the options of value are as follows:
+    #   1> "default": the dataset is evenly divided based train_ratio;
+    splitting_method: "default"
+  # the url address of initial model for model pre-training; string url;
+  initial_model_url: "/ianvs/initial_model/model.zip"
+
+  # algorithm module configuration in the paradigm; list type;
   modules:
-    - kind: "basemodel"
-      name: "estimator"
-      url: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_incremental_learning/basemodel.py"
+    # type of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel": contains important interfaces such as train, eval, predict and more; required module;
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "FPN"
+      # the url address of python module; string type;
+      url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/basemodel.py"
+
+      # hyperparameters configuration for the python module; list type;
       hyperparameters:
-        - other_hyperparameters:
+        # name of the hyperparameter; string type;
+        - momentum:
+            # values of the hyperparameter; list type;
+            # types of the value are string/int/float/boolean/list/dictionary
             values:
-              - "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_incremental_learning/fpn_hyperparameter.yaml"
+              - 0.95
+              - 0.5
+        - learning_rate:
+            values:
+              - 0.1
+      #  2> "hard_example_mining": check hard example when predict ; optional module;
+    - type: "hard_example_mining"
+      # name of python module; string type;
+      name: "IBT"
+      # the url address of python module; string type;
+      url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/hard_example_mining.py"
+      # hyperparameters configuration for the python module; list type;
+      hyperparameters:
+        # name of the hyperparameter; string type;
+        # threshold of image; value is [0, 1]
+        - threshold_img:
+            values:
+              - 0.9
+        # predict box of image; value is [0, 1]
+        - threshold_box:
+            values:
+              - 0.9
 ```
 
 
 The URL address of this algorithm then should be filled in the configuration file of ``benchmarkingJob.yaml`` in the following Step 3. Two examples are as follows: 
 ``` yaml
-  algorithms:
-    - name: "fpn_singletask_learning"
-      url: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_singletask_learning/fpn_algorithm.yaml"
+  # the configuration of test object
+  test_object:
+    # test type; string type;
+    # currently the option of value is "algorithms",the others will be added in succession.
+    type: "algorithms"
+    # test algorithm configuration files; list type;
+    algorithms:
+      # algorithm name; string type;
+      - name: "fpn_incremental_learning"
+        # the url address of test algorithm configuration file; string type;
+        # the file format supports yaml/yml
+        url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/fpn_algorithm.yaml"
 ```
 
 or 
 
 ``` yaml
-  algorithms:
-    - name: "fpn_incremental_learning"
-      url: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_incremental_learning/fpn_algorithm.yaml"
+  # the configuration of test object
+  test_object:
+    # test type; string type;
+    # currently the option of value is "algorithms",the others will be added in succession.
+    type: "algorithms"
+    # test algorithm configuration files; list type;
+    algorithms:
+      # algorithm name; string type;
+      - name: "fpn_singletask_learning"
+        # the url address of test algorithm configuration file; string type;
+        # the file format supports yaml/yml;
+        url: "./examples/pcb-aoi/singletask_learning_bench/testalgorithms/fpn/fpn_algorithm.yaml"
 ```
 
 ## Step 3. ianvs Configuration

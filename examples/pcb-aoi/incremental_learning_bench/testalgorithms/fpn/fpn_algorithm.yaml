@@ -1,7 +1,12 @@
 algorithm:
+  # paradigm type; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
   paradigm_type: "incrementallearning"
   incremental_learning_data_setting:
     # ratio of training dataset; float type;
+    # the default value is 0.8.
     train_ratio: 0.8
     # the method of splitting dataset; string type; optional;
     # currently the options of value are as follows:
@@ -31,12 +36,9 @@ algorithm:
             values:
               - 0.95
               - 0.5
-          # hyperparameters configuration files; dictionary type;
-        - other_hyperparameters:
-            # the url addresses of hyperparameters configuration files; list type;
-            # type of the value is string;
+        - learning_rate:
             values:
-              - "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/fpn_hyperparameter.yaml"
+              - 0.1
       #  2> "hard_example_mining": check hard example when predict ; optional module;
     - type: "hard_example_mining"
       # name of python module; string type;

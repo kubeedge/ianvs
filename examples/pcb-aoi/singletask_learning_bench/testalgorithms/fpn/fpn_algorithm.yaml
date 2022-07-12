@@ -9,9 +9,9 @@ algorithm:
 
   # algorithm module configuration in the paradigm; list type;
   modules:
-      # kind of algorithm module; string type;
-      # currently the options of value are as follows:
-      #   1> "basemodel"
+    # kind of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel"
     - type: "basemodel"
       # name of python module; string type;
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
@@ -21,16 +21,13 @@ algorithm:
 
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
-          # name of the hyperparameter; string type;
+        # name of the hyperparameter; string type;
         - momentum:
             # values of the hyperparameter; list type;
             # types of the value are string/int/float/boolean/list/dictionary
             values:
               - 0.95
               - 0.5
-          # hyperparameters configuration files; dictionary type;
-        - other_hyperparameters:
-            # the url addresses of hyperparameters configuration files; list type;
-            # type of the value is string;
+        - learning_rate:
             values:
-              - "./examples/pcb-aoi/singletask_learning_bench/testalgorithms/fpn/fpn_hyperparameter.yaml"
+              - 0.1
