@@ -30,12 +30,14 @@ The directories of this dataset is as follows:
 │       ├── Annotation
 │       ├── JPEGImages
 │       ├── index.txt
+│   ├── train_data_augmentation
+│       ├── Annotation
+│       ├── JPEGImages
+│       ├── index.txt
 ```
 
-
-The following is part of `index.txt` 
-
-```
+The following is part of `index.txt`:
+```shell
 ./JPEGImages/20161019-SPI-AOI-1.jpeg ./Annotations/20161019-SPI-AOI-1.xml
 ./JPEGImages/20161020-SPI-AOI-5.jpeg ./Annotations/20161020-SPI-AOI-5.xml
 ./JPEGImages/20161021-SPI-AOI-13.jpeg ./Annotations/20161021-SPI-AOI-13.xml
