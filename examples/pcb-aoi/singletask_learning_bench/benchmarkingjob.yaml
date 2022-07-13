@@ -1,0 +1,67 @@
+benchmarkingjob:
+  # job name of bechmarking; string type;
+  name: "benchmarkingjob"
+  # the url address of job workspace that will reserve the output of tests; string type;
+  workspace: "/ianvs/singletask_learning_bench/workspace"
+
+  # the url address of test environment configuration file; string type;
+  # the file format supports yaml/yml;
+  testenv: "./examples/pcb-aoi/singletask_learning_bench/testenv/testenv.yaml"
+
+  # test algorithm configuration files; list type;
+  algorithms:
+    # algorithm name; string type;
+    - name: "fpn_singletask_learning"
+      # the url address of test algorithm configuration file; string type;
+      # the file format supports yaml/yml;
+      url: "./examples/pcb-aoi/singletask_learning_bench/testalgorithms/fpn/fpn_algorithm.yaml"
+
+  # the configuration of ranking leaderboard
+  rank:
+    # rank leaderboard with metric of test case's evaluation and order ; list type;
+    # the sorting priority is based on the sequence of metrics in the list from front to back;
+    sort_by: [ { "f1_score": "descend" } ]
+
+    # visualization configuration
+    visualization:
+      # mode of visualization in the leaderboard; string type;
+      # There are quite a few possible dataitems in the leaderboard. Not all of them can be shown simultaneously on the screen.
+      # In the leaderboard, we provide the "selected_only" mode for the user to configure what is shown or is not shown.
+      mode: "selected_only"
+      # method of visualization for selected dataitems; string type;
+      # currently the options of value are as follows:
+      #  1> "print_table": print selected dataitems;
+      method: "print_table"
+
+    # selected dataitem configuration
+    # The user can add his/her interested dataitems in terms of "paradigms", "modules", "hyperparameters" and "metrics",
+    # so that the selected columns will be shown.
+    selected_dataitem:
+      # currently the options of value are as follows:
+      #   1> "all": select all paradigms in the leaderboard;
+      #   2> paradigms in the leaderboard, e.g., "singletasklearning"
+      paradigms: [ "all" ]
+      # currently the options of value are as follows:
+      #   1> "all": select all modules in the leaderboard;
+      #   2> modules in the leaderboard, e.g., "basemodel"
+      modules: [ "all" ]
+      # currently the options of value are as follows:
+      #   1> "all": select all hyperparameters in the leaderboard;
+      #   2> hyperparameters in the leaderboard, e.g., "momentum"
+      hyperparameters: [ "all" ]
+      # currently the options of value are as follows:
+      #   1> "all": select all metrics in the leaderboard;
+      #   2> metrics in the leaderboard, e.g., "f1_score"
+      metrics: [ "f1_score" ]
+
+    # model of save selected and all dataitems in workspace; string type;
+    # currently the options of value are as follows:
+    #  1> "selected_and_all": save selected and all dataitems;
+    #  2> "selected_only": save selected dataitems;
+    save_mode: "selected_and_all"
+
+
+
+
+
+
