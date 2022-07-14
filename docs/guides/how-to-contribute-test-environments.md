@@ -1,4 +1,4 @@
-# How to Contribute Test Environments
+# How to contribute test environments
 
 
 ## Overall contribution workflow
@@ -63,7 +63,7 @@ That means, if you want to test on different dataset, different model or differe
 
 ## Add a new test environment
 
-Please refer to the examples directory, [pcb-aoi] is a scenario for testing.
+Please refer to the examples directory, [pcb-aoi](https://github.com/kubeedge/ianvs/tree/main/examples/pcb-aoi) is a scenario for testing.
 We can regard it as a subject for a student that need to take an exam, the test env is like examination paper,
 and the test job is like the student.
 
@@ -84,5 +84,4 @@ Interested "student" from our comunity will take the exam.
 
 
 
-[pcb-aoi]: ../../examples/pcb-aoi
 [contribute algorithm]: how-to-contribute-algorithms.md
