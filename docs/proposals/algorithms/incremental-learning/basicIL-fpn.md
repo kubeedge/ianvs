@@ -38,7 +38,7 @@ Two classes are defined in `class_factory.py`, namely `ClassType` and `ClassFact
 
 `ClassFactory` can register the modules you want to reuse through decorators. For example, in the following code example, you have customized an **single task learning algorithm**, you only need to add a line of `ClassFactory.register(ClassType.GENERAL)` to complete the registration.
 
-The following code is just to show the overall structure of a basicIL-fpn BaseModel, not the complete version. The complete code can be found [here](https://github.com/JimmyYang20/ianvs/tree/main/examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn).
+The following code is just to show the overall structure of a basicIL-fpn BaseModel, not the complete version. The complete code can be found [here](https://github.com/kubeedge/ianvs/tree/main/examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn).
 
 ```python
 

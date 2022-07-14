@@ -9,8 +9,8 @@ The algorithm developer is able to test his/her own targeted algorithm using the
 |name|yes|Job name of benchmarking; Type: string|
 |workspace|no|The url address of job workspace that will reserve the output of tests; Type: string; Default value: `./workspace`|
 |testenv|yes|The url address of test environment configuration file; Type: string; Value Constraint: The file format supports yaml/yml.|
-|test_object|yes|[The configuration of test_object](#id1)|
-|rank|yes|[The configuration of ranking leaderboard](#id2)|
+|test_object|yes|[The configuration of test_object](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-benchmarkingjob.md#the-configuration-of-test_object)|
+|rank|yes|[The configuration of ranking leaderboard](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-benchmarkingjob.md#the-configuration-of-rank)|
 
 For example:
 
@@ -38,7 +38,7 @@ benchmarkingjob:
 | Property | Required | Description |
 |----------|----------|-------------|
 |type|yes|Type of test object; Type: string; Value Constraint: Currently the option of value is "algorithms",the others will be added in succession.|
-|algorithms|no|[Test algorithm configuration](#id2); Type: list|
+|algorithms|no|[Test algorithm configuration](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-benchmarkingjob.md#the-configuration-of-algorithms); Type: list|
 
 For example:
 
@@ -77,8 +77,8 @@ algorithms:
 | Property | Required | Description |
 |----------|----------|-------------|
 |sort_by|yes|Rank leaderboard with metric of test case's evaluation and order; Type: list; Value Constraint: The sorting priority is based on the sequence of metrics in the list from front to back.|
-|visualization|yes|[The configuration of visualization](#id3)|
-|selected_dataitem|yes|[The configuration of selected_dataitem](#id4); The user can add his/her interested dataitems in terms of "paradigms", "modules", "hyperparameters" and "metrics", so that the selected columns will be shown.|
+|visualization|yes|[The configuration of visualization](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-benchmarkingjob.md#the-configuration-of-visualization)|
+|selected_dataitem|yes|[The configuration of selected_dataitem](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-benchmarkingjob.md#the-configuration-of-selected_dataitem); The user can add his/her interested dataitems in terms of "paradigms", "modules", "hyperparameters" and "metrics", so that the selected columns will be shown.|
 |save_mode|yes|save mode of selected and all dataitems in workspace `./rank`; Type: string; Value Constraint: Currently the options of value are as follows: 1> "selected_and_all": save selected and all dataitems. 2> "selected_only": save selected dataitems.|
 
 For example:

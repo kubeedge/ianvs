@@ -26,7 +26,7 @@ Python 3.6.9
 
 ### Create virtualenv
 ```shell
-sudo apt install -y virtualenv
+sudo apt-get install -y virtualenv
 mkdir ~/venv 
 virtualenv -p python3 ~/venv/ianvs
 source ~/venv/ianvs/bin/activate
@@ -37,14 +37,16 @@ source ~/venv/ianvs/bin/activate
 ### Download ianvs project
 ```
 cd ~
-git clone https://github.com/JimmyYang20/ianvs.git    
+git clone https://github.com/kubeedge/ianvs.git 
 ```
 
 ### Install third-party dependencies
 ```
-sudo apt update
-sudo apt install libgl1-mesa-glx -y
-cd ~/ianvs
+sudo apt-get update
+sudo apt-get install libgl1-mesa-glx -y
+python -m pip install --upgrade pip
+
+cd ~/ianvs 
 python -m pip install ./examples/resources/third_party/*
 python -m pip install -r requirements.txt
 ```
