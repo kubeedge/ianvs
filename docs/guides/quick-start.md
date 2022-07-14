@@ -8,12 +8,6 @@
 [How to contribute algorithms]: how-to-contribute-algorithms.md
 [How to contribute test environments]: how-to-contribute-test-environments.md
 
-[testenv.yaml]: how-to-test-algorithms.html#step-1-test-environment-preparation
-
-[algorithm.yaml]: how-to-test-algorithms.html#step-2-test-case-preparation
-
-[benchmarkingJob.yaml]: how-to-test-algorithms.html#step-3-ianvs-configuration
-
 # Quick Start
 
 Welcome to Ianvs! Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, 
@@ -82,7 +76,7 @@ unzip dataset.zip
 ```
 
 The URL address of this dataset then should be filled in the configuration file ``testenv.yaml``. In this quick start,
-we have done that for you and the interested readers can refer to [testenv.yaml] for more details.
+we have done that for you and the interested readers can refer to [testenv.yaml](https://ianvs.readthedocs.io/en/latest/guides/how-to-test-algorithms.html#step-1-test-environment-preparation) for more details.
 
 <!-- Please put the downloaded dataset on the above datset path, e.g., `/ianvs/dataset`. One can transfer the dataset to the path, e.g., on a remote Linux system using [XFTP].  -->
 
@@ -106,7 +100,7 @@ python -m pip install examples/resources/algorithms/FPN_TensorFlow-0.1-py3-none-
 ```
 
 The URL address of this algorithm then should be filled in the configuration file ``algorithm.yaml``. In this quick
-start, we have done that for you and the interested readers can refer to [algorithm.yaml] for more details.
+start, we have done that for you and the interested readers can refer to [algorithm.yaml](https://ianvs.readthedocs.io/en/latest/guides/how-to-test-algorithms.html#step-1-test-environment-preparation) for more details.
 
 ## Step 3. Ianvs Execution and Presentation
 
@@ -119,7 +113,7 @@ ianvs -f ./examples/pcb-aoi/singletask_learning_bench/benchmarkingjob.yaml
 Finally, the user can check the result of benchmarking on the console and also in the output path(
 e.g. `/ianvs/singletask_learning_bench/workspace`) defined in the benchmarking config file (
 e.g. `benchmarkingjob.yaml`). In this quick start, we have done all configurations for you and the interested readers
-can refer to [benchmarkingJob.yaml] for more details.
+can refer to [benchmarkingJob.yaml](https://ianvs.readthedocs.io/en/latest/guides/how-to-test-algorithms.html#step-1-test-environment-preparation) for more details.
 
 The final output might look like:   
 
