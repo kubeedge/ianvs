@@ -26,7 +26,7 @@ try:
 except ModuleNotFoundError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "m2r2"])
 _base_path = os.path.abspath('..')
-BASE_URL = 'https://github.com/kubeedge-sedna/ianvs/'
+BASE_URL = 'https://github.com/kubeedge/ianvs/'
 
 sys.path.append(_base_path)
 
