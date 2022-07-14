@@ -14,11 +14,10 @@
 
 """BenchmarkingJob"""
 
-
 import os
-from core.common.constant import TestObjectType
-from core.testcasecontroller.algorithm import Algorithm
+
 from core.common import utils
+from core.common.constant import TestObjectType
 from core.testenvmanager.testenv import TestEnv
 from core.storymanager.rank import Rank
 from core.testcasecontroller.testcasecontroller import TestCaseController
@@ -42,8 +41,6 @@ class BenchmarkingJob:
         self.name: str = ""
         self.workspace: str = "./workspace"
         self.test_object: dict = {}
-
-        self.algorithms: list = []
         self.rank = None
         self.test_env = None
         self.testcase_controller = TestCaseController()
@@ -57,6 +54,7 @@ class BenchmarkingJob:
 
         if not isinstance(self.workspace, str):
             raise ValueError(f"benchmarkingjob's workspace({self.workspace}) must be string type.")
+
         if not self.test_object and not isinstance(self.test_object, dict):
             raise ValueError(f"benchmarkingjob's test_object({self.test_object})"
                              f" must be dict type.")
@@ -98,8 +96,6 @@ class BenchmarkingJob:
         for k, v in config.items():
             if k == str.lower(TestEnv.__name__):
                 self._parse_testenv_config(v)
-            elif k == str.lower(Algorithm.__name__ + "s"):
-                self._parse_algorithms_config(v)
             elif k == str.lower(Rank.__name__):
                 self._parse_rank_config(v)
             else:
@@ -121,34 +117,3 @@ class BenchmarkingJob:
 
     def _parse_rank_config(self, config):
         self.rank = Rank(config)
-        self._check_fields()
-
-    def _parse_testenv_config(self, config_file):
-        if not utils.is_local_file(config_file):
-            raise Exception(f"not found testenv config file({config_file}) in local")
-
-        try:
-            config = utils.yaml2dict(config_file)
-            self.test_env = TestEnv(config)
-        except Exception as err:
-            raise Exception(f"testenv config file({config_file}) is not supported, "
-                            f"error: {err}") from err
-
-    def _parse_rank_config(self, config):
-        self.rank = Rank(config)
-
-    def _parse_algorithms_config(self, config):
-        self.algorithms = []
-        for algorithm_config in config:
-            name = algorithm_config.get("name")
-            config_file = algorithm_config.get("url")
-            if not utils.is_local_file(config_file):
-                raise Exception(f"not found algorithm config file({config_file}) in local")
-
-            try:
-                config = utils.yaml2dict(config_file)
-                algorithm = Algorithm(name, config)
-                self.algorithms.append(algorithm)
-            except Exception as err:
-                raise Exception(f"algorithm config file({config_file} is not supported, "
-                                f"error: {err}") from err

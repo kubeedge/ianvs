@@ -13,7 +13,6 @@ jobs:
     name: pylint
     strategy:
       matrix:
-
         python-version: [ "3.6", "3.7", "3.8", "3.9" ]
     steps:
       - uses: actions/checkout@v3
@@ -28,7 +27,6 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install  pylint
           python -m pip install ${{github.workspace}}/examples/resources/third_party/*
-          python -m pip install ${{github.workspace}}/third_party/*
           python -m pip install -r ${{github.workspace}}/requirements.txt
       - name: Analysing code of core with pylint
         run: |
