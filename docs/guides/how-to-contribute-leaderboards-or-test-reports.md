@@ -30,14 +30,14 @@ Please follow [Ianvs setup] to install Ianvs, and then run your own algorithm to
 ### 2. Declare your grades 
 You may want to compare your testing result and those results on the [leaderboard]. 
 
-Test reports are welcome after benchmarking. It can be submitted to [there](../proposals/test-reports) for further review.   
+Test reports are welcome after benchmarking. It can be submitted to [there](https://github.com/kubeedge/ianvs/tree/main/docs/proposals/test-reports) for further review.   
 
 
 
 ## Leaderboards
 Leaderboards, i.e., rankings of test object, are public to everyone to visit. Examples are as [leaderboard]. 
 
-Except [Ianvs Owners], there are mainly two roles for a leaderboard publication:
+Except [Ianvs Owners](https://github.com/kubeedge/ianvs/blob/main/OWNERS), there are mainly two roles for a leaderboard publication:
 1. Developer: submit the test object for benchmarking, including but not limitted to materials like algorithm, test case following Ianvs settings and interfaces.  
 2. Maintainer: testing materials provided from developers and release the updated leaderboard to public. 
 
@@ -45,7 +45,7 @@ For potenial developers,
 - Develop your algorithm with ianvs and choose the algorithm to submit.
 - Make sure the submitted test object runs properly under the latest version of Ianvs before submission. Maintainers are not reponsible to debug for the submitted objects. 
 - Do NOT need to submit the new leaderboard. Maintainers are responsible to make test environment consistent for all test objects under the same leaderboard and execute the test object to generate new leaderboard. 
-- If the test object is ready, you are welcome to contact [Ianvs Owners]. Ianvs owners will connect you and maintainers, in order to receive your test object. Note that when developers submit the test object, developers give maintainers the right to test them. 
+- If the test object is ready, you are welcome to contact [Ianvs Owners](https://github.com/kubeedge/ianvs/blob/main/OWNERS). Ianvs owners will connect you and maintainers, in order to receive your test object. Note that when developers submit the test object, developers give maintainers the right to test them. 
 
 For potential maintainers,
 - To maintain the consistence of test environments and test objects, the [leaderboard] submssion is at present calling for acknowledged organizations to apply in charge. Please contact
@@ -68,5 +68,4 @@ For potential maintainers,
 [kubeedge]: https://kubeedge.io/en/docs/
 [kubeedge-k8s-compatibility]: https://github.com/kubeedge/kubeedge#kubernetes-compatibility
 [Ianvs Setup]: how-to-install-ianvs.md
-[leaderboard]: ../leaderboards/
-[Ianvs Owners]: ../../OWNERS
+[leaderboard]: ../leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning.md
