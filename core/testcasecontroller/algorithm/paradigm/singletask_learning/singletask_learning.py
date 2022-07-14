@@ -16,7 +16,7 @@
 
 import os
 
-from core.common.constant import ParadigmKind
+from core.common.constant import ParadigmType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 
 
@@ -24,6 +24,17 @@ class SingleTaskLearning(ParadigmBase):
     """
     SingleTaskLearning:
     provide the flow of single task learning paradigm.
+    Notes:
+          1. Ianvs serves as testing tools for test objects, e.g., algorithms.
+          2. Ianvs does NOT include code directly on test object.
+          3. Algorithms serve as typical test objects in Ianvs
+          and detailed algorithms are thus NOT included in this Ianvs python file.
+          4. As for the details of example test objects, e.g., algorithms,
+          please refer to third party packages in Ianvs example.
+          For example, AI workflow and interface pls refer to sedna
+          (sedna docs: https://sedna.readthedocs.io/en/latest/api/lib/index.html),
+          and module implementation pls refer to `examples' test algorithms`,
+          e.g., basemodel.py, hard_example_mining.py.
 
     Parameters
     ---------
@@ -51,7 +62,7 @@ class SingleTaskLearning(ParadigmBase):
 
         """
 
-        job = self.build_paradigm_job(ParadigmKind.SINGLE_TASK_LEARNING.value)
+        job = self.build_paradigm_job(ParadigmType.SINGLE_TASK_LEARNING.value)
 
         trained_model = self._train(job, self.initial_model)
 

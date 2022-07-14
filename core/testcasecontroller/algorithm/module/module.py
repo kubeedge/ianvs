@@ -19,7 +19,7 @@ import copy
 from sedna.common.class_factory import ClassFactory, ClassType
 
 from core.common import utils
-from core.common.constant import ModuleKind
+from core.common.constant import ModuleType
 from core.testcasecontroller.generation_assistant import get_full_combinations
 
 
@@ -27,18 +27,29 @@ class Module:
     """
     Algorithm Module:
     provide the configuration and the calling functions of the algorithm module.
+    Notes:
+          1. Ianvs serves as testing tools for test objects, e.g., algorithms.
+          2. Ianvs does NOT include code directly on test object.
+          3. Algorithms serve as typical test objects in Ianvs
+          and detailed algorithms are thus NOT included in this Ianvs python file.
+          4. As for the details of example test objects, e.g., algorithms,
+          please refer to third party packages in Ianvs example.
+          For example, AI workflow and interface pls refer to sedna
+          (sedna docs: https://sedna.readthedocs.io/en/latest/api/lib/index.html),
+          and module implementation pls refer to `examples' test algorithms`,
+          e.g., basemodel.py, hard_example_mining.py.
 
     Parameters
     ----------
     config : dict
-         config of the algorithm module, includes: kind, name,
+         config of the algorithm module, includes: type, name,
          url of the python file that defines algorithm module,
          hyperparameters of the calling functions of algorithm module, etc.
 
     """
 
     def __init__(self, config):
-        self.kind: str = ""
+        self.type: str = ""
         self.name: str = ""
         self.url: str = ""
         self.hyperparameters = None
@@ -46,13 +57,13 @@ class Module:
         self._parse_config(config)
 
     def _check_fields(self):
-        if not self.kind and not isinstance(self.kind, str):
-            raise ValueError(f"module kind({self.kind}) must be provided and be string type.")
+        if not self.type and not isinstance(self.type, str):
+            raise ValueError(f"module type({self.type}) must be provided and be string type.")
 
-        kinds = [e.value for e in ModuleKind.__members__.values()]
-        if self.kind not in kinds:
-            raise ValueError(f"not support module kind({self.kind}."
-                             f"the following paradigms can be selected: {kinds}")
+        types = [e.value for e in ModuleType.__members__.values()]
+        if self.type not in types:
+            raise ValueError(f"not support module type({self.type}."
+                             f"the following paradigms can be selected: {types}")
 
         if not self.name and not isinstance(self.name, str):
             raise ValueError(f"module name({self.name}) must be provided and be string type.")
@@ -113,21 +124,21 @@ class Module:
 
         return hard_example_mining
 
-    def get_module_func(self, kind):
+    def get_module_func(self, module_type):
         """
-        get function of algorithm module by using module kind
+        get function of algorithm module by using module type
 
         Parameters
         ---------
-        kind: string
-            module kind, e.g.: basemodel, hard_example_mining, etc.
+        module_type: string
+            module type, e.g.: basemodel, hard_example_mining, etc.
 
         Returns
         ------
         function
 
         """
-        func_name = f"{kind}_func"
+        func_name = f"{module_type}_func"
         return getattr(self, func_name)
 
     def _parse_config(self, config):
