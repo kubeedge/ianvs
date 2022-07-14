@@ -60,7 +60,7 @@ testenv:
 The URL address of this test environment, i.e., testenv.yaml, then should be filled in the configuration file in the following Step 3. For example,  
 ``` yaml
 # benchmarkingJob.yaml
-  testenv: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testenv/testenv.yaml"
+  testenv: "./examples/pcb-aoi/benchmarkingjob/testenv/testenv.yaml"
 ```
 
 ## Step 2. Test Case Preparation
@@ -234,7 +234,7 @@ class BaseModel:
 ```
 
 With the above algorithm interface, one may develop the targeted algorithm of FPN as usual in the same algorithm file. 
-The ``FPN_TensorFlow`` is also open sourced. For those interested in ``FPN_TensorFlow``, an example implementation is available [here](https://github.com/DetectionTeamUCAS/FPN_Tensorflow) and extended with the algorithm inferface [here](https://github.com/kubeedge-sedna/FPN_Tensorflow).
+The ``FPN_TensorFlow`` is also open sourced. For those interested in ``FPN_TensorFlow``, an example implementation is available [here](https://github.com/DetectionTeamUCAS/FPN_Tensorflow) and extended with the algorithm inferface [here](https://github.com/ECIL-EdgeAI/FPN_Tensorflow).
 
 Then we can fill the ``algorithm.yaml``: 
 ``` yaml
@@ -345,12 +345,12 @@ First, the user can configure the workspace to reserve the output of tests.
 Then, the user fill in the test environment and algorithm configured in previous steps. 
 ``` yaml
 # benchmarkingJob.yaml
-  testenv: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testenv/testenv.yaml"
+  testenv: ".examples/pcb-aoi/benchmarkingjob/testenv/testenv.yaml"
 ```
 ``` yaml
   algorithms:
     - name: "fpn_incremental_learning"
-      url: "/home/yj/ianvs/examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_incremental_learning/fpn_algorithm.yaml"
+      url: "./examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_incremental_learning/fpn_algorithm.yaml"
 ```
 
 As the final leaderboard, the user can configure how to rank the leaderboard with the specific metric and order. 
