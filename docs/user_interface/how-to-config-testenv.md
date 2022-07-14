@@ -7,9 +7,9 @@ how to config test environment, please to refer to the following configuration i
 
 | Property | Required | Description |
 |----------|----------|-------------|
-|dataset|yes|[The configuration of dataset](#id1)|
-|model_eval|no|[The configuration of model_eval](#id2)
-|metrics|yes|The metrics used for test case's evaluation; Type: list; Value Constraint: the list of [the configuration of metric](#id3).|
+|dataset|yes|[The configuration of dataset](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-testenv.md#the-configuration-of-dataset)|
+|model_eval|no|[The configuration of model_eval](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-testenv.md#the-configuration-of-model_eval)
+|metrics|yes|The metrics used for test case's evaluation; Type: list; Value Constraint: the list of [the configuration of metric](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-testenv.md#the-configuration-of-metric).|
 |incremental_rounds|no|Incremental rounds setting for incremental learning paradigm; Type: int; Default value: 2; Value Constraint: the value must be not less than 2. |
 
 For example:
@@ -52,7 +52,7 @@ dataset:
 
 | Property | Required | Description |
 |----------|----------|-------------|
-|model_metric|yes|The Metric used for model evaluation; [The configuration of metric](#id4).|
+|model_metric|yes|The Metric used for model evaluation; [The configuration of metric](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-testenv.md#the-configuration-of-metric).|
 |threshold|yes|Threshold of condition for triggering inference model to update; Type: float/int|
 |operator|yes|Operator of condition for triggering inference model to update; Type: string; Value Constraint: the values are ">=", ">", "<=", "<" and "=".|
 
