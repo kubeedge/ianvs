@@ -8,9 +8,9 @@ configuration.
 | Property | Required | Description |
 |----------|----------|-------------|
 |paradigm_type|yes|Paradigm name; Type: string; Value Constraint: Currently the options of value are as follows: 1> singletasklearning 2> incrementallearning|
-|incremental_learning_data_setting|no|Data setting for incremental learning paradigm.[the configuration of incremental_learning_data_setting](#id1)|
+|incremental_learning_data_setting|no|Data setting for incremental learning paradigm.[the configuration of incremental_learning_data_setting](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-algorithm.md#the-configuration-of-incremental_learning_data_setting)|
 |initial_model_url|no|The url address of initial model for model pre-training; Type: string|
-|modules|yes|The algorithm modules for paradigm; Type: list; Value Constraint: the list of [the configuration of module](#id2)|
+|modules|yes|The algorithm modules for paradigm; Type: list; Value Constraint: the list of [the configuration of module](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-algorithm.md#the-configuration-of-module)|
 
 For example:
 
@@ -58,7 +58,7 @@ incremental_learning_data_setting:
 |type|yes|Algorithm module type; Type: string; Value Constraint: Currently the options of value are as follows: 1> basemodel: the algorithm module contains important interfaces such as train, eval, predict and more.it's required module. 2> hard_example_mining: the module checks hard example when predict. it's optional module and often used for incremental learning paradigm. |
 |name|yes|Algorithm module name; Type: string; Value Constraint: a python module name|
 |url|yes|The url address of python module file; Type: string |
-|hyperparameters|no|[the configuration of hyperparameters](#id3)|
+|hyperparameters|no|[the configuration of hyperparameters](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-algorithm.md#the-configuration-of-hyperparameters)|
 
 For example:
 
