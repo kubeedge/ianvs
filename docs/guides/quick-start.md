@@ -1,4 +1,5 @@
-[Links of scenarios]: ../proposals/scenarios/
+[Links of scenarios]: ../proposals/scenarios/industrial-defect-detection/pcb-aoi.md
+
 [the PCB-AoI public dataset]: https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi
 [Details of PCB-AoI dataset]: ../proposals/scenarios/industrial-defect-detection/pcb-aoi.md
 [XFTP]: https://www.xshell.com/en/xftp/
@@ -6,9 +7,12 @@
 [How to test algorithms]: how-to-test-algorithms.md
 [How to contribute algorithms]: how-to-contribute-algorithms.md
 [How to contribute test environments]: how-to-contribute-test-environments.md
-[testenv.yaml]: how-to-test-algorithms.md#step-1-test-environment-preparation
-[algorithm.yaml]: how-to-test-algorithms.md#step-2-test-case-preparation
-[benchmarkingJob.yaml]: how-to-test-algorithms.md#step-3-ianvs-configuration
+
+[testenv.yaml]: how-to-test-algorithms.html#step-1-test-environment-preparation
+
+[algorithm.yaml]: how-to-test-algorithms.html#step-2-test-case-preparation
+
+[benchmarkingJob.yaml]: how-to-test-algorithms.html#step-3-ianvs-configuration
 
 # Quick Start
 

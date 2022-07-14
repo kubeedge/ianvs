@@ -1,5 +1,5 @@
 [Quick Start]: ./quick-start.md  
-[Links of scenarios]: ../proposals/scenarios/
+[Links of scenarios]: ../proposals/scenarios/industrial-defect-detection/pcb-aoi.md
 [the PCB-AoI public dataset]: https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi
 [details of PCB-AoI dataset]: ../proposals/scenarios/industrial-defect-detection/pcb-aoi.md
 
