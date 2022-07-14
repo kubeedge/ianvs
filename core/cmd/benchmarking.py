@@ -14,6 +14,7 @@
 
 """main"""
 
+import sys
 import argparse
 
 from core.common.log import LOGGER
@@ -48,13 +49,18 @@ def _generate_parser():
                         "--benchmarking_config_file",
                         nargs="?",
                         type=str,
-                        help="the benchmarking config file must be yaml/yml file")
+                        help="run a benchmarking job, "
+                             "and the benchmarking config file must be yaml/yml file.")
 
     parser.add_argument('-v',
                         '--version',
                         action='version',
                         version=__version__,
                         help='show program version info and exit.')
+
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
 
     return parser
 

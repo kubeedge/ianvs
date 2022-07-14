@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import numpy as np
 from FPN_TensorFlow.libs.label_name_dict.label_dict import NAME_LABEL_MAP
 from FPN_TensorFlow.data.io.read_tfrecord import convert_labels
 from FPN_TensorFlow.help_utils.tools import get_single_label_dict, single_label_eval
