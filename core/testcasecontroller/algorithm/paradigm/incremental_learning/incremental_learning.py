@@ -20,7 +20,7 @@ import tempfile
 
 import numpy as np
 
-from core.common.constant import ParadigmKind, SystemMetricKind
+from core.common.constant import ParadigmType, SystemMetricType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 from core.testcasecontroller.metrics import get_metric_func
 from core.common.utils import get_file_format, is_local_dir
@@ -29,8 +29,18 @@ from core.common.utils import get_file_format, is_local_dir
 class IncrementalLearning(ParadigmBase):
     """
     IncrementalLearning
-
     provide the flow of incremental learning paradigm.
+    Notes:
+          1. Ianvs serves as testing tools for test objects, e.g., algorithms.
+          2. Ianvs does NOT include code directly on test object.
+          3. Algorithms serve as typical test objects in Ianvs
+          and detailed algorithms are thus NOT included in this Ianvs python file.
+          4. As for the details of example test objects, e.g., algorithms,
+          please refer to third party packages in Ianvs example.
+          For example, AI workflow and interface pls refer to sedna
+          (sedna docs: https://sedna.readthedocs.io/en/latest/api/lib/index.html),
+          and module implementation pls refer to `examples' test algorithms`,
+          e.g., basemodel.py, hard_example_mining.py.
 
     Parameters
     ---------
@@ -52,7 +62,7 @@ class IncrementalLearning(ParadigmBase):
         self.incremental_rounds = kwargs.get("incremental_rounds", 2)
         self.model_eval_config = kwargs.get("model_eval")
 
-        self.system_metric_info = {SystemMetricKind.DATA_TRANSFER_COUNT_RATIO.value: []}
+        self.system_metric_info = {SystemMetricType.SAMPLES_TRANSFER_RATIO.value: []}
 
     def run(self):
         """
@@ -67,8 +77,8 @@ class IncrementalLearning(ParadigmBase):
         """
 
         rounds = self.incremental_rounds
-        data_transfer_count_ratio_info = self.system_metric_info.get(
-            SystemMetricKind.DATA_TRANSFER_COUNT_RATIO.value)
+        samples_transfer_ratio_info = self.system_metric_info.get(
+            SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
         dataset_files = self._preprocess_dataset(splitting_dataset_times=rounds)
         current_model = self.initial_model
 
@@ -80,7 +90,7 @@ class IncrementalLearning(ParadigmBase):
                                                                inference_dataset_file,
                                                                r)
 
-            data_transfer_count_ratio_info.append((inference_results, hard_examples))
+            samples_transfer_ratio_info.append((inference_results, hard_examples))
 
             # If no hard examples in the first round, starting the next round
             if len(hard_examples) <= 0:
@@ -96,7 +106,7 @@ class IncrementalLearning(ParadigmBase):
                 current_model = new_model
 
         test_res, hard_examples = self._inference(current_model, self.dataset.test_url, "test")
-        data_transfer_count_ratio_info.append((test_res, hard_examples))
+        samples_transfer_ratio_info.append((test_res, hard_examples))
 
         return test_res, self.system_metric_info
 
@@ -119,7 +129,7 @@ class IncrementalLearning(ParadigmBase):
     def _inference(self, model, data_index_file, rounds):
         hard_example_saved_dir = self._prepare_inference(model, rounds)
 
-        job = self.build_paradigm_job(ParadigmKind.INCREMENTAL_LEARNING.value)
+        job = self.build_paradigm_job(ParadigmType.INCREMENTAL_LEARNING.value)
         inference_dataset = self.dataset.load_data(data_index_file, "inference")
         inference_dataset_x = inference_dataset.x
 
@@ -157,7 +167,7 @@ class IncrementalLearning(ParadigmBase):
         os.environ["MODEL_URL"] = train_output_dir
         os.environ["BASE_MODEL_URL"] = model
 
-        job = self.build_paradigm_job(ParadigmKind.INCREMENTAL_LEARNING.value)
+        job = self.build_paradigm_job(ParadigmType.INCREMENTAL_LEARNING.value)
         train_dataset = self.dataset.load_data(data_index_file, "train")
         new_model = job.train(train_dataset)
         del job
@@ -169,7 +179,7 @@ class IncrementalLearning(ParadigmBase):
         model_eval_info = self.model_eval_config
         model_metric = model_eval_info.get("model_metric")
 
-        job = self.build_paradigm_job(ParadigmKind.INCREMENTAL_LEARNING.value)
+        job = self.build_paradigm_job(ParadigmType.INCREMENTAL_LEARNING.value)
         eval_dataset = self.dataset.load_data(data_index_file, "eval")
         eval_results = job.evaluate(eval_dataset, metric=get_metric_func(model_metric))
         del job

@@ -94,14 +94,14 @@ class Rank:
         return list(metrics)
 
     @classmethod
-    def _get_all_module_kinds(cls, test_cases) -> list:
-        all_module_kinds = []
+    def _get_all_module_types(cls, test_cases) -> list:
+        all_module_types = []
         for test_case in test_cases:
             modules = test_case.algorithm.modules
-            for module_kind in modules.keys():
-                if module_kind not in all_module_kinds:
-                    all_module_kinds.append(module_kind)
-        return all_module_kinds
+            for module_type in modules.keys():
+                if module_type not in all_module_types:
+                    all_module_types.append(module_type)
+        return all_module_types
 
     @classmethod
     def _get_algorithm_hyperparameters(cls, algorithm):
@@ -148,11 +148,11 @@ class Rank:
                 all_df.loc[i][metric_name] = test_results[test_case.id][0].get(metric_name)
 
             # file paradigm column of algorithm
-            all_df.loc[i]["paradigm"] = algorithm.paradigm_kind
+            all_df.loc[i]["paradigm"] = algorithm.paradigm_type
 
             # fill module columns of algorithm
-            for module_kind, module in algorithm.modules.items():
-                all_df.loc[i][module_kind] = module.name
+            for module_type, module in algorithm.modules.items():
+                all_df.loc[i][module_type] = module.name
 
             # fill hyperparameters columns of algorithm modules
             hps = self._get_algorithm_hyperparameters(algorithm)
@@ -175,9 +175,9 @@ class Rank:
         all_df.to_csv(self.all_rank_file, index_label="rank", encoding="utf-8", sep=" ")
 
     def _get_selected(self, test_cases, test_results) -> pd.DataFrame:
-        module_kinds = self.selected_dataitem.get("modules")
-        if module_kinds == ["all"]:
-            module_kinds = self._get_all_module_kinds(test_cases)
+        module_types = self.selected_dataitem.get("modules")
+        if module_types == ["all"]:
+            module_types = self._get_all_module_types(test_cases)
 
         hps_names = self.selected_dataitem.get("hyperparameters")
         if hps_names == ["all"]:
@@ -187,7 +187,7 @@ class Rank:
         if metric_names == ["all"]:
             metric_names = self._get_all_metric_names(test_results)
 
-        header = ["algorithm", *metric_names, "paradigm", *module_kinds, *hps_names, "time", "url"]
+        header = ["algorithm", *metric_names, "paradigm", *module_types, *hps_names, "time", "url"]
 
         all_df = copy.deepcopy(self.all_df)
         selected_df = pd.DataFrame(all_df, columns=header)
@@ -206,9 +206,9 @@ class Rank:
     def _prepare(self, test_cases, test_results, output_dir):
         all_metric_names = self._get_all_metric_names(test_results)
         all_hps_names = self._get_all_hps_names(test_cases)
-        all_module_kinds = self._get_all_module_kinds(test_cases)
+        all_module_types = self._get_all_module_types(test_cases)
         self.all_df_header = ["algorithm", *all_metric_names, "paradigm",
-                              *all_module_kinds, *all_hps_names, "time", "url"]
+                              *all_module_types, *all_hps_names, "time", "url"]
 
         rank_output_dir = os.path.join(output_dir, "rank")
         if not utils.is_local_dir(rank_output_dir):

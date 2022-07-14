@@ -26,24 +26,30 @@ class DatasetFormat(Enum):
     TXT = "txt"
 
 
-class ParadigmKind(Enum):
+class ParadigmType(Enum):
     """
-    Algorithm paradigm kind.
+    Algorithm paradigm type.
     """
     SINGLE_TASK_LEARNING = "singletasklearning"
     INCREMENTAL_LEARNING = "incrementallearning"
 
 
-class ModuleKind(Enum):
+class ModuleType(Enum):
     """
-    Algorithm module kind.
+    Algorithm module type.
     """
     BASEMODEL = "basemodel"
     HARD_EXAMPLE_MINING = "hard_example_mining"
 
 
-class SystemMetricKind(Enum):
+class SystemMetricType(Enum):
     """
-    System metric kind of ianvs.
+    System metric type of ianvs.
     """
-    DATA_TRANSFER_COUNT_RATIO = "data_transfer_count_ratio"
+    SAMPLES_TRANSFER_RATIO = "samples_transfer_ratio"
+
+class TestObjectType(Enum):
+    """
+    Test object type of ianvs.
+    """
+    ALGORITHMS = "algorithms"
