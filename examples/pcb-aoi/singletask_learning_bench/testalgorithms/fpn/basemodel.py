@@ -38,6 +38,7 @@ from FPN_TensorFlow.libs.networks.network_factory import get_flags_byname, get_n
 from FPN_TensorFlow.libs.rpn import build_rpn
 
 FLAGS = get_flags_byname(cfgs.NET_NAME)
+
 # avoid the conflict: 1. tf parses flags with sys.argv; 2. test system also parses flags .
 tf.flags.DEFINE_string("benchmarking_config_file", "", "ignore")
 

@@ -33,6 +33,7 @@ class ParadigmType(Enum):
     SINGLE_TASK_LEARNING = "singletasklearning"
     INCREMENTAL_LEARNING = "incrementallearning"
 
+
 class ModuleType(Enum):
     """
     Algorithm module type.
@@ -52,9 +53,3 @@ class TestObjectType(Enum):
     Test object type of ianvs.
     """
     ALGORITHMS = "algorithms"
-
-class SystemMetricKind(Enum):
-    """
-    System metric kind of ianvs.
-    """
-    DATA_TRANSFER_COUNT_RATIO = "data_transfer_count_ratio"
