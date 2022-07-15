@@ -3,7 +3,7 @@
 [![LICENSE SCAN](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkubeedge-sedna%2Fianvs.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkubeedge-sedna%2Fianvs?ref=badge_shield)
 [![LICENSE](https://img.shields.io/github/license/kubeedge-sedna/ianvs.svg)](/LICENSE)
 
-Ianvs is a distributed synergy AI benchmarking project incubated in KubeEdge SIG AI. Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. More detailedly, Ianvs prepares not only test cases with datasets and corresponding algorithms, but also benchmarking tools including simulation and hyper-parameter searching. Ianvs also revealing best practices for developers and end users with presentation tools including leaderboards and test reports. 
+Ianvs is a distributed synergy AI benchmarking project incubated in KubeEdge SIG AI. Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. More detailedly, Ianvs prepares not only test cases with datasets and corresponding algorithms, but also benchmarking tools including simulation and hyper-parameter searching. Ianvs also reveals best practices for developers and end users with presentation tools including leaderboards and test reports. 
 
 ## Scope
 The distributed synergy AI benchmarking Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. 
@@ -21,7 +21,7 @@ The scope of Ianvs includes
 
 
 ## Architecture
-The architectures and related concepts are shown in the below figure. The ianvs is designed to run within a single node. Critical components include
+The architectures and related concepts are shown in the below figure. The ianvs is designed to run **within a single node**. Critical components include
 - Test Environment Manager: the CRUD of test environments serving for global usage
 - Test Case Controller: control the runtime behavior of test cases like instance generation and vanish 
     - Generation Assistant: assist users to generate test cases based on certain rules or constraints, e.g., the range of parameters 
@@ -56,14 +56,14 @@ More details on Ianvs components:
 
 ### Documents
 
-Documentation is located on [readthedoc.io](https://ianvs.readthedocs.io/). These documents can help you understand Ianvs better.
+Documentation is located on [readthedoc.io](https://ianvs.readthedocs.io/). The documents include the quick start, guides, dataset descriptions, algorithms, user interfaces, stories, and roadmap.
 
 
 ### Installation
 Follow the [Ianvs installation document](docs/guides/how-to-install-ianvs.md) to install Ianvs.
 
 ### Examples
-Scenario PCB-AoI：[Industrial Defect Detection on the PCB-AoI Dataset](/examples/pcb-aoi/README.md).  
+Scenario PCB-AoI：[Industrial Defect Detection on the PCB-AoI Dataset](/docs/proposals/scenarios/industrial-defect-detection/pcb-aoi.md).  
 Example PCB-AoI-1：[Testing single task learning in industrial defect detection](/docs/proposals/test-reports/testing-single-task-learning-in-industrial-defect-detection-with-pcb-aoi.md).  
 Example PCB-AoI-2：[Testing incremental learning in industrial defect detection](/docs/proposals/test-reports/testing-incremental-learning-in-industrial-defect-detection-with-pcb-aoi.md).  
 
@@ -74,11 +74,9 @@ Example PCB-AoI-2：[Testing incremental learning in industrial defect detection
 
 ## Meeting
 
-Regular Community Meeting for KubeEdge SIG AI:
-- Europe Time: **Thursdays at 16:30-17:30 Beijing Time** (biweekly, starting from Feb. 2022).
+Routine Community Meeting for KubeEdge SIG AI runs weekly:
+- Europe Time: **Thursdays at 16:30-17:30 Beijing Time**.
 ([Convert to your timezone.](https://www.thetimezoneconverter.com/?t=16%3A30&tz=GMT%2B8&))
-- Pacific Time: **Thursdays at 10:00-11:00 Beijing Time** (biweekly, starting from Feb. 2022).
-([Convert to your timezone.](https://www.thetimezoneconverter.com/?t=10%3A00&tz=GMT%2B8&))
 
 Resources:
 - [Meeting notes and agenda](https://docs.google.com/document/d/12n3kGUWTkAH4q2Wv5iCVGPTA_KRWav_eakbFrF9iAww/edit)
