@@ -1,22 +1,22 @@
 # How to install Ianvs
 
-It is recommended to use Ianvs on Linux machine. But for quick algorith development, windows is also planed to support, to reduce the configuration cost of development environment.  
+It is recommended to use Ianvs on a Linux machine. But for quick algorithm development, the Windows platform is also planned to support, to reduce the configuration cost of the development environment.  
 
 This guide covers how to install Ianvs on a Linux environment.
 
 ## Prerequisites
-- One machine is all you need, i.e., a laptop or a virtual machine is sufficient and cluster is not necessary
+- One machine is all you need, i.e., a laptop or a virtual machine is sufficient and a cluster is not necessary
 - 2 CPUs or more
 - 4GB+ free memory, depends on algorithm and simulation setting
 - 10GB+ free disk space
-- Internet connection for github and pip, etc
+- Internet connection for GitHub and pip, etc
 - Python 3.6+ installed
 
 you can check the python version by the following command:
 ```
 python -V
 ```
-after doing that, the output will be like this, that means your version fits the bill.
+after doing that, the output will be like this, which means your version fits the bill.
 ```
 Python 3.6.9
 ```
@@ -60,13 +60,13 @@ python setup.py install
 ```shell
 ianvs -v
 ```
-If the version information is printed, Ianvs is installed successful. 
+If the version information is printed, Ianvs is installed successfully. 
 
 
 
 
 ## About Windows
 
-At the time being, package requirements of Ianvs is only applicable for Linux, to ensure comprehensive support from Linux ecosystem and to ease the burden of manual installation for users in Windows.
+At the time being, the package requirements of Ianvs are only applicable for Linux, to ensure comprehensive support from the Linux ecosystem and to ease the burden of manual installation for users in Windows.
 
-If you are more used to develop on Windows, you can still do so with remote connections like SSH from Windows connecting to a Linux machine with ianvs installed. Such remote connection is already supported in common Python coding tools like VScode, Pycharm etc. By doing so, it helps to provide efficient installation and robust functionality of Ianvs.
+If you are more used to developing on Windows, you can still do so with remote connections like SSH from Windows connecting to a Linux machine with ianvs installed. Such remote connection is already supported in common Python coding tools like VScode, Pycharm, etc. By doing so, it helps to provide efficient installation and robust functionality of Ianvs.
