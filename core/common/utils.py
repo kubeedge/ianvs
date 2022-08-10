@@ -85,9 +85,13 @@ def yaml2dict(url):
     raise Exception('config file must be the yaml format')
 
 
-def load_module(url):
+def load_module(url, name=None):
     """Load python module."""
     module_path, module_name = os.path.split(url)
+
+    if name:
+        module_name = name
+
     if os.path.isfile(url):
         module_name = module_name.split(".")[0]
 

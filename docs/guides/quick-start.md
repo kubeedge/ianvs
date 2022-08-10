@@ -99,6 +99,8 @@ cd /ianvs/project/ianvs/
 python -m pip install examples/resources/algorithms/FPN_TensorFlow-0.1-py3-none-any.whl
 ```
 
+Note: If you have your own third-party package, you can refer to [How to test algorithms].
+
 The URL address of this algorithm then should be filled in the configuration file ``algorithm.yaml``. In this quick
 start, we have done that for you and the interested readers can refer to [algorithm.yaml](https://ianvs.readthedocs.io/en/latest/guides/how-to-test-algorithms.html#step-1-test-environment-preparation) for more details.
 

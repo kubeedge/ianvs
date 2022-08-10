@@ -244,6 +244,14 @@ algorithm:
   #   1> "singletasklearning"
   #   2> "incrementallearning"
   paradigm_type: "incrementallearning"
+  
+  # dynamically load third-party packages; list type; optional;
+  third_party_packages:
+    # name of the python package; string type; optional;
+    - name: "FPN_TensorFlow"
+      # the url address of python package; string type; optional;
+      url: "/ianvs/third_party_packages/FPN_TensorFlow"
+  
   incremental_learning_data_setting:
     # ratio of training dataset; float type;
     # the default value is 0.8.

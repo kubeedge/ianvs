@@ -10,6 +10,7 @@ configuration.
 |paradigm_type|yes|Paradigm name; Type: string; Value Constraint: Currently the options of value are as follows: 1> singletasklearning 2> incrementallearning|
 |incremental_learning_data_setting|no|Data setting for incremental learning paradigm.[the configuration of incremental_learning_data_setting](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-algorithm.md#the-configuration-of-incremental_learning_data_setting)|
 |initial_model_url|no|The url address of initial model for model pre-training; Type: string|
+|third_party_packages|no|Dynamically load third-party packages; Type: list; Value Constraint: the package info in list contains name and url.|
 |modules|yes|The algorithm modules for paradigm; Type: list; Value Constraint: the list of [the configuration of module](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-algorithm.md#the-configuration-of-module)|
 
 For example:
@@ -21,6 +22,12 @@ algorithm:
   #   1> "singletasklearning"
   #   2> "incrementallearning"
   paradigm_type: "incrementallearning"
+  # dynamically load third-party packages; list type; optional;
+  third_party_packages:
+    # name of the python package; string type; optional;
+    - name: "FPN_TensorFlow"
+      # the url address of python package; string type; optional;
+      url: "/ianvs/third_party_packages/FPN_TensorFlow"
   incremental_learning_data_setting:
     ...
   # the url address of initial model for model pre-training; string url;
