@@ -3,7 +3,7 @@
 ## Motivation
 Nowadays,  the inference of lifelong learning is somehow a single task approach, which will first vote for the task suited for the sample, and then the model trained for this task will be used for inference. This approach works well when the model for the task is easy to train. However, for the perception of mobile agents, more complex models are usually used. Besides,  as shown in figure 1, an empirical study concluded that no single model maintains the best accuracy even for one second. So the joint inference will be better.
 
-<img src="Fig1_Heatmap of normalized mAP on a clip of 1 second.png" style="zoom: 33%;" />
+<img src="Fig1_Heatmap of normalized mAP on a clip of 1 second.png" width="600" />
 
 ​														Fig 1. Heatmap of normalized mAP on a clip of 1 second
 
@@ -32,7 +32,7 @@ Task, A triplet: Task Allocation +  Task samples + Task model
 
 The architecture is shown in the below figure. The red box shows the work we are going to do. 
 
-<img src="Fig2_Architecture.png" style="zoom: 50%;" />
+<img src="Fig2_Architecture.png" width="600" />
 
 ​																						Fig 2. Architecture
 
@@ -58,7 +58,7 @@ The architecture is shown in the below figure. The red box shows the work we are
 
   - In the Object Detection task, we first add all the bounding boxes together. The we use non maximum suppression(NMS) to get the final output. The figure 3 shows the process.
 
-    <img src="Fig3_Joint inference in Object Detection.png" style="zoom: 33%;" />
+    <img src="Fig3_Joint inference in Object Detection.png" width="600" />
 
     ​                                                 Fig 3. Joint inference in Object Detection
 
@@ -80,7 +80,7 @@ ianvs
 ```
 To add a new example in Ianvs, we need to prepare the test environments, provide the algorithms and give test reports or leaderboards. To prepare the test environments, we need to modify the testenv.yaml. The code of the algorithms is in  the folder: testalgorithms. The flow chart of the algorithms is in figure 4. 
 
-<img src="Fig4_algorithm in Ianvs.png"  />
+<img src="Fig4_algorithm in Ianvs.png" width="600" />
 
 ​                                                                        Fig 4. algorithm in Ianvs
 
