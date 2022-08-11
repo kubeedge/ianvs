@@ -3,9 +3,10 @@
 ## Motivation
 Nowadays,  the inference of lifelong learning is somehow a single task approach, which will first vote for the task suited for the sample, and then the model trained for this task will be used for inference. This approach works well when the model for the task is easy to train. However, for the perception of mobile agents, more complex models are usually used. Besides,  as shown in figure 1, an empirical study concluded that no single model maintains the best accuracy even for one second. So the joint inference will be better.
 
-<img src="Fig1_Heatmap of normalized mAP on a clip of 1 second.png" style="zoom:50%;" />
+<img src="Fig1_Heatmap of normalized mAP on a clip of 1 second.png" style="zoom: 33%;" />
 
-<center style="font-size:16px;color:#000;">Fig 1. Heatmap of normalized mAP on a clip of 1 second
+​														Fig 1. Heatmap of normalized mAP on a clip of 1 second
+
 
 We have noticed that autonomous driving is one of the important applications of edge AI. We consider the image object detection task on moving vehicles as the typical online model inference scenario. Recently, how to cooperate with resources on the edge and cloud to provide support for autonomous driving applications has become an important topic.  
 
@@ -31,9 +32,10 @@ Task, A triplet: Task Allocation +  Task samples + Task model
 
 The architecture is shown in the below figure. The red box shows the work we are going to do. 
 
-<img src="Fig2_Architecture.png" style="zoom:67%;" />
+<img src="Fig2_Architecture.png" style="zoom: 50%;" />
 
-<center style="font-size:16px;color:#000;">Fig 2. Architecture
+​																						Fig 2. Architecture
+
 
 - **Metaknowledge Initialization:** generates metaknowledge given the metadata base and training samples using meta learning
 
@@ -56,9 +58,9 @@ The architecture is shown in the below figure. The red box shows the work we are
 
   - In the Object Detection task, we first add all the bounding boxes together. The we use non maximum suppression(NMS) to get the final output. The figure 3 shows the process.
 
-    <img src="Fig3_Joint inference in Object Detection.png" style="zoom: 50%;" />
+    <img src="Fig3_Joint inference in Object Detection.png" style="zoom: 33%;" />
 
-    <center style="font-size:16px;color:#000;">Fig 3. Joint inference in Object Detection
+    ​                                                 Fig 3. Joint inference in Object Detection
 
 ### Customize algorithm
 
@@ -80,7 +82,8 @@ To add a new example in Ianvs, we need to prepare the test environments, provide
 
 <img src="Fig4_algorithm in Ianvs.png"  />
 
-<center style="font-size:16px;color:#000;">Fig 4. algorithm in Ianvs
+​                                                                        Fig 4. algorithm in Ianvs
+
 
 ## Roadmap
 
