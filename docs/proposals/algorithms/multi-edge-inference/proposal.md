@@ -1,7 +1,7 @@
 # Multi-task Joint Inference for Ianvs
 
 ## Motivation
-Nowadays,  the inference of lifelong learning is somehow a single task approach, which will first vote for the task suited for the sample, and then the model trained for this task will be used for inference. This approach works well when the model for the task is easy to train. However, for the perception of mobile agents, more complex models are usually used. Besides,  as shown in figure 1, an empirical study concluded that no single model maintains the best accuracy even for one second. So the joint inference will be better.
+Nowadays,  the inference of lifelong learning is somehow a single task approach, which will first vote for the task suited for the sample, and then the model trained for this task will be used for inference. This approach works well when the model for the task is easy to train. However, for the perception of mobile agents, more complex models are usually used. Besides,  as shown in figure 1, an empirical study concluded that no single model maintains the best accuracy even for one second. So we think the joint inference will be better.
 
 <img src="Fig1_Heatmap of normalized mAP on a clip of 1 second.png" width="400" />
 
