@@ -113,13 +113,11 @@ It is clear that the formulation in the paper does not consume additional time c
 
 ![](images/process.png)
 
-### Embedded in Sedna
+### Embedded in Ianvs
 
-![](images/framework.png)
+![ ](images/ianvs_arch.png)
 
-In the training phase, the classifier is deployed in two more ways, the classifier is stored as a model in the form of a file, either in a container or as an environment variable that is used by calling the address directly.
-
-In the inference phase, the unknown task algorithm exists in the Edge inference of the edge end, worker.
+After training, the unknown task algorithm model is placed in the Lifelong Learning Paradigm section of the Test Case Controller module as one of the algorithms for unknown task identification in the lifelong learning paradigm.
 
 
 
