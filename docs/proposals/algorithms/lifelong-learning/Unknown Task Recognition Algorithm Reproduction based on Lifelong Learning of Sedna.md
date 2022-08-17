@@ -1,17 +1,17 @@
-# Unknown Task Recognition Algorithm Reproduction based on Lifelong Learning of Sedna
+# Unknown Task Recognition Algorithm Reproduction based on Lifelong Learning of Ianvs
 Traditional machine learning performs test-set inference by training known samples to which its knowledge is limited. The model which is trained by traditional machine learning cannot be effectively recognized the unknown samples from new classes and they will be processed as known samples. Therefore, the recognition and processing of unknown samples or unknown tasks will become the main research direction of artificial intelligence in the future. This project aims to reproduce the CVPR2021 paper "Learning placeholders for open-set recognition" in the Semantic Segmentation dataset. This paper proposes placeholders that imitate the emergence of new classes, thus helping to transform closed-set training into open-set training.
 
 
 
 ## Goals
-1. The reproduction should be completed based on the Cityscapes Semantic Segmentation dataset.
-2. The reproduced code is successfully merged into the lifelong learning module of Sedna.
+1. The reproduction should be completed based on the Cityscapes Semantic Segmentation dataset and the Synthia dataset.
+2. The reproduced code is successfully merged into the lifelong learning module of Ianvs.
 3. The recognition accuracy (e.g. f1_score) of unknown classes is greater than 0.9.
 
 
 
 ## Proposal
-The goal of this Sedna-based lifelong learning recurrence unknown task identification algorithm project is to identify unknown samples and known samples in the inference dataset and categorize them for subsequent task assignment in the lifelong learning system created by Sedna, after the initial training phase of task definition and model training.
+The goal of this Ianvs-based lifelong learning recurrence unknown task identification algorithm project is to identify unknown samples and known samples in the inference dataset and categorize them for subsequent task assignment in the lifelong learning system created by Ianvs, after the initial training phase of task definition and model training.
 
 This project needs to complete the task definition part and the unknown task identification part.
 
@@ -29,11 +29,11 @@ This part of the training model algorithm uses the RFNet method mentioned in the
 
 The entire network architecture of RFNet is shown in Fig. In the encoder part of the architecture, we design two independent branches to extract features for RGB and depth images separately RGB branch as the main branch and the Depth branch as the subordinate branch. In both branches, we choose ResNet18 [30] as the backbone to extract features from inputs because ResNet-18 has moderate depth and residual structure, and its small operation footprint is compatible with the real-time operation. After each layer of ResNet-18, the output features from the Depth branch are fused to the RGB branch after the Attention Feature Complementary (AFC) module. The spatial pyramid pooling (SPP) block gathers the fused RGB-D features from two branches and produces feature maps with multi-scale information. Finally, referring to SwiftNet, we design the efﬁcient upsampling modules to restore the resolution of these feature maps with skip connections from the RGB branch.
 
-![](images/Overview_of_RFNet.png)
+<img src="images/Overview_of_RFNet.png" style="zoom:50%;" />
 
 Fig. shows some examples from the validation set of Cityscapes and Lost and Found, which demonstrates the excellent segmentation accuracy of our RFNet in various scenarios with or without small obstacles.
 
-![](images/example.png)
+<img src="images/example.png" style="zoom:33%;" />
 
 
 
@@ -45,7 +45,7 @@ For this project, we use two datasets to train the models separately: cityscape 
 
 #### workflow
 
-![](images/task_definition.png)
+<img src="images/task_definition.png" style="zoom:33%;" />
 
 
 
@@ -53,11 +53,106 @@ For this project, we use two datasets to train the models separately: cityscape 
 
 ##### Cityscape
 
-![](images/city_RGB.png)
+###### Background
+
+Cityscapes has 5000 images of driving scenes in urban environments (2975train, 500 val,1525test). The Cityscapes dataset, the Cityscapes dataset, is a new large-scale dataset containing a set of different stereo video sequences of street scenes recorded in 50 different cities.
+
+Below shows one example RNB figures in the dataset.
+
+<img src="images/city_RGB.png" style="zoom: 33%;" />
+
+###### Data Explorer
+
+ The Cityscapes dataset contains 2975 images. The Cityscapes dataset contains 2975 images, including street view images and corresponding labels. The Cityscapes dataset, jointly provided by three German organizations including Daimler, contains stereo vision data for more than 50 cities.
+
+The directories of this dataset is as follows:
+
+```
+├─disparity
+│  ├─test
+│  │  ├─berlin
+│  │  ├─bielefeld
+│  │  ├─bonn
+│  │  ├─...
+│  │  └─munich
+│  ├─train
+│  │  ├─aachen
+│  │  ├─bochum
+│  │  ├─...
+│  │  └─zurich
+│  └─val
+│      ├─frankfurt
+│      ├─lindau
+│      └─munster
+├─gtFine
+│  ├─test
+│  │  ├─berlin
+│  │  ├─bielefeld
+│  │  ├─bonn
+│  │  ├─...
+│  │  └─munich
+│  ├─train
+│  │  ├─aachen
+│  │  ├─bochum
+│  │  ├─...
+│  │  └─zurich
+│  └─val
+│      ├─frankfurt
+│      ├─lindau
+│      └─munster
+└─leftImg8bit
+    ├─test
+    │  ├─berlin
+    │  ├─bielefeld
+    │  ├─bonn
+    │  ├─...
+    │  └─munich
+    ├─train
+    │  ├─aachen
+    │  ├─bochum
+    │  ├─...
+    │  └─zurich
+    └─val
+       ├─frankfurt
+       ├─lindau
+       └─munster
+```
 
 ##### SYNTHIA-RAND-CITYSCAPES
 
-![](images/mn_RGB.png)
+###### Background
+
+SYNTHIA datasets consists of a collection of photo-realistic frames rendered from a virtual city and comes with precise pixel-level semantic annotations for 13 classes: misc, sky, building, road, sidewalk, fence, vegetation, pole, car, sign, pedestrian, cyclist, lane-marking.
+
+Below shows one example RNB figures in the dataset.
+
+<img src="images/mn_RGB.png" style="zoom:33%;" />
+
+###### Data Explorer
+
+It is a new set containing 9,000 random images with labels compatible with the CITYSCAPES test set. The list of classes is: void, sky, building, road, sidewalk, fence, vegetation, pole, car, traffic sign, pedestrian, bicycle, motorcycle, parking-slot, road-work, traffic light, terrain, rider, truck, bus, train, wall, lanemarking. These images are generated as random perturbation of the virtual world, therefore no temporal consistency is provided.
+
+The directories of this dataset is as follows:
+
+```
+├─Depth
+│  ├─0000000.png
+│  ├─...
+│  └─0009399.png
+├─GT
+│  ├─COLOR
+│  │  ├─0000000.png
+│  │  ├─...
+│  │  ├─0009399.png
+│  └─LABELS
+│     ├─0000000.png
+│     ├─...
+│     └─0009399.png
+└─RNB
+   ├─0000000.png
+   ├─...
+   └─0009399.png
+```
 
 
 
@@ -69,7 +164,7 @@ This project aims to reproduce the CVPR2021 paper "Learning placeholders for ope
 
 The following is the workflow of the unknown task identification module. When faced with an inference task, the unknown task identification algorithm can give a timely indication of which data are known and which are unknown in the data set.
 
-![](images/unknow.png)
+<img src="images/unknow.png" style="zoom:50%;" />
 
 #### Main Work
 
@@ -77,18 +172,18 @@ Data placeholders and classification placeholders are set up in the paper to han
 
 #### Algorithm Principle
 
-![](images/algorithm.png)
+<img src="images/algorithm.png" style="zoom:50%;" />
 
 ##### Learning classifier placeholders
 
 Retaining classifier placeholders aims at setting up additional virtual classifiers and optimizing them to represent the threshold between known and unknown classes. Assuming a well-trained closed-set classifier W; the paper first augments the output layer with additional virtual classifiers, as shown in Eq.
 
-![](images/eq1.png)
+<img src="images/eq1.png" style="zoom:50%;" />
 
 
 The closed set classifier and the virtual classifier embed the same set (matrix) and create only one additional linear layer. The added indices are passed through the softmax layer to generate the posterior probabilities. By fine-tuning the model so that the virtual classifier outputs the second highest probability of a known class, the invariant information between the known class classifier and the virtual classifier can be transferred to the detection process by this method. Since the output is increased by using the virtual classifier, the classification loss can be expressed as Eq:
 
-![](images/eq2.png)
+<img src="images/eq2.png" style="zoom:50%;" />
 
 
 L denotes cross entropy or other loss function. The first term in the formula corresponds to the output of the optimized expansion, which pushes the samples into the corresponding class groups to maintain accurate identification in the closed set. In the second term, matching the task to K+1 classes makes the virtual classifier output the second highest probability, tries to associate the position of the virtual classifier in the center space, and controls the distance to the virtual classifier as the second closest distance among all class centers. Thus, it seeks a trade-off between correctly classifying closed set instances and retaining the probability of a new class as a classifier placeholder. During training, it can be positioned between target and non-target classes. In the case of novel classes, the predictive power of the virtual classifier can be high because all known classes are non-target classes. Therefore, it is considered as an instance-related threshold that can be well adapted to each known class.
@@ -99,11 +194,11 @@ L denotes cross entropy or other loss function. The first term in the formula co
 
 The purpose of learning data placeholders is to transform closed-set training into open-set training. The combined data placeholders should have two main characteristics, the distribution of these samples should look novel and the generation process should be fast. In this paper, we simulate new patterns with multiple mixtures. Equation 6 in the paper gives two samples from different categories and mixes them in the middle layer.
 
-![](images/eq3.png)
+<img src="images/eq3.png" style="zoom:50%;" />
 
 The results of the mixture are passed through the later layers to obtain the new model embedding post. considering that the interpolation between two different clusters is usually a low confidence prediction region. The paper treats the embedding φpost (̃xpre) as an embedding of the open set class and trains it as a new class.
 
-![](images/eq4.png)
+<img src="images/eq4.png" style="zoom:50%;" />
 
 It is clear that the formulation in the paper does not consume additional time complexity, which would generate new situations between multiple decision boundaries. In addition, streamwise blending allows better use of interpolation of deeper hidden representations to generate new patterns in the improved embedding space, which better represents the new distribution. As illustrated in the figure above, the blending instance pushes the decision boundaries in the embedding space to two separate locations of the classes. With the help of the data placeholders, the embedding of the known classes will be tighter, leaving more places for the new classes.
 
@@ -111,13 +206,17 @@ It is clear that the formulation in the paper does not consume additional time c
 
 **PROSER algorithm training process**
 
-![](images/process.png)
+<img src="images/process.png" style="zoom:50%;" />
+
+
 
 ### Embedded in Ianvs
 
-![ ](images/ianvs_arch.png)
+![](images/workflow_ianvs_unknow_task_recognition.png)
 
 After training, the unknown task algorithm model is placed in the Lifelong Learning Paradigm section of the Test Case Controller module as one of the algorithms for unknown task identification in the lifelong learning paradigm.
+
+After users upload their own lifelong learning algorithms to the local Ianvs, the Ianvs component provides the dataset and testing environment, and offers a built-in unknown task recognition algorithm as an aid for testing. The test results are updated in the local leaderboard.
 
 
 
