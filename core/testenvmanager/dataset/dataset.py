@@ -79,10 +79,12 @@ class Dataset:
             tmp_file = os.path.join(tempfile.mkdtemp(), "index.txt")
             with open(tmp_file, "w", encoding="utf-8") as file:
                 for line in lines:
-                    front, back = line.split(" ")
-                    file.writelines(
-                        f"{os.path.abspath(os.path.join(root, front))} "
-                        f"{os.path.abspath(os.path.join(root, back))}")
+                    names = line.split(" ")
+                    s = ""
+                    for i in names:
+                        s = s + f"{os.path.abspath(os.path.join(root, i))} "
+                    s.strip()
+                    file.writelines(s)
 
             new_file = tmp_file
 
