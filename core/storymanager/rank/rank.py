@@ -107,7 +107,10 @@ class Rank:
     def _get_algorithm_hyperparameters(cls, algorithm):
         hps = {}
         for module in algorithm.modules.values():
-            hps.update(**module.hyperparameters)
+            for name, value in module.hyperparameters.items():
+                name = f"{module.type}-{name}"
+                value = str(value)
+                hps.update({name: value})
         return hps
 
     def _get_all_hps_names(self, test_cases) -> list:
