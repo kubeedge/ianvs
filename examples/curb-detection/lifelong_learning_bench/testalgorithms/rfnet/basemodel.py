@@ -1,20 +1,19 @@
 import os
 
-from PIL import Image
-from sedna.common.file_ops import FileOps
-from sedna.common.log import LOGGER
-from torchvision import transforms
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
 from sedna.common.class_factory import ClassType, ClassFactory
 from sedna.common.config import Context
+from sedna.common.file_ops import FileOps
+from sedna.common.log import LOGGER
+from PIL import Image
+from torchvision import transforms
 
 from RFNet.train import Trainer
 from RFNet.eval import Validator, load_my_state_dict
 from RFNet.dataloaders import custom_transforms as tr
 from RFNet.utils.args import TrainArgs, ValArgs
-
 
 # set backend
 os.environ['BACKEND_TYPE'] = 'PYTORCH'
@@ -24,14 +23,6 @@ os.environ['BACKEND_TYPE'] = 'PYTORCH'
 class BaseModel:
     def __init__(self, **kwargs):
         self.train_args = TrainArgs(**kwargs)
-        # self.val_args = self._val_args()
-        # self.train_args = self._train_args()
-
-        # self.train_args.lr = kwargs.get("learning_rate", 1e-4)
-        # self.train_args.epochs = kwargs.get("epochs", 2)
-        # self.train_args.eval_interval = kwargs.get("eval_interval", 2)
-        # self.train_args.no_val = kwargs.get("no_val", True)
-        # self.train_args.resume = Context.get_parameters("PRETRAINED_MODEL_URL", None)
         self.trainer = None
 
         self.val_args = ValArgs(**kwargs)
@@ -130,161 +121,3 @@ class BaseModel:
             transformed_images.append((composed_transforms(sample), img_path))
 
         return transformed_images
-
-    # def _train_args(self):
-    #     parser = argparse.ArgumentParser(description="PyTorch RFNet Training")
-    #     parser.add_argument('--depth', action="store_true", default=False,
-    #                         help='training with depth image or not (default: False)')
-    #     parser.add_argument('--dataset', type=str, default='cityscapes',
-    #                         choices=['citylostfound', 'cityscapes', 'cityrand', 'target', 'xrlab', 'e1', 'mapillary'],
-    #                         help='dataset name (default: cityscapes)')
-    #     parser.add_argument('--workers', type=int, default=4,
-    #                         metavar='N', help='dataloader threads')
-    #     parser.add_argument('--base-size', type=int, default=1024,
-    #                         help='base image size')
-    #     parser.add_argument('--crop-size', type=int, default=768,
-    #                         help='crop image size')
-    #     parser.add_argument('--loss-type', type=str, default='ce',
-    #                         choices=['ce', 'focal'],
-    #                         help='loss func type (default: ce)')
-    #     # training hyper params
-    #     # parser.add_argument('--epochs', type=int, default=None, metavar='N',
-    #     #                     help='number of epochs to train (default: auto)')
-    #     parser.add_argument('--epochs', type=int, default=None, metavar='N',
-    #                         help='number of epochs to train (default: auto)')
-    #     parser.add_argument('--start_epoch', type=int, default=0,
-    #                         metavar='N', help='start epochs (default:0)')
-    #     parser.add_argument('--batch-size', type=int, default=None,
-    #                         metavar='N', help='input batch size for \
-    #                                     training (default: auto)')
-    #     parser.add_argument('--val-batch-size', type=int, default=1,
-    #                         metavar='N', help='input batch size for \
-    #                                     testing (default: auto)')
-    #     parser.add_argument('--test-batch-size', type=int, default=1,
-    #                         metavar='N', help='input batch size for \
-    #                                     testing (default: auto)')
-    #     parser.add_argument('--use-balanced-weights', action='store_true', default=False,
-    #                         help='whether to use balanced weights (default: True)')
-    #     parser.add_argument('--num-class', type=int, default=24,
-    #                         help='number of training classes (default: 24')
-    #     # optimizer params
-    #     parser.add_argument('--lr', type=float, default=1e-4, metavar='LR',
-    #                         help='learning rate (default: auto)')
-    #     parser.add_argument('--lr-scheduler', type=str, default='cos',
-    #                         choices=['poly', 'step', 'cos', 'inv'],
-    #                         help='lr scheduler mode: (default: cos)')
-    #     parser.add_argument('--momentum', type=float, default=0.9,
-    #                         metavar='M', help='momentum (default: 0.9)')
-    #     parser.add_argument('--weight-decay', type=float, default=2.5e-5,
-    #                         metavar='M', help='w-decay (default: 5e-4)')
-    #     # cuda, seed and logging
-    #     parser.add_argument('--no-cuda', action='store_true', default=
-    #     False, help='disables CUDA training')
-    #     parser.add_argument('--gpu-ids', type=str, default='0',
-    #                         help='use which gpu to train, must be a \
-    #                             comma-separated list of integers only (default=0)')
-    #     parser.add_argument('--seed', type=int, default=1, metavar='S',
-    #                         help='random seed (default: 1)')
-    #     # checking point
-    #     parser.add_argument('--resume', type=str,
-    #                         default=None,
-    #                         help='put the path to resuming file if needed')
-    #     parser.add_argument('--checkname', type=str, default=None,
-    #                         help='set the checkpoint name')
-    #     # finetuning pre-trained models
-    #     parser.add_argument('--ft', action='store_true', default=True,
-    #                         help='finetuning on a different dataset')
-    #     # evaluation option
-    #     parser.add_argument('--eval-interval', type=int, default=1,
-    #                         help='evaluation interval (default: 1)')
-    #     parser.add_argument('--no-val', action='store_true', default=False,
-    #                         help='skip validation during training')
-    #
-    #     args = parser.parse_args()
-    #     args.cuda = not args.no_cuda and torch.cuda.is_available()
-    #     print(torch.cuda.is_available())
-    #     if args.cuda:
-    #         try:
-    #             args.gpu_ids = [int(s) for s in args.gpu_ids.split(',')]
-    #         except ValueError:
-    #             raise ValueError('Argument --gpu_ids must be a comma-separated list of integers only')
-    #
-    #     if args.epochs is None:
-    #         epoches = {
-    #             'cityscapes': 200,
-    #             'citylostfound': 200,
-    #         }
-    #         args.epochs = epoches[args.dataset.lower()]
-    #
-    #     if args.batch_size is None:
-    #         args.batch_size = 4 * len(args.gpu_ids)
-    #
-    #     if args.test_batch_size is None:
-    #         args.test_batch_size = args.batch_size
-    #
-    #     if args.lr is None:
-    #         lrs = {
-    #             'cityscapes': 0.0001,
-    #             'citylostfound': 0.0001,
-    #             'cityrand': 0.0001
-    #         }
-    #         args.lr = lrs[args.dataset.lower()] / (4 * len(args.gpu_ids)) * args.batch_size
-    #
-    #     if args.checkname is None:
-    #         args.checkname = 'RFNet'
-    #     print(args)
-    #     torch.manual_seed(args.seed)
-    #
-    #     return args
-
-    # def _val_args(self):
-    #     parser = argparse.ArgumentParser(description="PyTorch RFNet validation")
-    #     parser.add_argument('--dataset', type=str, default='cityscapes',
-    #                         choices=['citylostfound', 'cityscapes', 'xrlab', 'mapillary'],
-    #                         help='dataset name (default: cityscapes)')
-    #     parser.add_argument('--workers', type=int, default=4,
-    #                         metavar='N', help='dataloader threads')
-    #     parser.add_argument('--base-size', type=int, default=1024,
-    #                         help='base image size')
-    #     parser.add_argument('--crop-size', type=int, default=768,
-    #                         help='crop image size')
-    #     parser.add_argument('--batch-size', type=int, default=6,
-    #                         help='batch size for training')
-    #     parser.add_argument('--val-batch-size', type=int, default=1,
-    #                         metavar='N', help='input batch size for \
-    #                                     validating (default: auto)')
-    #     parser.add_argument('--test-batch-size', type=int, default=1,
-    #                         metavar='N', help='input batch size for \
-    #                                     testing (default: auto)')
-    #     parser.add_argument('--num-class', type=int, default=24,
-    #                         help='number of training classes (default: 24')
-    #     parser.add_argument('--no-cuda', action='store_true', default=False, help='disables CUDA training')
-    #     parser.add_argument('--gpu-ids', type=str, default='0',
-    #                         help='use which gpu to train, must be a \
-    #                             comma-separated list of integers only (default=0)')
-    #     parser.add_argument('--checkname', type=str, default=None,
-    #                         help='set the checkpoint name')
-    #     parser.add_argument('--weight-path', type=str, default="./models/530_exp3_2.pth",
-    #                         help='enter your path of the weight')
-    #     parser.add_argument('--save-predicted-image', action='store_true', default=False,
-    #                         help='save predicted images')
-    #     parser.add_argument('--color-label-save-path', type=str,
-    #                         default='./test/color/',
-    #                         help='path to save label')
-    #     parser.add_argument('--merge-label-save-path', type=str,
-    #                         default='./test/merge/',
-    #                         help='path to save merged label')
-    #     parser.add_argument('--label-save-path', type=str, default='./test/label/',
-    #                         help='path to save merged label')
-    #     parser.add_argument('--merge', action='store_true', default=True, help='merge image and label')
-    #     parser.add_argument('--depth', action='store_true', default=False, help='add depth image or not')
-    #
-    #     args = parser.parse_args()
-    #     args.cuda = not args.no_cuda and torch.cuda.is_available()
-    #     if args.cuda:
-    #         try:
-    #             args.gpu_ids = [int(s) for s in args.gpu_ids.split(',')]
-    #         except ValueError:
-    #             raise ValueError('Argument --gpu_ids must be a comma-separated list of integers only')
-    #
-    #     return args

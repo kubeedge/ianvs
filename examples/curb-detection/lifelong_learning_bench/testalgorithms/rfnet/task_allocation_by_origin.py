@@ -1,7 +1,8 @@
 from sedna.datasources import BaseDataSource
 from sedna.common.class_factory import ClassFactory, ClassType
 
-__all__ = ('TaskAllocationByOrigin')
+__all__ = ('TaskAllocationByOrigin',)
+
 
 @ClassFactory.register(ClassType.STP, alias="TaskAllocationByOrigin")
 class TaskAllocationByOrigin:
