@@ -105,8 +105,8 @@ class TestCase:
 
         test_dataset_file = dataset.test_url
         test_dataset = dataset.load_data(test_dataset_file,
-                                         data_type="eval overall")
-                                        #  label=dataset.label)
+                                         data_type="eval overall", 
+                                         label=dataset.label)
 
         metric_res = {}
         system_metric_types = [e.value for e in SystemMetricType.__members__.values()]
