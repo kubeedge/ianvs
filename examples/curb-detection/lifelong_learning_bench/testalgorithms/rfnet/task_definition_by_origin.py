@@ -4,8 +4,8 @@ from sedna.datasources import BaseDataSource
 from sedna.common.class_factory import ClassType, ClassFactory
 from sedna.algorithms.seen_task_learning.artifact import Task
 
+__all__ = ('TaskDefinitionByOrigin',)
 
-__all__ = ('TaskDefinitionByOrigin')
 
 @ClassFactory.register(ClassType.STP, alias="TaskDefinitionByOrigin")
 class TaskDefinitionByOrigin:
