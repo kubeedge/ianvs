@@ -17,13 +17,15 @@
 import copy
 
 from core.common.constant import ParadigmType
+from core.common.utils import load_module
 from core.testcasecontroller.algorithm.module import Module
-from core.testcasecontroller.algorithm.paradigm import SingleTaskLearning, IncrementalLearning
+from core.testcasecontroller.algorithm.paradigm import SingleTaskLearning, IncrementalLearning, \
+    LifelongLearning
 from core.testcasecontroller.generation_assistant import get_full_combinations
 
-
-# pylint: disable=too-few-public-methods
 class Algorithm:
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-few-public-methods
     """
     Algorithm: typical distributed-synergy AI algorithm paradigm.
     Notes:
@@ -49,7 +51,12 @@ class Algorithm:
     def __init__(self, name, config):
         self.name = name
         self.paradigm_type: str = ""
+        self.third_party_packages: list = []
         self.incremental_learning_data_setting: dict = {
+            "train_ratio": 0.8,
+            "splitting_method": "default"
+        }
+        self.lifelong_learning_data_setting: dict = {
             "train_ratio": 0.8,
             "splitting_method": "default"
         }
@@ -57,6 +64,7 @@ class Algorithm:
         self.modules: list = []
         self.modules_list = None
         self._parse_config(config)
+        self._load_third_party_packages()
 
     def paradigm(self, workspace: str, **kwargs):
         """
@@ -86,6 +94,9 @@ class Algorithm:
         if self.paradigm_type == ParadigmType.INCREMENTAL_LEARNING.value:
             return IncrementalLearning(workspace, **config)
 
+        if self.paradigm_type == ParadigmType.LIFELONG_LEARNING.value:
+            return LifelongLearning(workspace, **config)
+
         return None
 
     def _check_fields(self):
@@ -105,6 +116,11 @@ class Algorithm:
             raise ValueError(
                 f"algorithm incremental_learning_data_setting"
                 f"({self.incremental_learning_data_setting} must be dictionary type.")
+
+        if not isinstance(self.lifelong_learning_data_setting, dict):
+            raise ValueError(
+                f"algorithm lifelong_learning_data_setting"
+                f"({self.lifelong_learning_data_setting} must be dictionary type.")
 
         if not isinstance(self.initial_model_url, str):
             raise ValueError(
@@ -131,7 +147,7 @@ class Algorithm:
         for module in modules:
             hps_list = module.hyperparameters_list
             if not hps_list:
-                modules_list.append((module.type, None))
+                modules_list.append((module.type, [module]))
                 continue
 
             module_list = []
@@ -145,3 +161,16 @@ class Algorithm:
         module_combinations_list = get_full_combinations(modules_list)
 
         return module_combinations_list
+
+    def _load_third_party_packages(self):
+        if len(self.third_party_packages) == 0:
+            return
+
+        for package in self.third_party_packages:
+            name = package["name"]
+            url = package["url"]
+            try:
+                load_module(url)
+            except Exception as err:
+                raise Exception(f"load third party packages(name={name}, url={url}) failed,"
+                                f" error: {err}.") from err

@@ -67,8 +67,8 @@ def get_metric_func(metric_dict: dict):
     name = metric_dict.get("name")
     url = metric_dict.get("url")
     if url:
-        load_module(url)
         try:
+            load_module(url)
             metric_func = ClassFactory.get_cls(type_name=ClassType.GENERAL, t_cls_name=name)
             return name, metric_func
         except Exception as err:
