@@ -39,7 +39,6 @@ cd project
 git clone https://github.com/kubeedge/ianvs.git   
 ```
 
-
 Then, we install third-party dependencies for ianvs. 
 ``` shell
 sudo apt-get update
@@ -55,6 +54,20 @@ We are now ready to install Ianvs.
 ``` shell
 python setup.py install  
 ```
+
+Note:
+If you want to use a separate space to do work, you may select the following method:
+```shell
+python -m pip install --pre envd
+envd bootstrap
+
+cd /ianvs/project/ianvs
+envd build build.envd
+envd up
+```
+refer to the ML tool [envd](https://envd.tensorchord.ai/guide/getting-started.html).
+
+
 
 ## Step 2. Dataset and Model Preparation
 
