@@ -106,7 +106,7 @@ class ParadigmBase:
                 task_definition=self.module_instances.get(
                     ModuleType.TASK_DEFINITION.value),
                 task_relationship_discovery=self.module_instances.get(
-                    ModuleType.TASK_DEFINITION.value),
+                    ModuleType.TASK_RELATIONSHIP_DISCOVERY.value),
                 task_allocation=self.module_instances.get(
                     ModuleType.TASK_ALLOCATION.value),
                 task_remodeling=self.module_instances.get(
