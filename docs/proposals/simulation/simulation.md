@@ -16,7 +16,6 @@ The project is committed to building an edge-cloud collaborative AI Bechmark for
 
 - Provide downloadable open source datasets and data processing scripts for the difficulty in obtaining datasets and supporting algorithms
 - Provides industrial-grade distributed collaborative system simulation for the problem that the repeated deployment of edge-cloud collaboration is too heavy
-- In view of the high cost of solution selection and the obscure problem of value, it supports the calculation and ranking of edge-cloud collaborative AI algorithm indicators
 
 ## Proposal
 
@@ -110,29 +109,32 @@ In the framwork of ianvs, the `simulation controller` is the core module of syst
 The models in `simulation controller` are as follows:
 - The `Simulation System Administrator` is used to
   1. parse the system config(simulation)
-  2. build the simulation enviroment
-  3. create and deploy the moudles needed in simulation enviroment
-  3. close and delete the simulation enviroment
+  2. check the host enviroment, e.g. check if the host has installed docker, kind, and whether memory > 4GB
+  3. build the simulation enviroment
+  4. create and deploy the moudles needed in simulation enviroment
+  5. close and delete the simulation enviroment
 - The `Simulation Job Administrator` is the core module for manage the simulation job, and provides the following funcitons:
-  1. generate the YAML file of `simulation job`
-  2. deploy and delete the `simulation job` in K8s
-  3. list-watch the results of `simulation job` in K8s
+  1. build the docker images of algorithms to be tested
+  2. generate the YAML file of `simulation job`
+  3. deploy and delete the `simulation job` in K8s
+  4. list-watch the results of `simulation job` in K8s
 
-#### Dataflow
+#### Flowchart
 ![img](images/simulation_dataflow.jpg)
 
 The `System Config` denotes the system config of the current benchmarkingjob, such as the `cloud number` and `edge number`.
 
-In the data flow diagram above, the expected flow is as follows:
+In the flowchart diagram above, the expected flow is as follows:
 1. start the benchmarkingjob
 2. check whether to start emulation based on `system config`
 3. `Simulation System Administrator` check environment and parse system config
-  - check environment: eg. check if the host has installed docker, kind, and whether the memory > 4GB
+  - check environment: e.g. check if the host has installed docker, kind, and whether the memory > 4GB
   - parse simulation config
 4. `Simulation System Administrator` build the environment and create needed moudles.
   - build the environment: deploying a cluster including K8s and GM (global manager) locally through [all-in-one scripts of sedna](https://github.com/kubeedge/sedna/blob/527c574a60d0ae87b0436f9a8b38cf84fb6dab21/docs/setup/all-in-one.md)
   - create and deploy the `simulation job controller`
 5. `Simulation Job Administrator` generate and deploy simulation jobs.
+  - build the docker images of algorithms to be tested
   - generate the YAML of simulation job base on `testenv.yaml` and `algorithm.yaml`
   - deploy simulation job: access k8s API-server via `python-k8sclient` to deploy simulation jobs
 6. `Simulation Job Administrator` list-watch the configmap of results: ianvs-simualtion-job-result
