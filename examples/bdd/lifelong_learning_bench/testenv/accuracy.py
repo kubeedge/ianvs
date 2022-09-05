@@ -17,8 +17,8 @@ from tqdm import tqdm
 from sedna.common.class_factory import ClassType, ClassFactory
 
 from RFNet.dataloaders import make_data_loader
-from RFNet.utils.metrics import Evaluator
-from RFNet.utils.args import ValArgs
+from RFNet.myutils.metrics import Evaluator
+from RFNet.myutils.args import ValArgs
 
 __all__ = ('accuracy')
 
