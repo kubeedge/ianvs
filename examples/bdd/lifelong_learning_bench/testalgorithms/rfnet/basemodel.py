@@ -13,7 +13,7 @@ from torchvision import transforms
 from RFNet.train import Trainer
 from RFNet.eval import Validator, load_my_state_dict
 from RFNet.dataloaders import custom_transforms as tr
-from RFNet.utils.args import TrainArgs, ValArgs
+from RFNet.myutils.args import TrainArgs, ValArgs
 
 # set backend
 os.environ['BACKEND_TYPE'] = 'PYTORCH'

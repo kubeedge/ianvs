@@ -6,15 +6,15 @@ import torch
 
 from mypath import Path
 from dataloaders import make_data_loader
-from models.rfnet import RFNet
-from models.resnet.resnet_single_scale_single_attention import *
-from utils.loss import SegmentationLosses
-from models.replicate import patch_replication_callback
-from utils.calculate_weights import calculate_weigths_labels
-from utils.lr_scheduler import LR_Scheduler
-from utils.saver import Saver
-from utils.summaries import TensorboardSummary
-from utils.metrics import Evaluator
+from mymodels.rfnet import RFNet
+from mymodels.resnet.resnet_single_scale_single_attention import *
+from myutils.loss import SegmentationLosses
+from mymodels.replicate import patch_replication_callback
+from myutils.calculate_weights import calculate_weigths_labels
+from myutils.lr_scheduler import LR_Scheduler
+from myutils.saver import Saver
+from myutils.summaries import TensorboardSummary
+from myutils.metrics import Evaluator
 from sedna.datasources import BaseDataSource
 
 class Trainer(object):

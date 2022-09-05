@@ -9,11 +9,11 @@ from PIL import Image
 
 from dataloaders import make_data_loader
 from dataloaders.utils import decode_seg_map_sequence, Colorize
-from utils.metrics import Evaluator
-from models.rfnet import RFNet
-from models import rfnet_for_unseen
-from models.resnet.resnet_single_scale_single_attention import *
-from models.resnet import resnet_single_scale_single_attention_unseen
+from myutils.metrics import Evaluator
+from mymodels.rfnet import RFNet
+from mymodels import rfnet_for_unseen
+from mymodels.resnet.resnet_single_scale_single_attention import *
+from mymodels.resnet import resnet_single_scale_single_attention_unseen
 import torch.backends.cudnn as cudnn
 
 class Validator(object):
@@ -33,12 +33,16 @@ class Validator(object):
 
         # Define network
         if unseen_detection:
+            print("this is unseen detection")
             self.resnet = resnet_single_scale_single_attention_unseen.\
                 resnet18(pretrained=False, efficient=False, use_bn=True)
             self.model = rfnet_for_unseen.RFNet(self.resnet, num_classes=self.num_class, use_bn=True)
         else:
-            self.resnet = resnet18(pretrained=False, efficient=False, use_bn=True)
-            self.model = RFNet(self.resnet, num_classes=self.num_class, use_bn=True)
+            # self.resnet = resnet18(pretrained=False, efficient=False, use_bn=True)
+            # self.model = RFNet(self.resnet, num_classes=self.num_class, use_bn=True)
+            print("=================yolov5 is loading===================")
+            self.model = torch.hub.load('yolov5','custom', path ='/mnt/disk/shifan/ianvs/yolov5s.pt', source='local', device='2')
+            # self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
 
         if args.cuda:
             self.model = torch.nn.DataParallel(self.model, device_ids=self.args.gpu_ids)
