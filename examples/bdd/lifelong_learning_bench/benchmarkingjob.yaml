@@ -16,16 +16,17 @@ benchmarkingjob:
     # test algorithm configuration files; list type;
     algorithms:
       # algorithm name; string type;
-      - name: "yolo_lifelong_learning"
+      - name: "yolo_lifelong_learning_five_model_750data"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
-        url: "./examples/bdd/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml"
+        url: "./examples/bdd/lifelong_learning_bench/testalgorithms/yolo/yolo_algorithm.yaml"
 
   # the configuration of ranking leaderboard
   rank:
     # rank leaderboard with metric of test case's evaluation and order ; list type;
     # the sorting priority is based on the sequence of metrics in the list from front to back;
-    sort_by: [ { "accuracy": "descend" }, { "samples_transfer_ratio": "ascend" } ]
+    # sort_by: [ { "accuracy": "descend" }, { "samples_transfer_ratio": "ascend" } ]
+    sort_by: [ { "map": "descend" }]
 
     # visualization configuration
     visualization:
@@ -57,7 +58,8 @@ benchmarkingjob:
       # currently the options of value are as follows:
       #   1> "all": select all metrics in the leaderboard;
       #   2> metrics in the leaderboard, e.g., "F1_SCORE"
-      metrics: [ "accuracy", "samples_transfer_ratio" ]
+      # metrics: [ "accuracy", "samples_transfer_ratio" ]
+      metrics: [ "map" ]
 
     # model of save selected and all dataitems in workspace `./rank` ; string type;
     # currently the options of value are as follows:
