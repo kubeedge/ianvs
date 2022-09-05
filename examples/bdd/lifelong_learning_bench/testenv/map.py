@@ -387,7 +387,6 @@ def performance_evaluation_map_teacher_feedback(img, teacher, model, conf_thre=0
 def get_boxes_with_results(results, from_numpy=False):
     # if from_numpy is False:
     #     results = np.array(results.pandas().xyxy[0])
-    print(results)
     boundingbox_list = []
     box_list = results[:, 0:4]
     confidence_list = results[:, 4]
@@ -542,11 +541,7 @@ def get_boxes(imgs, teacher, models):
 @ClassFactory.register(ClassType.GENERAL, alias="map")
 def map(y_true, y_pred, **kwargs):
     map = []
-    # assert len(y_pred) == len(y_true)
-    # print(len(y_pred))
-    # print(len(y_true))
-    # y_pred = y_pred[0]
-    # print(y_true[28])
+    assert len(y_pred) == len(y_true)
     space = []
     for i in range(0, len(y_pred)):
         with open(y_true[i], "r")as f:
@@ -564,37 +559,9 @@ def map(y_true, y_pred, **kwargs):
         if not new_l:
             space.append(i)
             continue
-        y_pred_i = np.array([item.cpu().detach().numpy() for item in y_pred[i]])
-        print(">>>>>>>>>>>>>>>>>>>>>>>>>"+str(i))
-        map.append(get_mAP_with_results(np.array(new_l), np.array(y_pred_i)))
-        print("where is the number???")
+        # y_pred_i = np.array([item.cpu().detach().numpy() for item in y_pred[i]])
+        # map.append(get_mAP_with_results(np.array(new_l), np.array(y_pred_i)))
+        map.append(get_mAP_with_results(np.array(new_l), np.array(y_pred[i])))
     # with open(y_true, "r")as f:
     #     text = f.readlines()
-    # new_l = []
-    # for item in text:
-    #     new_item= []
-    #     item_split = []
-    #     item_split = item.split("\n")[:-1][0].split(" ")
-    #     # new_item.extend(map(float, item_split[1:]))
-    #     for i in range(1,5):
-    #         new_item.append(float(item_split[i]))
-    #     new_item.append(float(1))
-    #     new_item.append(int(float(item_split[0])))
-    #     new_l.append(np.array(new_item))
-   
-    # print(new_l)
-    # print(len(new_l))
-    # print("================In map==================================")
-    # print(y_pred[0])
-    # print(y_pred)
-    # y_pred = np.array([item.cpu().detach().numpy() for item in y_pred])
-    # # print(new_l)
-    # # print(new_l)
-    # # print()
-    # # print("CPA:{}, mIoU:{}, fwIoU: {}".format(CPA, mIoU, FWIoU))
-    # map = get_mAP_with_results(np.array(new_l), np.array(y_pred))
-    # print("*************I get map*****************")
-    # print(map)
-    print("This is all the space y_true and their index")
-    print(space)
     return np.mean(map)

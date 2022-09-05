@@ -85,7 +85,7 @@ class LifelongLearning(ParadigmBase):
         rounds = self.incremental_rounds
         samples_transfer_ratio_info = self.system_metric_info.get(
             SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
-        if self.mode != 'inference': 
+        if self.mode != 'multi-inference': 
             dataset_files = self._split_dataset(splitting_dataset_times=rounds)
             # pylint: disable=C0103
             for r in range(1, rounds + 1):
@@ -141,10 +141,11 @@ class LifelongLearning(ParadigmBase):
         inference_results = []
         unseen_tasks = []
         unseen_task_labels = []
-        for i, _ in enumerate(inference_dataset.x[:1]):
+        kwargs = {"mode": self.mode}
+        for i, _ in enumerate(inference_dataset.x):
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
-            res, is_unseen_task, _ = job.inference(data)
+            res, is_unseen_task, _ = job.inference(data, **kwargs)
             inference_results.append(res)
             if is_unseen_task:
                 unseen_tasks.append(inference_dataset.x[i])
