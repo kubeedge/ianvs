@@ -137,3 +137,6 @@ dataset
 
 # workspace
 lifelong_learning_bench/workspace
+
+# workspace
+yolo_lifelong_learning_bench/workspace
