@@ -13,6 +13,4 @@
 # limitations under the License.
 
 # pylint: disable=missing-module-docstring
-from .incremental_learning import IncrementalLearning
-from .singletask_learning import SingleTaskLearning
 from .multiedge_inference import MultiedgeInference
