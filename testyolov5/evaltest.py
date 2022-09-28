@@ -31,3 +31,4 @@ weight_list = ['all.pt', 'bdd.pt', 'traffic_0.pt', 'bdd_street.pt', 'bdd_clear.p
                       'bdd_snowy.pt', 'bdd_rainy.pt', 'bdd_night.pt', 'soda.pt', 'bdd_cloudy.pt', 'bdd_cloudy_night.pt',
                       'bdd_highway_residential.pt', 'bdd_snowy_rainy.pt', 'soda_t1.pt']
 model = torch.hub.load('ultralytics/yolov5', 'custom', path=selected_model_path+weight_list[0])
+ # vertify weather the signature is useful
