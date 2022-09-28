@@ -36,8 +36,8 @@ from sedna.common.class_factory import ClassFactory, ClassType
 __all__ = ('DefaultTaskRemodeling',)
 
 
-@ClassFactory.register(ClassType.STP)
-class DefaultTaskRemodeling:
+@ClassFactory.register(ClassType.STP, alias="TaskRemodeling")
+class TaskRemodeling:
     """
     Assume that each task is independent of each other
     """
@@ -50,25 +50,8 @@ class DefaultTaskRemodeling:
         Grouping based on assigned tasks
         """
         mappings = np.array(mappings)
-        data, models = [], []
-        d_type = samples.data_type
-        for m in np.unique(mappings):
-            task_df = BaseDataSource(data_type=d_type)
-            _inx = np.where(mappings == m)
-            if isinstance(samples.x, pd.DataFrame):
-                task_df.x = samples.x.iloc[_inx]
-            else:
-                task_df.x = np.array(samples.x)[_inx]
-            if d_type != "test":
-                if isinstance(samples.x, pd.DataFrame):
-                    task_df.y = samples.y.iloc[_inx]
-                else:
-                    task_df.y = np.array(samples.y)[_inx]
-            task_df.inx = _inx[0].tolist()
-            if samples.meta_attr is not None:
-                task_df.meta_attr = np.array(samples.meta_attr)[_inx]
-            data.append(task_df)
-            # TODO: if m is out of index
+        data, models = samples, []
+        for m in mappings:
             try:
                 model = self.models[m]
             except Exception as err:

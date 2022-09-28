@@ -77,5 +77,6 @@ class TaskDefinitionByOrigin:
         g_attr = "sim_semantic_segamentation_model"
         task_obj = Task(entry=g_attr, samples=sim_df, meta_attr="sim")
         tasks.append(task_obj)
+        print("=========brigin  defitinito================")
 
         return tasks, task_index, samples

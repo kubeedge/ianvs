@@ -53,3 +53,4 @@ def accuracy(y_true, y_pred, **kwargs):
 
     print("CPA:{}, mIoU:{}, fwIoU: {}".format(CPA, mIoU, FWIoU))
     return CPA
+
