@@ -62,16 +62,17 @@ class BaseModel:
 
         return self.train_model_url
 
-    def predict(self, data, **kwargs):
-        if not isinstance(data[0][0], dict):
-            data = self._preprocess(data)
+    def predict(self, data, with_nms, model_forward_result, only_nms, conf, **kwargs):
+        print("=============begin predict in basdemodel==========")
+        # if not isinstance(data[0][0], dict):
+        #     data = self._preprocess(data)
 
         if type(data) is np.ndarray:
             data = data.tolist()
 
-        self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
-                                                pin_memory=True)
-        return self.validator.validate()
+        # self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
+        #                                         pin_memory=True)
+        return self.validator.validate(data, with_nms, model_forward_result, only_nms, conf)
 
     def evaluate(self, data, **kwargs):
         self.val_args.save_predicted_image = kwargs.get("save_predicted_image", True)
@@ -85,11 +86,18 @@ class BaseModel:
 
     def load(self, model_url, **kwargs):
         if model_url:
-            self.validator.new_state_dict = torch.load(model_url, map_location=torch.device("cpu"))
+            print("There is model url==================")
+            print(model_url)
+            # self.validator.new_state_dict = torch.load(model_url, map_location=torch.device("cpu"))
+            # self.validator.new_state_dict = torch.hub.load('yolov5','custom', path = model_url, source='local', device='0')
+            self.validator.new_state_dict = torch.hub.load('/home/shifan/.cache/torch/hub/ultralytics_yolov5_master', 'custom', path=model_url, source='local')
+            # self.validator.new_state_dict = torch.hub.load('ultralytics/yolov5', 'custom', path=model_url)
             self.train_args.resume = model_url
+            # self.validator.model = torch.hub.load('yolov5','custom', path = model_url, source='local', device='0')
+            self.validator.model = torch.hub.load('/home/shifan/.cache/torch/hub/ultralytics_yolov5_master', 'custom', path=model_url, source='local')
         else:
             raise Exception("model url does not exist.")
-        self.validator.model = load_my_state_dict(self.validator.model, self.validator.new_state_dict['state_dict'])
+        # self.validator.model = load_my_state_dict(self.validator.model, self.validator.new_state_dict['state_dict'])
 
     def save(self, model_path=None):
         # TODO: save unstructured data model

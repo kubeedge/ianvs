@@ -84,31 +84,31 @@ class LifelongLearning(ParadigmBase):
         rounds = self.incremental_rounds
         samples_transfer_ratio_info = self.system_metric_info.get(
             SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
-        dataset_files = self._split_dataset(splitting_dataset_times=rounds)
+        #------my skip the training part----------
+        # dataset_files = self._split_dataset(splitting_dataset_times=rounds)
+        # # pylint: disable=C0103
+        # for r in range(1, rounds + 1):
+        #     if r == 1:
+        #         train_dataset_file, eval_dataset_file = dataset_files[r - 1]
+        #         self.cloud_task_index = self._train(self.cloud_task_index, train_dataset_file, r)
+        #         self.edge_task_index = self._eval(self.cloud_task_index, eval_dataset_file, r)
 
-        # pylint: disable=C0103
-        for r in range(1, rounds + 1):
-            if r == 1:
-                train_dataset_file, eval_dataset_file = dataset_files[r - 1]
-                self.cloud_task_index = self._train(self.cloud_task_index, train_dataset_file, r)
-                self.edge_task_index = self._eval(self.cloud_task_index, eval_dataset_file, r)
+        #     else:
+        #         infer_dataset_file, eval_dataset_file = dataset_files[r - 1]
 
-            else:
-                infer_dataset_file, eval_dataset_file = dataset_files[r - 1]
+        #         inference_results, unseen_task_train_samples = self._inference(self.edge_task_index,
+        #                                                                        infer_dataset_file,
+        #                                                                        r)
+        #         samples_transfer_ratio_info.append((inference_results, unseen_task_train_samples.x))
 
-                inference_results, unseen_task_train_samples = self._inference(self.edge_task_index,
-                                                                               infer_dataset_file,
-                                                                               r)
-                samples_transfer_ratio_info.append((inference_results, unseen_task_train_samples.x))
+        #         # If no unseen task samples in the this round, starting the next round
+        #         if len(unseen_task_train_samples.x) <= 0:
+        #             continue
 
-                # If no unseen task samples in the this round, starting the next round
-                if len(unseen_task_train_samples.x) <= 0:
-                    continue
-
-                self.cloud_task_index = self._train(self.cloud_task_index,
-                                                    unseen_task_train_samples,
-                                                    r)
-                self.edge_task_index = self._eval(self.cloud_task_index, eval_dataset_file, r)
+        #         self.cloud_task_index = self._train(self.cloud_task_index,
+        #                                             unseen_task_train_samples,
+        #                                             r)
+        #         self.edge_task_index = self._eval(self.cloud_task_index, eval_dataset_file, r)
 
         test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
                                                               self.dataset.test_url,
@@ -142,11 +142,14 @@ class LifelongLearning(ParadigmBase):
         unseen_tasks = []
         unseen_task_labels = []
         for i, _ in enumerate(inference_dataset.x):
+            print(">>>>>>>>>>>>>>>>>>This is {} test".format(i))
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
             res, is_unseen_task, _ = job.inference(data)
-
-            inference_results.extend(res)
+            inference_results.append(res)
+            # print(">>>>>>>>>>>>>This is the process of res extend")
+            # print(len(res))
+            # print(len(inference_results))
             if is_unseen_task:
                 unseen_tasks.append(inference_dataset.x[i])
                 unseen_task_labels.append(inference_dataset.y[i])

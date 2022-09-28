@@ -40,86 +40,98 @@ class Validator(object):
         else:
             # self.resnet = resnet18(pretrained=False, efficient=False, use_bn=True)
             # self.model = RFNet(self.resnet, num_classes=self.num_class, use_bn=True)
-            print("=================yolov5 is loading===================")
-            self.model = torch.hub.load('yolov5','custom', path ='/mnt/disk/shifan/ianvs/yolov5s.pt', source='local', device='2')
+            # print("=================yolov5 is loading===================")
+            # self.model = torch.hub.load('yolov5','custom', path ='/mnt/disk/shifan/ianvs/yolov5s.pt', source='local', device='2')
             # self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
+            self.model = None
 
-        if args.cuda:
-            self.model = torch.nn.DataParallel(self.model, device_ids=self.args.gpu_ids)
-            self.model = self.model.cuda()
-            cudnn.benchmark = True  # accelarate speed
-        print('Model loaded successfully!')
+        # if args.cuda:
+        #     self.model = torch.nn.DataParallel(self.model, device_ids=self.args.gpu_ids)
+        #     self.model = self.model.cuda()
+        #     cudnn.benchmark = True  # accelarate speed
+        # print('Model loaded successfully!')
 
         # # Load weights
         # assert os.path.exists(args.weight_path), 'weight-path:{} doesn\'t exit!'.format(args.weight_path)
         # self.new_state_dict = torch.load(args.weight_path, map_location=torch.device("cpu"))
         # self.model = load_my_state_dict(self.model, self.new_state_dict['state_dict'])
 
-    def validate(self):        
+    # def validate(self):
+    def validate(self, data, with_nms, model_forward_result, only_nms, conf):
         self.model.eval()
         self.evaluator.reset()
         # tbar = tqdm(self.test_loader, desc='\r')
         predictions = []
-        for sample, image_name in self.test_loader:
-            if self.args.depth:
-                image, depth, target = sample['image'], sample['depth'], sample['label']
-            else:
-                # spec = time.time()
-                image, target = sample['image'], sample['label']            
+        if not with_nms:   
+            result = self.model(data, with_nms=with_nms, size=640)     
+            return result
+        else:
+            result = self.model(data, model_forward_result=model_forward_result, only_nms=only_nms, conf=conf)            
+            predictions.append(np.array(result.pandas().xywhn[0]))
+            return predictions
+        # print("predictions ok!!!!!!!!!!!!!!!!!")
+        # print(np.array(result.pandas().xywhn[0]))
+        # print(type(result.pandas().xywhn[0]))
+        # for sample, image_name in self.test_loader:
+        #     if self.args.depth:
+        #         image, depth, target = sample['image'], sample['depth'], sample['label']
+        #     else:
+        #         # spec = time.time()
+        #         image, target = sample['image'], sample['label']            
             
-            if self.args.cuda:
-                image = image.cuda()
-                if self.args.depth:
-                    depth = depth.cuda()
+        #     if self.args.cuda:
+        #         image = image.cuda()
+        #         if self.args.depth:
+        #             depth = depth.cuda()
                     
-            with torch.no_grad():
-                if self.args.depth:
-                    output = self.model(image, depth)
-                else:
-                    output = self.model(image)
+        #     with torch.no_grad():
+        #         if self.args.depth:
+        #             output = self.model(image, depth)
+        #         else:
+        #             output = self.model(image)
                     
-            if self.args.cuda:
-                torch.cuda.synchronize()
+        #     if self.args.cuda:
+        #         torch.cuda.synchronize()
 
-            pred = output.data.cpu().numpy()
-            # todo
-            pred = np.argmax(pred, axis=1)
-            predictions.append(pred)
+        #     pred = output.data.cpu().numpy()
+        #     # todo
+        #     pred = np.argmax(pred, axis=1)
+        #     predictions.append(pred)
 
-            if not self.args.save_predicted_image:
-                continue
+        #     if not self.args.save_predicted_image:
+        #         continue
             
-            pre_colors = Colorize()(torch.max(output, 1)[1].detach().cpu().byte())
-            pre_labels = torch.max(output, 1)[1].detach().cpu().byte()
-            print(pre_labels.shape)
-            # save
-            for i in range(pre_colors.shape[0]):
-                print(image_name[0])
+        #     pre_colors = Colorize()(torch.max(output, 1)[1].detach().cpu().byte())
+        #     pre_labels = torch.max(output, 1)[1].detach().cpu().byte()
+        #     print(pre_labels.shape)
+        #     # save
+        #     for i in range(pre_colors.shape[0]):
+        #         print(image_name[0])
 
-                if not image_name[0]:
-                    img_name = "test.png"
-                else:
-                    img_name = os.path.basename(image_name[0])
+        #         if not image_name[0]:
+        #             img_name = "test.png"
+        #         else:
+        #             img_name = os.path.basename(image_name[0])
 
-                color_label_name = os.path.join(self.args.color_label_save_path, img_name)
-                label_name = os.path.join(self.args.label_save_path, img_name)
-                merge_label_name = os.path.join(self.args.merge_label_save_path, img_name)
+        #         color_label_name = os.path.join(self.args.color_label_save_path, img_name)
+        #         label_name = os.path.join(self.args.label_save_path, img_name)
+        #         merge_label_name = os.path.join(self.args.merge_label_save_path, img_name)
 
-                os.makedirs(os.path.dirname(color_label_name), exist_ok=True)
-                os.makedirs(os.path.dirname(merge_label_name), exist_ok=True)
-                os.makedirs(os.path.dirname(label_name), exist_ok=True)
+        #         os.makedirs(os.path.dirname(color_label_name), exist_ok=True)
+        #         os.makedirs(os.path.dirname(merge_label_name), exist_ok=True)
+        #         os.makedirs(os.path.dirname(label_name), exist_ok=True)
 
-                pre_color_image = ToPILImage()(pre_colors[i])  # pre_colors.dtype = float64
-                pre_color_image.save(color_label_name)
+        #         pre_color_image = ToPILImage()(pre_colors[i])  # pre_colors.dtype = float64
+        #         pre_color_image.save(color_label_name)
 
-                pre_label_image = ToPILImage()(pre_labels[i])
-                pre_label_image.save(label_name)
+        #         pre_label_image = ToPILImage()(pre_labels[i])
+        #         pre_label_image.save(label_name)
 
-                if (self.args.merge):
-                    image_merge(image[i], pre_color_image, merge_label_name)
-                    print('save image: {}'.format(merge_label_name))
+        #         if (self.args.merge):
+        #             image_merge(image[i], pre_color_image, merge_label_name)
+        #             print('save image: {}'.format(merge_label_name))
             
-        return predictions
+        # return predictions
   
     def task_divide(self):
         seen_task_samples, unseen_task_samples = [], []
