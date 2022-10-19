@@ -80,7 +80,7 @@ The expected implementation method is to modify `dataset.py` in the `testenvmana
 1. Add `self.dataset_url`, `self.dataset_path`
 2. Add `download_save()` function
 
-![](https://github.com/iszhyang/images/blob/main/ianvs/dataset-download.png?raw=true)
+![](images/dataset-download.png)
 
 ### Semantic segmentation dataset and corresponding algorithm
 
@@ -94,7 +94,7 @@ We will provide the cityscapes dataset and corresponding methods for ianvs. The 
 - dataset download link
   - provide the download link of cityscapes dataset in HUAWEI Cloud OBS.
 - Baseline algorithm
-  ![](https://github.com/iszhyang/images/blob/main/ianvs/rfnet.png?raw=true)
+  ![](images/rfnet.png)
 
 ### Industrial Distributed Collaborative System Simulation
 
