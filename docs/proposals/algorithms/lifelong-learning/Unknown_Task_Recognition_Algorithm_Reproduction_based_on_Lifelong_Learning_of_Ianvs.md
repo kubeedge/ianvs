@@ -112,14 +112,14 @@ Usage Process
 ```yaml
 - type: "unseen_sample_recognition"
 # name of python module; string type;
-	name: "UnseenSampleRecognitionByScene"
+  name: "UnseenSampleRecognitionByScene"
 # the url address of python module; string type;
-	url: "./examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/unseen_sample_recognition_by_scene.py"
+  url: "./examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/unseen_sample_recognition_by_scene.py"
 # hyperparameters configuration for the python module; list type;
-	hyperparameters:
-		- model_path:
-			values:
-				- "./examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/models/Epochofprose17.pth"
+  hyperparameters:
+    - model_path:
+      values:
+        - "./examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/models/Epochofprose17.pth"
 ```
 
 
@@ -128,7 +128,7 @@ Usage Process
 
 Two datasets, SYNTHIA, and cityscape, were selected for this project. Because SYNTHIA is often easier to obtain than the real urban road dataset as simulated by the simulator in a real research environment, it is treated as known task data for model pre-training, while the real urban landscape image acquisition requires more resources and is more difficult to obtain, so it is treated as unknown task data.
 
-You can check [here](https://github.com/Frank-lilinjie/ianvs/tree/feature-lifelong-n/docs/proposals/algorithms/lifelong-learning/curb_detetion_datasets.md) for more details about curb_detetion_datasets.
+You can check [here](https://github.com/Frank-lilinjie/ianvs/tree/main/docs/proposals/algorithms/lifelong-learning/curb_detetion_datasets.md) for more details about curb_detetion_datasets.
 
 ## 5 Design Details
 
@@ -182,7 +182,7 @@ In the testing phase, the test set consists of a combination of known and unknow
 
 WideResnet source code: [WideResnet](https://github.com/szagoruyko/wide-residual-networks)
 
-PROSER Algorithm principle: [PROSER](https://github.com/Frank-lilinjie/ianvs/tree/feature-lifelong-n/docs/proposals/algorithms/lifelong-learning/Open-set recognition Learning Placeholders.md)
+PROSER Algorithm principle: [PROSER](https://github.com/Frank-lilinjie/ianvs/tree/main/docs/proposals/algorithms/lifelong-learning/lifelong-learning/Open-set_recognition_Learning_Placeholders.md)
 
 
 
