@@ -182,7 +182,7 @@ In the testing phase, the test set consists of a combination of known and unknow
 
 WideResnet source code: [WideResnet](https://github.com/szagoruyko/wide-residual-networks)
 
-PROSER Algorithm principle: [PROSER](https://github.com/Frank-lilinjie/ianvs/tree/main/docs/proposals/algorithms/lifelong-learning/lifelong-learning/Open-set_recognition_Learning_Placeholders.md)
+PROSER Algorithm principle: [PROSER](https://github.com/Frank-lilinjie/ianvs/tree/main/docs/proposals/algorithms/lifelong-learning/Open-set_recognition_Learning_Placeholders.md)
 
 
 
