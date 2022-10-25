@@ -45,7 +45,7 @@ def plot_cmc(distmat, query_ids, gallery_ids, topk):
     cmc.yaxis.set_major_formatter(mtick.PercentFormatter(1.00))
     cmc.set(xlim=(0, topk), ylim=(0, 1))
     fig = cmc.get_figure()
-    output_dir = Path("./examples/pedestrian_tracking/cmc")
+    output_dir = Path("./examples/pedestrian_tracking/multiedge_inference_bench/cmc")
     output_dir.mkdir(parents=True, exist_ok=True)
     output_file = Path(output_dir, datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ".png")
     fig.savefig(output_file)

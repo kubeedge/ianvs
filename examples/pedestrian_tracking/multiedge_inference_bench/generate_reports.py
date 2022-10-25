@@ -1,3 +1,17 @@
+# Modified Copyright 2022 The KubeEdge Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import argparse
 import datetime
 import pandas as pd
@@ -11,13 +25,13 @@ class PDF(FPDF):
         super().__init__()
         self.WIDTH = 210
         self.HEIGHT = 297
-        
+
     def header(self):
         self.set_font('Arial', 'B', 11)
         self.cell(self.WIDTH - 80)
         self.cell(60, 1, 'Test report', 0, 0, 'R')
         self.ln(20)
-        
+
     def page_body(self, results):
         # Determine how many plots there are per page and set positions
         # and margins accordingly
@@ -48,7 +62,7 @@ class PDF(FPDF):
         self.text(20, 255, "Rank 2: " + "{:.2%}".format(reid_result["rank_2"]))
         self.text(20, 265, "Rank 5: " + "{:.2%}".format(reid_result["rank_5"]))
         self.image(reid_result["cmc"], 100, 185, 100)
-            
+
     def print_page(self, results):
         # Generates the report
         self.add_page()
@@ -76,7 +90,7 @@ def main():
         reid_result = reid_rank.sort_values(by="time", ascending=False).iloc[0]
         pdf = PDF()
         pdf.print_page([tracking_result, reid_result])
-        output_dir = Path("./examples/pedestrian_tracking/reports")
+        output_dir = Path("./examples/pedestrian_tracking/multiedge_inference_bench/reports")
         output_dir.mkdir(parents=True, exist_ok=True)
         pdf.output(Path(output_dir, datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ".pdf"), "F")
     except Exception as err:

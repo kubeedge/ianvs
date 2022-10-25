@@ -51,7 +51,7 @@ ianvs -f ./examples/pedestrian_tracking/multiedge_inference_bench/tracking_job.y
 ```
 
 The benchmarking process takes a few minutes and varies depending on devices.
-Finally, the user can check the result of benchmarking on the console and also in the output path( /ianvs/multiedge_inference_bench/workspace) defined in the benchmarking config file ( tracking_job.yaml). 
+Finally, the user can check the result of benchmarking on the console and also in the output path( /ianvs/multiedge_inference_bench/workspace) defined in the benchmarking config file ( tracking_job.yaml).
 The final output might look like this:
 
 |rank  |algorithm                | mota | f1_score  |motp  |recall  |idf1  |precision  |paradigm            |basemodel  |batch_size  |time                     |url                                                                                                                             |
@@ -82,7 +82,7 @@ ianvs -f ./examples/pedestrian_tracking/multiedge_inference_bench/reid_job.yaml
 ```
 
 The benchmarking process takes a few minutes and varies depending on devices.
-Finally, the user can check the result of benchmarking on the console and also in the output path( /ianvs/multiedge_inference_bench/workspace) defined in the benchmarking config file ( reid_job.yaml). 
+Finally, the user can check the result of benchmarking on the console and also in the output path( /ianvs/multiedge_inference_bench/workspace) defined in the benchmarking config file ( reid_job.yaml).
 The final output might look like this:
 
 |rank  |algorithm                |rank_1  |mAP  |cmc  |rank_2  |rank_5  |paradigm            |basemodel  |batch_size  |time                     |url                                                                                                                             |
@@ -93,12 +93,12 @@ The final output might look like this:
 ## Step 3. Generate test report
 
 ```shell
-python ./examples/pedestrian_tracking/generate_reports.py \
+python ./examples/pedestrian_tracking/multiedge_inference_bench/generate_reports.py \
 -t ./examples/pedestrian_tracking/multiedge_inference_bench/tracking_job.yaml \
 -r ./examples/pedestrian_tracking/multiedge_inference_bench/reid_job.yaml
 ```
 
-Finally, the report is generated under <Ianvs_HOME>/examples/multiedge_inference/reports. You can also check the sample report under the current directory.
+Finally, the report is generated under <Ianvs_HOME>/examples/pedestrian_tracking/multiedge_inference_bench/reports. You can also check the sample report under the current directory.
 
 ## What is next
 
@@ -116,7 +116,7 @@ If the reader is ready to explore more on this example, e.g. upload custom algor
 
 [How to contribute test environments](../../docs/guides/how-to-contribute-test-environments.md)
 
-If any problems happen, the user can refer to [the issue page on Github](https://github.com/kubeedge/ianvs/issues) for help and are also welcome to raise any new issue. 
+If any problems happen, the user can refer to [the issue page on Github](https://github.com/kubeedge/ianvs/issues) for help and are also welcome to raise any new issue.
 
 Enjoy your journey on Ianvs!
 
