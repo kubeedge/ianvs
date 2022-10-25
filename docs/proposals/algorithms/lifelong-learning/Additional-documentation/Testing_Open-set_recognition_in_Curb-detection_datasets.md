@@ -6,7 +6,7 @@ Traditional classiﬁers are deployed under a closed-set setting, with both trai
 
 This test aims to reproduce the CVPR2021 paper "Learning placeholders for open-set recognition".
 
-See [here](https://github.com/Frank-lilinjie/ianvs/tree/feature-lifelong-n/docs/proposals/algorithms/lifelong-learning/Unknown-task-recognition/Open-set recognition Learning Placeholders.md) for details
+See [here](https://github.com/Frank-lilinjie/ianvs/tree/main/docs/proposals/algorithms/lifelong-learning/Additional-documentation/Open-set_recognition_Learning_Placeholders.md) for details
 
 
 
@@ -14,7 +14,7 @@ See [here](https://github.com/Frank-lilinjie/ianvs/tree/feature-lifelong-n/docs/
 
 Two datasets, SYNTHIA, and cityscape, were selected for this project. Because SYNTHIA is often easier to obtain than the real urban road dataset as simulated by the simulator in a real research environment, it is treated as known task data for model pre-training, while the real urban landscape image acquisition requires more resources and is more difficult to obtain, so it is treated as unknown task data.
 
-See [here](https://github.com/Frank-lilinjie/ianvs/tree/feature-lifelong-n/docs/proposals/algorithms/lifelong-learning/Unknown-task-recognition/curb_detetion_datasets.md) for details
+See [here](https://github.com/Frank-lilinjie/ianvs/tree/main/docs/proposals/algorithms/lifelong-learning/Additional-documentation/curb_detetion_datasets.md) for details
 
 
 
@@ -47,7 +47,7 @@ benchmarkingjob:
         url: "./examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml"
 ```
 
-Key settings of the algorithm to incremental learning are as follows:
+Key settings of the algorithm are as follows:
 
 ```yaml
 algorithm:
@@ -118,25 +118,58 @@ algorithm:
       hyperparameters:
         -model_path:
           values:
-            - "./models/test_model_scene/Epochofprose7.pth"
-        -path_inference_sample:
-          values:
-            - "./datasets/inference_dataset/inference/inference"
-        -path_inference_dataset:
-          values:
-            - "./datasets/inference_dataset/inference"
-        -path_seen_sample:
-          values:
-            - "./datasets/inference_dataset/seen_sample"
-        -path_unseen_sample:
-          values:
-            - "./datasets/inference_dataset/unseen_sample"
+            - "/examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/results/Epochofprose17.pth"
 ```
 
 
 
 ## Benchmark Result
 
+| rank | algorithm               | accuracy            | samples_transfer_ratio | paradigm         | basemodel | task_definition        | task_allocation        | unseen_sample_recognition      | basemodel-learning_rate | task_definition-origins | task_allocation-origins | unseen_sample_recognition-model_path                         | time                | url                                                          |
+| ---- | ----------------------- | ------------------- | ---------------------- | ---------------- | --------- | ---------------------- | ---------------------- | ------------------------------ | ----------------------- | ----------------------- | ----------------------- | ------------------------------------------------------------ | ------------------- | ------------------------------------------------------------ |
+| 1    | rfnet_lifelong_learning | 0.30090234155994056 | 0.4535                 | lifelonglearning | BaseModel | TaskDefinitionByOrigin | TaskAllocationByOrigin | UnseenSampleRecognitionByScene | 0.0001                  | ['real', 'sim']         | ['real', 'sim']         | /examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/results/Epochofprose17.pth | 2022-10-25 14:50:01 | /ianvs/lifelong_learning_bench/workspace/benchmarkingjob/rfnet_lifelong_learning/1dfff552-542f-11ed-b875-b07b25dd6922 |
+
 
 
 ## Effect Display
+
+In this project, the known category is labeled as 1, and the unknown category is labeled as 0.
+
+This is the recognition result of some known classes, where *target* is the original tag and *predict* is the predicted value.
+
+<center>
+  <img src="images/KnownResults.png" style="zoom: 50%;" />
+  <br>
+  <dir style="color:orange; border-bottom: 1px solid #d9d9d9;
+              display: inline-block;
+              color: #999;
+              padding: 2px;">
+    Cityscape's RGB images
+  </dir>
+</center>
+
+This is the recognition result of some unknown classes, where *target* is the original tag and *predict* is the predicted value.
+
+<center>
+  <img src="images/UnknownResults.png" style="zoom: 50%;" />
+  <br>
+  <dir style="color:orange; border-bottom: 1px solid #d9d9d9;
+              display: inline-block;
+              color: #999;
+              padding: 2px;">
+    Cityscape's RGB images
+  </dir>
+</center>
+
+Results.
+
+<center>
+  <img src="images/Results.png" style="zoom: 50%;" />
+  <br>
+  <dir style="color:orange; border-bottom: 1px solid #d9d9d9;
+              display: inline-block;
+              color: #999;
+              padding: 2px;">
+    Cityscape's RGB images
+  </dir>
+</center>

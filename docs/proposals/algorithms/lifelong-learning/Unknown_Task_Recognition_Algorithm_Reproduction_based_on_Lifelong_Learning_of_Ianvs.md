@@ -128,7 +128,7 @@ Usage Process
 
 Two datasets, SYNTHIA, and cityscape, were selected for this project. Because SYNTHIA is often easier to obtain than the real urban road dataset as simulated by the simulator in a real research environment, it is treated as known task data for model pre-training, while the real urban landscape image acquisition requires more resources and is more difficult to obtain, so it is treated as unknown task data.
 
-You can check [here](https://github.com/Frank-lilinjie/ianvs/tree/main/docs/proposals/algorithms/lifelong-learning/curb_detetion_datasets.md) for more details about curb_detetion_datasets.
+You can check [here](https://github.com/Frank-lilinjie/ianvs/tree/main/docs/proposals/algorithms/lifelong-learning/Additional-documentation/curb_detetion_datasets.md) for more details about curb_detetion_datasets.
 
 ## 5 Design Details
 
@@ -140,11 +140,29 @@ This part of the training model algorithm uses the RFNet method mentioned in the
 
 The entire network architecture of RFNet is shown in Fig. In the encoder part of the architecture, we design two independent branches to extract features for RGB and depth images separately RGB branch is the main branch, and the Depth branch is the subordinate branch. In both branches, we choose ResNet18 [30] as the backbone to extract features from inputs because ResNet-18 has moderate depth and residual structure, and its small operation footprint is compatible with the real-time operation. After each layer of ResNet-18, the output features from the Depth branch are fused to the RGB branch after the Attention Feature Complementary (AFC) module. The spatial pyramid pooling (SPP) block gathers the fused RGB-D features from two branches and produces feature maps with multi-scale information. Finally, referring to SwiftNet, we design the efﬁcient upsampling modules to restore the resolution of these feature maps with skip connections from the RGB branch.
 
-<img src="images/Overview_of_RFNet.png" style="zoom:50%;" />
+<center>
+  <img src="images/Overview_of_RFNet.png" style="zoom: 33%;" />
+  <br>
+  <dir style="color:orange; border-bottom: 1px solid #d9d9d9;
+              display: inline-block;
+              color: #999;
+              padding: 2px;">
+  </dir>
+</center>
 
 Fig. shows some examples from the validation set of Cityscapes and Lost and Found, which demonstrates the excellent segmentation accuracy of our RFNet in various scenarios with or without small obstacles.
 
-<img src="images/example.png" style="zoom:33%;" />
+<center>
+  <img src="images/example.png" style="zoom: 33%;" />
+  <br>
+  <dir style="color:orange; border-bottom: 1px solid #d9d9d9;
+              display: inline-block;
+              color: #999;
+              padding: 2px;">
+  </dir>
+</center>
+
+
 
 You can check [RFnet](https://github.com/AHupuJR/RFNet) for more details.
 
@@ -156,7 +174,16 @@ For this project, we use two datasets to train the models separately: cityscape 
 
 #### 5.2.1 workflow
 
-<img src="images/task_definition.png" style="zoom:33%;" />
+<center>
+  <img src="images/task_definition.png" style="zoom: 33%;" />
+  <br>
+  <dir style="color:orange; border-bottom: 1px solid #d9d9d9;
+              display: inline-block;
+              color: #999;
+              padding: 2px;">
+  task definition
+  </dir>
+</center>
 
 
 
@@ -168,21 +195,53 @@ This project aims to reproduce the CVPR2021 paper "Learning placeholders for ope
 
 The following is the workflow of the unknown task identification module. When faced with an inference task, the unknown task identification algorithm can give a timely indication of which data are known and which are unknown in the data set.
 
-<img src="images/unknow.png" style="zoom:50%;" />
+<center>
+  <img src="images/unknow.png" style="zoom: 50%;" />
+  <br>
+  <dir style="color:orange; border-bottom: 1px solid #d9d9d9;
+              display: inline-block;
+              color: #999;
+              padding: 2px;">
+  </dir>
+</center>
+
+
 
 #### 5.3.2 Neural network structure
 
 For the model network structure of this project, WideResnet network + placeholder is selected, and the following is the schematic diagram of model training. As shown in the figure, in the training phase, we use real camera acquisition data and simulator data as known class training data set, and train the model after WideResnet+Proser algorithm.
 
-<img src="images/Training.png" alt="Training" style="zoom:48%;" />
+<center>
+  <img src="images/Training.png" style="zoom: 50%;" />
+  <br>
+  <dir style="color:orange; border-bottom: 1px solid #d9d9d9;
+              display: inline-block;
+              color: #999;
+              padding: 2px;">
+    Training processing
+  </dir>
+</center>
 
 In the testing phase, the test set consists of a combination of known and unknown class data, where the known class data are camera capture images and simulator images, while the unknown class data are natural forest images and cartoon images. After the model recognition, the data will be distinguished into known and unknown classes, where the known class data will be further classified according to the training categories.
 
-<img src="images/test.png" alt="test" style="zoom:48%;" />
+<center>
+  <img src="images/test.png" style="zoom: 50%;" />
+  <br>
+  <dir style="color:orange; border-bottom: 1px solid #d9d9d9;
+              display: inline-block;
+              color: #999;
+              padding: 2px;">
+    Inference processing
+  </dir>
+</center>
+
+
 
 WideResnet source code: [WideResnet](https://github.com/szagoruyko/wide-residual-networks)
 
-PROSER Algorithm principle: [PROSER](https://github.com/Frank-lilinjie/ianvs/tree/main/docs/proposals/algorithms/lifelong-learning/Open-set_recognition_Learning_Placeholders.md)
+PROSER Algorithm principle: [PROSER](https://github.com/Frank-lilinjie/ianvs/tree/main/docs/proposals/algorithms/lifelong-learning/Additional-documentation/Open-set_recognition_Learning_Placeholders.md)
+
+You can check the test report in [here](https://github.com/Frank-lilinjie/ianvs/tree/main/docs/proposals/algorithms/lifelong-learning/Additional-documentation/Testing_Open-set_recognition_in_Curb-detection_datasets.md)
 
 
 
