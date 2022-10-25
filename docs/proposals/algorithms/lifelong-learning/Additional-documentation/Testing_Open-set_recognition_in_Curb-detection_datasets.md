@@ -144,7 +144,6 @@ This is the recognition result of some known classes, where *target* is the orig
               display: inline-block;
               color: #999;
               padding: 2px;">
-    Cityscape's RGB images
   </dir>
 </center>
 
@@ -157,7 +156,6 @@ This is the recognition result of some unknown classes, where *target* is the or
               display: inline-block;
               color: #999;
               padding: 2px;">
-    Cityscape's RGB images
   </dir>
 </center>
 
@@ -170,6 +168,5 @@ Results.
               display: inline-block;
               color: #999;
               padding: 2px;">
-    Cityscape's RGB images
   </dir>
 </center>
