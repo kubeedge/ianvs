@@ -140,6 +140,7 @@ dataset
 lifelong_learning_bench/workspace
 
 # workspace
+<<<<<<< HEAD
 yolo_lifelong_learning_bench/workspace
 
 #models
@@ -148,3 +149,6 @@ examples/resources/yolo_model/*
 examples/bdd/lifelong_learning_bench/testalgorithms/yolo/model_selector/adaptive_selector_7w5_6w.pth
 
 yolov5
+=======
+yolo_lifelong_learning_bench/workspace
+>>>>>>> new files
