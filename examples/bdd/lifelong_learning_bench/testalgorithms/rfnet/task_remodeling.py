@@ -26,31 +26,44 @@ models : List of groups which including at least 1 task.
 """
 
 from typing import List
-
 import numpy as np
-import pandas as pd
 
 from sedna.datasources import BaseDataSource
 from sedna.common.class_factory import ClassFactory, ClassType
 
-__all__ = ('DefaultTaskRemodeling',)
+__all__ = ('TaskRemodeling',)
+# class Model:
+#     def __init__(self, index: int, entry, model, result):
+#         self.index = index  # integer
+#         self.entry = entry
+#         self.model = model
+#         self.result = result
+#         self.meta_attr = None  # assign on running
 
 
-@ClassFactory.register(ClassType.STP, alias="TaskRemodeling")
+@ClassFactory.register(ClassType.STP)
 class TaskRemodeling:
     """
     Assume that each task is independent of each other
     """
 
-    def __init__(self, models: list, **kwargs):
-        self.models = models
+    def __init__(self, **kwargs):
+        self.models = []
+        selected_model_path = "/mnt/disk/shifan/ianvs/yolo_model/"
+        weight_list = ['all.pt', 'bdd.pt', 'traffic_0.pt', 'bdd_street.pt', 'bdd_clear.pt', 'bdd_daytime.pt',
+                'bdd_highway.pt', 'traffic_2.pt', 'bdd_overcast.pt', 'bdd_residential.pt', 'traffic_1.pt', 
+                'bdd_snowy.pt', 'bdd_rainy.pt', 'bdd_night.pt', 'soda.pt', 'bdd_cloudy.pt', 'bdd_cloudy_night.pt',
+                'bdd_highway_residential.pt', 'bdd_snowy_rainy.pt', 'soda_t1.pt']
+        for i in range(len(weight_list)):
+            self.models.append([i, weight_list[i][:-3], selected_model_path + weight_list[i]])
+
 
     def __call__(self, samples: BaseDataSource, mappings: List):
         """
         Grouping based on assigned tasks
         """
         mappings = np.array(mappings)
-        data, models = samples, []
+        data, models = samples.x[0], []
         for m in mappings:
             try:
                 model = self.models[m]

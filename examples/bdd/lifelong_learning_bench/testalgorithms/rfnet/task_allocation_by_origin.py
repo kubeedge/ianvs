@@ -34,12 +34,8 @@ class TaskAllocationByOrigin:
         checkpoint_file = '/mnt/disk/shifan/ianvs/examples/bdd/lifelong_learning_bench/testalgorithms/rfnet/model_selector/adaptive_selector_7w5_6w.pth'  # 神经网络权重参数
         device = 'cuda:0'  # 推理设备
         model_selector = init_model(config_file, checkpoint_file, device=device)
-        # print("**********************>>>>>>>smaple")
-        # print(samples.x[0][0])
         result = self.inference_model(model_selector, samples.x[0][0])  # 默认传入数据地址，传入数据的值也可以
         allocations = result['top5']
-        # print("***************allocations")
-        # print(allocations)
 
         return samples, allocations
     
@@ -74,10 +70,8 @@ class TaskAllocationByOrigin:
         data = test_pipeline(data)
         data = collate([data], samples_per_gpu=1)
         if next(model.parameters()).is_cuda:
-            # scatter to specified GPU
             data = scatter(data, [device])[0]
 
-        # forward the model
         with torch.no_grad():
             scores = model(return_loss=False, **data)
             scores = np.array(scores)
@@ -87,5 +81,4 @@ class TaskAllocationByOrigin:
             top15_index = heapq.nlargest(len(weight_list), range(len(scores[0])), scores[0].__getitem__)
             result = {'pred_label': pred_label, 'pred_score': float(pred_score), 'scores': scores[0], 'top5':top5_index, 'top15':top15_index}
 
-        # result['pred_class'] = model.CLASSES[result['pred_label']]
         return result

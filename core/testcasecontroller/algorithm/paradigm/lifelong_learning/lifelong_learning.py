@@ -85,8 +85,6 @@ class LifelongLearning(ParadigmBase):
         rounds = self.incremental_rounds
         samples_transfer_ratio_info = self.system_metric_info.get(
             SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
-        print("This is self.mode!!!!!!!!!!!!")
-        print(self.mode)
         if self.mode != 'inference': 
             dataset_files = self._split_dataset(splitting_dataset_times=rounds)
             # pylint: disable=C0103
@@ -112,7 +110,6 @@ class LifelongLearning(ParadigmBase):
                                                         unseen_task_train_samples,
                                                         r)
                     self.edge_task_index = self._eval(self.cloud_task_index, eval_dataset_file, r)
-        print("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
         test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
                                                               self.dataset.test_url,
                                                               "test")
@@ -144,15 +141,11 @@ class LifelongLearning(ParadigmBase):
         inference_results = []
         unseen_tasks = []
         unseen_task_labels = []
-        for i, _ in enumerate(inference_dataset.x):
-            print(">>>>>>>>>>>>>>>>>>This is {} test".format(i))
+        for i, _ in enumerate(inference_dataset.x[:1]):
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
             res, is_unseen_task, _ = job.inference(data)
             inference_results.append(res)
-            # print(">>>>>>>>>>>>>This is the process of res extend")
-            # print(len(res))
-            # print(len(inference_results))
             if is_unseen_task:
                 unseen_tasks.append(inference_dataset.x[i])
                 unseen_task_labels.append(inference_dataset.y[i])

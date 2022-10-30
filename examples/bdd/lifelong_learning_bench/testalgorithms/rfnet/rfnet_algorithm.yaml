@@ -60,9 +60,9 @@ algorithm:
               - None
               # - [ "real", "sim" ]
               
-    # - type: "task_remodeling"
-    #   # name of python module; string type;
-    #   name: "TaskRemodeling"
-    #   # the url address of python module; string type;
-    #   url: "./examples/bdd/lifelong_learning_bench/testalgorithms/rfnet/task_remodeling.py"
-    #   # hyperparameters configuration for the python module; list type;
+    - type: "task_remodeling"
+      # name of python module; string type;
+      name: "TaskRemodeling"
+      # the url address of python module; string type;
+      url: "./examples/bdd/lifelong_learning_bench/testalgorithms/rfnet/task_remodeling.py"
+      # hyperparameters configuration for the python module; list type;

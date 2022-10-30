@@ -38,5 +38,5 @@ testenv:
 
   # incremental rounds setting; int type; default value is 2;
   incremental_rounds: 2
-  
+
   mode: "inference"
