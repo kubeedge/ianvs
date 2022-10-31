@@ -9,6 +9,7 @@ the `simulation controller` is the core module of system simulation. The simulat
 ![](https://github.com/kubeedge/ianvs/blob/main/docs/proposals/simulation/images/simulation_controller.jpg?raw=true)
 
 The models in `simulation controller` are as follows:
+
 - The `Simulation System Administrator` is used to
   1. parse the system config(simulation)
   2. check the host enviroment, e.g. check if the host has installed docker, kind, and whether memory > 4GB
@@ -21,7 +22,6 @@ The models in `simulation controller` are as follows:
   3. deploy and delete the `simulation job` in K8s
   4. list-watch the results of `simulation job` in K8s
 
-
 ## Simulation System Administrator Experiment
 
 At present, we have completed the construction of simulation environment through `Simulation System Administrator` module.
@@ -29,7 +29,9 @@ At present, we have completed the construction of simulation environment through
 The detailed process is as follows:
 
 ### 1. Prepare the `benchmarkingJob.yaml` file
+
 Typically, the config file `benchmarkingJob.yaml` is as follows, which represents the configuration information required for a benchmarkingJob.
+
 ```yaml
 benchmarkingjob:
   # job name of benchmarking; string type;
@@ -51,8 +53,6 @@ benchmarkingjob:
 
 We need to supplement the config of simulation in the `benchmarkingJob.yaml`, such as the following.
 
-### 1. Prepare the `benchmarkingJob.yaml` file
-Typically, the config file `benchmarkingJob.yaml` is as follows, which represents the configuration information required for a benchmarkingJob.
 ```yaml
 benchmarkingjob:
   ...
@@ -64,18 +64,20 @@ benchmarkingjob:
     kubeedge_version: "1.8.0"
     sedna_version: "0.4.3"
 ```
+
 Related parameters and explanations are as follows:
+
 - `cloud_number` : int, number of the cloud worker
 - `edge_number` : int, number of the edge nodes.
 - `cluster_name` : int, name of the simulation cluster.
 - `kubeedge_version` : string, version of kubeedge, e.g. 1.8.0, latest.
 - `sedna_version` : string, version of sedna, e.g. 0.4.3, latest.
 
-Note that the current simulation environment build script is still being debugged at this time. Our current testing is based on Kubeedge v1.8.0, sedna v0.4.3.
+Note that the current simulation environment build script is still being debugged at this time. Our current testing is based on Kubeedge v1.8.0, sedna v0.4.3, and the system OS is ubuntu 20.04.
 
 ### 2. Run the benchmarkingJob
-We just need to attach the `benchmarkingJob.yaml` when executing the `ianvs` command as before. Just like `ianvs -f /somepath/benchmarkingJob.yaml`
 
+We just need to attach the `benchmarkingJob.yaml` when executing the `ianvs` command as before. Just like `ianvs -f /somepath/benchmarkingJob.yaml`
 
 Next, the `Simulation System Administrator` module will first check your system environment, including the following checks:
 
