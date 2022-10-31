@@ -57,8 +57,7 @@ class LifelongLearning(ParadigmBase):
     def __init__(self, workspace, **kwargs):
         ParadigmBase.__init__(self, workspace, **kwargs)
 
-        self.incremental_learning_data_setting = 
-                                        kwargs.get("lifelong_learning_data_setting")
+        self.incremental_learning_data_setting = kwargs.get("lifelong_learning_data_setting")
         self.initial_model = kwargs.get("initial_model_url")
         self.incremental_rounds = kwargs.get("incremental_rounds", 1)
         self.model_eval_config = kwargs.get("model_eval")
@@ -99,8 +98,8 @@ class LifelongLearning(ParadigmBase):
                 else:
                     infer_dataset_file, eval_dataset_file = dataset_files[r - 1]
 
-                    inference_results, unseen_task_train_samples = 
-                                     self._inference(self.edge_task_index,
+                    inference_results, unseen_task_train_samples = self._inference(
+                                                    self.edge_task_index,
                                                     infer_dataset_file,
                                                     r)
                     samples_transfer_ratio_info.append((inference_results, 
