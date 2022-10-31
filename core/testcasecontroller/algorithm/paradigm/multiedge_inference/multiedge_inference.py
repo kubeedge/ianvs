@@ -70,10 +70,10 @@ class MultiedgeInference(ParadigmBase):
 
     def _inference(self, job, trained_model):
         train_dataset = self.dataset.load_data(self.dataset.train_url, "train")
-        os.environ["BASE_MODEL_URL"] = self.initial_model
+        os.environ["BASE_MODEL_URL"] = trained_model
         inference_dataset = self.dataset.load_data(self.dataset.test_url, "inference")
         inference_output_dir = os.path.join(self.workspace, "output/inference/")
         os.environ["RESULT_SAVED_URL"] = inference_output_dir
-        job.load(self.initial_model)
+        job.load(trained_model)
         infer_res = job.predict(inference_dataset.x, train_dataset=train_dataset)
         return infer_res
