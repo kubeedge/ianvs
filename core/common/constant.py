@@ -24,6 +24,7 @@ class DatasetFormat(Enum):
     """
     CSV = "csv"
     TXT = "txt"
+    JSON = "json"
 
 
 class ParadigmType(Enum):
@@ -32,6 +33,7 @@ class ParadigmType(Enum):
     """
     SINGLE_TASK_LEARNING = "singletasklearning"
     INCREMENTAL_LEARNING = "incrementallearning"
+    MULTIEDGE_INFERENCE = "multiedgeinference"
 
 
 class ModuleType(Enum):

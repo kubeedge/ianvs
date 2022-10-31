@@ -12,7 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=missing-module-docstring
-from .incremental_learning import IncrementalLearning
-from .singletask_learning import SingleTaskLearning
-from .multiedge_inference import MultiedgeInference
+from __future__ import absolute_import
+
+class IterLoader:
+    def __init__(self, loader, length=None):
+        self.loader = loader
+        self.length = length
+        self.iter = None
+
+    def __len__(self):
+        if self.length is not None:
+            return self.length
+        return len(self.loader)
+
+    def new_epoch(self):
+        self.iter = iter(self.loader)
+
+    def next(self):
+        try:
+            return next(self.iter)
+        except:
+            self.iter = iter(self.loader)
+            return next(self.iter)

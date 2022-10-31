@@ -18,7 +18,11 @@ import copy
 
 from core.common.constant import ParadigmType
 from core.testcasecontroller.algorithm.module import Module
-from core.testcasecontroller.algorithm.paradigm import SingleTaskLearning, IncrementalLearning
+from core.testcasecontroller.algorithm.paradigm import (
+    SingleTaskLearning,
+    IncrementalLearning,
+    MultiedgeInference,
+)
 from core.testcasecontroller.generation_assistant import get_full_combinations
 
 
@@ -85,6 +89,9 @@ class Algorithm:
 
         if self.paradigm_type == ParadigmType.INCREMENTAL_LEARNING.value:
             return IncrementalLearning(workspace, **config)
+
+        if self.paradigm_type == ParadigmType.MULTIEDGE_INFERENCE.value:
+            return MultiedgeInference(workspace, **config)
 
         return None
 
