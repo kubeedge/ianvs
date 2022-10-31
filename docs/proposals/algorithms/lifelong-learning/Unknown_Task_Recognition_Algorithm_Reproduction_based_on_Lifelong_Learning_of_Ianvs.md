@@ -48,7 +48,47 @@ This project mainly implements the function of discovering new tasks.
 
 The following is the architecture diagram of this project system, as shown in the figure, the input of the unknown sample identification module is the inference dataset, and the output bits are the known sample set and unknown sample set. Before the unknown sample identification module is the task definition module, after the task definition, the initialized dataset is considered a known dataset. In the task assignment module after the unknown sample identification module, the known data are inferred and the unknown data are re-posted and incorporated into the edge-side knowledge base and then into the cloud-side knowledge base.
 
-<img src="images/Algorithmflow.png" style="zoom:48%;" />
+<img src="images/Algorithmflow.jpeg" style="zoom:48%;" />
+
+
+
+#### 3.1.1 How the algorithm work in ianvs
+
+<img src="images/merge.png" alt="User" style="zoom:48%;" />
+
+#### 3.1.2 Description of the callable class
+
+The detailed code can be viewed [here](https://github.com/Frank-lilinjie/ianvs/blob/feature-lifelong-n/examples/scene-based-unknown-task-recognition/lifelong_learning_bench/testalgorithms/rfnet/unseen_sample_recognition_by_scene.py)
+
+1. Sign up in class factory from sedna
+
+``` @ClassFactory.register(ClassType.UTD, alias="UnseenSampleRecognitionByScene")``` 
+
+2. Get model path from [rfnet_algorithm.yaml](https://github.com/Frank-lilinjie/ianvs/blob/feature-lifelong-n/examples/scene-based-unknown-task-recognition/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml)
+
+```python
+def __init__(self, **kwargs):
+  self.model_path = kwargs.get("model_path")
+```
+
+3. Return the results
+
+ ```return seen_image, unseen_image ```
+
+#### 3.1.3 Interface Description
+
+```yaml
+- type: "unseen_sample_recognition"
+# name of python module; string type;
+  name: "UnseenSampleRecognitionByScene"
+# the url address of python module; string type;
+  url: "./examples/scene-based-unknown-task-recognition/lifelong_learning_bench/testalgorithms/rfnet/unseen_sample_recognition_by_scene.py"
+# hyperparameters configuration for the python module; list type;
+  hyperparameters:
+    - model_path:
+      values:
+        - "./examples/scene-based-unknown-task-recognition/lifelong_learning_bench/testalgorithms/rfnet/models/Epochofprose17.pth"
+```
 
 
 
@@ -74,7 +114,7 @@ testenv:
       # metric name; string type;
       name: "accuracy"
       # the url address of python file
-      url: "./examples/curb-detection/lifelong_learning_bench/testenv/accuracy.py"
+      url: "./examples/scene-based-unknown-task-recognition/lifelong_learning_bench/testenv/accuracy.py"
 
     # condition of triggering inference model to update
     # threshold of the condition; types are float/int
@@ -88,7 +128,7 @@ testenv:
       # metric name; string type;
     - name: "accuracy"
       # the url address of python file
-      url: "./examples/curb-detection/lifelong_learning_bench/testenv/accuracy.py"
+      url: "./examples/scene-based-unknown-task-recognition/lifelong_learning_bench/testenv/accuracy.py"
     - name: "samples_transfer_ratio"
 
 ```
@@ -106,21 +146,6 @@ Usage Process
 4. Call the Benchmark module, and the Benchmark module calls the developer's encapsulated Estimator
 5. Run and view the results
 6. Update and view the local edge cloud collaborative AI ranking
-
-#### 3.2.3 Interface Description
-
-```yaml
-- type: "unseen_sample_recognition"
-# name of python module; string type;
-  name: "UnseenSampleRecognitionByScene"
-# the url address of python module; string type;
-  url: "./examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/unseen_sample_recognition_by_scene.py"
-# hyperparameters configuration for the python module; list type;
-  hyperparameters:
-    - model_path:
-      values:
-        - "./examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/models/Epochofprose17.pth"
-```
 
 
 
