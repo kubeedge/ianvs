@@ -112,7 +112,7 @@ class LifelongLearning(ParadigmBase):
                                                         unseen_task_train_samples,
                                                         r)
                     self.edge_task_index = self._eval(self.cloud_task_index,
-                                                      eval_dataset_file, 
+                                                      eval_dataset_file,
                                                       r)
         test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
                                                               self.dataset.test_url,
