@@ -43,6 +43,7 @@ class TestEnv:
         self.metrics = []
         self.incremental_rounds = 2
         self.dataset = None
+        self.mode = ''
         self._parse_config(config)
 
     def _check_fields(self):
@@ -52,6 +53,10 @@ class TestEnv:
         if not isinstance(self.incremental_rounds, int) or self.incremental_rounds < 2:
             raise ValueError(f"testenv incremental_rounds(value={self.incremental_rounds})"
                              f" must be int type and not less than 2.")
+        
+        if not isinstance(self.mode, str):
+            raise ValueError(f"testenv mode(value={self.mode})"
+                             f" must be str type.")
 
     def _parse_config(self, config):
         config_dict = config[str.lower(TestEnv.__name__)]

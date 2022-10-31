@@ -59,6 +59,7 @@ class LifelongLearning(ParadigmBase):
 
         self.incremental_learning_data_setting = kwargs.get("lifelong_learning_data_setting")
         self.initial_model = kwargs.get("initial_model_url")
+        self.mode = kwargs.get("mode")
 
         self.incremental_rounds = kwargs.get("incremental_rounds", 1)
         self.model_eval_config = kwargs.get("model_eval")
@@ -84,32 +85,31 @@ class LifelongLearning(ParadigmBase):
         rounds = self.incremental_rounds
         samples_transfer_ratio_info = self.system_metric_info.get(
             SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
-        dataset_files = self._split_dataset(splitting_dataset_times=rounds)
+        if self.mode != 'multi-inference': 
+            dataset_files = self._split_dataset(splitting_dataset_times=rounds)
+            # pylint: disable=C0103
+            for r in range(1, rounds + 1):
+                if r == 1:
+                    train_dataset_file, eval_dataset_file = dataset_files[r - 1]
+                    self.cloud_task_index = self._train(self.cloud_task_index, train_dataset_file, r)
+                    self.edge_task_index = self._eval(self.cloud_task_index, eval_dataset_file, r)
 
-        # pylint: disable=C0103
-        for r in range(1, rounds + 1):
-            if r == 1:
-                train_dataset_file, eval_dataset_file = dataset_files[r - 1]
-                self.cloud_task_index = self._train(self.cloud_task_index, train_dataset_file, r)
-                self.edge_task_index = self._eval(self.cloud_task_index, eval_dataset_file, r)
+                else:
+                    infer_dataset_file, eval_dataset_file = dataset_files[r - 1]
 
-            else:
-                infer_dataset_file, eval_dataset_file = dataset_files[r - 1]
+                    inference_results, unseen_task_train_samples = self._inference(self.edge_task_index,
+                                                                                   infer_dataset_file,
+                                                                                   r)
+                    samples_transfer_ratio_info.append((inference_results, unseen_task_train_samples.x))
 
-                inference_results, unseen_task_train_samples = self._inference(self.edge_task_index,
-                                                                               infer_dataset_file,
-                                                                               r)
-                samples_transfer_ratio_info.append((inference_results, unseen_task_train_samples.x))
+                    # If no unseen task samples in the this round, starting the next round
+                    if len(unseen_task_train_samples.x) <= 0:
+                        continue
 
-                # If no unseen task samples in the this round, starting the next round
-                if len(unseen_task_train_samples.x) <= 0:
-                    continue
-
-                self.cloud_task_index = self._train(self.cloud_task_index,
-                                                    unseen_task_train_samples,
-                                                    r)
-                self.edge_task_index = self._eval(self.cloud_task_index, eval_dataset_file, r)
-
+                    self.cloud_task_index = self._train(self.cloud_task_index,
+                                                        unseen_task_train_samples,
+                                                        r)
+                    self.edge_task_index = self._eval(self.cloud_task_index, eval_dataset_file, r)
         test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
                                                               self.dataset.test_url,
                                                               "test")
@@ -141,12 +141,12 @@ class LifelongLearning(ParadigmBase):
         inference_results = []
         unseen_tasks = []
         unseen_task_labels = []
+        kwargs = {"mode": self.mode}
         for i, _ in enumerate(inference_dataset.x):
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
-            res, is_unseen_task, _ = job.inference(data)
-
-            inference_results.extend(res)
+            res, is_unseen_task, _ = job.inference(data, **kwargs)
+            inference_results.append(res)
             if is_unseen_task:
                 unseen_tasks.append(inference_dataset.x[i])
                 unseen_task_labels.append(inference_dataset.y[i])
