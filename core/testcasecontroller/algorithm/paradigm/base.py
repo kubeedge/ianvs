@@ -99,4 +99,7 @@ class ParadigmBase:
                 hard_example_mining=self.modules_funcs.get(
                     ModuleType.HARD_EXAMPLE_MINING.value)())
 
+        if paradigm_type == ParadigmType.MULTIEDGE_INFERENCE.value:
+            return self.modules_funcs.get(ModuleType.BASEMODEL.value)()
+
         return None

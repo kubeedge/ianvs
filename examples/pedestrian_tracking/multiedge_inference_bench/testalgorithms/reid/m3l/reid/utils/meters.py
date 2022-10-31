@@ -12,7 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=missing-module-docstring
-from .incremental_learning import IncrementalLearning
-from .singletask_learning import SingleTaskLearning
-from .multiedge_inference import MultiedgeInference
+from __future__ import absolute_import
+
+
+class AverageMeter(object):
+    """Computes and stores the average and current value"""
+
+    def __init__(self):
+        self.val = 0
+        self.avg = 0
+        self.sum = 0
+        self.count = 0
+
+    def reset(self):
+        self.val = 0
+        self.avg = 0
+        self.sum = 0
+        self.count = 0
+
+    def update(self, val, n=1):
+        self.val = val
+        self.sum += val * n
+        self.count += n
+        self.avg = self.sum / self.count
