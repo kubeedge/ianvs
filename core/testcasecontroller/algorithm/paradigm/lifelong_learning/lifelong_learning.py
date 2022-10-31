@@ -88,13 +88,12 @@ class LifelongLearning(ParadigmBase):
             for r in range(1, rounds + 1):
                 if r == 1:
                     train_dataset_file, eval_dataset_file = dataset_files[r - 1]
-                    self.cloud_task_index = self._train(self.cloud_task_index, 
-                                                        train_dataset_file, 
+                    self.cloud_task_index = self._train(self.cloud_task_index,
+                                                        train_dataset_file,
                                                         r)
-                    self.edge_task_index = self._eval(self.cloud_task_index, 
-                                                      eval_dataset_file, 
+                    self.edge_task_index = self._eval(self.cloud_task_index,
+                                                      eval_dataset_file,
                                                       r)
-
                 else:
                     infer_dataset_file, eval_dataset_file = dataset_files[r - 1]
 
@@ -102,7 +101,7 @@ class LifelongLearning(ParadigmBase):
                                                     self.edge_task_index,
                                                     infer_dataset_file,
                                                     r)
-                    samples_transfer_ratio_info.append((inference_results, 
+                    samples_transfer_ratio_info.append((inference_results,
                                                 unseen_task_train_samples.x))
 
                     # If no unseen task samples in the this round, starting the next round
@@ -112,7 +111,7 @@ class LifelongLearning(ParadigmBase):
                     self.cloud_task_index = self._train(self.cloud_task_index,
                                                         unseen_task_train_samples,
                                                         r)
-                    self.edge_task_index = self._eval(self.cloud_task_index, 
+                    self.edge_task_index = self._eval(self.cloud_task_index,
                                                       eval_dataset_file, 
                                                       r)
         test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
@@ -146,6 +145,7 @@ class LifelongLearning(ParadigmBase):
         inference_results = []
         unseen_tasks = []
         unseen_task_labels = []
+        mode = self.model_eval_config.get("model_metric").get("mode")
         kwargs = {"mode": mode}
         for i, _ in enumerate(inference_dataset.x):
             data = BaseDataSource(data_type="test")
