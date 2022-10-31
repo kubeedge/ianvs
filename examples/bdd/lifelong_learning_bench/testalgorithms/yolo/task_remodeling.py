@@ -30,7 +30,6 @@ import numpy as np
 
 from sedna.datasources import BaseDataSource
 from sedna.common.class_factory import ClassFactory, ClassType
-import yaml
 
 __all__ = ('TaskRemodeling',)
 
