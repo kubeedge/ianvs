@@ -1,4 +1,3 @@
-from curses import raw
 from sedna.datasources import BaseDataSource
 from sedna.common.class_factory import ClassFactory, ClassType
 from mmcls.apis import init_model
@@ -9,7 +8,6 @@ set_random_seed(0, deterministic=True)
 import torch
 import numpy as np
 import heapq
-import yaml
 
 __all__ = ('TaskAllocationByOrigin',)
 config_file = 'examples/bdd/lifelong_learning_bench/testalgorithms/yolo/model_selector/choose_net_b64.py'# 神经网络配置文件
