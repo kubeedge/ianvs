@@ -18,7 +18,7 @@ import os
 import tempfile
 
 import pandas as pd
-from sedna.datasources import CSVDataParse, TxtDataParse, JSONDataParse
+from sedna.datasources import CSVDataParse, TxtDataParse
 
 from core.common import utils
 from core.common.constant import DatasetFormat
@@ -79,10 +79,12 @@ class Dataset:
             tmp_file = os.path.join(tempfile.mkdtemp(), "index.txt")
             with open(tmp_file, "w", encoding="utf-8") as file:
                 for line in lines:
-                    front, back = line.split(" ")
-                    file.writelines(
-                        f"{os.path.abspath(os.path.join(root, front))} "
-                        f"{os.path.abspath(os.path.join(root, back))}")
+                    names = line.split(" ")
+                    s = ""
+                    for i in names:
+                        s = s + f"{os.path.abspath(os.path.join(root, i))} "
+                    s.strip()
+                    file.writelines(s)
 
             new_file = tmp_file
 
@@ -92,8 +94,6 @@ class Dataset:
         file_format = utils.get_file_format(file_url)
         if file_format == DatasetFormat.TXT.value:
             return self._process_txt_index_file(file_url)
-        if file_format == DatasetFormat.JSON.value:
-            return file_url
 
         return None
 
@@ -254,9 +254,5 @@ class Dataset:
         if data_format == DatasetFormat.TXT.value:
             data = TxtDataParse(data_type=data_type, func=feature_process)
             data.parse(file, use_raw=use_raw)
-
-        if data_format == DatasetFormat.JSON.value:
-            data = JSONDataParse(data_type=data_type, func=feature_process)
-            data.parse(file)
 
         return data
