@@ -55,11 +55,13 @@ class Dataset:
     @classmethod
     def _check_dataset_url(cls, url):
         if not utils.is_local_file(url) and not os.path.isabs(url):
-            raise ValueError(f"dataset file({url}) is not a local file and not a absolute path.")
+            raise ValueError(
+                f"dataset file({url}) is not a local file and not a absolute path.")
 
         file_format = utils.get_file_format(url)
         if file_format not in [v.value for v in DatasetFormat.__members__.values()]:
-            raise ValueError(f"dataset file({url})'s format({file_format}) is not supported.")
+            raise ValueError(
+                f"dataset file({url})'s format({file_format}) is not supported.")
 
     @classmethod
     def _process_txt_index_file(cls, file_url):
@@ -181,7 +183,8 @@ class Dataset:
         return data
 
     def _get_dataset_file(self, data, output_dir, dataset_type, index, dataset_format):
-        data_file = self._get_file_url(output_dir, dataset_type, index, dataset_format)
+        data_file = self._get_file_url(
+            output_dir, dataset_type, index, dataset_format)
 
         self._write_data_file(data, data_file, dataset_format)
 
