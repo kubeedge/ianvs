@@ -9,7 +9,7 @@ on:
 
 jobs:
   pylint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: pylint
     strategy:
       matrix:
