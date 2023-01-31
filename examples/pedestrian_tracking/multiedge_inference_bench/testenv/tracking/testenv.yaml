@@ -1,0 +1,29 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_url: "./dataset/mot17/annotations/train_half.json"
+    # the url address of test dataset index; string type;
+    test_url: "./dataset/mot17/annotations/val_half.json"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "recall"
+      # the url address of python file
+      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/tracking/recall.py"
+    - name: "precision"
+      # the url address of python file
+      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/tracking/precision.py"
+    - name: "f1_score"
+      # the url address of python file
+      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/tracking/f1_score.py"
+    - name: "mota"
+      # the url address of python file
+      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/tracking/mota.py"
+    - name: "motp"
+      # the url address of python file
+      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/tracking/motp.py"
+    - name: "idf1"
+      # the url address of python file
+      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/tracking/idf1.py"

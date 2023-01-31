@@ -1,0 +1,26 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_url: "./dataset/mot17/reid/train.txt"
+    # the url address of test dataset index; string type;
+    test_url: "./dataset/mot17/reid/test.txt"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "mAP"
+      # the url address of python file
+      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/reid/mAP.py"
+    - name: "rank_1"
+      # the url address of python file
+      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/reid/rank_1.py"
+    - name: "rank_2"
+      # the url address of python file
+      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/reid/rank_2.py"
+    - name: "rank_5"
+      # the url address of python file
+      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/reid/rank_5.py"
+    - name: "cmc"
+      # the url address of python file
+      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/reid/cmc.py"

@@ -20,6 +20,8 @@ from core.common import utils
 from core.common.constant import TestObjectType
 from core.testenvmanager.testenv import TestEnv
 from core.storymanager.rank import Rank
+from core.testcasecontroller.simulation import Simulation
+from core.testcasecontroller.simulation_system_admin import build_simulation_enviroment
 from core.testcasecontroller.testcasecontroller import TestCaseController
 
 
@@ -43,6 +45,7 @@ class BenchmarkingJob:
         self.test_object: dict = {}
         self.rank = None
         self.test_env = None
+        self.simulation = None
         self.testcase_controller = TestCaseController()
         self._parse_config(config)
 
@@ -80,6 +83,9 @@ class BenchmarkingJob:
         """
         self.workspace = os.path.join(self.workspace, self.name)
 
+        if self.simulation is not None:
+            build_simulation_enviroment(self.simulation)
+
         self.test_env.prepare()
 
         self.testcase_controller.build_testcases(test_env=self.test_env,
@@ -98,6 +104,8 @@ class BenchmarkingJob:
                 self._parse_testenv_config(v)
             elif k == str.lower(Rank.__name__):
                 self._parse_rank_config(v)
+            elif k == str.lower(Simulation.__name__):
+                self._parse_simulation_config(v)
             else:
                 if k in self.__dict__:
                     self.__dict__[k] = v
@@ -117,3 +125,6 @@ class BenchmarkingJob:
 
     def _parse_rank_config(self, config):
         self.rank = Rank(config)
+
+    def _parse_simulation_config(self, simulation_config):
+        self.simulation = Simulation(simulation_config)

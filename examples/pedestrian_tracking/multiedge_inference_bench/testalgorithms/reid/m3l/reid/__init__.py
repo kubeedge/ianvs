@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=missing-module-docstring
-from .incremental_learning import IncrementalLearning
-from .singletask_learning import SingleTaskLearning
-from .multiedge_inference import MultiedgeInference
+from __future__ import absolute_import
+
+from . import models
+from . import utils
+
+__version__ = '0.1.0'
