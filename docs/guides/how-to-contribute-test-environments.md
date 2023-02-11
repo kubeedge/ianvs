@@ -1,21 +1,20 @@
 # How to contribute test environments
 
-
 ## Overall contribution workflow
 
-1. Apply for a topic.   
-   Once you have new idea about test environment, you can apply for a topic to discuss it on [SIG AI weekly meeting](http://github.com/kubeedge/ianvs.git).
+1. Apply for a topic.
+   Once you have a new idea about the test environment, you can apply for a topic to discuss it on [SIG AI weekly meeting](http://github.com/kubeedge/ianvs.git).
 2. Submit proposal.
-   After the idea is fully discussed, the former proposal PR is needed to submit to [Ianvs repository](http://github.com/kubeedge/ianvs.git).
+   After the idea is fully discussed, the former proposal PR is needed to submit to the [Ianvs repository](http://github.com/kubeedge/ianvs.git).
 3. Fix proposal review comments.  
-   If other Ianvs maintainer leave review comments to the PR, you need fix them and get at least 2 reviewers' `/lgtm`, and 1 approver's `/approve`.
+   If other Ianvs maintainers leave review comments to the PR, you need to fix them and get at least 2 reviewers' `/lgtm`, and 1 approver's `/approve`.
 4. Submit code.
-   Then you can implement your code, and good code style is encouraged.
+   Then you can implement your code, and a good code style is encouraged.
 5. Fix code review comments.  
-   Besides the merge requirements of proposal,  CI passing is needed before review in this step.
+   Besides the merge requirements of the proposal, CI passing is needed before reviewing this step.
 
+The following is a typical testenv:
 
-The following is a typical testenv: 
 ```yaml
 testenv:
   # dataset configuration
@@ -52,36 +51,30 @@ testenv:
   # incremental rounds setting for incremental learning paradigm.; int type; default value is 2;
   incremental_rounds: 2
 ```
-It can be found that, for a test we need to setup the three fields: 
+
+It can be found that for a test, we need to set up the three fields:
+
 - dataset
 - model_eval
 - metrics
 
-That means, if you want to test on different dataset, different model or different metrics, you need a new test environment.
-
-
+That means, if you want to test on a different dataset, different model, or different metrics, you need a new test environment.
 
 ## Add a new test environment
 
 Please refer to the examples directory, [pcb-aoi](https://github.com/kubeedge/ianvs/tree/main/examples/pcb-aoi) is a scenario for testing.
-We can regard it as a subject for a student that need to take an exam, the test env is like examination paper,
+We can regard it as a subject for a student that needs to take an exam, the test env is like an examination paper,
 and the test job is like the student.
 
-For a subject `pcb-aoi`, a new examination paper could be added to the subdirectory, on the same level as `benchmarkingjob`.
+For a subject `pcb-aoi`, a new examination paper could be added to the subdirectory, on the same level as a `benchmarking job`.
 The detailed steps could be the following:
-1. Copy `benchmarkingjob` and named `benchmarkingjob_2` or any other intuitive name.
-2. Add new algorithm to `testalgorithms`, or Keep the useful algorithm. It can refer to [contribute algorithm] section to develop your own algorithm.   
-3. Copy `testenv/testnev.yaml`, and modify it based on what you need to test, with different dataset, model, metrics and so on.
+
+1. Copy `benchmarking job` and name `benchmarking job_2` or any other intuitive name.
+2. Add new algorithms to test algorithms, or Keep the useful algorithm. It can refer to contribute algorithm section to develop your own algorithm.
+3. Copy testenv/testnev.yaml, and modify it based on what you need to test, with different datasets, models, metrics, and so on.
 
 If all things have been done, and you think that would be a nice "examination paper", you can create PR to ianvs, to publish your paper.
 
-Interested "student" from our comunity will take the exam.
-
-
-
-
-
-
-
+Interested "students" from our community will take the exam.
 
 [contribute algorithm]: how-to-contribute-algorithms.md
