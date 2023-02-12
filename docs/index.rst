@@ -14,8 +14,8 @@ Ianvs also reveals best practices for developers and end users with presentation
 
 The scope of Ianvs is mainly two folds. 
 
-First, Ianvs aims to provide end-to-end benchmark toolkits across devices, edge nodes and cloud nodes based on typical distributed-synergy AI paradigms and applications. 
-- Tools to manage test environment. For example, it would be necessary to support the CRUD (Create, Read, Update and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration.  
+First, Ianvs aims to provide end-to-end benchmark toolkits across devices, edge nodes, and cloud nodes based on typical distributed-synergy AI paradigms and applications. 
+- Tools to manage test environment. For example, it would be necessary to support the CRUD (Create, Read, Update, and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration.  
 - Tools to control test cases. Typical examples include paradigm templates, simulation tools, and hyper-parameter-based assistant tools.
 - Tools to manage benchmark presentation, e.g., leaderboard and test report generation. 
 

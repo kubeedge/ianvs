@@ -1,6 +1,6 @@
 # Benchmarks for Edge-cloud Collaborative Lifelong Learning
 
-Artificial intelligence technology has served us in all aspects of life, especially in image, video, voice, recommendation system, etc. It has brought breakthrough results. AI Benchmark is designed to measure the performance and efficacy of AI models. There are already many authoritative AI Benchmark systems in the traditional AI field. As an emerging direction of edge AI, the corresponding Benchmark development is not perfect, and there are generally problems such as insufficient paradigm coverage, inactive communities, no edge/cloud side involved, and few test samples.
+Artificial intelligence technology has served us in all aspects of life, especially in image, video, voice, recommendation systems, etc. It has brought breakthrough results. AI Benchmark is designed to measure the performance and efficacy of AI models. There are already many authoritative AI Benchmark systems in the traditional AI field. As an emerging direction of edge AI, the corresponding Benchmark development is not perfect, and there are generally problems such as insufficient paradigm coverage, inactive communities, no edge/cloud side involved, and few test samples.
 The specific research results of AI Benchmark for cloud-side-device collaboration can be found in this [document(in chinese)](https://github.com/iszhyang/AI-Benchmark-for-Cloud-Edge-Device).
 
 As a very promising community in edge AI Benchmarking, ianvs still has the following problems to be solved
@@ -12,7 +12,7 @@ This proposal provides features in datasets, edge-cloud collaborative AI system 
 
 ## Goals
 
-The project is committed to building an edge-cloud collaborative AI Bechmark for edge-cloud collaborative lifelong detection in the Kubeedge open source community.
+The project is committed to building an edge-cloud collaborative AI Benchmark for edge-cloud collaborative lifelong detection in the Kubeedge open source community.
 
 - Provide downloadable open source datasets and data processing scripts for the difficulty in obtaining datasets and supporting algorithms
 - Provides industrial-grade distributed collaborative system simulation for the problem that the repeated deployment of edge-cloud collaboration is too heavy
@@ -99,7 +99,9 @@ We will provide the cityscapes dataset and corresponding methods for ianvs. The 
 ### Industrial Distributed Collaborative System Simulation
 
 Provide ianvs with the feature of industrial distributed system simulation.
+
 #### Framework
+
 ![img](images/simulation_framework.jpg)
 
 In the framwork of ianvs, the `simulation controller` is the core module of system simulation. The `simulation controller` has been supplemented, which build and deploy local edge-cloud simulation environment with K8s.
@@ -107,6 +109,7 @@ In the framwork of ianvs, the `simulation controller` is the core module of syst
 ![img](images/simulation_controller.jpg)
 
 The models in `simulation controller` are as follows:
+
 - The `Simulation System Administrator` is used to
   1. parse the system config(simulation)
   2. check the host enviroment, e.g. check if the host has installed docker, kind, and whether memory > 4GB
@@ -120,19 +123,24 @@ The models in `simulation controller` are as follows:
   4. list-watch the results of `simulation job` in K8s
 
 #### Flowchart
+
 ![img](images/simulation_dataflow.jpg)
 
 The `System Config` denotes the system config of the current benchmarkingjob, such as the `cloud number` and `edge number`.
 
 In the flowchart diagram above, the expected flow is as follows:
+
 1. start the benchmarkingjob
 2. check whether to start emulation based on `system config`
 3. `Simulation System Administrator` check environment and parse system config
+
   - check environment: e.g. check if the host has installed docker, kind, and whether the memory > 4GB
   - parse simulation config
+
 4. `Simulation System Administrator` build the environment and create needed moudles.
   - build the environment: deploying a cluster including K8s and GM (global manager) locally through [all-in-one scripts of sedna](https://github.com/kubeedge/sedna/blob/527c574a60d0ae87b0436f9a8b38cf84fb6dab21/docs/setup/all-in-one.md)
   - create and deploy the `simulation job controller`
+
 5. `Simulation Job Administrator` generate and deploy simulation jobs.
   - build the docker images of algorithms to be tested
   - generate the YAML of simulation job base on `testenv.yaml` and `algorithm.yaml`
@@ -164,4 +172,4 @@ The roadmap would be as follows
 1. (0901-0904) Start implementing the preliminary framework through code.
 2. (0905-0911) Improve the code and verify the reliability.
 3. (0912-0918) Prepare the final PR.
-2. (0919-0930) Linkage integration with other projects
+4. (0919-0930) Linkage integration with other projects
