@@ -53,7 +53,7 @@ class TestCaseController:
             try:
                 res, time = (testcase.run(workspace), utils.get_local_time())
             except Exception as err:
-                raise Exception(f"testcase(id={testcase.id}) runs failed, error: {err}") from err
+                raise RuntimeError(f"testcase(id={testcase.id}) runs failed, error: {err}") from err
 
             succeed_results[testcase.id] = (res, time)
             succeed_testcases.append(testcase)
@@ -67,14 +67,14 @@ class TestCaseController:
             name = algorithm_config.get("name")
             config_file = algorithm_config.get("url")
             if not utils.is_local_file(config_file):
-                raise Exception(f"not found algorithm config file({config_file}) in local")
+                raise RuntimeError(f"not found algorithm config file({config_file}) in local")
 
             try:
                 config = utils.yaml2dict(config_file)
                 algorithm = Algorithm(name, config)
                 algorithms.append(algorithm)
             except Exception as err:
-                raise Exception(f"algorithm config file({config_file} is not supported, "
+                raise RuntimeError(f"algorithm config file({config_file} is not supported, "
                                 f"error: {err}") from err
 
         new_algorithms = []
