@@ -72,6 +72,6 @@ def get_metric_func(metric_dict: dict):
             metric_func = ClassFactory.get_cls(type_name=ClassType.GENERAL, t_cls_name=name)
             return name, metric_func
         except Exception as err:
-            raise Exception(f"get metric func(url={url}) failed, error: {err}.") from err
+            raise RuntimeError(f"get metric func(url={url}) failed, error: {err}.") from err
 
     return name, getattr(sys.modules[__name__], str.lower(name) + "_func")

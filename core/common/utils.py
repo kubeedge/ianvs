@@ -71,7 +71,7 @@ def py2dict(url):
 
         return raw_dict
 
-    raise Exception('config file must be the py format')
+    raise RuntimeError('config file must be the py format')
 
 
 def yaml2dict(url):
@@ -82,7 +82,7 @@ def yaml2dict(url):
 
         return raw_dict
 
-    raise Exception('config file must be the yaml format')
+    raise RuntimeError('config file must be the yaml format')
 
 
 def load_module(url):
@@ -96,4 +96,4 @@ def load_module(url):
         importlib.import_module(module_name)
         sys.path.pop(0)
     except Exception as err:
-        raise Exception(f"load module(url={url}) failed, error: {err}") from err
+        raise RuntimeError(f"load module(url={url}) failed, error: {err}") from err
