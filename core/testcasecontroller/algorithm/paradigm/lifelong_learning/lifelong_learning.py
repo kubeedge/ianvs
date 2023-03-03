@@ -146,7 +146,8 @@ class LifelongLearning(ParadigmBase):
         unseen_tasks = []
         unseen_task_labels = []
         mode = self.model_eval_config.get("model_metric").get("mode")
-        kwargs = {"mode": mode}
+        #kwargs = {"mode": mode}
+        kwargs = {}
         for i, _ in enumerate(inference_dataset.x):
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
