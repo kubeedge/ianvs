@@ -26,9 +26,9 @@ cd /ianvs #One might use another path preferred
 
 mkdir project
 cd project
-git clone -b feature-lifelong-cityscapes https://github.com/hsj576/ianvs.git  
+git clone -b feature-lifelong-cityscapes https://github.com/hsj576/ianvs.git
 ```
-
+Because of the error in https://github.com/kubeedge/ianvs/issues/57, we modified feature-lifelong-n branch of ianvs to make the lifelonglearning paradigm executable. So, it this quick start, we use the new branch feature-lifelong-cityscapes.
 
 Then, we install third-party dependencies for ianvs. 
 ``` shell
@@ -57,6 +57,12 @@ mkdir dataset
 cd dataset
 wget https://kubeedge.obs.cn-north-1.myhuaweicloud.com/examples/robo_dog_delivery/cityscapes.zip
 unzip cityscapes.zip
+```
+
+The cityscapes dataset doesn't have the index file. Developer could use the index of the cityscapes dataset in the example.
+``` shell   
+cp /ianvs/project/ianvs/examples/cityscapes/lifelong_learning_bench/train-index-middle.txt /ianvs/dataset/cityscapes/
+cp /ianvs/project/ianvs/examples/cityscapes/lifelong_learning_bench/test-index-middle.txt /ianvs/dataset/cityscapes/
 ```
 
 The URL address of this dataset then should be filled in the configuration file ``testenv.yaml``. In this quick start,
