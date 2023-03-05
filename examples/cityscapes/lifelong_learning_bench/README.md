@@ -1,4 +1,4 @@
-# Quick Start
+# Quick Start for Cityscapes Lifelong Learning
 
 Welcome to Ianvs! Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, 
 in order to facilitate more efficient and effective development. Quick start helps you to test your algorithm on Ianvs 
@@ -29,7 +29,7 @@ mkdir project
 cd project
 git clone -b feature-lifelong-cityscapes https://github.com/hsj576/ianvs.git
 ```
-Because of the error in https://github.com/kubeedge/ianvs/issues/57, we modified feature-lifelong-n branch of ianvs to make the lifelonglearning paradigm executable. So, it this quick start, we use the new branch feature-lifelong-cityscapes.
+Because of the error in https://github.com/kubeedge/ianvs/issues/57, we modified feature-lifelong-n branch of ianvs to make the lifelonglearning paradigm executable. So, it this quick start, we use the new branch **feature-lifelong-cityscapes**.
 
 Then, we install third-party dependencies for ianvs. 
 ``` shell
@@ -60,11 +60,13 @@ wget https://kubeedge.obs.cn-north-1.myhuaweicloud.com/examples/robo_dog_deliver
 unzip cityscapes.zip
 ```
 
-The cityscapes dataset doesn't have the index file. Developer could use the index of the cityscapes dataset in the example.
+The cityscapes dataset doesn't have the index file. Developer could use the index of the cityscapes dataset in this example.    
 ``` shell   
 cp /ianvs/project/ianvs/examples/cityscapes/lifelong_learning_bench/train-index-small.txt /ianvs/dataset/cityscapes/
 cp /ianvs/project/ianvs/examples/cityscapes/lifelong_learning_bench/test-index-small.txt /ianvs/dataset/cityscapes/
 ```
+
+The provided index only includes part of the samples in cityscapes dataset in order to speed up the training. So, if you want to use the whole dataset for training, you could write the index refer to the example of [train-index-small.txt](https://github.com/hsj576/ianvs/blob/feature-lifelong-cityscapes/examples/cityscapes/lifelong_learning_bench/train-index-small.txt)
 
 The URL address of this dataset then should be filled in the configuration file ``testenv.yaml``. In this quick start,
 we have done that for you and the interested readers can refer to [testenv.yaml](https://ianvs.readthedocs.io/en/latest/guides/how-to-test-algorithms.html#step-1-test-environment-preparation) for more details.
