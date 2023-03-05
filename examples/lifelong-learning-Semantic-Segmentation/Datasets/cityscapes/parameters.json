@@ -1,0 +1,1 @@
+{"K": [[1.1, 0, 0.5, 0], [0, 2.21, 0.5, 0], [0, 0, 1, 0], [0, 0, 0, 1]], "stereo_T": 0.22, "labels": "cityscapes", "labels_mode": "fromid", "depth_mode": "uint_16_subtract_one", "flow_mode": null, "splits": null}
