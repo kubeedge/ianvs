@@ -13,7 +13,7 @@ Before using Ianvs, you might want to have the device ready:
 - Internet connection for GitHub and pip, etc
 - Python 3.6+ installed
   
-In this example, we are using the Linux platform with Python 3.6.9. If you are using Windows, most steps should still apply but a few like commands and package requirements might be different. 
+In this example, we are using the Linux platform with Python 3.8.5. If you are using Windows, most steps should still apply but a few like commands and package requirements might be different. 
 
 ## Step 1. Ianvs Preparation
 
@@ -26,7 +26,7 @@ cd /ianvs #One might use another path preferred
 
 mkdir project
 cd project
-git clone https://github.com/kubeedge/ianvs.git   
+git clone -b feature-lifelong-cityscapes https://github.com/hsj576/ianvs.git  
 ```
 
 
@@ -55,8 +55,8 @@ not include origin datasets. Then developers do not need to download non-necessa
 cd /ianvs #One might use another path preferred
 mkdir dataset   
 cd dataset
-wget https://kubeedge.obs.cn-north-1.myhuaweicloud.com/ianvs/curb-detection/curb-detection.zip
-unzip dataset.zip
+wget https://kubeedge.obs.cn-north-1.myhuaweicloud.com/examples/robo_dog_delivery/cityscapes.zip
+unzip cityscapes.zip
 ```
 
 The URL address of this dataset then should be filled in the configuration file ``testenv.yaml``. In this quick start,
@@ -67,7 +67,7 @@ we have done that for you and the interested readers can refer to [testenv.yaml]
 
 Related algorithm is also ready in this quick start. 
 ``` shell
-export PYTHONPATH=$PYTHONPATH:/ianvs/project/examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/RFNet
+export PYTHONPATH=$PYTHONPATH:/ianvs/project/ianvs/examples/cityscapes/lifelong_learning_bench/testalgorithms/rfnet/RFNet
 ```
 
 The URL address of this algorithm then should be filled in the configuration file ``algorithm.yaml``. In this quick
@@ -78,8 +78,8 @@ start, we have done that for you and the interested readers can refer to [algori
 We are now ready to run the ianvs for benchmarking. 
 
 ``` shell
-cd /ianvs/project
-ianvs -f examples/curb-detection/lifelong_learning_bench/benchmarkingjob.yaml
+cd /ianvs/project/ianvs
+ianvs -f examples/cityscapes/lifelong_learning_bench/benchmarkingjob.yaml
 ```
 
 Finally, the user can check the result of benchmarking on the console and also in the output path(
