@@ -13,6 +13,7 @@ Before using Ianvs, you might want to have the device ready:
 - Internet connection for GitHub and pip, etc
 - Python 3.6+ installed
   
+
 In this example, we are using the Linux platform with Python 3.8.5. If you are using Windows, most steps should still apply but a few like commands and package requirements might be different. 
 
 ## Step 1. Ianvs Preparation
@@ -61,8 +62,8 @@ unzip cityscapes.zip
 
 The cityscapes dataset doesn't have the index file. Developer could use the index of the cityscapes dataset in the example.
 ``` shell   
-cp /ianvs/project/ianvs/examples/cityscapes/lifelong_learning_bench/train-index-middle.txt /ianvs/dataset/cityscapes/
-cp /ianvs/project/ianvs/examples/cityscapes/lifelong_learning_bench/test-index-middle.txt /ianvs/dataset/cityscapes/
+cp /ianvs/project/ianvs/examples/cityscapes/lifelong_learning_bench/train-index-small.txt /ianvs/dataset/cityscapes/
+cp /ianvs/project/ianvs/examples/cityscapes/lifelong_learning_bench/test-index-small.txt /ianvs/dataset/cityscapes/
 ```
 
 The URL address of this dataset then should be filled in the configuration file ``testenv.yaml``. In this quick start,
@@ -95,9 +96,9 @@ can refer to [benchmarkingJob.yaml](https://ianvs.readthedocs.io/en/latest/guide
 
 The final output might look like this:   
 
-|rank  |algorithm                |accuracy  |samples_transfer_ratio|paradigm            |basemodel  |task_definition       |task_allocation        |basemodel-learning_rate  |task_definition-origins|task_allocation-origins |                                                                                                    
-|:----:|:-----------------------:|:--------:|:--------------------:|:------------------:|:---------:|:--------------------:|:---------------------:|:-----------------------:|:----------------------|:-----------------------|
-|1     |rfnet_lifelong_learning  | 0.2123   |0.4649                |lifelonglearning    | BaseModel |TaskDefinitionByOrigin| TaskAllocationByOrigin|0.0001                   |['real', 'sim']        |['real', 'sim']         |
+| rank |        algorithm        | accuracy | samples_transfer_ratio |     paradigm     | basemodel |    task_definition     |    task_allocation     | basemodel-learning_rate | task_definition-origins | task_allocation-origins |
+| :--: | :---------------------: | :------: | :--------------------: | :--------------: | :-------: | :--------------------: | :--------------------: | :---------------------: | :---------------------- | :---------------------- |
+|  1   | rfnet_lifelong_learning |  0.238   |         0.5789         | lifelonglearning | BaseModel | TaskDefinitionByOrigin | TaskAllocationByOrigin |         0.0001          | ['real', 'sim']         | ['real', 'sim']         |
 
 
 This ends the quick start experiment.
