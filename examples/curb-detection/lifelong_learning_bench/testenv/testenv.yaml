@@ -2,9 +2,9 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_url: "/ianvs/dataset/curb-detection/train_data/index.txt"
+    train_url: "/ianvs/dataset/curb-detection/train_data/index-shuffle.txt"
     # the url address of test dataset index; string type;
-    test_url: "/ianvs/dataset/curb-detection/test_data/index.txt"
+    test_url: "/ianvs/dataset/curb-detection/test_data/index-shuffle.txt"
 
   # model eval configuration of incremental learning;
   model_eval:
@@ -31,4 +31,4 @@ testenv:
     - name: "samples_transfer_ratio"
 
   # incremental rounds setting; int type; default value is 2;
-  incremental_rounds: 2
+  incremental_rounds: 5

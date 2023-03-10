@@ -48,11 +48,13 @@ class TaskAllocationByOrigin:
             "weimar",
             "zurich"]
 
+        print("task allocation!----------------------------------------------------------------------")
         sample_origins = []
         for _x in samples.x:
             is_real = False
             for city in cities:
                 if city in _x[0]:
+                    print(_x[0])
                     is_real = True
                     sample_origins.append("real")
                     break

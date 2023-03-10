@@ -68,7 +68,7 @@ class BaseModel:
 
         if type(data) is np.ndarray:
             data = data.tolist()
-
+        print("start predicting!")
         self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
                                                 pin_memory=True)
         return self.validator.validate()

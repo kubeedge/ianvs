@@ -58,10 +58,12 @@ class TaskDefinitionByOrigin:
         sim_df = BaseDataSource(data_type=d_type)
         sim_df.x, sim_df.y = [], []
 
+        print("task definition!****************************************************************")
         for i in range(samples.num_examples()):
             is_real = False
             for city in cities:
                 if city in x_data[i][0]:
+                    print(x_data[i])
                     is_real = True
                     real_df.x.append(x_data[i])
                     real_df.y.append(y_data[i])

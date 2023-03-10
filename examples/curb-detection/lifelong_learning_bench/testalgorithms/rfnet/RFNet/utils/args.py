@@ -43,7 +43,7 @@ class ValArgs:
         self.gpu_ids = '0'
         self.checkname = None
         self.weight_path = "./models/530_exp3_2.pth"
-        self.save_predicted_image = False
+        self.save_predicted_image = True
         self.color_label_save_path = './test/color'
         self.merge_label_save_path = './test/merge'
         self.label_save_path = './test/label'
