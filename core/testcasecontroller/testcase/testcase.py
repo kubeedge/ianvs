@@ -76,7 +76,7 @@ class TestCase:
 
         except Exception as err:
             paradigm_type = self.algorithm.paradigm_type
-            raise Exception(
+            raise RuntimeError(
                 f"(paradigm={paradigm_type}) pipeline runs failed, error: {err}") from err
         return test_result
 

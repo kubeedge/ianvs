@@ -41,9 +41,9 @@ bash -s docker --mirror Aliyun"
             if install_docker.returncode == 0:
                 LOGGER.info("successfully installed docker")
             else:
-                raise Exception("install docker failed")
+                raise RuntimeError("install docker failed")
         except Exception as err:
-            raise Exception(f"install docker failed, error: {err}.") from err
+            raise RuntimeError(f"install docker failed, error: {err}.") from err
 
     LOGGER.info("check docker successful")
 
@@ -71,9 +71,9 @@ chmod +x ./kind && mv ./kind /usr/local/bin/kind"
                 LOGGER.info("successfully installed kind")
             else:
                 LOGGER.exception("install kind failed")
-                raise Exception("install kind failed")
+                raise RuntimeError("install kind failed")
         except Exception as err:
-            raise Exception(f"install kind failed, error: {err}.") from err
+            raise RuntimeError(f"install kind failed, error: {err}.") from err
 
 
 def get_host_free_memory_size():
@@ -102,7 +102,7 @@ def check_host_memory():
             "The current free memory is insufficient. \
 Current Memory Free: %s kB, Memory Require: %s kB",
             memory_free, memory_require)
-        raise Exception("The current free memory is insufficient.")
+        raise RuntimeError("The current free memory is insufficient.")
 
 
 def get_host_number_of_cpus():
@@ -132,7 +132,7 @@ def check_host_cpu():
         LOGGER.info(
             "The number of cpus is insufficient. Number of Cpus: %s kB, Cpus Require: %s kB",
             number_of_cpus, cpus_require)
-        raise Exception("The number os cpus is insufficient.")
+        raise RuntimeError("The number os cpus is insufficient.")
 
 
 def check_host_enviroment():
@@ -169,7 +169,7 @@ def build_simulation_enviroment(simulation):
         LOGGER.info(
             "Congratulation! The simulation enviroment build successful!")
     else:
-        raise Exception("The simulation enviroment build failed.")
+        raise RuntimeError("The simulation enviroment build failed.")
 
 
 def destory_simulation_enviroment(simulation):

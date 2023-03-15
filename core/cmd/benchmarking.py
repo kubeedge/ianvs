@@ -38,7 +38,7 @@ def main():
 
         LOGGER.info("benchmarkingjob runs successfully.")
     except Exception as err:
-        raise Exception(f"benchmarkingjob runs failed, error: {err}.") from err
+        raise RuntimeError(f"benchmarkingjob runs failed, error: {err}.") from err
 
 
 def _generate_parser():
