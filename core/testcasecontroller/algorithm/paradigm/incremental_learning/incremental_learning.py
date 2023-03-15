@@ -207,7 +207,7 @@ class IncrementalLearning(ParadigmBase):
         operator_func = operator_map[operator]
 
         if len(eval_results) != 2:
-            raise Exception(f"two models of evaluation should have two results."
+            raise RuntimeError(f"two models of evaluation should have two results."
                             f" the eval results: {eval_results}")
 
         metric_values = [0, 0]
