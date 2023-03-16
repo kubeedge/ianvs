@@ -70,4 +70,4 @@ class TestEnv:
         try:
             self.dataset.process_dataset()
         except Exception as err:
-            raise Exception(f"prepare dataset failed, error: {err}.") from err
+            raise RuntimeError(f"prepare dataset failed, error: {err}.") from err

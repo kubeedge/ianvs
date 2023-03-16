@@ -90,7 +90,7 @@ class Module:
             basemodel = ClassFactory.get_cls(type_name=ClassType.GENERAL,
                                              t_cls_name=self.name)(**self.hyperparameters)
         except Exception as err:
-            raise Exception(f"basemodel module loads class(name={self.name}) failed, "
+            raise RuntimeError(f"basemodel module loads class(name={self.name}) failed, "
                             f"error: {err}.") from err
 
         return basemodel
@@ -114,7 +114,7 @@ class Module:
 
                 return func
             except Exception as err:
-                raise Exception(f"hard_example_mining module loads class"
+                raise RuntimeError(f"hard_example_mining module loads class"
                                 f"(name={self.name}) failed, error: {err}.") from err
 
         # call built-in hard example mining function
@@ -179,14 +179,14 @@ class Module:
         base_hps = {}
         for hp_config_file in config_files:
             if not utils.is_local_file(hp_config_file):
-                raise Exception(f"not found other hyperparameters config file"
+                raise RuntimeError(f"not found other hyperparameters config file"
                                 f"({hp_config_file}) in local")
 
             try:
                 other_hps = utils.yaml2dict(hp_config_file)
                 base_hps.update(**other_hps)
             except Exception as err:
-                raise Exception(
+                raise RuntimeError(
                     f"other hyperparameters config file({hp_config_file}) is unvild, "
                     f"error: {err}") from err
         return base_hps
