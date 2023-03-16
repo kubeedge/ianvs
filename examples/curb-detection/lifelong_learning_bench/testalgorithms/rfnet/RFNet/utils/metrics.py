@@ -134,7 +134,11 @@ class Evaluator(object):
         return confusion_matrix
 
     def add_batch(self, gt_image, pre_image):
+        gt_image = np.array(gt_image)
+        pre_image = np.array(pre_image)
         print(gt_image.shape, pre_image.shape)
+        if gt_image.shape != pre_image.shape:
+            pre_image = pre_image[0]
         assert gt_image.shape == pre_image.shape
         self.confusion_matrix += self._generate_matrix(gt_image, pre_image)
 
