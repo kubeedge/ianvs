@@ -45,7 +45,7 @@ def samples_transfer_ratio_func(system_metric_info: dict):
     for inference_data, transfer_data in info:
         inference_num += len(inference_data)
         transfer_num += len(transfer_data)
-    return round(float(transfer_num) / inference_num, 4)
+    return round(float(transfer_num) / (inference_num + 1), 4)
 
 
 def get_metric_func(metric_dict: dict):

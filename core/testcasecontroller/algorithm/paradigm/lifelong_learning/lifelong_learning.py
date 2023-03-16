@@ -96,7 +96,7 @@ class LifelongLearning(ParadigmBase):
                                                       r)
                 else:
                     infer_dataset_file, eval_dataset_file = dataset_files[r - 1]
-
+                    '''
                     inference_results, unseen_task_train_samples = self._inference(
                                                     self.edge_task_index,
                                                     infer_dataset_file,
@@ -111,19 +111,36 @@ class LifelongLearning(ParadigmBase):
                     self.cloud_task_index = self._train(self.cloud_task_index,
                                                         unseen_task_train_samples,
                                                         r)
+                    '''
+                    self.cloud_task_index = self._train(self.cloud_task_index,
+                                                        infer_dataset_file,
+                                                        r)
                     self.edge_task_index = self._eval(self.cloud_task_index,
                                                       eval_dataset_file,
                                                       r)
+        '''
         test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
                                                               self.dataset.test_url,
                                                               "test")
 
         samples_transfer_ratio_info.append((test_res, unseen_task_train_samples.x))
-
+        '''
+        job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
+        inference_dataset = self.dataset.load_data(self.dataset.test_url, "eval",
+                                                   feature_process=_data_feature_process)
+        kwargs = {}
+        model_eval_info = self.model_eval_config
+        model_metric = model_eval_info.get("model_metric")
+        _, metric_func = get_metric_func(model_metric)
+        #_ = job.evaluate(inference_dataset, metrics=metric_func)
+        test_res = job.my_inference(inference_dataset, **kwargs)
+        del job
+        
         return test_res, self.system_metric_info
 
     def _inference(self, edge_task_index, data_index_file, rounds):
         # pylint:disable=duplicate-code
+        print("start inference")
         output_dir = os.path.join(self.workspace,
                                   f"output/inference/results/{rounds}")
         if not is_local_dir(output_dir):
@@ -150,7 +167,9 @@ class LifelongLearning(ParadigmBase):
             kwargs = {} # fix the bug of "TypeError: call() got an unexpected keyword argument 'mode'"
         else:
             kwargs = {"mode": mode}
+        print(len(inference_dataset.x))
         for i, _ in enumerate(inference_dataset.x):
+            print(i)
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
             res, is_unseen_task, _ = job.inference(data, **kwargs)
@@ -158,9 +177,11 @@ class LifelongLearning(ParadigmBase):
             if is_unseen_task:
                 unseen_tasks.append(inference_dataset.x[i])
                 unseen_task_labels.append(inference_dataset.y[i])
+        '''        
                 for infer_data in inference_dataset.x[i]:
                     shutil.copy(infer_data, unseen_task_saved_dir)
-
+        '''
+        print("inference 168")
         del job
 
         unseen_task_train_samples = BaseDataSource(data_type="train")

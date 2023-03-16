@@ -79,10 +79,25 @@ class Dataset:
             tmp_file = os.path.join(tempfile.mkdtemp(), "index.txt")
             with open(tmp_file, "w", encoding="utf-8") as file:
                 for line in lines:
-                    front, back = line.split(" ")
-                    file.writelines(
-                        f"{os.path.abspath(os.path.join(root, front))} "
-                        f"{os.path.abspath(os.path.join(root, back))}")
+                    #front, back = line.split(" ")
+                    
+                    words = line.split(" ")
+                    if len(words) == 2:
+                        front = words[0]
+                        back = words[1]
+                        file.writelines(
+                            f"{os.path.abspath(os.path.join(root, front))} "
+                            f"{os.path.abspath(os.path.join(root, back))}")
+                    else:
+                        front = words[0]
+                        depth = words[1]
+                        back = words[2]
+                        if back[-1] != '\n':
+                            back = back + '\n'
+                        file.writelines(
+                            f"{os.path.abspath(os.path.join(root, front))} "
+                            f"{os.path.abspath(os.path.join(root, depth))} "
+                            f"{os.path.abspath(os.path.join(root, back))}")
 
             new_file = tmp_file
 
@@ -145,6 +160,11 @@ class Dataset:
 
         if method == "default":
             return self._splitting_more_times(dataset_url, dataset_format, ratio,
+                                              data_types=dataset_types,
+                                              output_dir=output_dir,
+                                              times=times)
+        if method == "my_splitting":
+            return self._my_splitting(dataset_url, dataset_format, ratio,
                                               data_types=dataset_types,
                                               output_dir=output_dir,
                                               times=times)
@@ -217,6 +237,54 @@ class Dataset:
             index += 1
 
         return data_files
+    
+    def _my_splitting(self, data_file, data_format, ratio,
+                              data_types=None, output_dir=None, times=1):
+        if not data_types:
+            data_types = ("train", "eval")
+
+        if not output_dir:
+            output_dir = tempfile.mkdtemp()
+
+        all_data = self._read_data_file(data_file, data_format)
+
+        data_files = []
+
+        all_num = len(all_data)
+        index0 = 0
+        for i in range(all_num):
+            if 'synthia_sim' in all_data[i]:
+                continue
+            else:
+                index0 = i
+                break
+        new_dataset = all_data[:index0]
+        new_num = len(new_dataset)
+        data_files.append((
+                self._get_dataset_file(new_dataset[:int(new_num * ratio)], output_dir,
+                                       data_types[0], 1, data_format),
+                self._get_dataset_file(new_dataset[int(new_num * ratio):], output_dir,
+                                       data_types[1], 1, data_format)))
+        times = times - 1
+        step = int((all_num-index0) / times)
+        index = 1
+        while index <= times:
+            if index == times:
+                new_dataset = all_data[index0 + step * (index - 1):]
+            else:
+                new_dataset = all_data[index0 + step * (index - 1):index0 + step * index]
+
+            new_num = len(new_dataset)
+
+            data_files.append((
+                self._get_dataset_file(new_dataset[:int(new_num * ratio)], output_dir,
+                                       data_types[0], index+1, data_format),
+                self._get_dataset_file(new_dataset[int(new_num * ratio):], output_dir,
+                                       data_types[1], index+1, data_format)))
+
+            index += 1
+
+        return data_files
 
     @classmethod
     def load_data(cls, file: str, data_type: str, label=None, use_raw=False, feature_process=None):
@@ -251,6 +319,7 @@ class Dataset:
 
         if data_format == DatasetFormat.TXT.value:
             data = TxtDataParse(data_type=data_type, func=feature_process)
+            #print(file)
             data.parse(file, use_raw=use_raw)
 
         return data
