@@ -146,8 +146,9 @@ class LifelongLearning(ParadigmBase):
         unseen_tasks = []
         unseen_task_labels = []
         mode = self.model_eval_config.get("model_metric").get("mode")
-        if mode == None:
-            kwargs = {} # fix the bug of "TypeError: call() got an unexpected keyword argument 'mode'"
+        if mode is None:
+            kwargs = {} 
+            # fix the bug of "TypeError: call() got an unexpected keyword argument 'mode'"
         else:
             kwargs = {"mode": mode}
         for i, _ in enumerate(inference_dataset.x):
