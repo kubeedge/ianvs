@@ -56,12 +56,8 @@ class CityscapesSegmentation(data.Dataset):
         return len(self.images[self.split])
 
     def __getitem__(self, index):
-        #print(type(self.images[self.split][index]))
-        #print(self.images[self.split][index])
         img_path = self.images[self.split][index].rstrip()
         disp_path = self.disparities[self.split][index].rstrip()
-        #print(img_path)
-        #print(index)
         try:
             lbl_path = self.labels[self.split][index].rstrip()
             _img = Image.open(img_path).convert('RGB')

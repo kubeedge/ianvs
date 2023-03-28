@@ -48,7 +48,6 @@ class BenchmarkingJob:
 
     def _check_fields(self):
         if not self.name and not isinstance(self.name, str):
-            ValueError(f"algorithm name({self.name}) must be provided and be string type.")
             raise ValueError(f"benchmarkingjob's name({self.name}) must be provided"
                              f" and be string type.")
 
@@ -106,13 +105,13 @@ class BenchmarkingJob:
 
     def _parse_testenv_config(self, config_file):
         if not utils.is_local_file(config_file):
-            raise Exception(f"not found testenv config file({config_file}) in local")
+            raise RuntimeError(f"not found testenv config file({config_file}) in local")
 
         try:
             config = utils.yaml2dict(config_file)
             self.test_env = TestEnv(config)
         except Exception as err:
-            raise Exception(f"testenv config file({config_file}) is not supported, "
+            raise RuntimeError(f"testenv config file({config_file}) is not supported, "
                             f"error: {err}") from err
 
     def _parse_rank_config(self, config):

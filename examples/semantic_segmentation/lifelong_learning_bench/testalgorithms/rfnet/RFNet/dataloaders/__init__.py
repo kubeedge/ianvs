@@ -25,9 +25,6 @@ def make_data_loader(args, train_data=None, valid_data=None, test_data=None, **k
         else:
             test_loader, num_class = None, cityscapes.CityscapesSegmentation.NUM_CLASSES
 
-        # custom_set = cityscapes.CityscapesSegmentation(args, split='custom_resize')
-        # custom_loader = DataLoader(custom_set, batch_size=args.test_batch_size, shuffle=False, **kwargs)
-        # return train_loader, val_loader, test_loader, custom_loader, num_class
         return train_loader, val_loader, test_loader, num_class
 
     if args.dataset == 'citylostfound':

@@ -13,6 +13,7 @@ Before using Ianvs, you might want to have the device ready:
 - Internet connection for GitHub and pip, etc
 - Python 3.6+ installed
   
+
 In this example, we are using the Linux platform with Python 3.8.5. If you are using Windows, most steps should still apply but a few like commands and package requirements might be different. 
 
 ## Step 1. Ianvs Preparation
@@ -26,7 +27,7 @@ cd /ianvs #One might use another path preferred
 
 mkdir project
 cd project
-git clone -b feature-lifelong-n https://github.com/kubeedge/ianvs.git   
+git clone https://github.com/kubeedge/ianvs.git   
 ```
 
 
