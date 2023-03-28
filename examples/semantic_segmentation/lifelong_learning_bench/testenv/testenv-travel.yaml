@@ -2,11 +2,11 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_url: "/root/data/semantic_segmentation_dataset/train-small-3.txt"
-    #train_url: "/root/data/semantic_segmentation_dataset/train-index-sort.txt"
+    #train_url: "/root/data/semantic_segmentation_dataset/train-small-3.txt"
+    train_url: "/root/data/semantic_segmentation_dataset/train-index-sort.txt"
     # the url address of test dataset index; string type;
-    test_url: "/root/data/semantic_segmentation_dataset/test-small-3.txt"
-    #test_url: "/root/data/semantic_segmentation_dataset/test-index-sort.txt"
+    #test_url: "/root/data/semantic_segmentation_dataset/test-small-3.txt"
+    test_url: "/root/data/semantic_segmentation_dataset/test-index-sort.txt"
 
   # model eval configuration of incremental learning;
   model_eval:
@@ -34,4 +34,4 @@ testenv:
     - name: "samples_transfer_ratio"
 
   # incremental rounds setting; int type; default value is 2;
-  incremental_rounds: 2
+  incremental_rounds: 3

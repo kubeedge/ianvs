@@ -257,6 +257,6 @@ class Rank:
                 func = get_visualization_func(method)
                 func(self.selected_rank_file)
             except Exception as err:
-                raise Exception(
+                raise RuntimeError(
                     f"process visualization(method={method}) of "
                     f"rank file({self.selected_rank_file}) failed, error: {err}.") from err

@@ -26,7 +26,7 @@ cd /ianvs #One might use another path preferred
 
 mkdir project
 cd project
-git clone -b feature-lifelong-n https://github.com/kubeedge/ianvs.git   
+git clone https://github.com/kubeedge/ianvs.git   
 ```
 
 
@@ -52,22 +52,28 @@ Datasets and models can be large. To avoid over-size projects in the Github repo
 not include origin datasets. Then developers do not need to download non-necessary datasets for a quick start.
 
 ``` shell
-cd /ianvs #One might use another path preferred
-mkdir dataset   
-cd dataset
-wget https://kubeedge.obs.cn-north-1.myhuaweicloud.com/ianvs/curb-detection/curb-detection.zip
-unzip dataset.zip
+cd /root #One might use another path preferred
+mkdir data   
+cd data
+wget https://kubeedge.obs.cn-north-1.myhuaweicloud.com/sedna-robo/semantic_segmentation_dataset.zip
+unzip semantic_segmentation_dataset.zip
 ```
 
 The URL address of this dataset then should be filled in the configuration file ``testenv.yaml``. In this quick start,
 we have done that for you and the interested readers can refer to [testenv.yaml](https://ianvs.readthedocs.io/en/latest/guides/how-to-test-algorithms.html#step-1-test-environment-preparation) for more details.
+
+Copy the index files of dataset.
+
+``` shell
+cp /ianvs/project/ianvs/examples/semantic_segmentation/lifelong_learning_bench/indexes/* /root/data/semantic_segmentation_dataset/
+```
 
 <!-- Please put the downloaded dataset on the above dataset path, e.g., `/ianvs/dataset`. One can transfer the dataset to the path, e.g., on a remote Linux system using [XFTP].  -->
 
 
 Related algorithm is also ready in this quick start. 
 ``` shell
-export PYTHONPATH=$PYTHONPATH:/ianvs/project/ianvs/examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/RFNet
+export PYTHONPATH=$PYTHONPATH:/ianvs/project/ianvs/examples/semantic_segmentation/lifelong_learning_bench/testalgorithms/rfnet/RFNet
 ```
 
 The URL address of this algorithm then should be filled in the configuration file ``algorithm.yaml``. In this quick
@@ -79,7 +85,7 @@ We are now ready to run the ianvs for benchmarking.
 
 ``` shell
 cd /ianvs/project/ianvs
-ianvs -f examples/curb-detection/lifelong_learning_bench/benchmarkingjob.yaml
+ianvs -f examples/semantic_segmentation/lifelong_learning_bench/benchmarkingjob-smalltest.yaml
 ```
 
 Finally, the user can check the result of benchmarking on the console and also in the output path(
@@ -91,7 +97,7 @@ The final output might look like this:
 
 |rank  |algorithm                |accuracy  |samples_transfer_ratio|paradigm            |basemodel  |task_definition       |task_allocation        |basemodel-learning_rate  |task_definition-origins|task_allocation-origins |                                                                                                    
 |:----:|:-----------------------:|:--------:|:--------------------:|:------------------:|:---------:|:--------------------:|:---------------------:|:-----------------------:|:----------------------|:-----------------------|
-|1     |rfnet_lifelong_learning  | 0.2123   |0.4649                |lifelonglearning    | BaseModel |TaskDefinitionByOrigin| TaskAllocationByOrigin|0.0001                   |['real', 'sim']        |['real', 'sim']         |
+|1     |rfnet_lifelong_learning for small test | 0.3009   |0.4807               |lifelonglearning    | BaseModel |TaskDefinitionByOrigin| TaskAllocationByOrigin|0.0001                   |['real', 'sim']        |['real', 'sim']         |
 
 
 This ends the quick start experiment.

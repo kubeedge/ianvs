@@ -2,10 +2,10 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_url: "/ianvs/dataset/semantic_segmentation_dataset/train-small-3.txt"
+    train_url: "/root/data/semantic_segmentation_dataset/train-small-3.txt"
     #train_url: "/root/data/semantic_segmentation_dataset/train-index.txt"
     # the url address of test dataset index; string type;
-    test_url: "/ianvs/dataset/semantic_segmentation_dataset/test-small-3.txt"
+    test_url: "/root/data/semantic_segmentation_dataset/test-small-3.txt"
     #test_url: "/root/data/semantic_segmentation_dataset/test-index.txt"
 
   # model eval configuration of incremental learning;
@@ -16,6 +16,7 @@ testenv:
       name: "accuracy"
       # the url address of python file
       url: "./examples/semantic_segmentation/lifelong_learning_bench/testenv/accuracy.py"
+      mode: "no-inference"
 
     # condition of triggering inference model to update
     # threshold of the condition; types are float/int
@@ -33,4 +34,4 @@ testenv:
     - name: "samples_transfer_ratio"
 
   # incremental rounds setting; int type; default value is 2;
-  incremental_rounds: 3
+  incremental_rounds: 2

@@ -116,7 +116,7 @@ class Module:
 
                 return func
             except Exception as err:
-                raise Exception(f"module(type={module_type} loads class(name={self.name}) "
+                raise RuntimeError(f"module(type={module_type} loads class(name={self.name}) "
                                 f"failed, error: {err}.") from err
 
         # call lib built-in module function
@@ -164,14 +164,14 @@ class Module:
         base_hps = {}
         for hp_config_file in config_files:
             if not utils.is_local_file(hp_config_file):
-                raise Exception(f"not found other hyperparameters config file"
+                raise RuntimeError(f"not found other hyperparameters config file"
                                 f"({hp_config_file}) in local")
 
             try:
                 other_hps = utils.yaml2dict(hp_config_file)
                 base_hps.update(**other_hps)
             except Exception as err:
-                raise Exception(
+                raise RuntimeError(
                     f"other hyperparameters config file({hp_config_file}) is unvild, "
                     f"error: {err}") from err
         return base_hps
