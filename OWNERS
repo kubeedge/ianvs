@@ -1,9 +1,10 @@
 approvers:
   - MooreZheng
-  - JimmyYang20
+  - sig-ai-co-chairs
+  - sig-ai-tech-leads
   
 reviewers:
   - MooreZheng
-  - JimmyYang20
   - jaypume
-  - back1860
+  - luosiqi
+  - sig-ai-project-maintainers
