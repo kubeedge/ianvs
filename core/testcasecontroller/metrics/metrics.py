@@ -45,7 +45,7 @@ def samples_transfer_ratio_func(system_metric_info: dict):
     for inference_data, transfer_data in info:
         inference_num += len(inference_data)
         transfer_num += len(transfer_data)
-    return round(float(transfer_num) / inference_num, 4)
+    return round(float(transfer_num) / (inference_num + 1), 4)
 
 
 def get_metric_func(metric_dict: dict):
@@ -72,6 +72,6 @@ def get_metric_func(metric_dict: dict):
             metric_func = ClassFactory.get_cls(type_name=ClassType.GENERAL, t_cls_name=name)
             return name, metric_func
         except Exception as err:
-            raise Exception(f"get metric func(url={url}) failed, error: {err}.") from err
+            raise RuntimeError(f"get metric func(url={url}) failed, error: {err}.") from err
 
     return name, getattr(sys.modules[__name__], str.lower(name) + "_func")

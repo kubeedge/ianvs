@@ -76,7 +76,7 @@ class TestCase:
 
         except Exception as err:
             paradigm_type = self.algorithm.paradigm_type
-            raise Exception(
+            raise RuntimeError(
                 f"(paradigm={paradigm_type}) pipeline runs failed, error: {err}") from err
         return test_result
 
@@ -111,6 +111,7 @@ class TestCase:
         metric_res = {}
         system_metric_types = [e.value for e in SystemMetricType.__members__.values()]
         for metric_name, metric_func in metric_funcs.items():
+            print(metric_name)
             if metric_name in system_metric_types:
                 metric_res[metric_name] = metric_func(kwargs)
             else:

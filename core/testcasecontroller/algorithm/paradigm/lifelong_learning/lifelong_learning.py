@@ -82,7 +82,36 @@ class LifelongLearning(ParadigmBase):
         samples_transfer_ratio_info = self.system_metric_info.get(
             SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
         mode = self.model_eval_config.get("model_metric").get("mode")
-        if mode != 'multi-inference':
+
+        # in this mode, the inference period is skipped to accelerate training speed
+        if mode == 'no-inference':
+            dataset_files = self._split_dataset(splitting_dataset_times=rounds)
+            # pylint: disable=C0103
+            for r in range(1, rounds + 1):
+                if r == 1:
+                    train_dataset_file, eval_dataset_file = dataset_files[r - 1]
+                    self.cloud_task_index = self._train(self.cloud_task_index,
+                                                        train_dataset_file,
+                                                        r)
+                    self.edge_task_index = self._eval(self.cloud_task_index,
+                                                      eval_dataset_file,
+                                                      r)
+                else:
+                    infer_dataset_file, eval_dataset_file = dataset_files[r - 1]
+                    self.cloud_task_index = self._train(self.cloud_task_index,
+                                                        infer_dataset_file,
+                                                        r)
+                    self.edge_task_index = self._eval(self.cloud_task_index,
+                                                      eval_dataset_file,
+                                                      r)
+            job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
+            inference_dataset = self.dataset.load_data(self.dataset.test_url, "eval",
+                                                   feature_process=_data_feature_process)
+            kwargs = {}
+            test_res = job.my_inference(inference_dataset, **kwargs)
+            del job
+
+        elif mode != 'multi-inference':
             dataset_files = self._split_dataset(splitting_dataset_times=rounds)
             # pylint: disable=C0103
             for r in range(1, rounds + 1):
@@ -114,16 +143,15 @@ class LifelongLearning(ParadigmBase):
                     self.edge_task_index = self._eval(self.cloud_task_index,
                                                       eval_dataset_file,
                                                       r)
-        test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
+            test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
                                                               self.dataset.test_url,
                                                               "test")
-
-        samples_transfer_ratio_info.append((test_res, unseen_task_train_samples.x))
 
         return test_res, self.system_metric_info
 
     def _inference(self, edge_task_index, data_index_file, rounds):
         # pylint:disable=duplicate-code
+        #print("start inference")
         output_dir = os.path.join(self.workspace,
                                   f"output/inference/results/{rounds}")
         if not is_local_dir(output_dir):
@@ -146,7 +174,12 @@ class LifelongLearning(ParadigmBase):
         unseen_tasks = []
         unseen_task_labels = []
         mode = self.model_eval_config.get("model_metric").get("mode")
-        kwargs = {"mode": mode}
+        if mode is None:
+            kwargs = {}
+            # fix the bug of "TypeError: call() got an unexpected keyword argument 'mode'"
+        else:
+            kwargs = {"mode": mode}
+        #print(len(inference_dataset.x))
         for i, _ in enumerate(inference_dataset.x):
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
