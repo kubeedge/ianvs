@@ -7,7 +7,7 @@ from torchvision import transforms
 from dataloaders import custom_transforms as tr
 
 class CityscapesSegmentation(data.Dataset):
-    NUM_CLASSES = 24 # 25
+    NUM_CLASSES = 30 # 25
 
     def __init__(self, args, root=Path.db_root_dir('cityscapes'), data=None, split="train"):
 

@@ -1,0 +1,63 @@
+algorithm:
+  # paradigm type; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  #   3> "lifelonglearning"
+  paradigm_type: "lifelonglearning"
+  lifelong_learning_data_setting:
+    # ratio of training dataset; float type;
+    # the default value is 0.8.
+    train_ratio: 0.9
+    # the method of splitting dataset; string type; optional;
+    # currently the options of value are as follows:
+    #   1> "default": the dataset is evenly divided based train_ratio;
+    splitting_method: "default"
+    #splitting_method: "my_splitting"
+
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # type of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel": contains important interfaces such as train、 eval、 predict and more; required module;
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "BaseModel"
+      # the url address of python module; string type;
+      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/basemodel-simple.py"
+      # hyperparameters configuration for the python module; list type;
+      hyperparameters:
+        # name of the hyperparameter; string type;
+        - learning_rate:
+            values:
+              - 0.0001
+        - epochs:
+            values:
+              - 1
+    #  2> "task_definition": define lifelong task ; optional module;
+    - type: "task_definition"
+      # name of python module; string type;
+      name: "TaskDefinitionByOrigin"
+      # the url address of python module; string type;
+      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/task_definition_by_origin-simple.py"
+      # hyperparameters configuration for the python module; list type;
+      hyperparameters:
+        # name of the hyperparameter; string type;
+        # origins of data; value is ["real", "sim"], this means that data from real camera and simulator.
+        - origins:
+            values:
+              - [ "front", "garden" ]
+    #  3> "task_allocation": allocate lifelong task ; optional module;
+    - type: "task_allocation"
+      # name of python module; string type;
+      name: "TaskAllocationByOrigin"
+      # the url address of python module; string type;
+      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/task_allocation_by_origin-simple.py"
+      # hyperparameters configuration for the python module; list type;
+      hyperparameters:
+        # name of the hyperparameter; string type;
+        # origins of data; value is ["real", "sim"], this means that data from real camera and simulator.
+        - origins:
+            values:
+              - [ "front", "garden" ]

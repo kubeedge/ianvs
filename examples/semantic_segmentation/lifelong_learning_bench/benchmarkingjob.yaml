@@ -2,7 +2,7 @@ benchmarkingjob:
   # job name of bechmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  workspace: "/ianvs/lifelong_learning_bench/workspace"
+  workspace: "/home/shijing.hu/ianvs/lifelong_learning_bench/workspace"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;

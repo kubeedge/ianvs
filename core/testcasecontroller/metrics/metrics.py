@@ -47,6 +47,19 @@ def samples_transfer_ratio_func(system_metric_info: dict):
         transfer_num += len(transfer_data)
     return round(float(transfer_num) / (inference_num + 1), 4)
 
+def bwt_func(system_metric_info: dict):
+    """
+    compute BWT
+    """
+    info = system_metric_info.get(SystemMetricType.BWT.value)
+    return info["all"]
+
+def fwt_func(system_metric_info: dict):
+    """
+    compute FWT
+    """
+    info = system_metric_info.get(SystemMetricType.FWT.value)
+    return info["all"]
 
 def get_metric_func(metric_dict: dict):
     """
