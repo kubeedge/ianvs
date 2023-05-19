@@ -34,7 +34,7 @@ algorithm:
               - 0.0001
         - epochs:
             values:
-              - 1
+              - 50
     #  2> "task_definition": define lifelong task ; optional module;
     - type: "task_definition"
       # name of python module; string type;

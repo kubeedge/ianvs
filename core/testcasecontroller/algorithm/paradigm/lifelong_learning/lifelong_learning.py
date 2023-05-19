@@ -16,7 +16,8 @@
 
 import os
 import shutil
-
+import pickle
+import matplotlib.pyplot as plt
 import numpy as np
 from sedna.datasources import BaseDataSource
 
@@ -25,6 +26,7 @@ from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 from core.testcasecontroller.metrics import get_metric_func
 from core.common.utils import get_file_format, is_local_dir
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 class LifelongLearning(ParadigmBase):
     # pylint: disable=too-many-locals
@@ -63,10 +65,13 @@ class LifelongLearning(ParadigmBase):
         self.model_eval_config = kwargs.get("model_eval")
         self.cloud_task_index = '/tmp/cloud_task/index.pkl'
         self.edge_task_index = '/tmp/edge_task/index.pkl'
-        self.system_metric_info = {SystemMetricType.SAMPLES_TRANSFER_RATIO.value: []}
+        self.system_metric_info = {SystemMetricType.SAMPLES_TRANSFER_RATIO.value: [],
+                                   SystemMetricType.BWT.value : {}, SystemMetricType.FWT.value: {}}
 
     def run(self):
         # pylint:disable=duplicate-code
+        # pylint: disable=R0912
+        # pylint: disable=R0915
         """
         run the test flow of incremental learning paradigm.
 
@@ -87,29 +92,94 @@ class LifelongLearning(ParadigmBase):
         if mode == 'no-inference':
             dataset_files = self._split_dataset(splitting_dataset_times=rounds)
             # pylint: disable=C0103
+            # pylint: disable=C0206
+            # pylint: disable=C0201
+            my_dict = {}
             for r in range(1, rounds + 1):
                 if r == 1:
                     train_dataset_file, eval_dataset_file = dataset_files[r - 1]
                     self.cloud_task_index = self._train(self.cloud_task_index,
                                                         train_dataset_file,
                                                         r)
-                    self.edge_task_index = self._eval(self.cloud_task_index,
+                    tmp_dict = {}
+                    for j in range(rounds):
+                        _, eval_dataset_file = dataset_files[j]
+                        self.edge_task_index, tasks_detail, res = self.my_eval(
+                                                    self.cloud_task_index,
                                                       eval_dataset_file,
                                                       r)
+                        print("train from round ", r)
+                        print("test round ", j+1)
+                        print(f"all scores: {res}")
+                        score_list = tmp_dict.get("all", [])
+                        score_list.append(res)
+                        tmp_dict["all"] = score_list
+                        for detail in tasks_detail:
+                            scores = detail.scores
+                            entry = detail.entry
+                            print(f"{entry} scores: {scores}")
+                            score_list = tmp_dict.get(entry, [])
+                            score_list.append(scores)
+                            tmp_dict[entry] = score_list
+                    for key in tmp_dict.keys():
+                        scores_list = my_dict.get(key, [])
+                        scores_list.append(tmp_dict[key])
+                        my_dict[key] = scores_list
+                        print(f"{key} scores: {scores_list}")
+
                 else:
                     infer_dataset_file, eval_dataset_file = dataset_files[r - 1]
                     self.cloud_task_index = self._train(self.cloud_task_index,
                                                         infer_dataset_file,
                                                         r)
-                    self.edge_task_index = self._eval(self.cloud_task_index,
+                    tmp_dict = {}
+                    for j in range(rounds):
+                        _, eval_dataset_file = dataset_files[j]
+                        self.edge_task_index, tasks_detail, res = self.my_eval(
+                                                    self.cloud_task_index,
                                                       eval_dataset_file,
                                                       r)
+                        print("train from round ", r)
+                        print("test round ", j+1)
+                        print(f"all scores: {res}")
+                        score_list = tmp_dict.get("all", [])
+                        score_list.append(res)
+                        tmp_dict["all"] = score_list
+                        for detail in tasks_detail:
+                            scores = detail.scores
+                            entry = detail.entry
+                            print(f"{entry} scores: {scores}")
+                            score_list = tmp_dict.get(entry, [])
+                            score_list.append(scores)
+                            tmp_dict[entry] = score_list
+                    for key in tmp_dict.keys():
+                        scores_list = my_dict.get(key, [])
+                        scores_list.append(tmp_dict[key])
+                        my_dict[key] = scores_list
+                        print(f"{key} scores: {scores_list}")
+
+            self.edge_task_index = self._eval(self.cloud_task_index,
+                                                      self.dataset.test_url,
+                                                      r+1)
             job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
             inference_dataset = self.dataset.load_data(self.dataset.test_url, "eval",
                                                    feature_process=_data_feature_process)
             kwargs = {}
             test_res = job.my_inference(inference_dataset, **kwargs)
             del job
+            output_dir = os.path.join(self.workspace,
+                                  "output/result.pkl")
+            for key in my_dict.keys():
+                print(f"{key} scores: {my_dict[key]}")
+            with open(output_dir,'wb') as file:
+                pickle.dump(my_dict,file)
+            for key in my_dict.keys():
+                matrix = my_dict[key]
+                BWT, FWT = self.compute(key, matrix)
+                self.system_metric_info[SystemMetricType.BWT.value][key] = BWT
+                self.system_metric_info[SystemMetricType.FWT.value][key] = FWT
+
+            file.close()
 
         elif mode != 'multi-inference':
             dataset_files = self._split_dataset(splitting_dataset_times=rounds)
@@ -148,6 +218,63 @@ class LifelongLearning(ParadigmBase):
                                                               "test")
 
         return test_res, self.system_metric_info
+
+    def compute(self, key, matrix):
+        """
+        compute BWT and FWT
+        """
+        # pylint: disable=C0103
+        length = len(matrix)
+        accuracy = 0.0
+        BWT_score = 0.0
+        FWT_score = 0.0
+        flag = True
+        for i in range(length):
+            if len(matrix[i]) != length:
+                flag = False
+                break
+        if flag is False:
+            BWT_score = np.nan
+            FWT_score = np.nan
+            return BWT_score, FWT_score
+
+        for i in range(length):
+            accuracy += matrix[length-1][i]['accuracy']
+            BWT_score += matrix[length-1][i]['accuracy'] - matrix[i][i]['accuracy']
+        for i in range(1,length):
+            FWT_score += matrix[i-1][i]['accuracy'] - matrix[0][i]['accuracy']
+        accuracy = accuracy/(length)
+        BWT_score = BWT_score/(length-1)
+        FWT_score = FWT_score/(length-1)
+        #print(f"{key} accuracy: ", accuracy)
+        print(f"{key} BWT_score: ", BWT_score)
+        print(f"{key} FWT_score: ", FWT_score)
+        my_matrix = []
+        for i in range(length):
+            my_matrix.append([])
+        for i in range(length):
+            for j in range(length):
+                my_matrix[i].append(matrix[j][i]['accuracy'])
+        self.draw_picture(key,my_matrix)
+        return BWT_score, FWT_score
+
+    def draw_picture(self, title, matrix):
+        """
+        draw hot image for results
+        """
+        plt.figure(figsize=(10,8), dpi=80)
+        plt.imshow(matrix, cmap='bwr', extent=(0.5,len(matrix)+0.5,0.5,len(matrix)+0.5),
+                    origin='lower')
+        plt.xticks(fontsize=15)
+        plt.yticks(fontsize=15)
+        plt.xlabel('task round', fontsize=15)
+        plt.ylabel('task', fontsize=15)
+        plt.title(title, fontsize=15)
+        plt.colorbar(format='%.2f')
+        output_dir = os.path.join(self.workspace,
+                                  f"output/{title}-heatmap.png")
+        plt.savefig(output_dir)
+        plt.show()
 
     def _inference(self, edge_task_index, data_index_file, rounds):
         # pylint:disable=duplicate-code
@@ -244,6 +371,33 @@ class LifelongLearning(ParadigmBase):
         del job
 
         return edge_task_index
+
+    def my_eval(self, cloud_task_index, data_index_file, rounds):
+        """
+        evaluate models
+        """
+        eval_output_dir = os.path.join(self.workspace, f"output/eval/{rounds}")
+        if not is_local_dir(eval_output_dir):
+            os.makedirs(eval_output_dir)
+
+        model_eval_info = self.model_eval_config
+        model_metric = model_eval_info.get("model_metric")
+
+        os.environ["OUTPUT_URL"] = eval_output_dir
+        os.environ["model_threshold"] = str(model_eval_info.get("threshold"))
+        os.environ["operator"] = model_eval_info.get("operator")
+        os.environ["MODEL_URLS"] = f"{cloud_task_index}"
+
+        eval_dataset = self.dataset.load_data(data_index_file, "eval",
+                                              feature_process=_data_feature_process)
+
+        job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
+        _, metric_func = get_metric_func(model_metric)
+        edge_task_index, tasks_detail, res = job.my_evaluate(eval_dataset, metrics=metric_func)
+
+        del job
+
+        return edge_task_index, tasks_detail, res
 
     def _split_dataset(self, splitting_dataset_times=1):
         # pylint:disable=duplicate-code

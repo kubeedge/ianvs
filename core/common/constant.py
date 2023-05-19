@@ -67,6 +67,8 @@ class SystemMetricType(Enum):
     System metric type of ianvs.
     """
     SAMPLES_TRANSFER_RATIO = "samples_transfer_ratio"
+    FWT = "FWT"
+    BWT = "BWT"
 
 
 class TestObjectType(Enum):
