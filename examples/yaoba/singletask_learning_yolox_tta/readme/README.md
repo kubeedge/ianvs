@@ -18,7 +18,7 @@ In this project, we present a policy search-based test-time augmentation method 
 
 Three test-time augmentation schemes: single policy, cascade policy, and combined policy are proposed in this method. Their differences among them are shown in the following figure.
 
-<img alt="readme_tta_3" height="200" src="readme_tta_3.jpg" title="readme_tta_3" width="850"/>
+<img alt="diagram3" height="200" src="diagram3.jpg" title="diagram3" width="850"/>
 
 ## About dataset
 
@@ -26,7 +26,7 @@ The industrial crank defect detection dataset consists of 627 images, which hold
 huahen', and 'mosun', and the image resolution is 4024 × 3036. Please follow  [this link](https://baidu.com) to download
 the dataset and learn more about it. Additionally, below is an example figure from the dataset.
 
-<img alt="example_img" height="280" src="2021-05-17-12-34-44.jpg" title="example_img" width="400"/>
+<img alt="diagram4" height="280" src="diagram4.jpg" title="diagram4" width="400"/>
 
 ## Dataset splitting for unknown task processing
 After unzipping dataset.zip, your folder format should look like below:
