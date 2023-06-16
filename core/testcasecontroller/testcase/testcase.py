@@ -103,17 +103,25 @@ class TestCase:
             if callable(metric_func):
                 metric_funcs.update({metric_name: metric_func})
 
-        test_dataset_file = dataset.test_url
-        test_dataset = dataset.load_data(test_dataset_file,
-                                         data_type="eval overall",
-                                         label=dataset.label)
-
+        use_raw = kwargs.get("use_raw")
+        if use_raw:
+            img_prefix = dataset.image_folder_url
+            ann_file = dataset.test_url
+            test_dataset = (img_prefix, ann_file)
+        else:
+            test_dataset_file = dataset.test_url
+            test_dataset = dataset.load_data(test_dataset_file,
+                                             data_type="eval overall",
+                                             label=dataset.label)
         metric_res = {}
         system_metric_types = [e.value for e in SystemMetricType.__members__.values()]
         for metric_name, metric_func in metric_funcs.items():
             if metric_name in system_metric_types:
                 metric_res[metric_name] = metric_func(kwargs)
             else:
-                metric_res[metric_name] = metric_func(test_dataset.y, paradigm_result)
+                if use_raw:
+                    metric_res[metric_name] = metric_func(test_dataset, paradigm_result)
+                else:
+                    metric_res[metric_name] = metric_func(test_dataset.y, paradigm_result)
 
         return metric_res

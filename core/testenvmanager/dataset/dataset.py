@@ -39,6 +39,10 @@ class Dataset:
         self.train_url: str = ""
         self.test_url: str = ""
         self.label: str = ""
+        self.val_url = ""
+        self.known_dataset_url = ""
+        self.unknown_dataset_url = ""
+        self.image_folder_url = ""
         self._parse_config(config)
 
     def _check_fields(self):

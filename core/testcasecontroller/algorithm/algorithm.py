@@ -22,6 +22,8 @@ from core.testcasecontroller.algorithm.paradigm import (
     SingleTaskLearning,
     IncrementalLearning,
     MultiedgeInference,
+    SingleTaskLearningACBoost,
+    SingleTaskLearningTTA
 )
 from core.testcasecontroller.generation_assistant import get_full_combinations
 
@@ -86,6 +88,12 @@ class Algorithm:
 
         if self.paradigm_type == ParadigmType.SINGLE_TASK_LEARNING.value:
             return SingleTaskLearning(workspace, **config)
+
+        if self.paradigm_type == ParadigmType.SINGLE_TASK_LEARNING_TTA.value:
+            return SingleTaskLearningTTA(workspace, **config)
+
+        if self.paradigm_type == ParadigmType.SINGLE_TASK_LEARNING_ACBoost.value:
+            return SingleTaskLearningACBoost(workspace, **config)
 
         if self.paradigm_type == ParadigmType.INCREMENTAL_LEARNING.value:
             return IncrementalLearning(workspace, **config)

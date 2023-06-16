@@ -16,3 +16,5 @@
 from .incremental_learning import IncrementalLearning
 from .singletask_learning import SingleTaskLearning
 from .multiedge_inference import MultiedgeInference
+from .singletask_learning import SingleTaskLearningTTA
+from .singletask_learning import SingleTaskLearningACBoost
