@@ -12,8 +12,8 @@ algorithm:
     # the method of splitting dataset; string type; optional;
     # currently the options of value are as follows:
     #   1> "default": the dataset is evenly divided based train_ratio;
-    splitting_method: "default"
-    #splitting_method: "my_splitting"
+    #splitting_method: "default"
+    splitting_method: "fwt_splitting"
 
   # algorithm module configuration in the paradigm; list type;
   modules:
