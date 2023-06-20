@@ -2,7 +2,7 @@ benchmarkingjob:
   # job name of bechmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  workspace: "/ianvs/lifelong_learning_bench/robot-workspace-bwt"
+  workspace: "/home/hsj/ianvs/lifelong_learning_bench/robot-workspace-test"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
@@ -57,13 +57,13 @@ benchmarkingjob:
       # currently the options of value are as follows:
       #   1> "all": select all metrics in the leaderboard;
       #   2> metrics in the leaderboard, e.g., "F1_SCORE"
-      metrics: [ "accuracy", "BWT", "FWT"]
+      metrics: [ "accuracy", "Task_Avg_Acc", "BWT", "FWT"]
 
     # model of save selected and all dataitems in workspace `./rank` ; string type;
     # currently the options of value are as follows:
     #  1> "selected_and_all": save selected and all dataitems;
     #  2> "selected_only": save selected dataitems;
-    save_mode: "selected_and_all"
+    save_mode: "selected_and_all_and_picture"
 
 
 
