@@ -4,6 +4,7 @@ This document helps you to contribute stories, i.e., test reports or leaderboard
 If you follow this guide and find some problem, it is appreciated to submit an issue to update this file.
 
 ## Test Reports
+
 Everyone is welcome to submit and share your own test report to the community. 
 
 ### 1. Setup and Testing
@@ -24,38 +25,37 @@ Clone the `Ianvs` repo.:
 git clone http://github.com/kubeedge/ianvs.git
 ```
 
-Please follow [Ianvs setup] to install Ianvs, and then run your own algorithm to output test reports.
+Please follow the [Ianvs setup] to install Ianvs, and then run your own algorithm to output test reports.
 
+### 2. Declare your grades
 
-### 2. Declare your grades 
-You may want to compare your testing result and those results on the [leaderboard]. 
+You may want to compare your testing result and those results on the [leaderboard].
 
-Test reports are welcome after benchmarking. It can be submitted to [there](https://github.com/kubeedge/ianvs/tree/main/docs/proposals/test-reports) for further review.   
-
-
+Test reports are welcome after benchmarking. It can be submitted [here](https://github.com/kubeedge/ianvs/tree/main/docs/proposals/test-reports) for further review.
 
 ## Leaderboards
-Leaderboards, i.e., rankings of test object, are public to everyone to visit. Examples are as [leaderboard]. 
 
-Except [Ianvs Owners](https://github.com/kubeedge/ianvs/blob/main/OWNERS), there are mainly two roles for a leaderboard publication:
-1. Developer: submit the test object for benchmarking, including but not limitted to materials like algorithm, test case following Ianvs settings and interfaces.  
-2. Maintainer: testing materials provided from developers and release the updated leaderboard to public. 
+Leaderboards, i.e., rankings of the test object, are public for everyone to visit. Example:[leaderboard].
 
-For potenial developers, 
+Except for [Ianvs Owners](https://github.com/kubeedge/ianvs/blob/main/OWNERS), there are mainly two roles for a leaderboard publication:
+
+1. Developer: submit the test object for benchmarking, including but not limited to materials like algorithm, test case following Ianvs settings, and interfaces.  
+2. Maintainer: testing materials provided by developers and releasing the updated leaderboard to the public.
+
+For potential developers,
+
 - Develop your algorithm with ianvs and choose the algorithm to submit.
-- Make sure the submitted test object runs properly under the latest version of Ianvs before submission. Maintainers are not reponsible to debug for the submitted objects. 
-- Do NOT need to submit the new leaderboard. Maintainers are responsible to make test environment consistent for all test objects under the same leaderboard and execute the test object to generate new leaderboard. 
-- If the test object is ready, you are welcome to contact [Ianvs Owners](https://github.com/kubeedge/ianvs/blob/main/OWNERS). Ianvs owners will connect you and maintainers, in order to receive your test object. Note that when developers submit the test object, developers give maintainers the right to test them. 
+- Make sure the submitted test object runs properly under the latest version of Ianvs before submission. Maintainers are not responsible to debug for the submitted objects.
+- Do NOT need to submit the new leaderboard. Maintainers are responsible to make the test environment consistent for all test objects under the same leaderboard and execute the test object to generate a new leaderboard.
+- If the test object is ready, you are welcome to contact [Ianvs Owners](https://github.com/kubeedge/ianvs/blob/main/OWNERS). Ianvs owners will connect you and maintainers, in order to receive your test object. Note that when developers submit the test object, developers give maintainers the right to test them.
 
 For potential maintainers,
-- To maintain the consistence of test environments and test objects, the [leaderboard] submssion is at present calling for acknowledged organizations to apply in charge. Please contact
-- Maintainers should be responsible for the result summitted. 
-- Maintainers should update the leaderboard in a monthly manner. 
-- Maintainers are NOT allowed to use the test object in purpose out of Ianvs benchmarking without formal authorization from developers. 
-- Besides submitted objects, maintainers are suggested to test objects released in KubeEdge SIG AI or other classic solutions released in public. 
 
-
-
+- To maintain the consistency of test environments and test objects, the [leaderboard] submission is at present calling for acknowledged organizations to apply in charge. Please contact
+- Maintainers should be responsible for the result submitted.
+- Maintainers should update the leaderboard in a monthly manner.
+- Maintainers are NOT allowed to use the test object in purpose out of Ianvs benchmarking without formal authorization from developers.
+- Besides submitted objects, maintainers are suggested to test objects released in KubeEdge SIG AI or other classic solutions released in public.
 
 [git]: https://git-scm.com/
 [framework]: /docs/proposals/architecture.md#architecture

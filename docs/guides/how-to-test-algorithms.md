@@ -1,23 +1,25 @@
-[Quick Start]: ./quick-start.md  
+[Quick Start]: ./quick-start.md
 [Links of scenarios]: ../proposals/scenarios/industrial-defect-detection/pcb-aoi.md
 [the PCB-AoI public dataset]: https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi
 [details of PCB-AoI dataset]: ../proposals/scenarios/industrial-defect-detection/pcb-aoi.md
 
 # How to test algorithms with Ianvs
 
-With Ianvs installed and related environment prepared, an algorithm developer is then able to test his/her own targeted algorithm using the following steps. 
+With Ianvs installed and the related environment prepared, an algorithm developer is then able to test his/her own targeted algorithm using the following steps.
 
 Note that:
-- If you are testing an algorithm summitted in Ianvs repository, e.g., FPN for single task learning, the test environment and the test case are both ready to use and you can directly refer to [Quick Start]. 
-- Otherwise, if the user has a test algorithm which is new to Ianvs repository, i.e., the test environment and the test case are not ready for the targeted algorithm, you might test the algorithm in Ianvs following the next steps from scratch.
+
+- If you are testing an algorithm submitted in the Ianvs repository, e.g., FPN for single task learning, the test environment and the test case are both ready to use and you can directly refer to Quick Start.
+- Otherwise, if the user has a test algorithm that is new to the Ianvs repository, i.e., the test environment and the test case are not ready for the targeted algorithm, you might test the algorithm in Ianvs following the next steps from scratch
 
 ## Step 1. Test Environment Preparation
   
-First, the user need to prepare the dataset according to the targeted scenario, from source links (e.g., from Kaggle) provided by Ianvs. Scenarios with dataset are  available [Links of scenarios]. As an example in this document, we are using [the PCB-AoI Public Dataset] released by KubeEdge SIG AI members on Kaggle. See [details of PCB-AoI dataset] for more information of this dataset. 
+First, the user needs to prepare the dataset according to the targeted scenario, from source links (e.g., from Kaggle) provided by Ianvs. Scenarios with datasets are available Links of scenarios. As an example in this document, we are using the PCB-AoI Public Dataset released by KubeEdge SIG AI members on Kaggle. See details of PCB-AoI dataset for more information on this dataset.
 
-You might wonder why not put the dataset on Github repository of Ianvs: Datasets can be large. To avoid over-size projects in the Github repository of Ianvs, the Ianvs code base do not include origin datasets and developers might want to download uneeded datasets. 
+You might wonder why not put the dataset on the GitHub repository of Ianvs: Datasets can be large. To avoid over-size projects in the GitHub repository of Ianvs, the Ianvs code base does not include origin datasets and developers might want to download unneeded datasets.
+The URL address of this dataset then should be filled in the configuration file testenv.yaml.
 
-The URL address of this dataset then should be filled in the configuration file ``testenv.yaml``. 
+The URL address of this dataset then should be filled in the configuration file ``testenv.yaml``.
 
 ``` yaml
 # testenv.yaml
@@ -58,6 +60,7 @@ testenv:
 ```
 
 The URL address of this test environment, i.e., testenv.yaml, then should be filled in the configuration file in the following Step 3. For example,  
+
 ``` yaml
 # benchmarkingJob.yaml
   testenv: "./examples/pcb-aoi/benchmarkingjob/testenv/testenv.yaml"
@@ -65,19 +68,14 @@ The URL address of this test environment, i.e., testenv.yaml, then should be fil
 
 ## Step 2. Test Case Preparation
 
-Note that the tested algorithm should follow the ianvs interface to ensure functional benchmarking.
-That is, when a new algorithm is needed for testing, it should to be extended based on the basic classes, i.e., `class_factory.py`. 
-The class factory helps to make the algorithm pluggable in Ianvs 
-and two classes are defined in `class_factory.py`, namely `ClassType` and `ClassFactory`. 
-`ClassFactory` can register the modules you want to reuse through decorators. 
-The the user may develop the targeted algorithm as usual using the algorithm interface in class factory. 
+Note that the tested algorithm should follow the ianvs interface to ensure functional benchmarking. That is, when a new algorithm is needed for testing, it should be extended based on the basic classes, i.e., class_factory.py. The class factory helps to make the algorithm pluggable in Ianvs and two classes are defined in class_factory.py, namely ClassType, and ClassFactory. ClassFactory can register the modules you want to reuse through decorators. The user may develop the targeted algorithm, as usual, using the algorithm interface in the class factory.
+Currently, Ianvs is using the class_factory.py defined in KubeEdge SIG AI (source link). If you want to contribute a new type of module to KubeEdge SIG AI, i.e., a new class type, please refer to the guide on how to contribute algorithms.
 
 Currently, Ianvs is using the `class_factory.py` defined in KubeEdge SIG AI ([source link](https://github.com/kubeedge/sedna/blob/main/lib/sedna/common/class_factory.py)). If you want to contribute a new type of modules to KubeEdge SIG AI, i.e., a new classtype, please refer to the guide of [how to contribute algorithms](./how-to-contribute-algorithms.md).
 
-
 ### Example 1. Testing a hard-example-mining algorithm in incremental learning
 
-As the first example, we describe how to test an algorithm `Threshold-based-HEM` for HEM (Hard Example Mining) module in incremental learning. 
+As the first example, we describe how to test an algorithm `Threshold-based-HEM` for HEM (Hard Example Mining) module in incremental learning.
 For this new algorithm in `ClassType.HEM`, the code in the algorithm file is as follows:
 
 ```python
@@ -110,7 +108,7 @@ def Threshold-based-HEM(infer_result=None):
 
 ### Example 2. Testing a neural-network-based modeling algorithm in incremental learning
 
-As the second example, we describe how to test a neural network `FPN` for HEM (Hard Example Mining) module in incremental learning. 
+As the second example, we describe how to test a neural network `FPN` for HEM (Hard Example Mining) module in incremental learning.
 For this new algorithm in `ClassType.GENERAL`, the code in the algorithm file is as follows: 
 
 ```python
@@ -233,10 +231,11 @@ class BaseModel:
             raise Exception(f"not found model metric func(name={metric_name}) in model eval phase")
 ```
 
-With the above algorithm interface, one may develop the targeted algorithm of FPN as usual in the same algorithm file. 
-The ``FPN_TensorFlow`` is also open sourced. For those interested in ``FPN_TensorFlow``, an example implementation is available [here](https://github.com/DetectionTeamUCAS/FPN_Tensorflow) and extended with the algorithm inferface [here](https://github.com/ECIL-EdgeAI/FPN_Tensorflow).
+With the above algorithm interface, one may develop the targeted algorithm of FPN as usual in the same algorithm file.
+The ``FPN_TensorFlow`` is also open sourced. For those interested in ``FPN_TensorFlow``, an example implementation is available [here](https://github.com/DetectionTeamUCAS/FPN_Tensorflow) and extended with the algorithm interface [here](https://github.com/ECIL-EdgeAI/FPN_Tensorflow).
 
-Then we can fill the ``algorithm.yaml``: 
+Then we can fill in the ``algorithm.yaml``:
+
 ``` yaml
 algorithm:
   # paradigm type; string type;
@@ -298,8 +297,8 @@ algorithm:
               - 0.9
 ```
 
-
 The URL address of this algorithm then should be filled in the configuration file of ``benchmarkingJob.yaml`` in the following Step 3. Two examples are as follows: 
+
 ``` yaml
   # the configuration of test object
   test_object:
@@ -315,7 +314,7 @@ The URL address of this algorithm then should be filled in the configuration fil
         url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/fpn_algorithm.yaml"
 ```
 
-or 
+or
 
 ``` yaml
   # the configuration of test object
@@ -334,33 +333,38 @@ or
 
 ## Step 3. ianvs Configuration
 
-Now we comes to the final configuration on ``benchmarkingJob.yaml`` before running ianvs. 
+Now we come to the final configuration on ``benchmarkingJob.yaml`` before running ianvs.
 
-First, the user can configure the workspace to reserve the output of tests. 
+First, the user can configure the workspace to reserve the output of tests.
+
 ``` yaml
 # benchmarkingJob.yaml
   workspace: "/ianvs/pcb-aoi/workspace/"
 ```
 
 Then, the user fill in the test environment and algorithm configured in previous steps. 
+
 ``` yaml
 # benchmarkingJob.yaml
   testenv: ".examples/pcb-aoi/benchmarkingjob/testenv/testenv.yaml"
 ```
+
 ``` yaml
   algorithms:
     - name: "fpn_incremental_learning"
       url: "./examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_incremental_learning/fpn_algorithm.yaml"
 ```
 
-As the final leaderboard, the user can configure how to rank the leaderboard with the specific metric and order. 
+As the final leaderboard, the user can configure how to rank the leaderboard with the specific metric and order.
+
 ``` yaml
 # benchmarkingJob.yaml
     rank:
         sort_by: [ { "f1_score": "descend" } ]
 ```
 
-There are quite a few possible dataitems in the leaderboard. Not all of them can be shown simultaneously on the screen. In the leaderboard, we provide the ``selected_only`` mode for the user to configure what is shown or is not shown. The user can add his/her interested dataitems in terms of ``paradigms``, ``modules``, ``hyperparameters`` and ``metrics``, so that the selected columns will be shown.
+There are quite a few possible data items in the leaderboard. Not all of them can be shown simultaneously on the screen. In the leaderboard, we provide the ``selected_only`` mode for the user to configure what is shown or is not shown. The user can add his/her interested data items in terms of ``paradigms``, ``modules``, ``hyperparameters``, and ``metrics`` so that the selected columns will be shown.
+
 ``` yaml
     visualization:
       mode: "selected_only"
@@ -375,9 +379,8 @@ There are quite a few possible dataitems in the leaderboard. Not all of them can
     save_mode: "selected_and_all"
 ```
 
-
 ## Step 4. Execution and Presentation
 
-Finally, the user can run ianvs for benchmarking. 
+Finally, the user can run ianvs for benchmarking.
 
-The benchmarking result of the targeted algorithms will be shown after evaluation is done. Leaderboard examples can be found [here](../proposals/leaderboards).
+The benchmarking result of the targeted algorithms will be shown after the evaluation is done. Leaderboard examples can be found [here](../proposals/leaderboards).
