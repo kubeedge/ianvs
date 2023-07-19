@@ -18,7 +18,7 @@ https://github.com/hsj576/ianvs/tree/cloud-robotics/examples/robot/lifelong_lear
 
 **Cloud-Robotics数据集网站：**
 
-https://hsj576.github.io/index.html
+https://kubeedge-ianvs.github.io/
 
 **数据集引用：**
 
@@ -26,7 +26,7 @@ https://hsj576.github.io/index.html
 @online{Cloud-Robotics,
         title={Cloud Robotics},
         author={Hu, Shijing and Mao, Sitong and Luo, Siqi and Huang, Zhiwei and Zheng, Zimu and Pu, Jie and Wang, Feng},
-        url={https://hsj576.github.io/}
+        url={https://kubeedge-ianvs.github.io/}
         year={2023}
     }             
 ```
