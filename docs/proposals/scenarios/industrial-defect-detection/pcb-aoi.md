@@ -4,7 +4,7 @@ Download link: [Kaggle](https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi), 
 
 ## Authors
 
-- China Telcom Research Institute: Dongdong Li, Dan Liu, Yun Shen, Yaqi Song 
+- China Telcom Research Institute: Dongdong Li, Dan Liu, Yun Shen, Yaqi Song
 - Raisecom Technology Co.,ltd.: Liangliang Luo
 
 ## Background
@@ -19,7 +19,7 @@ Below shows two example figures in the dataset.
 
 ## Data Explorer
 
-In this dataset, more than 230 boards are collected and the number of images is enhanced to more than 1200. Detailedly, the dataset include two parts, i.e., the train and the test set. The train set includes 173 boards while the test set includes 60 boards. That is, the train-test ratio is around 3:1 in terms of PCB boards. Data augmentation is conducted, boosting the train-test ratio to 1211:60 (about 20:1) in term of images. Both directories of train_data and test_data include the ``index`` file which recodes the mapping between the raw images and the label of annotation. 
+In this dataset, more than 230 boards are collected and the number of images is enhanced to more than 1200. Detailedly, the dataset include two parts, i.e., the train and the test set. The train set includes 173 boards while the test set includes 60 boards. That is, the train-test ratio is around 3:1 in terms of PCB boards. Data augmentation is conducted, boosting the train-test ratio to 1211:60 (about 20:1) in term of images. Both directories of train_data and test_data include the ``index`` file which recodes the mapping between the raw images and the label of annotation.
 
 The directories of this dataset is as follows:
 

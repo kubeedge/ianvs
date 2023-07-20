@@ -35,8 +35,7 @@ def check_host_docker():
         try:
             shell_install_docker = "curl -fsSL https://get.docker.com | \
 bash -s docker --mirror Aliyun"
-            install_docker = subprocess.run(
-                shell_install_docker, shell=True, check=True)
+            install_docker = subprocess.run(shell_install_docker, shell=True, check=True)
 
             if install_docker.returncode == 0:
                 LOGGER.info("successfully installed docker")
@@ -64,8 +63,7 @@ def check_host_kind():
             shell_install_kind = "curl -Lo ./kind \
 https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64 && \
 chmod +x ./kind && mv ./kind /usr/local/bin/kind"
-            install_kind = subprocess.run(
-                shell_install_kind, shell=True, check=True)
+            install_kind = subprocess.run(shell_install_kind, shell=True, check=True)
 
             if install_kind.returncode == 0:
                 LOGGER.info("successfully installed kind")
@@ -80,7 +78,7 @@ def get_host_free_memory_size():
     """
     return the current memory(free) on the host(in kB)
     """
-    shell_cmd = "cat /proc/meminfo | grep MemFree"   # in kB
+    shell_cmd = "cat /proc/meminfo | grep MemFree"  # in kB
     with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_memory_info:
         memory_info = get_memory_info.stdout.read()
         memory_free = int(str(memory_info).split(":")[1].strip().split(" ")[0])
@@ -93,7 +91,7 @@ def check_host_memory():
 
     """
     memory_free = get_host_free_memory_size()
-    memory_require = 4 * 1024 * 1024    # 4GB
+    memory_require = 4 * 1024 * 1024  # 4GB
 
     if memory_free >= memory_require:
         LOGGER.info("check memory successful")
@@ -101,7 +99,9 @@ def check_host_memory():
         LOGGER.exception(
             "The current free memory is insufficient. \
 Current Memory Free: %s kB, Memory Require: %s kB",
-            memory_free, memory_require)
+            memory_free,
+            memory_require,
+        )
         raise RuntimeError("The current free memory is insufficient.")
 
 
@@ -113,8 +113,7 @@ def get_host_number_of_cpus():
     shell_cmd = "lscpu | grep CPU:"
     with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_cpu_info:
         cpu_info = get_cpu_info.stdout.read()
-        number_of_cpus = int(str(cpu_info).split(":")[
-                             1].strip().split("\\")[0])
+        number_of_cpus = int(str(cpu_info).split(":")[1].strip().split("\\")[0])
         return number_of_cpus
 
 
@@ -131,7 +130,9 @@ def check_host_cpu():
     else:
         LOGGER.info(
             "The number of cpus is insufficient. Number of Cpus: %s kB, Cpus Require: %s kB",
-            number_of_cpus, cpus_require)
+            number_of_cpus,
+            cpus_require,
+        )
         raise RuntimeError("The number os cpus is insufficient.")
 
 
@@ -152,22 +153,22 @@ def build_simulation_enviroment(simulation):
 
     """
 
-    check_host_enviroment()         # check the enviroment
+    check_host_enviroment()  # check the enviroment
 
-    shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
-/master/scripts/installation/all-in-one.sh | " \
-        f"NUM_CLOUD_WORKER_NODES={simulation.cloud_number} " \
-        f"NUM_EDGE_NODES={simulation.edge_number} " \
-        f"KUBEEDGE_VERSION={simulation.kubeedge_version} " \
-        f"SEDNA_VERSION={simulation.sedna_version} " \
+    shell_cmd = (
+        "curl https://raw.githubusercontent.com/kubeedge/sedna\
+/master/scripts/installation/all-in-one.sh | "
+        f"NUM_CLOUD_WORKER_NODES={simulation.cloud_number} "
+        f"NUM_EDGE_NODES={simulation.edge_number} "
+        f"KUBEEDGE_VERSION={simulation.kubeedge_version} "
+        f"SEDNA_VERSION={simulation.sedna_version} "
         f"CLUSTER_NAME={simulation.cluster_name} bash -"
+    )
 
-    build_simulation_env_ret = subprocess.run(
-        shell_cmd, shell=True, check=True)
+    build_simulation_env_ret = subprocess.run(shell_cmd, shell=True, check=True)
 
     if build_simulation_env_ret.returncode == 0:
-        LOGGER.info(
-            "Congratulation! The simulation enviroment build successful!")
+        LOGGER.info("Congratulation! The simulation enviroment build successful!")
     else:
         raise RuntimeError("The simulation enviroment build failed.")
 
@@ -177,9 +178,11 @@ def destory_simulation_enviroment(simulation):
     build the simulation enviroment
 
     """
-    shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
-/main/scripts/installation/all-in-one.sh | " \
+    shell_cmd = (
+        "curl https://raw.githubusercontent.com/kubeedge/sedna\
+/main/scripts/installation/all-in-one.sh | "
         f"CLUSTER_NAME={simulation.cluster_name} bash /dev/stdin clean"
+    )
 
     retcode = subprocess.call(shell_cmd, shell=True)
 

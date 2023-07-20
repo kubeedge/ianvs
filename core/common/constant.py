@@ -22,6 +22,7 @@ class DatasetFormat(Enum):
     File format of inputting dataset.
     Currently, file formats are as follows: txt, csv.
     """
+
     CSV = "csv"
     TXT = "txt"
     JSON = "json"
@@ -31,6 +32,7 @@ class ParadigmType(Enum):
     """
     Algorithm paradigm type.
     """
+
     SINGLE_TASK_LEARNING = "singletasklearning"
     INCREMENTAL_LEARNING = "incrementallearning"
     MULTIEDGE_INFERENCE = "multiedgeinference"
@@ -40,6 +42,7 @@ class ModuleType(Enum):
     """
     Algorithm module type.
     """
+
     BASEMODEL = "basemodel"
     HARD_EXAMPLE_MINING = "hard_example_mining"
 
@@ -48,10 +51,13 @@ class SystemMetricType(Enum):
     """
     System metric type of ianvs.
     """
+
     SAMPLES_TRANSFER_RATIO = "samples_transfer_ratio"
+
 
 class TestObjectType(Enum):
     """
     Test object type of ianvs.
     """
+
     ALGORITHMS = "algorithms"

@@ -34,14 +34,16 @@ def f1_score(y_true, y_pred):
     f1_score_list = []
 
     for label in NAME_LABEL_MAP.keys():
-        if label == 'back_ground':
+        if label == "back_ground":
             continue
 
         rboxes, gboxes = get_single_label_dict(predict_dict, gtboxes_dict, label)
         rec, prec, ap, box_num = single_label_eval(rboxes, gboxes, 0.3, False)
         recall = 0 if rec.shape[0] == 0 else rec[-1]
         precision = 0 if prec.shape[0] == 0 else prec[-1]
-        f1_score = 0 if not (recall + precision) else (2 * precision * recall / (recall + precision))
+        f1_score = (
+            0 if not (recall + precision) else (2 * precision * recall / (recall + precision))
+        )
 
         f1_score_list.append(f1_score)
 

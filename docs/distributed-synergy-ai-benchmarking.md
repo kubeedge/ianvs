@@ -23,7 +23,7 @@ The distributed synergy AI benchmarking ianvs aims to test the performance of di
 The scope of ianvs includes
 
 - Providing end-to-end benchmark toolkits across devices, edge nodes, and cloud nodes based on typical distributed-synergy AI paradigms and applications.
-    - Tools to manage test environment. For example, it would be necessary to support the CRUD (Create, Read, Update, and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration.  
+    - Tools to manage test environment. For example, it would be necessary to support the CRUD (Create, Read, Update, and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration.
     - Tools to control test cases. Typical examples include paradigm templates, simulation tools, and hyper-parameter-based assistant tools.
     - Tools to manage benchmark presentation, e.g., leaderboard and test report generation.
 - Cooperation with other organizations or communities, e.g., in KubeEdge SIG AI, to establish comprehensive benchmarks and developed related applications, which can include but are not limited to
@@ -83,7 +83,7 @@ Ianvs includes Test-Environment Management, Test-case Controller, and Story Mana
 
 ### Definitions of Objects
 
-Quite a few terms exist in ianvs, which include the detailed modules and objects. To facilitate easier concept understanding, we show a hierarchical table of terms in the following figures, where the top item contains the items below it.  
+Quite a few terms exist in ianvs, which include the detailed modules and objects. To facilitate easier concept understanding, we show a hierarchical table of terms in the following figures, where the top item contains the items below it.
 ![](guides/images/ianvs_concept.png)
 
 The concept definition of modules has been shown in the Architecture Section. In the following, we introduce the concepts of objects for easier understanding.
@@ -93,14 +93,14 @@ The concept definition of modules has been shown in the Architecture Section. In
     - Besides components, a benchmarking job includes instances of a test environment, one or more test cases, a leaderboard, or a test report.
     - Different test environments lead to different benchmarking jobs and leaderboards. A benchmarking job can include multiple test cases
 - ``Test Object``: the targeted instance under benchmark testing. A typical example would be a particular algorithm or system.
-- ``Test Environment``: setups or configurations for benchmarking, typically excluding the test object.  
-    - It can include algorithm-wise and system-wise configurations.  
+- ``Test Environment``: setups or configurations for benchmarking, typically excluding the test object.
+    - It can include algorithm-wise and system-wise configurations.
     - It serves as the unique descriptor of a benchmarking job. Different test environments thus lead to different benchmarking jobs.
 - ``Test Case``: the executable instance to evaluate the performance of the test object under a particular test environment. Thus, the test case is usually generated with a particular test environment and outputs testing results if executed.
     - It is the atomic unit of a benchmark. That is, a benchmarking job can include quite a few test cases.
 - ``Attribute (Attr.) of Test Case``: Attributes or descriptors of a test case, e.g., id, name, and time stamp.
-- ``Algorithm Paradigm``: acknowledged AI process which usually includes quite a few modules that can be implemented with replaceable algorithms, e.g., federated learning which includes modules of local train and global aggregation.  
-- ``Algorithm Module``: the component of the algorithm paradigm, e.g., the global aggregation module of the federated learning paradigm.  
+- ``Algorithm Paradigm``: acknowledged AI process which usually includes quite a few modules that can be implemented with replaceable algorithms, e.g., federated learning which includes modules of local train and global aggregation.
+- ``Algorithm Module``: the component of the algorithm paradigm, e.g., the global aggregation module of the federated learning paradigm.
 - ``Leaderboard``: the ranking of the test object under a specific test environment.
     - The local node holds the local leaderboard for private usage.
     - The global leaderboard is shared (e.g., via GitHub) by the acknowledged organization.

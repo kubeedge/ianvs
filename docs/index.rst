@@ -2,30 +2,30 @@
 Welcome to Ianvs documentation!
 ===========================================
 
-Ianvs is a distributed synergy AI benchmarking project incubated in KubeEdge SIG AI. According to the landing challenge survey 2022 in KubeEdge SIG AI, 
-when it comes to the landing of distributed synergy AI projects, developers suffer from the lack of support on related datasets and algorithms; 
-while end users are lost in the sea of mismatched solutions. 
-That limits the wide application of related techniques and hinders a prosperous ecosystem of distributed synergy AI. 
+Ianvs is a distributed synergy AI benchmarking project incubated in KubeEdge SIG AI. According to the landing challenge survey 2022 in KubeEdge SIG AI,
+when it comes to the landing of distributed synergy AI projects, developers suffer from the lack of support on related datasets and algorithms;
+while end users are lost in the sea of mismatched solutions.
+That limits the wide application of related techniques and hinders a prosperous ecosystem of distributed synergy AI.
 
-Confronted with these challenges, Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, 
-in order to facilitate more efficient and effective development. More detailedly, Ianvs prepares not only test cases with datasets and corresponding algorithms, 
-but also benchmarking tools including simulation and hyper-parameter searching. 
-Ianvs also reveals best practices for developers and end users with presentation tools including leaderboards and test reports. 
+Confronted with these challenges, Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards,
+in order to facilitate more efficient and effective development. More detailedly, Ianvs prepares not only test cases with datasets and corresponding algorithms,
+but also benchmarking tools including simulation and hyper-parameter searching.
+Ianvs also reveals best practices for developers and end users with presentation tools including leaderboards and test reports.
 
-The scope of Ianvs is mainly two folds. 
+The scope of Ianvs is mainly two folds.
 
-First, Ianvs aims to provide end-to-end benchmark toolkits across devices, edge nodes, and cloud nodes based on typical distributed-synergy AI paradigms and applications. 
-- Tools to manage test environment. For example, it would be necessary to support the CRUD (Create, Read, Update, and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration.  
+First, Ianvs aims to provide end-to-end benchmark toolkits across devices, edge nodes, and cloud nodes based on typical distributed-synergy AI paradigms and applications.
+- Tools to manage test environment. For example, it would be necessary to support the CRUD (Create, Read, Update, and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration.
 - Tools to control test cases. Typical examples include paradigm templates, simulation tools, and hyper-parameter-based assistant tools.
-- Tools to manage benchmark presentation, e.g., leaderboard and test report generation. 
+- Tools to manage benchmark presentation, e.g., leaderboard and test report generation.
 
-Second, Ianvs also cooperates with other organizations or communities, e.g., in KubeEdge SIG AI, to establish comprehensive benchmarks and developed related applications, which can include but are not limited to 
+Second, Ianvs also cooperates with other organizations or communities, e.g., in KubeEdge SIG AI, to establish comprehensive benchmarks and developed related applications, which can include but are not limited to
 - Dataset collection, re-organization, and publication
-- Formalized specifications, e.g., standards 
+- Formalized specifications, e.g., standards
 - Holding competitions or coding events, e.g., open source promotion plan
-- Maintaining solution leaderboards or certifications for commercial usage 
+- Maintaining solution leaderboards or certifications for commercial usage
 
-Start your journey on Ianvs with the following links: 
+Start your journey on Ianvs with the following links:
 
 .. toctree::
     :maxdepth: 1
@@ -45,7 +45,7 @@ Start your journey on Ianvs with the following links:
 .. toctree::
     :maxdepth: 1
     :caption: SCENARIOs
-    
+
     Industrial Defect Detection: PCB-AoI <proposals/scenarios/industrial-defect-detection/pcb-aoi>
 
 .. toctree::

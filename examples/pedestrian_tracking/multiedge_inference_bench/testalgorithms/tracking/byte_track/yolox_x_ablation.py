@@ -27,6 +27,7 @@ import torch.distributed as dist
 
 from yolox.exp import Exp as MyExp
 
+
 class Exp(MyExp):
     def __init__(self):
         super(Exp, self).__init__()
@@ -48,7 +49,6 @@ class Exp(MyExp):
         self.basic_lr_per_img = 0.001 / 64.0
         self.warmup_epochs = 1
 
-
     def get_eval_loader(self, data_dir, batch_size, is_distributed, testdev=False):
         from yolox.data import MOTDataset, ValTransform
 
@@ -56,7 +56,7 @@ class Exp(MyExp):
             data_dir=os.path.join(data_dir, "mot"),
             json_file=self.val_ann,
             img_size=self.test_size,
-            name='train',
+            name="train",
             preproc=ValTransform(
                 rgb_means=(0.485, 0.456, 0.406),
                 std=(0.229, 0.224, 0.225),
@@ -65,9 +65,7 @@ class Exp(MyExp):
 
         if is_distributed:
             batch_size = batch_size // dist.get_world_size()
-            sampler = torch.utils.data.distributed.DistributedSampler(
-                valdataset, shuffle=False
-            )
+            sampler = torch.utils.data.distributed.DistributedSampler(valdataset, shuffle=False)
         else:
             sampler = torch.utils.data.SequentialSampler(valdataset)
 

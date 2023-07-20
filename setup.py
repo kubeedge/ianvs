@@ -57,8 +57,7 @@ class InstallPrepare:
                     continue
                 if check:
                     approvers.add(line.strip().split()[-1])
-                check = (line.startswith("approvers:") or
-                         (line.startswith(" -") and check))
+                check = line.startswith("approvers:") or (line.startswith(" -") and check)
         return ",".join(approvers) or default_owner
 
     @property
@@ -67,15 +66,13 @@ class InstallPrepare:
 
     @staticmethod
     def _read_requirements(file_path, section="all"):
-        print(f"Start to install requirements of {section} "
-              f"in ianvs from {file_path}")
+        print(f"Start to install requirements of {section} " f"in ianvs from {file_path}")
         if not os.path.isfile(file_path):
             return []
         with open(file_path, "r", encoding="utf-8") as f:
             install_requires = [p.strip() for p in f.readlines() if p.strip()]
         if section == "all":
-            return list(filter(lambda x: not x.startswith("#"),
-                               install_requires))
+            return list(filter(lambda x: not x.startswith("#"), install_requires))
         section_start = False
         section_requires = []
         for p in install_requires:
@@ -91,19 +88,16 @@ class InstallPrepare:
 _infos = InstallPrepare()
 
 setup(
-    name='ianvs',
+    name="ianvs",
     version=_infos.version,
     description="The ianvs package is designed to help algorithm developers \
                 better do algorithm test.",
-    packages=find_packages(exclude=["tests", "*.tests",
-                                    "*.tests.*", "tests.*"]),
+    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     author=_infos.owners,
     maintainer=_infos.owners,
     maintainer_email="",
     include_package_data=True,
-    entry_points={
-        "console_scripts": ["ianvs = core.cmd.benchmarking:main"]
-    },
+    entry_points={"console_scripts": ["ianvs = core.cmd.benchmarking:main"]},
     python_requires=">=3.6",
     long_description=_infos.long_desc,
     long_description_content_type="text/markdown",

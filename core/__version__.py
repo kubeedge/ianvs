@@ -15,8 +15,8 @@
 """Ianvs version information"""
 
 # follow Semantic Versioning (https://semver.org/)
-_MAJOR_V = '0'
-_MINOR_V = '1'
-_PATCH_V = '0'
+_MAJOR_V = "0"
+_MINOR_V = "1"
+_PATCH_V = "0"
 
-__version__ = '.'.join([_MAJOR_V, _MINOR_V, _PATCH_V])
+__version__ = ".".join([_MAJOR_V, _MINOR_V, _PATCH_V])

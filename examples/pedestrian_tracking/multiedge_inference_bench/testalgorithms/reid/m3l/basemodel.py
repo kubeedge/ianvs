@@ -42,7 +42,6 @@ os.environ["BACKEND_TYPE"] = "TORCH"
 @ClassFactory.register(ClassType.GENERAL, alias="M3L")
 class BaseModel:
     def __init__(self, **kwargs):
-
         random.seed(1)
         np.random.seed(1)
         torch.manual_seed(1)
@@ -55,14 +54,12 @@ class BaseModel:
         if model_url:
             arch = re.compile("_([a-zA-Z]+).pth").search(model_url).group(1)
             # Create model
-            self.model = models.create(
-                arch, num_features=0, dropout=0, norm=True, BNNeck=True
-            )
+            self.model = models.create(arch, num_features=0, dropout=0, norm=True, BNNeck=True)
             # use CUDA
             self.model.cuda()
             self.model = nn.DataParallel(self.model)
             if Path(model_url).is_file():
-                checkpoint = torch.load(model_url, map_location=torch.device('cpu'))
+                checkpoint = torch.load(model_url, map_location=torch.device("cpu"))
                 print("=> Loaded checkpoint '{}'".format(model_url))
                 self.model.load_state_dict(checkpoint["state_dict"])
             else:
@@ -73,23 +70,20 @@ class BaseModel:
     def predict(self, data, input_shape=None, **kwargs):
         train_dataset = kwargs.get("train_dataset")
         gallery = [
-            (x, int(y.split("/")[-1]), -1, 1)
-            for x, y in zip(train_dataset.x, train_dataset.y)
+            (x, int(y.split("/")[-1]), -1, 1) for x, y in zip(train_dataset.x, train_dataset.y)
         ]
         root = Path(train_dataset.x[0]).parents[2]
         query = [(x, -1, -1, 1) for x in data]
-        test_loader = self._get_test_loader(Path(root, "query"), list(set(query) | set(gallery)), 256, 128, self.batch_size, 4)
-        features = self._extract_features(self.model, test_loader)
-        distmat = self._pairwise_distance(
-            features, query, gallery
+        test_loader = self._get_test_loader(
+            Path(root, "query"), list(set(query) | set(gallery)), 256, 128, self.batch_size, 4
         )
+        features = self._extract_features(self.model, test_loader)
+        distmat = self._pairwise_distance(features, query, gallery)
         distmat = self.to_numpy(distmat)
         gallery_ids = np.asarray([pid for _, pid, _, _ in gallery])
         return distmat, gallery_ids
 
-    def _get_test_loader(
-        self, data_dir, data, height, width, batch_size, workers, testset=None
-    ):
+    def _get_test_loader(self, data_dir, data, height, width, batch_size, workers, testset=None):
         normalizer = T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         test_transformer = T.Compose(
             [T.Resize((height, width), interpolation=3), T.ToTensor(), normalizer]
@@ -134,9 +128,18 @@ class BaseModel:
                 end = time.time()
 
                 if (i + 1) % print_freq == 0:
-                    print("Extract Features: [{}/{}]\t"
+                    print(
+                        "Extract Features: [{}/{}]\t"
                         "Time {:.3f} ({:.3f})\t"
-                        "Data {:.3f} ({:.3f})\t".format(i + 1, len(data_loader), batch_time.val, batch_time.avg, data_time.val, data_time.avg,))
+                        "Data {:.3f} ({:.3f})\t".format(
+                            i + 1,
+                            len(data_loader),
+                            batch_time.val,
+                            batch_time.avg,
+                            data_time.val,
+                            data_time.avg,
+                        )
+                    )
 
         return features
 
@@ -156,7 +159,7 @@ class BaseModel:
     def to_numpy(self, tensor):
         if torch.is_tensor(tensor):
             return tensor.cpu().numpy()
-        elif type(tensor).__module__ != 'numpy':
-            raise ValueError("Cannot convert {} to numpy array"
-                            .format(type(tensor)))
+        elif type(tensor).__module__ != "numpy":
+            raise ValueError(f"Cannot convert {type(tensor)} to numpy array")
+
         return tensor

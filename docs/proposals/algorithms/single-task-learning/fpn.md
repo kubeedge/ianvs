@@ -2,29 +2,29 @@
 
 Pre-trained model: [Huawei OBS](https://kubeedge.obs.cn-north-1.myhuaweicloud.com:443/ianvs/pcb-aoi/model.zip)
 
-Single task learning is a traditional learning pooling all data together to train a single model. It typically includes a specialist model laser-focused on a single task and requires large amounts of task-specific labeled data, which is not always available on early stage of a distributed synergy AI project. 
+Single task learning is a traditional learning pooling all data together to train a single model. It typically includes a specialist model laser-focused on a single task and requires large amounts of task-specific labeled data, which is not always available on early stage of a distributed synergy AI project.
 
-As shown in the following figure, the single task learning works as procedures below: 
-1. Developer implements and deploys the application based on single task learning. 
-2. The application runs and launches single task learning. 
+As shown in the following figure, the single task learning works as procedures below:
+1. Developer implements and deploys the application based on single task learning.
+2. The application runs and launches single task learning.
 3. The application uploads samples to the cloud.
-4. Labeling service labels the uploaded samples. 
-5. Training learns the samples to generate a new model. 
-6. The system updates the model on the edge. 
+4. Labeling service labels the uploaded samples.
+5. Training learns the samples to generate a new model.
+6. The system updates the model on the edge.
 7. The model conducts inference given test samples where the inference result is send to the application which ends the process.
 
 ![](single_task_learning.png)
 
 
 
-As for the base model of single task learning, in this report we are using FPN_TensorFlow. It is a tensorflow re-implementation of Feature Pyramid Networks for Object Detection, which is based on Faster-RCNN. More detailedly, feature pyramids are a basic component in recognition systems for detecting objects at different scales. But recent deep learning object detectors have avoided pyramid representations, in part because they are compute and memory intensive. Researchers have exploited the inherent multi-scale, pyramidal hierarchy of deep convolutional networks to construct feature pyramids with marginal extra cost. A top-down architecture with lateral connections is developed for building high-level semantic feature maps at all scales. The architecture, called a Feature Pyramid Network (FPN), shows significant improvement as a generic feature extractor in several applications. Using FPN in a basic Faster R-CNN system, the method achieves state-of-the-art single-model results on the COCO detection benchmark without bells and whistles, surpassing all existing single-task entries including those from the COCO 2016 challenge winners. In addition, FPN can run at 5 FPS on a GPU and thus is a practical and accurate solution to multi-scale object detection. 
+As for the base model of single task learning, in this report we are using FPN_TensorFlow. It is a tensorflow re-implementation of Feature Pyramid Networks for Object Detection, which is based on Faster-RCNN. More detailedly, feature pyramids are a basic component in recognition systems for detecting objects at different scales. But recent deep learning object detectors have avoided pyramid representations, in part because they are compute and memory intensive. Researchers have exploited the inherent multi-scale, pyramidal hierarchy of deep convolutional networks to construct feature pyramids with marginal extra cost. A top-down architecture with lateral connections is developed for building high-level semantic feature maps at all scales. The architecture, called a Feature Pyramid Network (FPN), shows significant improvement as a generic feature extractor in several applications. Using FPN in a basic Faster R-CNN system, the method achieves state-of-the-art single-model results on the COCO detection benchmark without bells and whistles, surpassing all existing single-task entries including those from the COCO 2016 challenge winners. In addition, FPN can run at 5 FPS on a GPU and thus is a practical and accurate solution to multi-scale object detection.
 
 The ``FPN_TensorFlow`` is also open sourced and completed by YangXue and YangJirui. For those interested in details of ``FPN_TensorFlow``, an example implementation is available [here](https://github.com/DetectionTeamUCAS/FPN_Tensorflow) and is extended with the Ianvs algorithm inferface [here](https://github.com/ECIL-EdgeAI/FPN_Tensorflow).
 
 
 ## Implementation
 
-Here we also show how to implement a single task learning algorithm for testing in ianvs, based on an opensource algorithm [FPN].  
+Here we also show how to implement a single task learning algorithm for testing in ianvs, based on an opensource algorithm [FPN].
 
 When testing your own algorithm, of course, FPN is not necessary. It can be replaced with any algorithm complying the requirement of ianvs interface.
 
@@ -83,7 +83,7 @@ class BaseModel:
                 )
 
             # ... ...
-            # several lines are omitted here. 
+            # several lines are omitted here.
 
         return self.checkpoint_path
 
@@ -130,7 +130,7 @@ class BaseModel:
                 sess.run(init_op)
 
         # ... ...
-        # several lines are omitted here. 
+        # several lines are omitted here.
 
         return predict_dict
 

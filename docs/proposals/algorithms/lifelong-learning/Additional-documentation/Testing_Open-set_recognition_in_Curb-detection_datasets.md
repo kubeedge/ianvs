@@ -2,7 +2,7 @@
 
 ## About Open-set recognition
 
-Traditional classiﬁers are deployed under a closed-set setting, with both training and test classes belonging to the same set. However, real-world applications probably face the input of unknown categories, and the model will recognize them as known ones. Under such circumstances, open-set recognition is proposed to maintain classiﬁcation performance on known classes and reject unknowns. The closed-set models make overconﬁdent predictions over familiar known class instances so that calibration and thresholding across categories become essential issues when extending to an open-set environment. 
+Traditional classiﬁers are deployed under a closed-set setting, with both training and test classes belonging to the same set. However, real-world applications probably face the input of unknown categories, and the model will recognize them as known ones. Under such circumstances, open-set recognition is proposed to maintain classiﬁcation performance on known classes and reject unknowns. The closed-set models make overconﬁdent predictions over familiar known class instances so that calibration and thresholding across categories become essential issues when extending to an open-set environment.
 
 This test aims to reproduce the CVPR2021 paper "Learning placeholders for open-set recognition".
 

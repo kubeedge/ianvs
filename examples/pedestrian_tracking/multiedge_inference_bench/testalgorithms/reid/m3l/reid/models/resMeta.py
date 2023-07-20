@@ -60,6 +60,7 @@ class Bottleneck(nn.Module):
 
         return out
 
+
 class BasicBlock(nn.Module):
     expansion = 1
 
@@ -67,7 +68,9 @@ class BasicBlock(nn.Module):
         super(BasicBlock, self).__init__()
 
         # Both self.conv1 and self.downsample layers downsample the input when stride != 1
-        self.conv1 = MetaConv2d(inplanes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.conv1 = MetaConv2d(
+            inplanes, planes, kernel_size=3, stride=stride, padding=1, bias=False
+        )
         self.bn1 = MetaBatchNorm2d(planes)
         self.relu = nn.ReLU(inplace=True)
         self.conv2 = MetaConv2d(planes, planes, kernel_size=3, stride=1, padding=1, bias=False)
@@ -92,6 +95,7 @@ class BasicBlock(nn.Module):
 
         return out
 
+
 class MetaResNetBase(MetaModule):
     def __init__(self, layers, block=Bottleneck):
         super(MetaResNetBase, self).__init__()
@@ -108,13 +112,17 @@ class MetaResNetBase(MetaModule):
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
-                MetaConv2d(self.inplanes, planes * block.expansion, kernel_size=1, stride=stride, bias=False),
+                MetaConv2d(
+                    self.inplanes,
+                    planes * block.expansion,
+                    kernel_size=1,
+                    stride=stride,
+                    bias=False,
+                ),
                 MetaBatchNorm2d(planes * block.expansion),
             )
 
-        layers = [
-            block(self.inplanes, planes, stride, downsample)
-        ]
+        layers = [block(self.inplanes, planes, stride, downsample)]
 
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):
@@ -146,7 +154,15 @@ class MetaResNet(MetaModule):
         self.__init_with_imagenet(baseModel)
         return baseModel
 
-    def __init__(self, num_features=0, dropout=0, cut_at_pooling=False, norm=True, num_classes=[0,0,0], BNNeck=False):
+    def __init__(
+        self,
+        num_features=0,
+        dropout=0,
+        cut_at_pooling=False,
+        norm=True,
+        num_classes=[0, 0, 0],
+        BNNeck=False,
+    ):
         super(MetaResNet, self).__init__()
         self.num_features = num_features
         self.dropout = dropout
@@ -167,7 +183,7 @@ class MetaResNet(MetaModule):
         out_planes = 2048
         if self.has_embedding:
             self.feat = MetaLinear(out_planes, self.num_features)
-            init.kaiming_normal_(self.feat.weight, mode='fan_out')
+            init.kaiming_normal_(self.feat.weight, mode="fan_out")
             init.constant_(self.feat.bias, 0)
         else:
             # Change the num_features to CNN output channels
@@ -177,8 +193,8 @@ class MetaResNet(MetaModule):
         init.constant_(self.feat_bn.weight, 1)
         init.constant_(self.feat_bn.bias, 0)
 
-    def forward(self, x, MTE='', save_index=0):
-        x= self.base(x)
+    def forward(self, x, MTE="", save_index=0):
+        x = self.base(x)
         x = self.gap(x)
         x = x.view(x.size(0), -1)
 
@@ -218,5 +234,3 @@ class MetaResNet(MetaModule):
             return bn_x, tri_features
         else:
             return bn_x
-
-

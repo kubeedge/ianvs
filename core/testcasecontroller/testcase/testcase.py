@@ -69,15 +69,15 @@ class TestCase:
                 test_env_config[k] = v
 
             self.output_dir = self._get_output_dir(workspace)
-            paradigm = self.algorithm.paradigm(workspace=self.output_dir,
-                                               **test_env_config)
+            paradigm = self.algorithm.paradigm(workspace=self.output_dir, **test_env_config)
             res, system_metric_info = paradigm.run()
             test_result = self.compute_metrics(res, dataset, **system_metric_info)
 
         except Exception as err:
             paradigm_type = self.algorithm.paradigm_type
             raise RuntimeError(
-                f"(paradigm={paradigm_type}) pipeline runs failed, error: {err}") from err
+                f"(paradigm={paradigm_type}) pipeline runs failed, error: {err}"
+            ) from err
         return test_result
 
     def compute_metrics(self, paradigm_result, dataset, **kwargs):
@@ -104,9 +104,9 @@ class TestCase:
                 metric_funcs.update({metric_name: metric_func})
 
         test_dataset_file = dataset.test_url
-        test_dataset = dataset.load_data(test_dataset_file,
-                                         data_type="eval overall",
-                                         label=dataset.label)
+        test_dataset = dataset.load_data(
+            test_dataset_file, data_type="eval overall", label=dataset.label
+        )
 
         metric_res = {}
         system_metric_types = [e.value for e in SystemMetricType.__members__.values()]

@@ -62,8 +62,10 @@ class Module:
 
         types = [e.value for e in ModuleType.__members__.values()]
         if self.type not in types:
-            raise ValueError(f"not support module type({self.type}."
-                             f"the following paradigms can be selected: {types}")
+            raise ValueError(
+                f"not support module type({self.type}."
+                f"the following paradigms can be selected: {types}"
+            )
 
         if not self.name and not isinstance(self.name, str):
             raise ValueError(f"module name({self.name}) must be provided and be string type.")
@@ -87,11 +89,13 @@ class Module:
         try:
             utils.load_module(self.url)
             # pylint: disable=E1134
-            basemodel = ClassFactory.get_cls(type_name=ClassType.GENERAL,
-                                             t_cls_name=self.name)(**self.hyperparameters)
+            basemodel = ClassFactory.get_cls(type_name=ClassType.GENERAL, t_cls_name=self.name)(
+                **self.hyperparameters
+            )
         except Exception as err:
-            raise RuntimeError(f"basemodel module loads class(name={self.name}) failed, "
-                            f"error: {err}.") from err
+            raise RuntimeError(
+                f"basemodel module loads class(name={self.name}) failed, " f"error: {err}."
+            ) from err
 
         return basemodel
 
@@ -109,13 +113,16 @@ class Module:
             try:
                 utils.load_module(self.url)
                 # pylint: disable=E1134
-                func = ClassFactory.get_cls(
-                    type_name=ClassType.HEM, t_cls_name=self.name)(**self.hyperparameters)
+                func = ClassFactory.get_cls(type_name=ClassType.HEM, t_cls_name=self.name)(
+                    **self.hyperparameters
+                )
 
                 return func
             except Exception as err:
-                raise RuntimeError(f"hard_example_mining module loads class"
-                                f"(name={self.name}) failed, error: {err}.") from err
+                raise RuntimeError(
+                    f"hard_example_mining module loads class"
+                    f"(name={self.name}) failed, error: {err}."
+                ) from err
 
         # call built-in hard example mining function
         hard_example_mining = {"method": self.name}
@@ -179,8 +186,9 @@ class Module:
         base_hps = {}
         for hp_config_file in config_files:
             if not utils.is_local_file(hp_config_file):
-                raise RuntimeError(f"not found other hyperparameters config file"
-                                f"({hp_config_file}) in local")
+                raise RuntimeError(
+                    f"not found other hyperparameters config file" f"({hp_config_file}) in local"
+                )
 
             try:
                 other_hps = utils.yaml2dict(hp_config_file)
@@ -188,5 +196,6 @@ class Module:
             except Exception as err:
                 raise RuntimeError(
                     f"other hyperparameters config file({hp_config_file}) is unvild, "
-                    f"error: {err}") from err
+                    f"error: {err}"
+                ) from err
         return base_hps

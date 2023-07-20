@@ -18,5 +18,3 @@ algorithm:
         - epochs:
             values:
               - 2
-
-        

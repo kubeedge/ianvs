@@ -5,7 +5,7 @@ If you follow this guide and find some problem, it is appreciated to submit an i
 
 ## Test Reports
 
-Everyone is welcome to submit and share your own test report to the community. 
+Everyone is welcome to submit and share your own test report to the community.
 
 ### 1. Setup and Testing
 
@@ -39,7 +39,7 @@ Leaderboards, i.e., rankings of the test object, are public for everyone to visi
 
 Except for [Ianvs Owners](https://github.com/kubeedge/ianvs/blob/main/OWNERS), there are mainly two roles for a leaderboard publication:
 
-1. Developer: submit the test object for benchmarking, including but not limited to materials like algorithm, test case following Ianvs settings, and interfaces.  
+1. Developer: submit the test object for benchmarking, including but not limited to materials like algorithm, test case following Ianvs settings, and interfaces.
 2. Maintainer: testing materials provided by developers and releasing the updated leaderboard to the public.
 
 For potential developers,

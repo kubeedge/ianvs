@@ -8,12 +8,12 @@ Ianvs is a distributed synergy AI benchmarking project incubated in KubeEdge SIG
 
 ## Scope
 
-The distributed synergy AI benchmarking Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. 
+The distributed synergy AI benchmarking Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development.
 
 The scope of Ianvs includes
 
 - Providing end-to-end benchmark toolkits across devices, edge nodes, and cloud nodes based on typical distributed-synergy AI paradigms and applications.
-    - Tools to manage test environment. For example, it would be necessary to support the CRUD (Create, Read, Update, and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration.  
+    - Tools to manage test environment. For example, it would be necessary to support the CRUD (Create, Read, Update, and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration.
     - Tools to control test cases. Typical examples include paradigm templates, simulation tools, and hyper-parameter-based assistant tools.
     - Tools to manage benchmark presentation, e.g., leaderboard and test report generation.
 - Cooperation with other organizations or communities, e.g., in KubeEdge SIG AI, to establish comprehensive benchmarks and developed related applications, which can include but are not limited to
@@ -28,7 +28,7 @@ The scope of Ianvs includes
 The architectures and related concepts are shown in the below figure. The ianvs is designed to run **within a single node**. Critical components include
 
 - Test Environment Manager: the CRUD of test environments serving for global usage
-- Test Case Controller: control the runtime behavior of test cases like instance generation and vanish 
+- Test Case Controller: control the runtime behavior of test cases like instance generation and vanish
     - Generation Assistant: assist users to generate test cases based on certain rules or constraints, e.g., the range of parameters
     - Simulation Controller: control the simulation process of edge-cloud synergy AI, including the instance generation and vanishment of simulation containers
 - Story Manager: the output management and presentation of the test case, e.g., leaderboards
@@ -69,9 +69,9 @@ Follow the [Ianvs installation document](docs/guides/how-to-install-ianvs.md) to
 
 ### Examples
 
-Scenario PCB-AoI：[Industrial Defect Detection on the PCB-AoI Dataset](/docs/proposals/scenarios/industrial-defect-detection/pcb-aoi.md).  
-Example PCB-AoI-1：[Testing single task learning in industrial defect detection](/docs/proposals/test-reports/testing-single-task-learning-in-industrial-defect-detection-with-pcb-aoi.md).  
-Example PCB-AoI-2：[Testing incremental learning in industrial defect detection](/docs/proposals/test-reports/testing-incremental-learning-in-industrial-defect-detection-with-pcb-aoi.md).  
+Scenario PCB-AoI：[Industrial Defect Detection on the PCB-AoI Dataset](/docs/proposals/scenarios/industrial-defect-detection/pcb-aoi.md).
+Example PCB-AoI-1：[Testing single task learning in industrial defect detection](/docs/proposals/test-reports/testing-single-task-learning-in-industrial-defect-detection-with-pcb-aoi.md).
+Example PCB-AoI-2：[Testing incremental learning in industrial defect detection](/docs/proposals/test-reports/testing-incremental-learning-in-industrial-defect-detection-with-pcb-aoi.md).
 
 ## Roadmap
 

@@ -25,8 +25,8 @@ try:
     import m2r2
 except ModuleNotFoundError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "m2r2"])
-_base_path = os.path.abspath('..')
-BASE_URL = 'https://github.com/kubeedge/ianvs/'
+_base_path = os.path.abspath("..")
+BASE_URL = "https://github.com/kubeedge/ianvs/"
 
 sys.path.append(_base_path)
 
@@ -34,10 +34,7 @@ extra_paths = [
     os.path.join(_base_path, "examples"),
 ]
 for p in extra_paths:
-    dst = os.path.join(
-        _base_path, "docs",
-        os.path.basename(p)
-    )
+    dst = os.path.join(_base_path, "docs", os.path.basename(p))
     if os.path.isfile(dst):
         os.remove(dst)
     elif os.path.isdir(dst):
@@ -49,12 +46,12 @@ for p in extra_paths:
 
 # -- Project information -----------------------------------------------------
 
-project = 'Ianvs'
-copyright = '2022, KubeEdge SIG AI'
-author = 'KubeEdge SIG AI'
+project = "Ianvs"
+copyright = "2022, KubeEdge SIG AI"
+author = "KubeEdge SIG AI"
 
 # The full version, including alpha/beta/rc tags
-release = 'v0.1'
+release = "v0.1"
 
 # -- General configuration ---------------------------------------------------
 
@@ -69,7 +66,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosummary",
-    "sphinx.ext.napoleon"
+    "sphinx.ext.napoleon",
 ]
 
 autodoc_inherit_docstrings = False
@@ -78,29 +75,27 @@ autodoc_member_order = "bysource"
 todo_include_todos = True
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 html_last_updated_fmt = "%b %d, %Y"
-html_theme_options = {
-    'prev_next_buttons_location': 'both'
-}
+html_theme_options = {"prev_next_buttons_location": "both"}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -108,15 +103,12 @@ html_theme_options = {
 # html_static_path = ['_static']
 
 source_suffix = {
-    '.rst': 'restructuredtext',
-    '.txt': 'markdown',
-    '.md': 'markdown',
+    ".rst": "restructuredtext",
+    ".txt": "markdown",
+    ".md": "markdown",
 }
 
-extlinks = {
-    "issue": f"{BASE_URL}issues",
-    "pr": f"{BASE_URL}pull"
-}
+extlinks = {"issue": f"{BASE_URL}issues", "pr": f"{BASE_URL}pull"}
 
 
 # hack to replace file link to html link in markdown
@@ -129,29 +121,26 @@ def ultimateReplace(app, docname, source):
     path = app.env.doc2path(docname)  # get current path
 
     # INLINE_LINK_EXAMPLE: [Ianvs repository](https://github.com/kubeedge/ianvs)
-    INLINE_LINK_RE = re.compile(r'\[[^\]]+\]\(([^)]+)\)')
+    INLINE_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
     # FOOTNOTE_LINK_EXAMPLE: [Ianvs repository]: https://github.com/kubeedge/ianvs
-    FOOTNOTE_LINK_URL_RE = re.compile(r'\[[^\]]+\](?:\s+)?:(?:\s+)?(\S+)')
-    if path.endswith('.md'):
+    FOOTNOTE_LINK_URL_RE = re.compile(r"\[[^\]]+\](?:\s+)?:(?:\s+)?(\S+)")
+    if path.endswith(".md"):
         new_line = []
 
         docs_url = os.path.join(_base_path, "docs")
-        for line in source[0].split('\n'):
-            line = re.sub(
-                "\[`([^\]]+)`\]\[", "[\g<1>][", line
-            )  # fix html render error: [`title`]
+        for line in source[0].split("\n"):
+            line = re.sub("\[`([^\]]+)`\]\[", "[\g<1>][", line)  # fix html render error: [`title`]
             replace_line = []
             prev_start = 0
-            href_list = (
-                    list(INLINE_LINK_RE.finditer(line)) +
-                    list(FOOTNOTE_LINK_URL_RE.finditer(line))
+            href_list = list(INLINE_LINK_RE.finditer(line)) + list(
+                FOOTNOTE_LINK_URL_RE.finditer(line)
             )
             for href in href_list:
                 pstart = href.start(1)
                 pstop = href.end(1)
                 if pstart == -1 or pstop == -1:
                     continue
-                link = line[pstart: pstop]
+                link = line[pstart:pstop]
                 if not link or link.startswith("http"):
                     continue
                 if link.startswith("/"):
@@ -167,9 +156,7 @@ def ultimateReplace(app, docname, source):
                         continue
                     if os.path.isdir(sp):
                         sp += "/"
-                    _relpath = os.path.join(
-                        docs_url, _relpath[len(_base_path):].lstrip("/")
-                    )
+                    _relpath = os.path.join(docs_url, _relpath[len(_base_path) :].lstrip("/"))
                     break
 
                 # If relative path looks like:
@@ -179,25 +166,18 @@ def ultimateReplace(app, docname, source):
                 # `docs/path/file.md`
                 # those paths will change to `docs/path/file.html`
                 if _relpath.startswith(docs_url) and (
-                        os.path.isdir(_relpath) or
-                        os.path.splitext(_relpath)[-1].lower().startswith(
-                            (
-                                    ".md", ".rst", ".txt", "html",
-                                    ".png", ".jpg", ".jpeg", ".svg", ".gif"
-                            )
-                        )
-                ):
-                    link = os.path.relpath(_relpath,
-                                           os.path.dirname(path))
-                    if not os.path.isdir(_relpath):  # suffix edit
-                        link = re.sub(
-                            "(?:\.md|\.rst|\.txt)(\W+\w+)?$",
-                            ".html\g<1>", link
-                        )
-                else:  # redirect to `github`
-                    _relpath = os.path.abspath(
-                        os.path.join(tmp, link.lstrip("/"))
+                    os.path.isdir(_relpath)
+                    or os.path.splitext(_relpath)[-1]
+                    .lower()
+                    .startswith(
+                        (".md", ".rst", ".txt", "html", ".png", ".jpg", ".jpeg", ".svg", ".gif")
                     )
+                ):
+                    link = os.path.relpath(_relpath, os.path.dirname(path))
+                    if not os.path.isdir(_relpath):  # suffix edit
+                        link = re.sub("(?:\.md|\.rst|\.txt)(\W+\w+)?$", ".html\g<1>", link)
+                else:  # redirect to `github`
+                    _relpath = os.path.abspath(os.path.join(tmp, link.lstrip("/")))
                     _rel_root = os.path.relpath(_relpath, _base_path)
                     link = f"{BASE_URL}tree/main/{_rel_root}"
                 p_line = f"{line[prev_start:pstart]}{link}"
@@ -209,9 +189,9 @@ def ultimateReplace(app, docname, source):
 
 
 def setup(app):
-    app.add_config_value('ultimate_replacements', {}, True)
+    app.add_config_value("ultimate_replacements", {}, True)
     # Emitted when a source file has been read.
     # The source argument is a list whose single element is the contents of the source file.
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-source-read
-    app.connect('source-read', ultimateReplace)
-    app.add_css_file('css/custom.css')
+    app.connect("source-read", ultimateReplace)
+    app.add_css_file("css/custom.css")

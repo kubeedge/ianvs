@@ -62,7 +62,7 @@ The detailed code can be viewed [here](https://github.com/Frank-lilinjie/ianvs/b
 
 1. Sign up in class factory from sedna
 
-``` @ClassFactory.register(ClassType.UTD, alias="UnseenSampleRecognitionByScene")``` 
+``` @ClassFactory.register(ClassType.UTD, alias="UnseenSampleRecognitionByScene")```
 
 2. Get model path from [rfnet_algorithm.yaml](https://github.com/Frank-lilinjie/ianvs/blob/feature-lifelong-n/examples/scene-based-unknown-task-recognition/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml)
 

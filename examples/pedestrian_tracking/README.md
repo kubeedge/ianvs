@@ -119,4 +119,3 @@ If the reader is ready to explore more on this example, e.g. upload custom algor
 If any problems happen, the user can refer to [the issue page on Github](https://github.com/kubeedge/ianvs/issues) for help and are also welcome to raise any new issue.
 
 Enjoy your journey on Ianvs!
-

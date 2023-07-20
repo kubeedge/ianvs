@@ -18,9 +18,8 @@ from .IBNMeta import MetaIBN
 from .resMeta import MetaResNet
 
 __factory = {
-    'resMeta': MetaResNet,
-    'IBNMeta': MetaIBN,
-
+    "resMeta": MetaResNet,
+    "IBNMeta": MetaIBN,
 }
 
 

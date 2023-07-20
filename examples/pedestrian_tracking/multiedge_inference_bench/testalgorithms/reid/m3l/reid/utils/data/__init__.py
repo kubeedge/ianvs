@@ -14,6 +14,7 @@
 
 from __future__ import absolute_import
 
+
 class IterLoader:
     def __init__(self, loader, length=None):
         self.loader = loader

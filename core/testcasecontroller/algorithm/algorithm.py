@@ -55,7 +55,7 @@ class Algorithm:
         self.paradigm_type: str = ""
         self.incremental_learning_data_setting: dict = {
             "train_ratio": 0.8,
-            "splitting_method": "default"
+            "splitting_method": "default",
         }
         self.initial_model_url: str = ""
         self.modules: list = []
@@ -101,21 +101,26 @@ class Algorithm:
 
         if not self.paradigm_type and not isinstance(self.paradigm_type, str):
             raise ValueError(
-                f"algorithm paradigm({self.paradigm_type}) must be provided and be string type.")
+                f"algorithm paradigm({self.paradigm_type}) must be provided and be string type."
+            )
 
         paradigm_types = [e.value for e in ParadigmType.__members__.values()]
         if self.paradigm_type not in paradigm_types:
-            raise ValueError(f"not support paradigm({self.paradigm_type})."
-                             f"the following paradigms can be selected: {paradigm_types}")
+            raise ValueError(
+                f"not support paradigm({self.paradigm_type})."
+                f"the following paradigms can be selected: {paradigm_types}"
+            )
 
         if not isinstance(self.incremental_learning_data_setting, dict):
             raise ValueError(
                 f"algorithm incremental_learning_data_setting"
-                f"({self.incremental_learning_data_setting} must be dictionary type.")
+                f"({self.incremental_learning_data_setting} must be dictionary type."
+            )
 
         if not isinstance(self.initial_model_url, str):
             raise ValueError(
-                f"algorithm initial_model_url({self.initial_model_url}) must be string type.")
+                f"algorithm initial_model_url({self.initial_model_url}) must be string type."
+            )
 
     def _parse_config(self, config):
         config_dict = config[str.lower(Algorithm.__name__)]

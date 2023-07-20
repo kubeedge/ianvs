@@ -20,12 +20,12 @@ from prettytable import from_csv
 
 
 def print_table(rank_file):
-    """ print rank of the test"""
+    """print rank of the test"""
     with open(rank_file, "r", encoding="utf-8") as file:
         table = from_csv(file)
         print(table)
 
 
 def get_visualization_func(mode):
-    """ get visualization func """
+    """get visualization func"""
     return getattr(sys.modules[__name__], mode)

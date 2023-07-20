@@ -35,15 +35,12 @@ class Rank:
 
     def __init__(self, config):
         self.sort_by: list = []
-        self.visualization: dict = {
-            "mode": "selected_only",
-            "method": "print_table"
-        }
+        self.visualization: dict = {"mode": "selected_only", "method": "print_table"}
         self.selected_dataitem: dict = {
             "paradigms": ["all"],
             "modules": ["all"],
             "hyperparameters": ["all"],
-            "metrics": ["all"]
+            "metrics": ["all"],
         }
         self.save_mode: str = "selected_and_all"
 
@@ -65,12 +62,15 @@ class Rank:
             raise ValueError(f"rank's sort_by({self.sort_by}) must be provided and be list type.")
 
         if not self.visualization and not isinstance(self.visualization, dict):
-            raise ValueError(f"rank's visualization({self.visualization}) "
-                             f"must be provided and be dict type.")
+            raise ValueError(
+                f"rank's visualization({self.visualization}) " f"must be provided and be dict type."
+            )
 
         if not self.selected_dataitem and not isinstance(self.selected_dataitem, dict):
-            raise ValueError(f"rank's selected_dataitem({self.selected_dataitem}) "
-                             f"must be provided and be dict type.")
+            raise ValueError(
+                f"rank's selected_dataitem({self.selected_dataitem}) "
+                f"must be provided and be dict type."
+            )
 
         if not self.selected_dataitem.get("paradigms"):
             raise ValueError("not found paradigms of selected_dataitem in rank.")
@@ -82,8 +82,9 @@ class Rank:
             raise ValueError("not found metrics of selected_dataitem in rank.")
 
         if not self.save_mode and not isinstance(self.save_mode, list):
-            raise ValueError(f"rank's save_mode({self.save_mode}) "
-                             f"must be provided and be list type.")
+            raise ValueError(
+                f"rank's save_mode({self.save_mode}) " f"must be provided and be list type."
+            )
 
     @classmethod
     def _get_all_metric_names(cls, test_results) -> list:
@@ -207,8 +208,15 @@ class Rank:
         all_metric_names = self._get_all_metric_names(test_results)
         all_hps_names = self._get_all_hps_names(test_cases)
         all_module_types = self._get_all_module_types(test_cases)
-        self.all_df_header = ["algorithm", *all_metric_names, "paradigm",
-                              *all_module_types, *all_hps_names, "time", "url"]
+        self.all_df_header = [
+            "algorithm",
+            *all_metric_names,
+            "paradigm",
+            *all_module_types,
+            *all_hps_names,
+            "time",
+            "url",
+        ]
 
         rank_output_dir = os.path.join(output_dir, "rank")
         if not utils.is_local_dir(rank_output_dir):
@@ -256,4 +264,5 @@ class Rank:
             except Exception as err:
                 raise RuntimeError(
                     f"process visualization(method={method}) of "
-                    f"rank file({self.selected_rank_file}) failed, error: {err}.") from err
+                    f"rank file({self.selected_rank_file}) failed, error: {err}."
+                ) from err

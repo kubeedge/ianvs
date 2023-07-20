@@ -61,9 +61,7 @@ def make_parser():
         default=0.9,
         help="matching threshold for tracking",
     )
-    parser.add_argument(
-        "--min-box-area", type=float, default=100, help="filter out tiny boxes"
-    )
+    parser.add_argument("--min-box-area", type=float, default=100, help="filter out tiny boxes")
     parser.add_argument(
         "--mot20", dest="mot20", default=False, action="store_true", help="test mot20."
     )
@@ -74,11 +72,9 @@ def make_parser():
 
 @ClassFactory.register(ClassType.GENERAL, alias="ByteTrack")
 class BaseModel:
-
     def __init__(self, **kwargs) -> None:
-
         self.args = make_parser().parse_args()
-        self.exp = get_exp(str(Path(Path(__file__).parent.resolve(), 'yolox_x_ablation.py')), None)
+        self.exp = get_exp(str(Path(Path(__file__).parent.resolve(), "yolox_x_ablation.py")), None)
         self.exp.merge(self.args.opts)
         self.args.experiment_name = self.exp.exp_name
 
@@ -92,22 +88,19 @@ class BaseModel:
         os.makedirs(file_name, exist_ok=True)
 
         setup_logger(file_name, distributed_rank=self.rank, filename="val_log.txt", mode="a")
-        logger.info("args: {}".format(self.args))
+        logger.info(f"args: {self.args}")
         self.exp.test_conf = self.args.conf
         self.exp.nmsthre = self.args.nms
         self.model = self.exp.get_model()
-        logger.info(
-            "Model Summary: {}".format(get_model_info(self.model, self.exp.test_size))
-        )
+        logger.info(f"Model Summary: {get_model_info(self.model, self.exp.test_size)}")
+
         self.batch_size = kwargs.get("batch_size", 1)
 
-
     def load(self, model_url=None) -> None:
-
         logger.info("loading checkpoint")
         # load the model state dict
         if model_url:
-            loc = "cuda:{}".format(self.rank)
+            loc = f"cuda:{self.rank}"
             ckpt = torch.load(model_url, map_location=loc)
             self.model.load_state_dict(ckpt["model"])
             logger.info("loaded checkpoint done.")
@@ -117,7 +110,7 @@ class BaseModel:
             logger.info("\tFusing model...")
             self.model = fuse_model(self.model)
         else:
-            raise Exception(f"model url is None")
+            raise Exception("model url is None")
 
     def predict(self, data, input_shape=None, **kwargs):
         if data is None:
@@ -148,17 +141,37 @@ class BaseModel:
 
         self.model.eval()
         # start evaluate
-        *_, summary = self.evaluator.evaluate(self.model, self.is_distributed, True, None, None, self.exp.test_size, inference_output_dir,)
+        *_, summary = self.evaluator.evaluate(
+            self.model,
+            self.is_distributed,
+            True,
+            None,
+            None,
+            self.exp.test_size,
+            inference_output_dir,
+        )
         logger.info("\n" + summary)
 
-        tsfiles = [f for f in glob.glob(os.path.join(inference_output_dir, '*.txt')) if not os.path.basename(f).startswith('eval')]
-        ts = OrderedDict([(os.path.splitext(Path(f).parts[-1])[0], mm.io.loadtxt(f, fmt='mot15-2D', min_confidence=-1)) for f in tsfiles])
+        tsfiles = [
+            f
+            for f in glob.glob(os.path.join(inference_output_dir, "*.txt"))
+            if not os.path.basename(f).startswith("eval")
+        ]
+        ts = OrderedDict(
+            [
+                (
+                    os.path.splitext(Path(f).parts[-1])[0],
+                    mm.io.loadtxt(f, fmt="mot15-2D", min_confidence=-1),
+                )
+                for f in tsfiles
+            ]
+        )
 
         return ts
 
-
-    def _get_eval_loader(self, data_dir, coco, ids, class_ids, annotations, batch_size, is_distributed, testdev=False):
-
+    def _get_eval_loader(
+        self, data_dir, coco, ids, class_ids, annotations, batch_size, is_distributed, testdev=False
+    ):
         valdataset = MOTDataset(
             data_dir=data_dir,
             coco=coco,

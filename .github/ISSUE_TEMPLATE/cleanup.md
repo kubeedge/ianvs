@@ -1,5 +1,5 @@
 ---
-name: Cleanup 
+name: Cleanup
 about: Cleaning up code, process, or technical debt, etc.
 labels: kind/cleanup
 
@@ -10,4 +10,3 @@ labels: kind/cleanup
 **What should be cleaned up or changed**:
 
 **Why is this needed**:
-

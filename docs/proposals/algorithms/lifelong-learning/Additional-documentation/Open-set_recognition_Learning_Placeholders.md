@@ -4,9 +4,9 @@ This is based on the 2021 CVPR paper *Learning Placeholders for Open-Set Recogni
 
 ```
 author = {Zhou, Da-Wei and Ye, Han-Jia and Zhan, De-Chuan},
-title = {Learning Placeholders for Open-Set Recognition}, 
-booktitle = {CVPR}, 
-pages = {4401-4410}, 
+title = {Learning Placeholders for Open-Set Recognition},
+booktitle = {CVPR},
+pages = {4401-4410},
 year = {2021}
 ```
 
@@ -18,9 +18,9 @@ The GitHub link:[CVPR21-Proser](https://github.com/zhoudw-zdw/CVPR21-Proser)
 
 ## Background
 
-Traditional classiﬁers are deployed under a closed-set setting, with both training and test classes belonging to the same set. However, real-world applications probably face the input of unknown categories, and the model will recognize them as known ones. Under such circumstances, open-set recognition is proposed to maintain classiﬁcation performance on known classes and reject unknowns. The closed-set models make overconﬁdent predictions over familiar known class instances so that calibration and thresholding across categories become essential issues when extending to an open-set environment. 
+Traditional classiﬁers are deployed under a closed-set setting, with both training and test classes belonging to the same set. However, real-world applications probably face the input of unknown categories, and the model will recognize them as known ones. Under such circumstances, open-set recognition is proposed to maintain classiﬁcation performance on known classes and reject unknowns. The closed-set models make overconﬁdent predictions over familiar known class instances so that calibration and thresholding across categories become essential issues when extending to an open-set environment.
 
-Learning PlaceholdeRs for open-set recognition prepares for the unknown classes by allocating placeholders for both data and classiﬁer. In detail, learning data placeholders try to anticipate open-set class data, thus transforming closed-set training into open-set training. Besides, reserving classiﬁer placeholders as the class-speciﬁc boundary between known and unknown to learn the invariant information between target and non-target classes. 
+Learning PlaceholdeRs for open-set recognition prepares for the unknown classes by allocating placeholders for both data and classiﬁer. In detail, learning data placeholders try to anticipate open-set class data, thus transforming closed-set training into open-set training. Besides, reserving classiﬁer placeholders as the class-speciﬁc boundary between known and unknown to learn the invariant information between target and non-target classes.
 
 
 
@@ -62,6 +62,3 @@ It is clear that the formulation in the paper does not consume additional time c
 ## PROSER algorithm training process
 
 <img src="./images/process.png" style="zoom:50%;" />
-
-
-

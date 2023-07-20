@@ -6,5 +6,3 @@ labels: kind/question
 ---
 
 <!-- Please use this template for submitting questions -->
-
-

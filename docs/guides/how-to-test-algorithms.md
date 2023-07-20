@@ -13,7 +13,7 @@ Note that:
 - Otherwise, if the user has a test algorithm that is new to the Ianvs repository, i.e., the test environment and the test case are not ready for the targeted algorithm, you might test the algorithm in Ianvs following the next steps from scratch
 
 ## Step 1. Test Environment Preparation
-  
+
 First, the user needs to prepare the dataset according to the targeted scenario, from source links (e.g., from Kaggle) provided by Ianvs. Scenarios with datasets are available Links of scenarios. As an example in this document, we are using the PCB-AoI Public Dataset released by KubeEdge SIG AI members on Kaggle. See details of PCB-AoI dataset for more information on this dataset.
 
 You might wonder why not put the dataset on the GitHub repository of Ianvs: Datasets can be large. To avoid over-size projects in the GitHub repository of Ianvs, the Ianvs code base does not include origin datasets and developers might want to download unneeded datasets.
@@ -59,7 +59,7 @@ testenv:
   incremental_rounds: 2
 ```
 
-The URL address of this test environment, i.e., testenv.yaml, then should be filled in the configuration file in the following Step 3. For example,  
+The URL address of this test environment, i.e., testenv.yaml, then should be filled in the configuration file in the following Step 3. For example,
 
 ``` yaml
 # benchmarkingJob.yaml
@@ -109,7 +109,7 @@ def Threshold-based-HEM(infer_result=None):
 ### Example 2. Testing a neural-network-based modeling algorithm in incremental learning
 
 As the second example, we describe how to test a neural network `FPN` for HEM (Hard Example Mining) module in incremental learning.
-For this new algorithm in `ClassType.GENERAL`, the code in the algorithm file is as follows: 
+For this new algorithm in `ClassType.GENERAL`, the code in the algorithm file is as follows:
 
 ```python
 
@@ -152,7 +152,7 @@ class BaseModel:
                 )
 
             # ... ...
-            # several lines are omitted here. 
+            # several lines are omitted here.
 
         return self.checkpoint_path
 
@@ -199,7 +199,7 @@ class BaseModel:
                 sess.run(init_op)
 
         # ... ...
-        # several lines are omitted here. 
+        # several lines are omitted here.
 
         return predict_dict
 
@@ -297,7 +297,7 @@ algorithm:
               - 0.9
 ```
 
-The URL address of this algorithm then should be filled in the configuration file of ``benchmarkingJob.yaml`` in the following Step 3. Two examples are as follows: 
+The URL address of this algorithm then should be filled in the configuration file of ``benchmarkingJob.yaml`` in the following Step 3. Two examples are as follows:
 
 ``` yaml
   # the configuration of test object
@@ -342,7 +342,7 @@ First, the user can configure the workspace to reserve the output of tests.
   workspace: "/ianvs/pcb-aoi/workspace/"
 ```
 
-Then, the user fill in the test environment and algorithm configured in previous steps. 
+Then, the user fill in the test environment and algorithm configured in previous steps.
 
 ``` yaml
 # benchmarkingJob.yaml

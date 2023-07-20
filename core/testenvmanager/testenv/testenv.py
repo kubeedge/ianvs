@@ -38,7 +38,7 @@ class TestEnv:
                 "url": "",
             },
             "threshold": 0.9,
-            "operator": ">"
+            "operator": ">",
         }
         self.metrics = []
         self.incremental_rounds = 2
@@ -50,8 +50,10 @@ class TestEnv:
             raise ValueError(f"not found testenv metrics({self.metrics}).")
 
         if not isinstance(self.incremental_rounds, int) or self.incremental_rounds < 2:
-            raise ValueError(f"testenv incremental_rounds(value={self.incremental_rounds})"
-                             f" must be int type and not less than 2.")
+            raise ValueError(
+                f"testenv incremental_rounds(value={self.incremental_rounds})"
+                f" must be int type and not less than 2."
+            )
 
     def _parse_config(self, config):
         config_dict = config[str.lower(TestEnv.__name__)]
@@ -59,14 +61,13 @@ class TestEnv:
         for k, v in config_dict.items():
             if k == str.lower(Dataset.__name__):
                 self.dataset = Dataset(v)
-            else:
-                if k in self.__dict__:
-                    self.__dict__[k] = v
+            elif k in self.__dict__:
+                self.__dict__[k] = v
 
         self._check_fields()
 
     def prepare(self):
-        """ prepare env"""
+        """prepare env"""
         try:
             self.dataset.process_dataset()
         except Exception as err:

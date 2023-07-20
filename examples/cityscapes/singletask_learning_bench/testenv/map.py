@@ -6,7 +6,7 @@ from RFNet.dataloaders import make_data_loader
 import RFNet.eval_config as valid_cfgs
 from RFNet.utils.metrics import Evaluator
 
-__all__ = ('accuracy')
+__all__ = "accuracy"
 
 
 @ClassFactory.register(ClassType.GENERAL, alias="map")
@@ -15,18 +15,18 @@ def accuracy(y_true, y_pred, **kwargs):
     _, _, test_loader, num_class = make_data_loader(args, test_data=y_true)
     evaluator = Evaluator(num_class)
 
-    tbar = tqdm(test_loader, desc='\r')
+    tbar = tqdm(test_loader, desc="\r")
     for i, (sample, img_path) in enumerate(tbar):
         if args.depth:
-            image, depth, target = sample['image'], sample['depth'], sample['label']
+            image, depth, target = sample["image"], sample["depth"], sample["label"]
         else:
-            image, target = sample['image'], sample['label']
+            image, target = sample["image"], sample["label"]
         if args.cuda:
             image, target = image.cuda(), target.cuda()
             if args.depth:
                 depth = depth.cuda()
 
-        target[target > evaluator.num_class-1] = 255
+        target[target > evaluator.num_class - 1] = 255
         target = torch.squeeze(target).cpu().numpy()
         # Add batch sample into evaluator
         evaluator.add_batch(target, y_pred[i])
@@ -37,5 +37,5 @@ def accuracy(y_true, y_pred, **kwargs):
     mIoU = evaluator.Mean_Intersection_over_Union()
     FWIoU = evaluator.Frequency_Weighted_Intersection_over_Union()
 
-    print("CPA:{}, mIoU:{}, fwIoU: {}".format(CPA, mIoU, FWIoU))
+    print(f"CPA:{CPA}, mIoU:{mIoU}, fwIoU: {FWIoU}")
     return CPA

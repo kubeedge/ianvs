@@ -2,7 +2,7 @@
 
 ## About Industrial Defect Detection
 
-In recent years, the manufacturing process is moving towards a higher degree of automation and improved manufacturing efficiency. During this development, smart manufacturing increasingly employs computing technologies, for example, with a higher degree of automation, there is also a higher risk of product defects; thus, a number of machine learning models have been developed to detect defectives in the manufacturing process.  
+In recent years, the manufacturing process is moving towards a higher degree of automation and improved manufacturing efficiency. During this development, smart manufacturing increasingly employs computing technologies, for example, with a higher degree of automation, there is also a higher risk of product defects; thus, a number of machine learning models have been developed to detect defectives in the manufacturing process.
 
 Defects are an unwanted thing in the manufacturing industry. There are many types of defects in manufacturing like blow holes, pinholes, burr, shrinkage defects, mould material defects, pouring metal defects, metallurgical defects, etc. For removing this defective product all industry have their defect detection department. But the main problem is this inspection process is carried out manually. It is a very time-consuming process and due to human accuracy, this is not 100\% accurate. This can be because of the rejection of the whole order. So it creates a big loss for the company.
 

@@ -30,7 +30,7 @@ def plot_cmc(distmat, query_ids, gallery_ids, topk):
     m, n = distmat.shape
     # Sort and find correct matches
     indices = np.argsort(distmat, axis=1)
-    matches = (gallery_ids[indices] == query_ids[:, np.newaxis])
+    matches = gallery_ids[indices] == query_ids[:, np.newaxis]
     # Compute CMC for each query
     ret = np.zeros(topk)
     for i in range(m):
@@ -54,6 +54,6 @@ def plot_cmc(distmat, query_ids, gallery_ids, topk):
 
 @ClassFactory.register(ClassType.GENERAL, alias="cmc")
 def cmc(query_ids, pred):
-    query_ids = np.asarray([int(y.split('/')[-1]) for y in query_ids])
+    query_ids = np.asarray([int(y.split("/")[-1]) for y in query_ids])
     distmat, gallery_ids = pred
     return plot_cmc(distmat, query_ids, gallery_ids, 5)

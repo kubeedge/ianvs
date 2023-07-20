@@ -6,11 +6,11 @@
    Once you have a new idea about the test environment, you can apply for a topic to discuss it on [SIG AI weekly meeting](http://github.com/kubeedge/ianvs.git).
 2. Submit proposal.
    After the idea is fully discussed, the former proposal PR is needed to submit to the [Ianvs repository](http://github.com/kubeedge/ianvs.git).
-3. Fix proposal review comments.  
+3. Fix proposal review comments.
    If other Ianvs maintainers leave review comments to the PR, you need to fix them and get at least 2 reviewers' `/lgtm`, and 1 approver's `/approve`.
 4. Submit code.
    Then you can implement your code, and a good code style is encouraged.
-5. Fix code review comments.  
+5. Fix code review comments.
    Besides the merge requirements of the proposal, CI passing is needed before reviewing this step.
 
 The following is a typical testenv:

@@ -129,8 +129,3 @@ testenv:
   # incremental rounds setting for incremental learning paradigm; int type; default value is 2;
   incremental_rounds: 2
 ```
-
-
-
-
-

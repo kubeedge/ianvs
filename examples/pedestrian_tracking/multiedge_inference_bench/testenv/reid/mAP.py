@@ -25,13 +25,13 @@ def mean_ap(distmat, query_ids, gallery_ids):
     m, _ = distmat.shape
     # Sort and find correct matches
     indices = np.argsort(distmat, axis=1)
-    matches = (gallery_ids[indices] == query_ids[:, np.newaxis])
+    matches = gallery_ids[indices] == query_ids[:, np.newaxis]
     # Compute AP for each query
     aps = []
     for i in range(m):
         y_true = matches[i]
         y_score = -distmat[i][indices[i]]
-        if not np.any(y_true): 
+        if not np.any(y_true):
             continue
         aps.append(average_precision_score(y_true, y_score))
     if len(aps) == 0:
@@ -41,6 +41,6 @@ def mean_ap(distmat, query_ids, gallery_ids):
 
 @ClassFactory.register(ClassType.GENERAL, alias="mAP")
 def mAP(query_ids, pred):
-    query_ids = np.asarray([int(y.split('/')[-1]) for y in query_ids])
+    query_ids = np.asarray([int(y.split("/")[-1]) for y in query_ids])
     distmat, gallery_ids = pred
     return mean_ap(distmat, query_ids, gallery_ids)

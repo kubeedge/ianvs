@@ -19,6 +19,7 @@ import random
 from torchvision.transforms import *
 from PIL import Image
 
+
 class RectScale(object):
     def __init__(self, height, width, interpolation=Image.BILINEAR):
         self.height = height
@@ -52,7 +53,7 @@ class RandomSizedRectCrop(object):
                 y1 = random.randint(0, img.size[1] - h)
 
                 img = img.crop((x1, y1, x1 + w, y1 + h))
-                assert(img.size == (w, h))
+                assert img.size == (w, h)
 
                 return img.resize((self.width, self.height), self.interpolation)
 
@@ -62,7 +63,7 @@ class RandomSizedRectCrop(object):
 
 
 class RandomErasing(object):
-    """ Randomly selects a rectangle region in an image and erases its pixels.
+    """Randomly selects a rectangle region in an image and erases its pixels.
         'Random Erasing Data Augmentation' by Zhong et al.
         See https://arxiv.org/pdf/1708.04896.pdf
     Args:
@@ -81,7 +82,6 @@ class RandomErasing(object):
         self.r1 = r1
 
     def __call__(self, img):
-
         if random.uniform(0, 1) >= self.probability:
             return img
 
@@ -98,11 +98,11 @@ class RandomErasing(object):
                 x1 = random.randint(0, img.size()[1] - h)
                 y1 = random.randint(0, img.size()[2] - w)
                 if img.size()[0] == 3:
-                    img[0, x1:x1 + h, y1:y1 + w] = self.mean[0]
-                    img[1, x1:x1 + h, y1:y1 + w] = self.mean[1]
-                    img[2, x1:x1 + h, y1:y1 + w] = self.mean[2]
+                    img[0, x1 : x1 + h, y1 : y1 + w] = self.mean[0]
+                    img[1, x1 : x1 + h, y1 : y1 + w] = self.mean[1]
+                    img[2, x1 : x1 + h, y1 : y1 + w] = self.mean[2]
                 else:
-                    img[0, x1:x1 + h, y1:y1 + w] = self.mean[0]
+                    img[0, x1 : x1 + h, y1 : y1 + w] = self.mean[0]
                 return img
 
         return img

@@ -78,7 +78,8 @@ class IncrementalLearning(ParadigmBase):
 
         rounds = self.incremental_rounds
         samples_transfer_ratio_info = self.system_metric_info.get(
-            SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
+            SystemMetricType.SAMPLES_TRANSFER_RATIO.value
+        )
         dataset_files = self._preprocess_dataset(splitting_dataset_times=rounds)
         current_model = self.initial_model
 
@@ -86,9 +87,9 @@ class IncrementalLearning(ParadigmBase):
         for r in range(1, rounds + 1):
             inference_dataset_file, eval_dataset_file = dataset_files[r - 1]
 
-            inference_results, hard_examples = self._inference(current_model,
-                                                               inference_dataset_file,
-                                                               r)
+            inference_results, hard_examples = self._inference(
+                current_model, inference_dataset_file, r
+            )
 
             samples_transfer_ratio_info.append((inference_results, hard_examples))
 
@@ -111,13 +112,13 @@ class IncrementalLearning(ParadigmBase):
         return test_res, self.system_metric_info
 
     def _prepare_inference(self, model, rounds):
-        inference_output_dir = os.path.join(self.workspace,
-                                            f"output/inference/results/{rounds}")
+        inference_output_dir = os.path.join(self.workspace, f"output/inference/results/{rounds}")
         if not is_local_dir(inference_output_dir):
             os.makedirs(inference_output_dir)
 
-        hard_example_saved_dir = os.path.join(self.workspace,
-                                              f"output/inference/hard_examples/{rounds}")
+        hard_example_saved_dir = os.path.join(
+            self.workspace, f"output/inference/hard_examples/{rounds}"
+        )
         if not is_local_dir(hard_example_saved_dir):
             os.makedirs(hard_example_saved_dir)
 
@@ -207,8 +208,10 @@ class IncrementalLearning(ParadigmBase):
         operator_func = operator_map[operator]
 
         if len(eval_results) != 2:
-            raise RuntimeError(f"two models of evaluation should have two results."
-                            f" the eval results: {eval_results}")
+            raise RuntimeError(
+                f"two models of evaluation should have two results."
+                f" the eval results: {eval_results}"
+            )
 
         metric_values = [0, 0]
         for i, result in enumerate(eval_results):
@@ -222,10 +225,12 @@ class IncrementalLearning(ParadigmBase):
         train_dataset_ratio = self.incremental_learning_data_setting.get("train_ratio")
         splitting_dataset_method = self.incremental_learning_data_setting.get("splitting_method")
 
-        return self.dataset.split_dataset(self.dataset.train_url,
-                                          get_file_format(self.dataset.train_url),
-                                          train_dataset_ratio,
-                                          method=splitting_dataset_method,
-                                          dataset_types=("model_inference", "model_evaluation"),
-                                          output_dir=self.dataset_output_dir(),
-                                          times=splitting_dataset_times)
+        return self.dataset.split_dataset(
+            self.dataset.train_url,
+            get_file_format(self.dataset.train_url),
+            train_dataset_ratio,
+            method=splitting_dataset_method,
+            dataset_types=("model_inference", "model_evaluation"),
+            output_dir=self.dataset_output_dir(),
+            times=splitting_dataset_times,
+        )

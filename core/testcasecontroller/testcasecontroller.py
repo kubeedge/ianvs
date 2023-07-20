@@ -74,8 +74,9 @@ class TestCaseController:
                 algorithm = Algorithm(name, config)
                 algorithms.append(algorithm)
             except Exception as err:
-                raise RuntimeError(f"algorithm config file({config_file} is not supported, "
-                                f"error: {err}") from err
+                raise RuntimeError(
+                    f"algorithm config file({config_file} is not supported, " f"error: {err}"
+                ) from err
 
         new_algorithms = []
         for algorithm in algorithms:

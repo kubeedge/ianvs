@@ -18,7 +18,7 @@ import abc
 
 from sedna.common.class_factory import ClassFactory, ClassType
 
-__all__ = ('IBTFilter')
+__all__ = "IBTFilter"
 
 
 class BaseFilter(metaclass=abc.ABCMeta):
@@ -93,18 +93,17 @@ class IBTFilter(BaseFilter, abc.ABC):
 
         infer_result = _convert_to_bboxes()
 
-        if not (infer_result
-                and all(map(lambda x: len(x) > 4, infer_result))):
+        if not (infer_result and all(map(lambda x: len(x) > 4, infer_result))):
             # if invalid input, return False
             return False
 
-        data_check_list = [bbox[4] for bbox in infer_result
-                           if self.data_check(bbox[4])]
+        data_check_list = [bbox[4] for bbox in infer_result if self.data_check(bbox[4])]
         if len(data_check_list) != len(infer_result):
             return False
 
         confidence_score_list = [
-            float(box_score) for box_score in data_check_list
-            if float(box_score) <= self.threshold_box]
-        return (len(confidence_score_list) / len(infer_result)
-                >= (1 - self.threshold_img))
+            float(box_score)
+            for box_score in data_check_list
+            if float(box_score) <= self.threshold_box
+        ]
+        return len(confidence_score_list) / len(infer_result) >= (1 - self.threshold_img)

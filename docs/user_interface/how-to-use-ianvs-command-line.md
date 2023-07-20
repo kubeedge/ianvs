@@ -2,7 +2,7 @@
 
 ### List available commands
 
-Command line: `ianvs -h`  
+Command line: `ianvs -h`
 For example:
 
 ```shell
@@ -22,7 +22,7 @@ optional arguments:
 
 ### Show the version of ianvs
 
-Command line: `ianvs -v`  
+Command line: `ianvs -v`
 For example:
 
 ```shell
@@ -32,7 +32,7 @@ $ ianvs -v
 
 ### Run a benchmarking job
 
-Command line: `ianvs -f [BENCHMARKING_CONFIG_FILE]`  
+Command line: `ianvs -f [BENCHMARKING_CONFIG_FILE]`
 For example:
 
 ```yaml
@@ -49,4 +49,3 @@ The final output might look like:
 Refer to [details of example].
 
 [details of example]: ../guides/quick-start.md
-

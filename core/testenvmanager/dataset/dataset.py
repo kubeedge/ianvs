@@ -82,7 +82,8 @@ class Dataset:
                     front, back = line.split(" ")
                     file.writelines(
                         f"{os.path.abspath(os.path.join(root, front))} "
-                        f"{os.path.abspath(os.path.join(root, back))}")
+                        f"{os.path.abspath(os.path.join(root, back))}"
+                    )
 
             new_file = tmp_file
 
@@ -110,8 +111,16 @@ class Dataset:
         self.test_url = self._process_index_file(self.test_url)
 
     # pylint: disable=too-many-arguments
-    def split_dataset(self, dataset_url, dataset_format, ratio, method="default",
-                      dataset_types=None, output_dir=None, times=1):
+    def split_dataset(
+        self,
+        dataset_url,
+        dataset_format,
+        ratio,
+        method="default",
+        dataset_types=None,
+        output_dir=None,
+        times=1,
+    ):
         """
         split dataset:
             step1: divide all data N(N = times) times to generate N pieces of data.
@@ -146,13 +155,19 @@ class Dataset:
         """
 
         if method == "default":
-            return self._splitting_more_times(dataset_url, dataset_format, ratio,
-                                              data_types=dataset_types,
-                                              output_dir=output_dir,
-                                              times=times)
+            return self._splitting_more_times(
+                dataset_url,
+                dataset_format,
+                ratio,
+                data_types=dataset_types,
+                output_dir=output_dir,
+                times=times,
+            )
 
-        raise ValueError(f"dataset splitting method({method}) is not supported,"
-                         f"currently, method supports 'default'.")
+        raise ValueError(
+            f"dataset splitting method({method}) is not supported,"
+            f"currently, method supports 'default'."
+        )
 
     @classmethod
     def _get_file_url(cls, output_dir, dataset_type, dataset_id, file_format):
@@ -187,8 +202,9 @@ class Dataset:
 
         return data_file
 
-    def _splitting_more_times(self, data_file, data_format, ratio,
-                              data_types=None, output_dir=None, times=1):
+    def _splitting_more_times(
+        self, data_file, data_format, ratio, data_types=None, output_dir=None, times=1
+    ):
         if not data_types:
             data_types = ("train", "eval")
 
@@ -204,17 +220,30 @@ class Dataset:
         index = 1
         while index <= times:
             if index == times:
-                new_dataset = all_data[step * (index - 1):]
+                new_dataset = all_data[step * (index - 1) :]
             else:
-                new_dataset = all_data[step * (index - 1):step * index]
+                new_dataset = all_data[step * (index - 1) : step * index]
 
             new_num = len(new_dataset)
 
-            data_files.append((
-                self._get_dataset_file(new_dataset[:int(new_num * ratio)], output_dir,
-                                       data_types[0], index, data_format),
-                self._get_dataset_file(new_dataset[int(new_num * ratio):], output_dir,
-                                       data_types[1], index, data_format)))
+            data_files.append(
+                (
+                    self._get_dataset_file(
+                        new_dataset[: int(new_num * ratio)],
+                        output_dir,
+                        data_types[0],
+                        index,
+                        data_format,
+                    ),
+                    self._get_dataset_file(
+                        new_dataset[int(new_num * ratio) :],
+                        output_dir,
+                        data_types[1],
+                        index,
+                        data_format,
+                    ),
+                )
+            )
 
             index += 1
 

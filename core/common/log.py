@@ -30,8 +30,9 @@ class Logger:
         self.logger = logging.getLogger(name)
 
         self.format = colorlog.ColoredFormatter(
-            '%(log_color)s[%(asctime)-15s] %(filename)s(%(lineno)d)'
-            ' [%(levelname)s]%(reset)s - %(message)s', )
+            "%(log_color)s[%(asctime)-15s] %(filename)s(%(lineno)d)"
+            " [%(levelname)s]%(reset)s - %(message)s",
+        )
 
         self.handler = logging.StreamHandler()
         self.handler.setFormatter(self.format)

@@ -24,7 +24,8 @@ from torch.autograd import Variable
 
 
 def to_var(x, requires_grad=True):
-    if torch.cuda.is_available(): x = x.cuda()
+    if torch.cuda.is_available():
+        x = x.cuda()
     return Variable(x, requires_grad=requires_grad)
 
 
@@ -40,39 +41,39 @@ class MetaModule(nn.Module):
     def named_submodules(self):
         return []
 
-    def named_params(self, curr_module=None, memo=None, prefix=''):
+    def named_params(self, curr_module=None, memo=None, prefix=""):
         if memo is None:
             memo = set()
 
-        if hasattr(curr_module, 'named_leaves'):
+        if hasattr(curr_module, "named_leaves"):
             for name, p in curr_module.named_leaves():
                 if p is not None and p not in memo:
                     memo.add(p)
-                    yield prefix + ('.' if prefix else '') + name, p
+                    yield prefix + ("." if prefix else "") + name, p
         else:
             for name, p in curr_module._parameters.items():
                 if p is not None and p not in memo:
                     memo.add(p)
-                    yield prefix + ('.' if prefix else '') + name, p
+                    yield prefix + ("." if prefix else "") + name, p
 
         for mname, module in curr_module.named_children():
-            submodule_prefix = prefix + ('.' if prefix else '') + mname
+            submodule_prefix = prefix + ("." if prefix else "") + mname
             for name, p in self.named_params(module, memo, submodule_prefix):
                 yield name, p
 
-    def update_params(self, lr_inner, source_params=None,
-                      solver='sgd', beta1=0.9, beta2=0.999, weight_decay=5e-4):
-        if solver == 'sgd':
+    def update_params(
+        self, lr_inner, source_params=None, solver="sgd", beta1=0.9, beta2=0.999, weight_decay=5e-4
+    ):
+        if solver == "sgd":
             for tgt, src in zip(self.named_params(self), source_params):
                 name_t, param_t = tgt
                 grad = src if src is not None else 0
                 tmp = param_t - lr_inner * grad
                 self.set_param(self, name_t, tmp)
-        elif solver == 'adam':
+        elif solver == "adam":
             for tgt, gradVal in zip(self.named_params(self), source_params):
                 name_t, param_t = tgt
-                exp_avg, exp_avg_sq = torch.zeros_like(param_t.data), \
-                                      torch.zeros_like(param_t.data)
+                exp_avg, exp_avg_sq = torch.zeros_like(param_t.data), torch.zeros_like(param_t.data)
                 bias_correction1 = 1 - beta1
                 bias_correction2 = 1 - beta2
                 gradVal.add_(weight_decay, param_t)
@@ -90,10 +91,10 @@ class MetaModule(nn.Module):
             self.set_param(self, name_t, param)
 
     def set_param(self, curr_mod, name, param):
-        if '.' in name:
-            n = name.split('.')
+        if "." in name:
+            n = name.split(".")
             module_name = n[0]
-            rest = '.'.join(n[1:])
+            rest = ".".join(n[1:])
             for name, mod in curr_mod.named_children():
                 if module_name == name:
                     self.set_param(mod, rest, param)
@@ -102,9 +103,9 @@ class MetaModule(nn.Module):
             setattr(curr_mod, name, param)
 
     def setBN(self, inPart, name, param):
-        if '.' in name:
-            part = name.split('.')
-            self.setBN(getattr(inPart, part[0]), '.'.join(part[1:]), param)
+        if "." in name:
+            part = name.split(".")
+            self.setBN(getattr(inPart, part[0]), ".".join(part[1:]), param)
         else:
             setattr(inPart, name, param)
 
@@ -118,10 +119,12 @@ class MetaModule(nn.Module):
 
         # requires_grad
         partName, partW = list(map(lambda v: v[0], newModel.named_params(newModel))), list(
-            map(lambda v: v[1], newModel.named_params(newModel)))  # new model's weight
+            map(lambda v: v[1], newModel.named_params(newModel))
+        )  # new model's weight
 
         metaName, metaW = list(map(lambda v: v[0], self.named_params(self))), list(
-            map(lambda v: v[1], self.named_params(self)))
+            map(lambda v: v[1], self.named_params(self))
+        )
         bnNames = list(set(tarName) - set(partName))
 
         # copy vars
@@ -149,16 +152,15 @@ class MetaModule(nn.Module):
         for tgt in self.named_params(self):
             name_t, param_t = tgt
             # print(name_t)
-            module_name_t = 'module.' + name_t
+            module_name_t = "module." + name_t
             if name_t in modelW:
                 param = to_var(modelW[name_t], requires_grad=True)
                 self.set_param(self, name_t, param)
             elif module_name_t in modelW:
-                param = to_var(modelW['module.' + name_t], requires_grad=True)
+                param = to_var(modelW["module." + name_t], requires_grad=True)
                 self.set_param(self, name_t, param)
             else:
                 continue
-
 
     def copyWeight_eval(self, modelW):
         # copy state_dict to buffers
@@ -170,16 +172,18 @@ class MetaModule(nn.Module):
                 tarNames.add(".".join(name.split(".")[1:]))
             else:
                 tarNames.add(name)
-        bnNames = list(tarNames - set(curName))  ## in BN resMeta bnNames only contains running var/mean
+        bnNames = list(
+            tarNames - set(curName)
+        )  ## in BN resMeta bnNames only contains running var/mean
         for tgt in self.named_params(self):
             name_t, param_t = tgt
             # print(name_t)
-            module_name_t = 'module.' + name_t
+            module_name_t = "module." + name_t
             if name_t in modelW:
                 param = to_var(modelW[name_t], requires_grad=True)
                 self.set_param(self, name_t, param)
             elif module_name_t in modelW:
-                param = to_var(modelW['module.' + name_t], requires_grad=True)
+                param = to_var(modelW["module." + name_t], requires_grad=True)
                 self.set_param(self, name_t, param)
             else:
                 continue
@@ -188,7 +192,7 @@ class MetaModule(nn.Module):
             try:
                 param = to_var(modelW[name], requires_grad=False)
             except:
-                param = to_var(modelW['module.' + name], requires_grad=False)
+                param = to_var(modelW["module." + name], requires_grad=False)
             self.setBN(self, name, param)
 
 
@@ -199,14 +203,17 @@ class MetaLinear(MetaModule):
         self.in_features = args[0]
         self.out_features = args[1]
 
-        self.register_buffer('weight', to_var(ignore.weight.data, requires_grad=True))
-        self.register_buffer('bias', to_var(ignore.bias.data, requires_grad=True) if ignore.bias is not None else None)
+        self.register_buffer("weight", to_var(ignore.weight.data, requires_grad=True))
+        self.register_buffer(
+            "bias",
+            to_var(ignore.bias.data, requires_grad=True) if ignore.bias is not None else None,
+        )
 
     def forward(self, x):
         return F.linear(x, self.weight, self.bias)
 
     def named_leaves(self):
-        return [('weight', self.weight), ('bias', self.bias)]
+        return [("weight", self.weight), ("bias", self.bias)]
 
 
 class MetaConv2d(MetaModule):
@@ -221,18 +228,20 @@ class MetaConv2d(MetaModule):
         self.groups = ignore.groups
         self.kernel_size = ignore.kernel_size
 
-        self.register_buffer('weight', to_var(ignore.weight.data, requires_grad=True))
+        self.register_buffer("weight", to_var(ignore.weight.data, requires_grad=True))
 
         if ignore.bias is not None:
-            self.register_buffer('bias', to_var(ignore.bias.data, requires_grad=True))
+            self.register_buffer("bias", to_var(ignore.bias.data, requires_grad=True))
         else:
-            self.register_buffer('bias', None)
+            self.register_buffer("bias", None)
 
     def forward(self, x):
-        return F.conv2d(x, self.weight, self.bias, self.stride, self.padding, self.dilation, self.groups)
+        return F.conv2d(
+            x, self.weight, self.bias, self.stride, self.padding, self.dilation, self.groups
+        )
 
     def named_leaves(self):
-        return [('weight', self.weight), ('bias', self.bias)]
+        return [("weight", self.weight), ("bias", self.bias)]
 
 
 class MetaBatchNorm2d(MetaModule):
@@ -247,26 +256,34 @@ class MetaBatchNorm2d(MetaModule):
         self.track_running_stats = ignore.track_running_stats
 
         if self.affine:
-            self.register_buffer('weight', to_var(ignore.weight.data, requires_grad=True))
-            self.register_buffer('bias', to_var(ignore.bias.data, requires_grad=True))
+            self.register_buffer("weight", to_var(ignore.weight.data, requires_grad=True))
+            self.register_buffer("bias", to_var(ignore.bias.data, requires_grad=True))
 
         if self.track_running_stats:
-            self.register_buffer('running_mean', torch.zeros(self.num_features))
-            self.register_buffer('running_var', torch.ones(self.num_features))
-            self.register_buffer('num_batches_tracked', torch.LongTensor([0]).squeeze())
+            self.register_buffer("running_mean", torch.zeros(self.num_features))
+            self.register_buffer("running_var", torch.ones(self.num_features))
+            self.register_buffer("num_batches_tracked", torch.LongTensor([0]).squeeze())
         else:
-            self.register_buffer('running_mean', None)
-            self.register_buffer('running_var', None)
-            self.register_buffer('num_batches_tracked', None)
+            self.register_buffer("running_mean", None)
+            self.register_buffer("running_var", None)
+            self.register_buffer("num_batches_tracked", None)
 
     def forward(self, x):
         val2 = self.weight.sum()
-        res = F.batch_norm(x, self.running_mean, self.running_var, self.weight, self.bias,
-                           self.training or not self.track_running_stats, self.momentum, self.eps)
+        res = F.batch_norm(
+            x,
+            self.running_mean,
+            self.running_var,
+            self.weight,
+            self.bias,
+            self.training or not self.track_running_stats,
+            self.momentum,
+            self.eps,
+        )
         return res
 
     def named_leaves(self):
-        return [('weight', self.weight), ('bias', self.bias)]
+        return [("weight", self.weight), ("bias", self.bias)]
 
 
 class MetaBatchNorm1d(MetaModule):
@@ -281,24 +298,33 @@ class MetaBatchNorm1d(MetaModule):
         self.track_running_stats = ignore.track_running_stats
 
         if self.affine:
-            self.register_buffer('weight', to_var(ignore.weight.data, requires_grad=True))
-            self.register_buffer('bias', to_var(ignore.bias.data, requires_grad=True))
+            self.register_buffer("weight", to_var(ignore.weight.data, requires_grad=True))
+            self.register_buffer("bias", to_var(ignore.bias.data, requires_grad=True))
 
         if self.track_running_stats:
-            self.register_buffer('running_mean', torch.zeros(self.num_features))
-            self.register_buffer('running_var', torch.ones(self.num_features))
-            self.register_buffer('num_batches_tracked', torch.LongTensor([0]).squeeze())
+            self.register_buffer("running_mean", torch.zeros(self.num_features))
+            self.register_buffer("running_var", torch.ones(self.num_features))
+            self.register_buffer("num_batches_tracked", torch.LongTensor([0]).squeeze())
         else:
-            self.register_buffer('running_mean', None)
-            self.register_buffer('running_var', None)
-            self.register_buffer('num_batches_tracked', None)
+            self.register_buffer("running_mean", None)
+            self.register_buffer("running_var", None)
+            self.register_buffer("num_batches_tracked", None)
 
     def forward(self, x):
-        return F.batch_norm(x, self.running_mean, self.running_var, self.weight, self.bias,
-                            self.training or not self.track_running_stats, self.momentum, self.eps)
+        return F.batch_norm(
+            x,
+            self.running_mean,
+            self.running_var,
+            self.weight,
+            self.bias,
+            self.training or not self.track_running_stats,
+            self.momentum,
+            self.eps,
+        )
         ## meta test set this one to False self.training or not self.track_running_stats
+
     def named_leaves(self):
-        return [('weight', self.weight), ('bias', self.bias)]
+        return [("weight", self.weight), ("bias", self.bias)]
 
 
 class MetaInstanceNorm2d(MetaModule):
@@ -313,20 +339,20 @@ class MetaInstanceNorm2d(MetaModule):
         self.track_running_stats = ignore.track_running_stats
 
         if self.affine:
-            self.register_buffer('weight', to_var(ignore.weight.data, requires_grad=True))
-            self.register_buffer('bias', to_var(ignore.bias.data, requires_grad=True))
+            self.register_buffer("weight", to_var(ignore.weight.data, requires_grad=True))
+            self.register_buffer("bias", to_var(ignore.bias.data, requires_grad=True))
         else:
-            self.register_buffer('weight', None)
-            self.register_buffer('bias', None)
+            self.register_buffer("weight", None)
+            self.register_buffer("bias", None)
 
         if self.track_running_stats:
-            self.register_buffer('running_mean', torch.zeros(self.num_features))
-            self.register_buffer('running_var', torch.ones(self.num_features))
-            self.register_buffer('num_batches_tracked', torch.LongTensor([0]).squeeze())
+            self.register_buffer("running_mean", torch.zeros(self.num_features))
+            self.register_buffer("running_var", torch.ones(self.num_features))
+            self.register_buffer("num_batches_tracked", torch.LongTensor([0]).squeeze())
         else:
-            self.register_buffer('running_mean', None)
-            self.register_buffer('running_var', None)
-            self.register_buffer('num_batches_tracked', None)
+            self.register_buffer("running_mean", None)
+            self.register_buffer("running_var", None)
+            self.register_buffer("num_batches_tracked", None)
 
         self.reset_parameters()
 
@@ -336,27 +362,35 @@ class MetaInstanceNorm2d(MetaModule):
             init.constant_(self.bias, 0)
 
     def forward(self, x):
-
-        res = F.instance_norm(x, self.running_mean, self.running_var, self.weight, self.bias,
-            self.training or not self.track_running_stats, self.momentum, self.eps)
+        res = F.instance_norm(
+            x,
+            self.running_mean,
+            self.running_var,
+            self.weight,
+            self.bias,
+            self.training or not self.track_running_stats,
+            self.momentum,
+            self.eps,
+        )
         return res
 
     def named_leaves(self):
-        return [('weight', self.weight), ('bias', self.bias)]
+        return [("weight", self.weight), ("bias", self.bias)]
+
 
 class MixUpBatchNorm1d(MetaBatchNorm1d):
-    def __init__(self, num_features, eps=1e-5, momentum=0.1,
-                 affine=True, track_running_stats=True):
+    def __init__(self, num_features, eps=1e-5, momentum=0.1, affine=True, track_running_stats=True):
         super(MixUpBatchNorm1d, self).__init__(
-            num_features, eps, momentum, affine, track_running_stats)
+            num_features, eps, momentum, affine, track_running_stats
+        )
 
-        self.register_buffer('meta_mean1', torch.zeros(self.num_features))
-        self.register_buffer('meta_var1', torch.zeros(self.num_features))
-        self.register_buffer('meta_mean2', torch.zeros(self.num_features))
-        self.register_buffer('meta_var2', torch.zeros(self.num_features))
+        self.register_buffer("meta_mean1", torch.zeros(self.num_features))
+        self.register_buffer("meta_var1", torch.zeros(self.num_features))
+        self.register_buffer("meta_mean2", torch.zeros(self.num_features))
+        self.register_buffer("meta_var2", torch.zeros(self.num_features))
         self.device_count = torch.cuda.device_count()
 
-    def forward(self, input, MTE='', save_index=0):
+    def forward(self, input, MTE="", save_index=0):
         exponential_average_factor = 0.0
 
         if self.training and self.track_running_stats:
@@ -369,15 +403,24 @@ class MixUpBatchNorm1d(MetaBatchNorm1d):
 
         # calculate running estimates
         if self.training:
-            if MTE == 'sample':
+            if MTE == "sample":
                 from torch.distributions.normal import Normal
+
                 Distri1 = Normal(self.meta_mean1, self.meta_var1)
                 Distri2 = Normal(self.meta_mean2, self.meta_var2)
-                sample1 = Distri1.sample([input.size(0), ])
-                sample2 = Distri2.sample([input.size(0), ])
-                lam = np.random.beta(1., 1.)
-                inputmix1 = lam * sample1 + (1-lam) * input
-                inputmix2 = lam * sample2 + (1-lam) * input
+                sample1 = Distri1.sample(
+                    [
+                        input.size(0),
+                    ]
+                )
+                sample2 = Distri2.sample(
+                    [
+                        input.size(0),
+                    ]
+                )
+                lam = np.random.beta(1.0, 1.0)
+                inputmix1 = lam * sample1 + (1 - lam) * input
+                inputmix2 = lam * sample2 + (1 - lam) * input
 
                 mean1 = inputmix1.mean(dim=0)
                 var1 = inputmix1.var(dim=0, unbiased=False)
@@ -398,11 +441,15 @@ class MixUpBatchNorm1d(MetaBatchNorm1d):
                 n = input.numel() / input.size(1)
 
                 with torch.no_grad():
-                    running_mean = exponential_average_factor * mean \
-                                   + (1 - exponential_average_factor) * self.running_mean
+                    running_mean = (
+                        exponential_average_factor * mean
+                        + (1 - exponential_average_factor) * self.running_mean
+                    )
                     # update running_var with unbiased var
-                    running_var = exponential_average_factor * var * n / (n - 1) \
-                                  + (1 - exponential_average_factor) * self.running_var
+                    running_var = (
+                        exponential_average_factor * var * n / (n - 1)
+                        + (1 - exponential_average_factor) * self.running_var
+                    )
                     self.running_mean.copy_(running_mean)
                     self.running_var.copy_(running_var)
                     if save_index == 1:

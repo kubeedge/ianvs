@@ -2,7 +2,7 @@
 
 Initial model: [Huawei OBS](https://kubeedge.obs.cn-north-1.myhuaweicloud.com:443/ianvs/pcb-aoi/model.zip)
 
-Traditionally, the data is collected manually and periodically retrained on the cloud to improve the model effect. However, data is continuously generated on the edge side. Traditional method wastes a lot of human resources, and the model update frequency is slow.  
+Traditionally, the data is collected manually and periodically retrained on the cloud to improve the model effect. However, data is continuously generated on the edge side. Traditional method wastes a lot of human resources, and the model update frequency is slow.
 
 Incremental learning allows users to continuously monitor the newly generated data and by configuring some triggering rules to determine whether to start training, evaluation, and deployment automatically, and continuously improve the model performance.
 
@@ -10,17 +10,17 @@ Its goals include:
 * Automatically retrains, evaluates, and updates models based on the data generated at the edge.
 * Support time trigger, sample size trigger, and precision-based trigger.
 * Support manual triggering of training, evaluation, and model update.
-* Support hard example discovering of unlabeled data,  for reducing the manual labeling workload. 
+* Support hard example discovering of unlabeled data,  for reducing the manual labeling workload.
 
 ![](incremental_learning.png)
 
-As shown in the above figure, the incremental learning works as following procedures: 
-1. Developer implements and deploys the application based on incremental learning. 
-2. The application runs and launches incremental learning. It can also return the inference result to the application. 
+As shown in the above figure, the incremental learning works as following procedures:
+1. Developer implements and deploys the application based on incremental learning.
+2. The application runs and launches incremental learning. It can also return the inference result to the application.
 3. The system detects hard examples and uploads hard examples to the cloud.
-4. Labeling service labels the hard examples. 
-5. Incremental training online learns the hard examples to generate a new model. 
-6. Model evaluation is conducted and updates the model if qualified. 
+4. Labeling service labels the hard examples.
+5. Incremental training online learns the hard examples to generate a new model.
+6. Model evaluation is conducted and updates the model if qualified.
 7. The model outputs the inference result given test samples and continue as Step 3.
 
 ## Implementation
@@ -81,7 +81,7 @@ class BaseModel:
                 )
 
             # ... ...
-            # several lines are omitted here. 
+            # several lines are omitted here.
 
         return self.checkpoint_path
 
@@ -128,7 +128,7 @@ class BaseModel:
                 sess.run(init_op)
 
         # ... ...
-        # several lines are omitted here. 
+        # several lines are omitted here.
 
         return predict_dict
 
@@ -167,4 +167,3 @@ After registration, you only need to change the name of the basicIL and paramete
 [FPN]: https://github.com/DetectionTeamUCAS/FPN_Tensorflow
 [examples directory]: ../../../../examples
 [Sedna repository]: https://github.com/kubeedge/sedna
-

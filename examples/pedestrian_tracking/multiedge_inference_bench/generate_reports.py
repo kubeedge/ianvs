@@ -27,9 +27,9 @@ class PDF(FPDF):
         self.HEIGHT = 297
 
     def header(self):
-        self.set_font('Arial', 'B', 11)
+        self.set_font("Arial", "B", 11)
         self.cell(self.WIDTH - 80)
-        self.cell(60, 1, 'Test report', 0, 0, 'R')
+        self.cell(60, 1, "Test report", 0, 0, "R")
         self.ln(20)
 
     def page_body(self, results):
@@ -68,6 +68,7 @@ class PDF(FPDF):
         self.add_page()
         self.page_body(results)
 
+
 def main():
     try:
         parser = _generate_parser()
@@ -77,7 +78,14 @@ def main():
             raise SystemExit(f"not found benchmarking config({config_file}) file in local")
 
         tracking_config = utils.yaml2dict(args.tracking_benchmarking_config_file)
-        tracking_rank = pd.read_csv(Path(tracking_config["benchmarkingjob"]["workspace"], tracking_config["benchmarkingjob"]["name"], "rank/all_rank.csv"), delim_whitespace=True)
+        tracking_rank = pd.read_csv(
+            Path(
+                tracking_config["benchmarkingjob"]["workspace"],
+                tracking_config["benchmarkingjob"]["name"],
+                "rank/all_rank.csv",
+            ),
+            delim_whitespace=True,
+        )
         tracking_rank["time"] = pd.to_datetime(tracking_rank["time"])
         tracking_result = tracking_rank.sort_values(by="time", ascending=False).iloc[0]
 
@@ -85,7 +93,14 @@ def main():
         if not utils.is_local_file(reid_config_file):
             raise SystemExit(f"not found benchmarking config({config_file}) file in local")
         reid_config = utils.yaml2dict(args.reid_benchmarking_config_file)
-        reid_rank = pd.read_csv(Path(reid_config["benchmarkingjob"]["workspace"], reid_config["benchmarkingjob"]["name"], "rank/all_rank.csv"), delim_whitespace=True)
+        reid_rank = pd.read_csv(
+            Path(
+                reid_config["benchmarkingjob"]["workspace"],
+                reid_config["benchmarkingjob"]["name"],
+                "rank/all_rank.csv",
+            ),
+            delim_whitespace=True,
+        )
         reid_rank["time"] = pd.to_datetime(reid_rank["time"])
         reid_result = reid_rank.sort_values(by="time", ascending=False).iloc[0]
         pdf = PDF()
@@ -96,19 +111,25 @@ def main():
     except Exception as err:
         raise Exception(f"test report generation runs failed, error: {err}.") from err
 
+
 def _generate_parser():
-    parser = argparse.ArgumentParser(description='Test Report Generation Tool')
-    parser.add_argument("-t",
-                        "--tracking_benchmarking_config_file",
-                        nargs="?",
-                        type=str,
-                        help="the benchmarking config file must be yaml/yml file.")
-    parser.add_argument("-r",
-                        "--reid_benchmarking_config_file",
-                        nargs="?",
-                        type=str,
-                        help="the benchmarking config file must be yaml/yml file.")
+    parser = argparse.ArgumentParser(description="Test Report Generation Tool")
+    parser.add_argument(
+        "-t",
+        "--tracking_benchmarking_config_file",
+        nargs="?",
+        type=str,
+        help="the benchmarking config file must be yaml/yml file.",
+    )
+    parser.add_argument(
+        "-r",
+        "--reid_benchmarking_config_file",
+        nargs="?",
+        type=str,
+        help="the benchmarking config file must be yaml/yml file.",
+    )
     return parser
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

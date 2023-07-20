@@ -51,8 +51,7 @@ class Bottleneck_IBN(nn.Module):
             self.bn1 = IBN(planes)
         else:
             self.bn1 = MetaBatchNorm2d(planes)
-        self.conv2 = MetaConv2d(planes, planes, kernel_size=3, stride=stride,
-                               padding=1, bias=False)
+        self.conv2 = MetaConv2d(planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn2 = MetaBatchNorm2d(planes)
         self.conv3 = MetaConv2d(planes, planes * self.expansion, kernel_size=1, bias=False)
         self.bn3 = MetaBatchNorm2d(planes * self.expansion)
@@ -84,13 +83,11 @@ class Bottleneck_IBN(nn.Module):
 
 
 class MetaResNet_IBN_a_base(MetaModule):
-
     def __init__(self, layers, block=Bottleneck_IBN):
         scale = 64
         self.inplanes = scale
         super(MetaResNet_IBN_a_base, self).__init__()
-        self.conv1 = MetaConv2d(3, scale, kernel_size=7, stride=2, padding=3,
-                               bias=False)
+        self.conv1 = MetaConv2d(3, scale, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = MetaBatchNorm2d(scale)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.layer1 = self._make_layer(block, scale, layers[0])
@@ -101,7 +98,7 @@ class MetaResNet_IBN_a_base(MetaModule):
         for m in self.modules():
             if isinstance(m, MetaConv2d):
                 n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
-                m.weight.data.normal_(0, math.sqrt(2. / n))
+                m.weight.data.normal_(0, math.sqrt(2.0 / n))
             elif isinstance(m, MetaBatchNorm2d):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
@@ -113,8 +110,13 @@ class MetaResNet_IBN_a_base(MetaModule):
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
-                MetaConv2d(self.inplanes, planes * block.expansion,
-                          kernel_size=1, stride=stride, bias=False),
+                MetaConv2d(
+                    self.inplanes,
+                    planes * block.expansion,
+                    kernel_size=1,
+                    stride=stride,
+                    bias=False,
+                ),
                 MetaBatchNorm2d(planes * block.expansion),
             )
 
@@ -153,7 +155,15 @@ class MetaIBN(MetaModule):
         self.__init_with_imagenet(baseModel)
         return baseModel
 
-    def __init__(self, num_features=0, dropout=0, cut_at_pooling=False, norm=True, num_classes=[0,0,0], BNNeck=False):
+    def __init__(
+        self,
+        num_features=0,
+        dropout=0,
+        cut_at_pooling=False,
+        norm=True,
+        num_classes=[0, 0, 0],
+        BNNeck=False,
+    ):
         super(MetaIBN, self).__init__()
         self.num_features = num_features
         self.dropout = dropout
@@ -172,7 +182,7 @@ class MetaIBN(MetaModule):
         out_planes = 2048
         if self.has_embedding:
             self.feat = MetaLinear(out_planes, self.num_features)
-            init.kaiming_normal_(self.feat.weight, mode='fan_out')
+            init.kaiming_normal_(self.feat.weight, mode="fan_out")
             init.constant_(self.feat.bias, 0)
         else:
             # Change the num_features to CNN output channels
@@ -186,13 +196,12 @@ class MetaIBN(MetaModule):
 
     def reset_IN(self):
         for m in self.modules():
-            if isinstance(m, MetaInstanceNorm2d):
-                if m.affine:
-                    init.constant_(m.weight, 1)
-                    init.constant_(m.bias, 0)
+            if isinstance(m, MetaInstanceNorm2d) and m.affine:
+                init.constant_(m.weight, 1)
+                init.constant_(m.bias, 0)
 
-    def forward(self, x, MTE='', save_index=0):
-        x= self.base(x)
+    def forward(self, x, MTE="", save_index=0):
+        x = self.base(x)
         x = self.gap(x)
         x = x.view(x.size(0), -1)
 
@@ -202,7 +211,7 @@ class MetaIBN(MetaModule):
         if self.has_embedding:
             bn_x = self.feat_bn(self.feat(x))
         else:
-            bn_x= self.feat_bn(x, MTE, save_index)
+            bn_x = self.feat_bn(x, MTE, save_index)
         tri_features = x
 
         if self.training is False:
@@ -232,5 +241,3 @@ class MetaIBN(MetaModule):
             return bn_x, tri_features
         else:
             return bn_x
-
-

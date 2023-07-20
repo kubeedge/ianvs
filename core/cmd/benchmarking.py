@@ -24,7 +24,7 @@ from core.__version__ import __version__
 
 
 def main():
-    """ main command-line interface to ianvs"""
+    """main command-line interface to ianvs"""
     try:
         parser = _generate_parser()
         args = parser.parse_args()
@@ -42,21 +42,24 @@ def main():
 
 
 def _generate_parser():
-    parser = argparse.ArgumentParser(description='AI Benchmarking Tool')
+    parser = argparse.ArgumentParser(description="AI Benchmarking Tool")
     parser.prog = "ianvs"
 
-    parser.add_argument("-f",
-                        "--benchmarking_config_file",
-                        nargs="?",
-                        type=str,
-                        help="run a benchmarking job, "
-                             "and the benchmarking config file must be yaml/yml file.")
+    parser.add_argument(
+        "-f",
+        "--benchmarking_config_file",
+        nargs="?",
+        type=str,
+        help="run a benchmarking job, " "and the benchmarking config file must be yaml/yml file.",
+    )
 
-    parser.add_argument('-v',
-                        '--version',
-                        action='version',
-                        version=__version__,
-                        help='show program version info and exit.')
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=__version__,
+        help="show program version info and exit.",
+    )
 
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -65,5 +68,5 @@ def _generate_parser():
     return parser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

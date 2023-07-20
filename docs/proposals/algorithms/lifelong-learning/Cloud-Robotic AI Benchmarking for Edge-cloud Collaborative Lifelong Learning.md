@@ -22,7 +22,7 @@ Based on real-world datasets provided by industry members of KubeEdge SIG AI, th
 
 ## 2 Proposal
 
-This project will provide new test examples of real-world datasets for KubeEdge-Ianvs's lifelong learning algorithm, including a public Semantic-Segmentation data set and a Cloud-Robotics dataset provided by Huawei. Each dataset released at the same time will have a supporting benchmarking website to introduce the dataset. In addition, the project will further enrich the lifelong learning algorithm in KubeEdge-Ianvs, including but not limited to dataset-splitting, task-definition, task-allocation, task-recognition and other methods. 
+This project will provide new test examples of real-world datasets for KubeEdge-Ianvs's lifelong learning algorithm, including a public Semantic-Segmentation data set and a Cloud-Robotics dataset provided by Huawei. Each dataset released at the same time will have a supporting benchmarking website to introduce the dataset. In addition, the project will further enrich the lifelong learning algorithm in KubeEdge-Ianvs, including but not limited to dataset-splitting, task-definition, task-allocation, task-recognition and other methods.
 
 ### 2.1 Introduction for Semantic-Segmentation datasets
 
@@ -86,7 +86,7 @@ Below shows one example figure(RGB) in the dataset.
 
 #### 2.4.1 Why we need it?
 
-The way the dataset is divided during each round of training in lifelong learning tasks has a significant impact on the final model training results. If only a random partitioning method is used, there may be situations that are inconsistent with reality, such as later data appearing in earlier training sets. At the same time, changes in data distribution in different splitting methods can make it difficult to compare test results. Therefore, we urgently need a reasonable dataset splitting method as a benchmark for testing lifelong learning algorithms on semantic segmentation datasets. 
+The way the dataset is divided during each round of training in lifelong learning tasks has a significant impact on the final model training results. If only a random partitioning method is used, there may be situations that are inconsistent with reality, such as later data appearing in earlier training sets. At the same time, changes in data distribution in different splitting methods can make it difficult to compare test results. Therefore, we urgently need a reasonable dataset splitting method as a benchmark for testing lifelong learning algorithms on semantic segmentation datasets.
 
 Currently, we have implemented the "City Mode" test benchmark, and we will implement more various test benchmarks in the future.
 
@@ -100,7 +100,7 @@ The first training round uses all simulated images as the pre training of the mo
 
 ### 2.5 Introduction for BWT, FWT
 
-The BWT and FWT metrics are used to respectively measure the model's ability to resist forgetting and to generalize. 
+The BWT and FWT metrics are used to respectively measure the model's ability to resist forgetting and to generalize.
 
 ![workflow](images/BWT.jpg)
 

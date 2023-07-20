@@ -19,10 +19,10 @@ Upon the release of ianvs, the roadmap would be as follows
    d) Release the open-source test case generation tool: Use hyperparameter enumeration to fill in one configuration file to generate multiple test cases.
 
 ## 2. Release the PCB-AoI public dataset.
-Release the PCB-AoI public dataset, its corresponding preprocessing, and baseline algorithm projects. 
+Release the PCB-AoI public dataset, its corresponding preprocessing, and baseline algorithm projects.
 Ianvs is the first open-source site for that dataset.
 
-## 3. Support two new paradigms in test environments and test cases. 
+## 3. Support two new paradigms in test environments and test cases.
    a) Test environments and test cases that support the single-task learning paradigm.
    b) Test environments and test cases that support the incremental learning paradigm.
 

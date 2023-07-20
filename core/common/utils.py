@@ -44,7 +44,7 @@ def parse_kwargs(func, **kwargs):
     if not callable(func):
         return kwargs
     need_kw = getfullargspec(func)
-    if need_kw.varkw == 'kwargs':
+    if need_kw.varkw == "kwargs":
         return kwargs
     return {k: v for k, v in kwargs.items() if k in need_kw.args}
 
@@ -56,33 +56,31 @@ def get_local_time():
 
 def py2dict(url):
     """Convert py file to the dict."""
-    if url.endswith('.py'):
+    if url.endswith(".py"):
         module_name = os.path.basename(url)[:-3]
         config_dir = os.path.dirname(url)
         sys.path.insert(0, config_dir)
         mod = import_module(module_name)
         sys.path.pop(0)
         raw_dict = {
-            name: value
-            for name, value in mod.__dict__.items()
-            if not name.startswith('__')
+            name: value for name, value in mod.__dict__.items() if not name.startswith("__")
         }
         sys.modules.pop(module_name)
 
         return raw_dict
 
-    raise RuntimeError('config file must be the py format')
+    raise RuntimeError("config file must be the py format")
 
 
 def yaml2dict(url):
     """Convert yaml file to the dict."""
-    if url.endswith('.yaml') or url.endswith('.yml'):
+    if url.endswith(".yaml") or url.endswith(".yml"):
         with open(url, "rb") as file:
             raw_dict = yaml.load(file, Loader=yaml.SafeLoader)
 
         return raw_dict
 
-    raise RuntimeError('config file must be the yaml format')
+    raise RuntimeError("config file must be the yaml format")
 
 
 def load_module(url):
