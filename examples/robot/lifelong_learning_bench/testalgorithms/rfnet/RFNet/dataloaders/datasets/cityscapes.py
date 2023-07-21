@@ -1,4 +1,6 @@
 import os
+os.environ["OMP_NUM_THREADS"] = "1" 
+os.environ["MKL_NUM_THREADS"] = "1"
 import numpy as np
 from PIL import Image
 from torch.utils import data

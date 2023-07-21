@@ -8,7 +8,7 @@ algorithm:
   lifelong_learning_data_setting:
     # ratio of training dataset; float type;
     # the default value is 0.8.
-    train_ratio: 0.95
+    train_ratio: 0.9
     # the method of splitting dataset; string type; optional;
     # currently the options of value are as follows:
     #   1> "default": the dataset is evenly divided based train_ratio;
@@ -25,7 +25,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "BaseModel"
       # the url address of python module; string type;
-      url: "./examples/semantic_segmentation/lifelong_learning_bench/testalgorithms/rfnet/basemodel.py"
+      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/basemodel.py"
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
         # name of the hyperparameter; string type;
@@ -34,13 +34,13 @@ algorithm:
               - 0.0001
         - epochs:
             values:
-              - 50
+              - 1
     #  2> "task_definition": define lifelong task ; optional module;
     - type: "task_definition"
       # name of python module; string type;
       name: "TaskDefinitionByOrigin"
       # the url address of python module; string type;
-      url: "./examples/semantic_segmentation/lifelong_learning_bench/testalgorithms/rfnet/task_definition_by_origin.py"
+      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/task_definition_by_origin.py"
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
         # name of the hyperparameter; string type;
@@ -53,7 +53,7 @@ algorithm:
       # name of python module; string type;
       name: "TaskAllocationByOrigin"
       # the url address of python module; string type;
-      url: "./examples/semantic_segmentation/lifelong_learning_bench/testalgorithms/rfnet/task_allocation_by_origin.py"
+      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/task_allocation_by_origin.py"
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
         # name of the hyperparameter; string type;

@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import scipy.misc as m
 from PIL import Image
 from torch.utils import data
 from mypath import Path
@@ -7,45 +8,36 @@ from torchvision import transforms
 from dataloaders import custom_transforms as tr
 
 class CityscapesSegmentation(data.Dataset):
-    NUM_CLASSES = 30 # 25
+    NUM_CLASSES = 25
 
-    def __init__(self, args, root=Path.db_root_dir('cityscapes'), data=None, split="train"):
+    def __init__(self, args, root=Path.db_root_dir('xrlab'), split="train"):
 
-        # self.root = root
-        self.root = "/home/lsq/Dataset/"
+        self.root = root
         self.split = split
         self.args = args
         self.images = {}
         self.disparities = {}
         self.labels = {}
 
-        self.disparities_base = os.path.join(self.root, self.split, "depth", "cityscapes_real")
-        self.images[split] = [img[0] for img in data.x] if hasattr(data, "x") else data
+        self.images_base = os.path.join(self.root, 'leftImg8bit', self.split)
+        self.disparities_base = os.path.join(self.root, 'disparity', self.split)
+        self.annotations_base = os.path.join(self.root, 'gtFine', self.split)
 
+        self.images[split] = self.recursive_glob(rootdir=self.images_base, suffix='.png')
+        self.images[split].sort()
 
-        if hasattr(data, "x") and len(data.x[0]) == 1:
-            # TODO: fit the case that depth images don't exist.
-            self.disparities[split] = self.images[split]
-        elif hasattr(data, "x") and len(data.x[0]) == 2:
-            self.disparities[split] = [img[1] for img in data.x]
-        else:
-            if len(data[0]) == 2:
-                self.images[split] = [img[0] for img in data]
-                self.disparities[split] = [img[1] for img in data]
-            elif len(data[0]) == 1:
-                self.images[split] = [img[0] for img in data]
-                self.disparities[split] = [img[0] for img in data]
-            else:
-                self.images[split] = data
-                self.disparities[split] = data
+        self.disparities[split] = self.recursive_glob(rootdir=self.disparities_base, suffix='.png')
+        self.disparities[split].sort()
 
-        self.labels[split] = data.y if hasattr(data, "y") else data
+        self.labels[split] = self.recursive_glob(rootdir=self.annotations_base, suffix='.png')
+        self.labels[split].sort()
+        
 
         self.ignore_index = 255
 
-        if len(self.images[split]) == 0:
+        if not self.images[split]:
             raise Exception("No RGB images for split=[%s] found in %s" % (split, self.images_base))
-        if len(self.disparities[split]) == 0:
+        if not self.disparities[split]:
             raise Exception("No depth images for split=[%s] found in %s" % (split, self.disparities_base))
 
         print("Found %d %s RGB images" % (len(self.images[split]), split))
@@ -56,8 +48,10 @@ class CityscapesSegmentation(data.Dataset):
         return len(self.images[self.split])
 
     def __getitem__(self, index):
+
         img_path = self.images[self.split][index].rstrip()
         disp_path = self.disparities[self.split][index].rstrip()
+        #print(index)
         try:
             lbl_path = self.labels[self.split][index].rstrip()
             _img = Image.open(img_path).convert('RGB')
@@ -111,7 +105,7 @@ class CityscapesSegmentation(data.Dataset):
     def transform_ts(self, sample):
 
         composed_transforms = transforms.Compose([
-            #tr.CropBlackArea(),
+            tr.CropBlackArea(),
             #tr.FixedResize(size=self.args.crop_size),
             tr.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
             tr.ToTensor()])
