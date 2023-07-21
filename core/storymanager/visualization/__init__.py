@@ -13,4 +13,4 @@
 # limitations under the License.
 
 # pylint: disable=missing-module-docstring
-from .visualization import get_visualization_func
+from .visualization import get_visualization_func, draw_heatmap_picture

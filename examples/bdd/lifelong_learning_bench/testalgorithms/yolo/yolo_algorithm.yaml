@@ -1,0 +1,53 @@
+algorithm:
+  # paradigm type; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  #   3> "lifelonglearning"
+  paradigm_type: "lifelonglearning"
+  lifelong_learning_data_setting:
+    # ratio of training dataset; float type;
+    # the default value is 0.8.
+    train_ratio: 0.8
+    # the method of splitting dataset; string type; optional;
+    # currently the options of value are as follows:
+    #   1> "default": the dataset is evenly divided based train_ratio;
+    splitting_method: "default"
+
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # type of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel": contains important interfaces such as train、 eval、 predict and more; required module;
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "BaseModel"
+      # the url address of python module; string type;
+      url: "./examples/bdd/lifelong_learning_bench/testalgorithms/yolo/basemodel.py"
+      # hyperparameters configuration for the python module; list type;
+
+    #  2> "task_allocation": allocate lifelong task ; optional module;
+    - type: "task_allocation"
+      # name of python module; string type;
+      name: "TaskAllocationByOrigin"
+      # the url address of python module; string type;
+      url: "./examples/bdd/lifelong_learning_bench/testalgorithms/yolo/task_allocation_by_origin.py"
+      # config_file: "/mnt/disk/shifan/ianvs/examples/bdd/lifelong_learning_bench/testalgorithms/yolo/model_selector/choose_net_b64.py"
+      # checkpoint_file: "/mnt/disk/shifan/ianvs/examples/bdd/lifelong_learning_bench/testalgorithms/yolo/model_selector/adaptive_selector_7w5_6w.pth"
+    
+     #  3> "task_remodeling"
+    - type: "task_remodeling"
+      # name of python module; string type;
+      name: "TaskRemodeling"
+      # the url address of python module; string type;
+      url: "./examples/bdd/lifelong_learning_bench/testalgorithms/yolo/task_remodeling.py"
+      # hyperparameters configuration for the python module; list type;
+
+      #  4> "inference_integrate"
+    - type: "inference_integrate"
+      # name of python module; string type;
+      name: "InferenceIntegrate"
+      # the url address of python module; string type;
+      url: "./examples/bdd/lifelong_learning_bench/testalgorithms/yolo/inference_integrate.py"
+      # hyperparameters configuration for the python module; list typ

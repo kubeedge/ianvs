@@ -1,0 +1,35 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_url: "/home/shijing.hu/ianvs/dataset/robot_dataset/train-index.txt"
+    # the url address of test dataset index; string type;
+    test_url: "/home/shijing.hu/ianvs/dataset/robot_dataset/test-index.txt"
+
+  # model eval configuration of incremental learning;
+  model_eval:
+    # metric used for model evaluation
+    model_metric:
+      # metric name; string type;
+      name: "accuracy"
+      # the url address of python file
+      url: "./examples/robot/lifelong_learning_bench/testenv/accuracy.py"
+      mode: "no-inference"
+
+    # condition of triggering inference model to update
+    # threshold of the condition; types are float/int
+    threshold: 0
+    # operator of the condition; string type;
+    # values are ">=", ">", "<=", "<" and "=";
+    operator: "<"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "accuracy"
+      # the url address of python file
+      url: "./examples/robot/lifelong_learning_bench/testenv/accuracy.py"
+    - name: "samples_transfer_ratio"
+
+  # incremental rounds setting; int type; default value is 2;
+  incremental_rounds: 5
