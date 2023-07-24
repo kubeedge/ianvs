@@ -2,7 +2,7 @@ class TrainArgs:
     def __init__(self, **kwargs):
         self.depth = False
         self.dataset = 'cityscapes'
-        self.workers = 0
+        self.workers = 4
         self.base_size = 1024
         self.crop_size = 768
         self.loss_type = 'ce'
