@@ -122,7 +122,7 @@ class ParadigmBase:
                 unseen_sample_re_recognition=self.module_instances.get(
                     ModuleType.UNSEEN_SAMPLE_RE_RECOGNITION.value)
             )
-
+        # pylint: disable=E1101
         if paradigm_type == ParadigmType.MULTIEDGE_INFERENCE.value:
             return self.modules_funcs.get(ModuleType.BASEMODEL.value)()
 
