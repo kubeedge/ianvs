@@ -79,9 +79,6 @@ class BaseModel:
                 }, is_best)
 
         self.trainer.writer.close()
-        with open('/home/hsj/ianvs/project/ianvs/train_loss.txt', 'a+') as file:
-            np.savetxt(file, loss_all)
-        file.close
         return self.train_model_url
 
     def predict(self, data, **kwargs):

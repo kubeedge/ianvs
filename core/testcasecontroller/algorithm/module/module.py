@@ -107,14 +107,6 @@ class Module:
                              ModuleType.UNSEEN_SAMPLE_RE_RECOGNITION.value]:
             class_factory_type = ClassType.UTD
 
-        try:
-            utils.load_module(self.url)
-            # pylint: disable=E1134
-            basemodel = ClassFactory.get_cls(type_name=ClassType.GENERAL,
-                                             t_cls_name=self.name)(**self.hyperparameters)
-        except Exception as err:
-            raise RuntimeError(f"basemodel module loads class(name={self.name}) failed, "
-                            f"error: {err}.") from err
         if self.url:
             try:
                 utils.load_module(self.url)
