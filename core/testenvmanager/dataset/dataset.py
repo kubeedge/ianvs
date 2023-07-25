@@ -79,10 +79,16 @@ class Dataset:
             tmp_file = os.path.join(tempfile.mkdtemp(), "index.txt")
             with open(tmp_file, "w", encoding="utf-8") as file:
                 for line in lines:
-                    front, back = line.split(" ")
-                    file.writelines(
-                        f"{os.path.abspath(os.path.join(root, front))} "
-                        f"{os.path.abspath(os.path.join(root, back))}")
+                    #copy all the files in the line
+                    line = line.strip()
+                    words = line.split(" ")
+                    length = len(words)
+                    words[-1] = words[-1] + '\n'
+                    for i in range(length):
+                        file.writelines(
+                            f"{os.path.abspath(os.path.join(root, words[i]))}")
+                        if i < length-1:
+                            file.writelines(" ")
 
             new_file = tmp_file
 
@@ -147,6 +153,17 @@ class Dataset:
 
         if method == "default":
             return self._splitting_more_times(dataset_url, dataset_format, ratio,
+                                              data_types=dataset_types,
+                                              output_dir=output_dir,
+                                              times=times)
+        # add new splitting method for semantic segmantation
+        if method == "city_splitting":
+            return self._city_splitting(dataset_url, dataset_format, ratio,
+                                              data_types=dataset_types,
+                                              output_dir=output_dir,
+                                              times=times)
+        if method == "fwt_splitting":
+            return self._fwt_splitting(dataset_url, dataset_format, ratio,
                                               data_types=dataset_types,
                                               output_dir=output_dir,
                                               times=times)
@@ -220,6 +237,89 @@ class Dataset:
 
         return data_files
 
+    def _fwt_splitting(self, data_file, data_format, ratio,
+                              data_types=None, output_dir=None, times=1):
+        if not data_types:
+            data_types = ("train", "eval")
+
+        if not output_dir:
+            output_dir = tempfile.mkdtemp()
+
+        all_data = self._read_data_file(data_file, data_format)
+
+        data_files = []
+
+        all_num = len(all_data)
+        step = int(all_num / times)
+        data_files.append((
+                self._get_dataset_file(all_data[:1], output_dir,
+                                       data_types[0], 0, data_format),
+                self._get_dataset_file(all_data[:1], output_dir,
+                                       data_types[1], 0, data_format)))
+        index = 1
+        while index <= times:
+            if index == times:
+                new_dataset = all_data[step * (index - 1):]
+            else:
+                new_dataset = all_data[step * (index - 1):step * index]
+
+            new_num = len(new_dataset)
+
+            data_files.append((
+                self._get_dataset_file(new_dataset[:int(new_num * ratio)], output_dir,
+                                       data_types[0], index, data_format),
+                self._get_dataset_file(new_dataset[int(new_num * ratio):], output_dir,
+                                       data_types[1], index, data_format)))
+
+            index += 1
+
+        return data_files
+
+    # add new splitting method for semantic segmentation
+    def _city_splitting(self, data_file, data_format, ratio,
+                              data_types=None, output_dir=None, times=1):
+        if not data_types:
+            data_types = ("train", "eval")
+
+        if not output_dir:
+            output_dir = tempfile.mkdtemp()
+
+        all_data = self._read_data_file(data_file, data_format)
+
+        data_files = []
+
+        index0 = 0
+        for i, data in enumerate(all_data):
+            if 'synthia_sim' in data:
+                continue
+            index0 = i
+            break
+
+        new_dataset = all_data[:index0]
+        data_files.append((
+                self._get_dataset_file(new_dataset[:int(len(new_dataset) * ratio)], output_dir,
+                                       data_types[0], 1, data_format),
+                self._get_dataset_file(new_dataset[int(len(new_dataset) * ratio):], output_dir,
+                                       data_types[1], 1, data_format)))
+        times = times - 1
+        step = int((len(all_data)-index0) / times)
+        index = 1
+        while index <= times:
+            if index == times:
+                new_dataset = all_data[index0 + step * (index - 1):]
+            else:
+                new_dataset = all_data[index0 + step * (index - 1):index0 + step * index]
+
+            data_files.append((
+                self._get_dataset_file(new_dataset[:int(len(new_dataset) * ratio)], output_dir,
+                                       data_types[0], index+1, data_format),
+                self._get_dataset_file(new_dataset[int(len(new_dataset) * ratio):], output_dir,
+                                       data_types[1], index+1, data_format)))
+
+            index += 1
+
+        return data_files
+
     @classmethod
     def load_data(cls, file: str, data_type: str, label=None, use_raw=False, feature_process=None):
         """
@@ -253,6 +353,7 @@ class Dataset:
 
         if data_format == DatasetFormat.TXT.value:
             data = TxtDataParse(data_type=data_type, func=feature_process)
+            #print(file)
             data.parse(file, use_raw=use_raw)
 
         if data_format == DatasetFormat.JSON.value:
