@@ -23,6 +23,7 @@ from core.common.constant import ModuleType
 from core.testcasecontroller.generation_assistant import get_full_combinations
 
 
+# pylint: disable=too-few-public-methods
 class Module:
     """
     Algorithm Module:
@@ -52,8 +53,8 @@ class Module:
         self.type: str = ""
         self.name: str = ""
         self.url: str = ""
-        self.hyperparameters = None
-        self.hyperparameters_list = None
+        self.hyperparameters = {}
+        self.hyperparameters_list = []
         self._parse_config(config)
 
     def _check_fields(self):
@@ -71,60 +72,7 @@ class Module:
         if not isinstance(self.url, str):
             raise ValueError(f"module url({self.url}) must be string type.")
 
-    def basemodel_func(self):
-        """
-        get basemodel module function of the module.
-
-        Returns
-        --------
-        function
-
-        """
-
-        if not self.url:
-            raise ValueError(f"url({self.url}) of basemodel module must be provided.")
-
-        try:
-            utils.load_module(self.url)
-            # pylint: disable=E1134
-            basemodel = ClassFactory.get_cls(type_name=ClassType.GENERAL,
-                                             t_cls_name=self.name)(**self.hyperparameters)
-        except Exception as err:
-            raise RuntimeError(f"basemodel module loads class(name={self.name}) failed, "
-                            f"error: {err}.") from err
-
-        return basemodel
-
-    def hard_example_mining_func(self):
-        """
-        get hard example mining function of the module.
-
-        Returns:
-        --------
-        function
-
-        """
-
-        if self.url:
-            try:
-                utils.load_module(self.url)
-                # pylint: disable=E1134
-                func = ClassFactory.get_cls(
-                    type_name=ClassType.HEM, t_cls_name=self.name)(**self.hyperparameters)
-
-                return func
-            except Exception as err:
-                raise RuntimeError(f"hard_example_mining module loads class"
-                                f"(name={self.name}) failed, error: {err}.") from err
-
-        # call built-in hard example mining function
-        hard_example_mining = {"method": self.name}
-        if self.hyperparameters:
-            hard_example_mining["param"] = self.hyperparameters
-
-        return hard_example_mining
-
-    def get_module_func(self, module_type):
+    def get_module_instance(self, module_type):
         """
         get function of algorithm module by using module type
 
@@ -138,8 +86,45 @@ class Module:
         function
 
         """
-        func_name = f"{module_type}_func"
-        return getattr(self, func_name)
+        class_factory_type = ClassType.GENERAL
+        if module_type in [ModuleType.HARD_EXAMPLE_MINING.value]:
+            class_factory_type = ClassType.HEM
+
+        elif module_type in [ModuleType.TASK_DEFINITION.value,
+                             ModuleType.TASK_RELATIONSHIP_DISCOVERY.value,
+                             ModuleType.TASK_REMODELING.value,
+                             ModuleType.TASK_ALLOCATION.value,
+                             ModuleType.INFERENCE_INTEGRATE.value]:
+            class_factory_type = ClassType.STP
+
+        elif module_type in [ModuleType.TASK_UPDATE_DECISION.value]:
+            class_factory_type = ClassType.KM
+
+        elif module_type in [ModuleType.UNSEEN_TASK_ALLOCATION.value]:
+            class_factory_type = ClassType.UTP
+
+        elif module_type in [ModuleType.UNSEEN_SAMPLE_RECOGNITION.value,
+                             ModuleType.UNSEEN_SAMPLE_RE_RECOGNITION.value]:
+            class_factory_type = ClassType.UTD
+
+        if self.url:
+            try:
+                utils.load_module(self.url)
+                # pylint: disable=E1134
+                func = ClassFactory.get_cls(
+                    type_name=class_factory_type, t_cls_name=self.name)(**self.hyperparameters)
+
+                return func
+            except Exception as err:
+                raise RuntimeError(f"module(type={module_type} loads class(name={self.name}) "
+                                f"failed, error: {err}.") from err
+
+        # call lib built-in module function
+        module_func = {"method": self.name}
+        if self.hyperparameters:
+            module_func["param"] = self.hyperparameters
+
+        return module_func
 
     def _parse_config(self, config):
         # pylint: disable=C0103
