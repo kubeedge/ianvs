@@ -36,6 +36,7 @@ class ParadigmType(Enum):
     SINGLE_TASK_LEARNING = "singletasklearning"
     INCREMENTAL_LEARNING = "incrementallearning"
     MULTIEDGE_INFERENCE = "multiedgeinference"
+    LIFELONG_LEARNING = "lifelonglearning"
 
 
 class ModuleType(Enum):
@@ -44,15 +45,38 @@ class ModuleType(Enum):
     """
 
     BASEMODEL = "basemodel"
+
+    # HEM
     HARD_EXAMPLE_MINING = "hard_example_mining"
+
+    # STP
+    TASK_DEFINITION = "task_definition"
+    TASK_RELATIONSHIP_DISCOVERY = "task_relationship_discovery"
+    TASK_ALLOCATION = "task_allocation"
+    TASK_REMODELING = "task_remodeling"
+    INFERENCE_INTEGRATE = "inference_integrate"
+
+    # KM
+    TASK_UPDATE_DECISION = "task_update_decision"
+
+    # UTP
+    UNSEEN_TASK_ALLOCATION = "unseen_task_allocation"
+
+    # UTD
+    UNSEEN_SAMPLE_RECOGNITION = "unseen_sample_recognition"
+    UNSEEN_SAMPLE_RE_RECOGNITION = "unseen_sample_re_recognition"
 
 
 class SystemMetricType(Enum):
     """
     System metric type of ianvs.
     """
-
+    # pylint: disable=C0103
     SAMPLES_TRANSFER_RATIO = "samples_transfer_ratio"
+    FWT = "FWT"
+    BWT = "BWT"
+    Task_Avg_Acc = "Task_Avg_Acc"
+    Matrix = "Matrix"
 
 
 class TestObjectType(Enum):

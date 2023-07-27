@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 
 from core.common import utils
-from core.storymanager.visualization import get_visualization_func
+from core.storymanager.visualization import get_visualization_func, draw_heatmap_picture
 
 
 # pylint: disable=R0902
@@ -108,7 +108,10 @@ class Rank:
     def _get_algorithm_hyperparameters(cls, algorithm):
         hps = {}
         for module in algorithm.modules.values():
-            hps.update(**module.hyperparameters)
+            for name, value in module.hyperparameters.items():
+                name = f"{module.type}-{name}"
+                value = str(value)
+                hps.update({name: value})
         return hps
 
     def _get_all_hps_names(self, test_cases) -> list:
@@ -171,6 +174,7 @@ class Rank:
         return self._sort_all_df(all_df, self._get_all_metric_names(test_results))
 
     def _save_all(self):
+        # pylint: disable=E1101
         all_df = copy.deepcopy(self.all_df)
         all_df.index = pd.np.arange(1, len(all_df) + 1)
         all_df.to_csv(self.all_rank_file, index_label="rank", encoding="utf-8", sep=" ")
@@ -200,9 +204,20 @@ class Rank:
         return selected_df
 
     def _save_selected(self, test_cases, test_results):
+        # pylint: disable=E1101
         selected_df = self._get_selected(test_cases, test_results)
         selected_df.index = pd.np.arange(1, len(selected_df) + 1)
         selected_df.to_csv(self.selected_rank_file, index_label="rank", encoding="utf-8", sep=" ")
+
+    def _draw_pictures(self, test_cases, test_results):
+        # pylint: disable=E1101
+        for test_case in test_cases:
+            out_put = test_case.output_dir
+            test_result = test_results[test_case.id][0]
+            matrix = test_result.get('Matrix')
+            #print(out_put)
+            for key in matrix.keys():
+                draw_heatmap_picture(out_put, key, matrix[key])
 
     def _prepare(self, test_cases, test_results, output_dir):
         all_metric_names = self._get_all_metric_names(test_results)
@@ -248,6 +263,11 @@ class Rank:
 
         if self.save_mode == "selected_only":
             self._save_selected(test_cases, test_results)
+
+        if self.save_mode == "selected_and_all_and_picture":
+            self._save_all()
+            self._save_selected(test_cases, test_results)
+            self._draw_pictures(test_cases, test_results)
 
     def plot(self):
         """

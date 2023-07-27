@@ -34,6 +34,7 @@ class TestEnv:
     def __init__(self, config):
         self.model_eval = {
             "model_metric": {
+                "mode": "",
                 "name": "",
                 "url": "",
             },

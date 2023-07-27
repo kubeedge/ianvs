@@ -17,6 +17,7 @@
 import os
 
 from sedna.core.incremental_learning import IncrementalLearning
+from sedna.core.lifelong_learning import LifelongLearning
 
 from core.common.constant import ModuleType, ParadigmType
 
@@ -51,7 +52,7 @@ class ParadigmBase:
         self.dataset = kwargs.get("dataset")
         self.workspace = workspace
         self.system_metric_info = {}
-        self.modules_funcs = self._get_module_funcs()
+        self.module_instances = self._get_module_instances()
         os.environ["LOCAL_TEST"] = "TRUE"
 
     def dataset_output_dir(self):
@@ -68,13 +69,12 @@ class ParadigmBase:
             os.makedirs(output_dir)
         return output_dir
 
-    def _get_module_funcs(self):
-        module_funcs = {}
+    def _get_module_instances(self):
+        module_instances = {}
         for module_type, module in self.modules.items():
-            func = module.get_module_func(module_type)
-            if callable(func):
-                module_funcs.update({module_type: func})
-        return module_funcs
+            func = module.get_module_instance(module_type)
+            module_instances.update({module_type: func})
+        return module_instances
 
     def build_paradigm_job(self, paradigm_type):
         """
@@ -91,14 +91,38 @@ class ParadigmBase:
 
         """
         if paradigm_type == ParadigmType.SINGLE_TASK_LEARNING.value:
-            return self.modules_funcs.get(ModuleType.BASEMODEL.value)()
+            return self.module_instances.get(ModuleType.BASEMODEL.value)
 
         if paradigm_type == ParadigmType.INCREMENTAL_LEARNING.value:
             return IncrementalLearning(
-                estimator=self.modules_funcs.get(ModuleType.BASEMODEL.value)(),
-                hard_example_mining=self.modules_funcs.get(ModuleType.HARD_EXAMPLE_MINING.value)(),
-            )
+                estimator=self.module_instances.get(ModuleType.BASEMODEL.value),
+                hard_example_mining=self.module_instances.get(
+                    ModuleType.HARD_EXAMPLE_MINING.value))
 
+        if paradigm_type == ParadigmType.LIFELONG_LEARNING.value:
+            return LifelongLearning(
+                estimator=self.module_instances.get(
+                    ModuleType.BASEMODEL.value),
+                task_definition=self.module_instances.get(
+                    ModuleType.TASK_DEFINITION.value),
+                task_relationship_discovery=self.module_instances.get(
+                    ModuleType.TASK_RELATIONSHIP_DISCOVERY.value),
+                task_allocation=self.module_instances.get(
+                    ModuleType.TASK_ALLOCATION.value),
+                task_remodeling=self.module_instances.get(
+                    ModuleType.TASK_REMODELING.value),
+                inference_integrate=self.module_instances.get(
+                    ModuleType.INFERENCE_INTEGRATE.value),
+                task_update_decision=self.module_instances.get(
+                    ModuleType.TASK_UPDATE_DECISION.value),
+                unseen_task_allocation=self.module_instances.get(
+                    ModuleType.UNSEEN_TASK_ALLOCATION.value),
+                unseen_sample_recognition=self.module_instances.get(
+                    ModuleType.UNSEEN_SAMPLE_RECOGNITION.value),
+                unseen_sample_re_recognition=self.module_instances.get(
+                    ModuleType.UNSEEN_SAMPLE_RE_RECOGNITION.value)
+            )
+        # pylint: disable=E1101
         if paradigm_type == ParadigmType.MULTIEDGE_INFERENCE.value:
             return self.modules_funcs.get(ModuleType.BASEMODEL.value)()
 
