@@ -110,7 +110,7 @@ testenv:
   dataset:
     train_url: "/home/QXY/ianvs/dataset/mdil-ss-dataset/train_data/index.txt"
     test_url: "/home/QXY/ianvs/dataset/mdil-ss-dataset/test_data/index.txt"
-	using: "CS SYN CR"
+    using: "CS SYN CR"
   incremental_rounds: 3
   
   # 2
@@ -125,7 +125,7 @@ testenv:
   metrics:
     - name: "mIoU"
       url: "/home/QXY/ianvs/examples/mdil-ss/testenv/mIoU.py"
-	- name: "BWT"
+	  - name: "BWT"
     - name: "FWT"
 ```
 
@@ -149,8 +149,8 @@ algorithm:
   
   modules:
     - type: "basemodel"
-	
-	  # 1
+    
+	    # 1
       name: "ERFNet"
       url: "/home/QXY/ianvs/examples/mdil-ss/testalgorithms/mdil-ss/basemodel.py"
       
