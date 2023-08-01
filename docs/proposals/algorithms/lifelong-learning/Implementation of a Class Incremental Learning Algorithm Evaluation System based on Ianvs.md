@@ -125,7 +125,7 @@ testenv:
   metrics:
     - name: "mIoU"
       url: "/home/QXY/ianvs/examples/mdil-ss/testenv/mIoU.py"
-	  - name: "BWT"
+    - name: "BWT"
     - name: "FWT"
 ```
 
@@ -149,8 +149,8 @@ algorithm:
   
   modules:
     - type: "basemodel"
-    
-	    # 1
+
+      # 1
       name: "ERFNet"
       url: "/home/QXY/ianvs/examples/mdil-ss/testalgorithms/mdil-ss/basemodel.py"
       
