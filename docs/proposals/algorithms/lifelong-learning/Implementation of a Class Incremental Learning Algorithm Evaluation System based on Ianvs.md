@@ -2,7 +2,7 @@
 
 ## 1 Motivation
 
-Currently, lifelong learning is facing a challenge: new classes may appear when a model trains on a new data domain (for example, three classes in red are new classes in `Domain 2` in the figure below), which makes it difficult for models to maintain generalization ability and results in a severe performance drop. For example, . 
+Currently, lifelong learning is facing a challenge: new classes may appear when a model trains on a new data domain ( for example, in the figure below, three classes in red are new classes in `Domain 2` ), which makes it difficult for models to maintain generalization ability and results in a severe performance drop.
 
 ![MDIL-SS](images/OSPP_MDIL-SS_7.png) 
 
@@ -33,7 +33,6 @@ Targeting users include
 The following is the architecture diagram of this project system, and this project focuses on the `unknown task processing` module.
 
 Before entering this module, unknown tasks have been [detected](https://github.com/kubeedge/ianvs/tree/4ae10f0e5e1ab958e143b04fade4acc448009857/examples/scene-based-unknown-task-recognition/lifelong_learning_bench) and samples have been labeled by some means such as manual labeling. The core concern of this module is how to use unknown task samples (i.e., incremental class samples) to update the model.
-
 ![MDIL-SS](images/OSPP_MDIL-SS_6.png) 
 
 The following diagram shows how the algorithm works in ianvs.
