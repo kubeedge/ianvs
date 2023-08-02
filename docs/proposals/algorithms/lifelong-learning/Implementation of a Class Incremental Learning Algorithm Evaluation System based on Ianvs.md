@@ -2,9 +2,9 @@
 
 ## 1 Motivation
 
-Currently, lifelong learning faces a challenge: when a machine learning model trains on a new data domain, new classes may appear, which makes it difficult for models to maintain generalization ability and results in a severe performance drop. For example, in the figure below, lions and tigers are new classes in domain 2. 
+Currently, lifelong learning is facing a challenge: new classes may appear when a model trains on a new data domain, which makes it difficult for models to maintain generalization ability and results in a severe performance drop. For example, in the figure below, three classes in red are new classes in `Domain 2`. 
 
-![MDIL-SS](images/OSPP_MDIL-SS_6.png) 
+![MDIL-SS](images/OSPP_MDIL-SS_7.png) 
 
 Many algorithms have been proposed to solve the class increment problem in domain-shift scenario. However, algorithms for solving such problem lack a unified testing environment, which is not conducive to comparing algorithms. In some cases, new algorithms are only tested on certain datasets, which is not rigorous. In this context, it is necessary to develop an algorithm evaluation system that provides standardized testing for class incremental learning algorithms, which is increasingly widely used in the industry, and evaluates the effectiveness of these algorithms.
 
@@ -14,7 +14,7 @@ This project aims to take advantage of the benchmarking capabilities of ianvs to
 
 ## 2 Proposal
 
-`Implementation of a Class Incremental Learning Algorithm Evaluation System based on Ianvs` aims to test the performance of MDIL-SS models following recognized standards, to make the development more efficient and productive.
+`Implementation of a Class Incremental Learning Algorithm Evaluation System based on Ianvs` taking MDIL-SS algorithm as an example, aims to test the performance of class incremental learning models following benchmarking standards, to make the development more efficient and productive.
 
 The scope of the system includes
 
@@ -30,13 +30,15 @@ Targeting users include
 
 ### 3.1 Overall Design
 
-The following is the architecture diagram of this project system, and this project focuses on the unknown task processing module. Before entering this module, unknown tasks have been detected and samples have been labeled by some means such as manual labeling. The core concern of this module is how to use unknown task samples (i.e., incremental class samples) to update the model. The next diagram shows how the algorithm works in ianvs
+The following is the architecture diagram of this project system, and this project focuses on the `unknown task processing` module.
+
+Before entering this module, unknown tasks have been detected and samples have been labeled by some means such as manual labeling. The core concern of this module is how to use unknown task samples (i.e., incremental class samples) to update the model.
 
 ![MDIL-SS](images/OSPP_MDIL-SS_6.png) 
 
 The following diagram shows how the algorithm works in ianvs
 
-![MDIL-SS](images/OSPP_MDIL-SS_6.png) 
+![MDIL-SS](images/OSPP_MDIL-SS_8.png) 
 
 ### 3.2 Datasets
 
@@ -91,7 +93,7 @@ Test environment can be understood as an exam paper, which specifies the dataset
 
 ![MDIL-SS](images/OSPP_MDIL-SS_4.png)
 
-In addition, `benchmarkingjob.yaml` is used for integrating the configuration of test env and test algorithms, and is a necessary Ianvs configuration file.
+In addition, `benchmarkingjob.yaml` is used for integrating the configuration of test env and test algorithms, and is a necessary ianvs configuration file.
 
 For test env, the development work mainly focuses on the implementation of `mIoU.py`. And for test algorithms, development is concentrated on `basemodel.py`, as shown in the picture below.
 
