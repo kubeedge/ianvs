@@ -2,15 +2,15 @@
 
 ## 1 Motivation
 
-Currently, lifelong learning is facing a challenge: new classes may appear when a model trains on a new data domain, which makes it difficult for models to maintain generalization ability and results in a severe performance drop. For example, in the figure below, three classes in red are new classes in `Domain 2`. 
+Currently, lifelong learning is facing a challenge: new classes may appear when a model trains on a new data domain (for example, three classes in red are new classes in `Domain 2` in the figure below), which makes it difficult for models to maintain generalization ability and results in a severe performance drop. For example, . 
 
 ![MDIL-SS](images/OSPP_MDIL-SS_7.png) 
 
-Many algorithms have been proposed to solve the class increment problem in domain-shift scenario. However, algorithms for solving such problem lack a unified testing environment, which is not conducive to comparing algorithms. In some cases, new algorithms are only tested on certain datasets, which is not rigorous. In this context, it is necessary to develop an algorithm evaluation system that provides standardized testing for class incremental learning algorithms, which is increasingly widely used in the industry, and evaluates the effectiveness of these algorithms.
+Many algorithms have been proposed to solve the class increment problem in domain-shift scenario. However, algorithms for solving such problem lack a unified testing environment, which is not conducive to comparing algorithms. In some cases, new algorithms are only tested on certain datasets, which is not rigorous. 
 
-[KubeEdge-Ianvs](https://github.com/kubeedge/ianvs) is a distributed collaborative AI benchmarking project which can perform benchmarks with respect to several types of paradigms (e.g. single-task learning, incremental learning, etc.). 
+In this context, it is necessary to develop an algorithm evaluation system that provides standardized testing for class incremental learning algorithms, which is increasingly widely used in the industry, and evaluates the effectiveness of these algorithms.
 
-This project aims to take advantage of the benchmarking capabilities of ianvs to develop the evaluation system for class incremental learning algorithms to meet benchmarking requirements for this type of algorithm. Specifically, this project will reproduce the algorithm proposed in the [WACV2022 paper](https://github.com/prachigarg23/MDIL-SS) on ianvs, and use three specified datasets (including Cityscapes, SYNTHIA, and the Cloud-Robotic dataset provided by KubeEdge SIG AI) to conduct baseline tests. In addition, a comprehensive test report (including rankings, time, algorithm name, dataset, dataset distribution type, and test metrics, among other details) will be generated.
+[KubeEdge-Ianvs](https://github.com/kubeedge/ianvs) is a distributed collaborative AI benchmarking project which can perform benchmarks with respect to several types of paradigms (e.g. single-task learning, incremental learning, etc.). This project aims to take advantage of the benchmarking capabilities of ianvs to develop the evaluation system for class incremental learning algorithms to meet benchmarking requirements for this type of algorithm. Specifically, this project will reproduce the algorithm proposed in the [WACV2022 paper](https://github.com/prachigarg23/MDIL-SS) on ianvs, and use three specified datasets (including Cityscapes, SYNTHIA, and the Cloud-Robotic dataset provided by KubeEdge SIG AI) to conduct baseline tests. In addition, a comprehensive test report (including rankings, time, algorithm name, dataset, dataset distribution type, and test metrics, among other details) will be generated.
 
 ## 2 Proposal
 
@@ -32,15 +32,15 @@ Targeting users include
 
 The following is the architecture diagram of this project system, and this project focuses on the `unknown task processing` module.
 
-Before entering this module, unknown tasks have been detected and samples have been labeled by some means such as manual labeling. The core concern of this module is how to use unknown task samples (i.e., incremental class samples) to update the model.
+Before entering this module, unknown tasks have been [detected](https://github.com/kubeedge/ianvs/tree/4ae10f0e5e1ab958e143b04fade4acc448009857/examples/scene-based-unknown-task-recognition/lifelong_learning_bench) and samples have been labeled by some means such as manual labeling. The core concern of this module is how to use unknown task samples (i.e., incremental class samples) to update the model.
 
 ![MDIL-SS](images/OSPP_MDIL-SS_6.png) 
 
-The following diagram shows how the algorithm works in ianvs
+The following diagram shows how the algorithm works in ianvs.
 
 ![MDIL-SS](images/OSPP_MDIL-SS_8.png) 
 
-### 3.2 Datasets
+### 3.2 Dataset
 
 This project will use three datasets, namely **Cityscapes**, **SYNTHIA**, and KubeEdge SIG AI's **Cloud-Robotics** dataset (**CS**, **SYN**, **CR**).
 
@@ -84,6 +84,8 @@ As shown in the table below, this dataset contains 7 groups and 30 classes.
 |    object    | pole · traffic sign · traffic light · CCTV camera · Manhole · hydrant · belt · dustbin |
 |    nature    |                     vegetation · terrain                     |
 |     sky      |                             sky                              |
+
+More detail about CR dataset please refer to [this link](https://github.com/kubeedge/ianvs/blob/main/docs/proposals/scenarios/Cloud-Robotics/Cloud-Robotics_zh.md).
 
 ### 3.3 File-level Design
 
