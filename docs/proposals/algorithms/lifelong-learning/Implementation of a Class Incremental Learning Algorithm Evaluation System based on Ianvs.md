@@ -2,15 +2,24 @@
 
 ## 1 Motivation
 
+### 1.1 Background
 Currently, lifelong learning is facing a challenge: new classes may appear when a model trains on a new data domain ( for example, in the figure below, three classes in red are new classes in `Domain 2` ), which makes it difficult for models to maintain generalization ability and results in a severe performance drop.
+<div align = center>
+<img src="images/OSPP_MDIL-SS_7.png" width = "300" height = "250" alt="MDIL-SS"  />
+</div>
 
-![MDIL-SS](images/OSPP_MDIL-SS_7.png) 
-
-Many algorithms have been proposed to solve the class increment problem in domain-shift scenario. However, algorithms for solving such problem lack a unified testing environment, which is not conducive to comparing algorithms. In some cases, new algorithms are only tested on certain datasets, which is not rigorous. 
+Many algorithms have been proposed to solve the class increment problem in domain-shift scenario. However, such algorithms lack a unified testing environment, which is not conducive to comparing algorithms. In some cases, new algorithms are only tested on certain datasets, which is not rigorous. 
 
 In this context, it is necessary to develop an algorithm evaluation system that provides standardized testing for class incremental learning algorithms, which is increasingly widely used in the industry, and evaluates the effectiveness of these algorithms.
 
-[KubeEdge-Ianvs](https://github.com/kubeedge/ianvs) is a distributed collaborative AI benchmarking project which can perform benchmarks with respect to several types of paradigms (e.g. single-task learning, incremental learning, etc.). This project aims to take advantage of the benchmarking capabilities of ianvs to develop the evaluation system for class incremental learning algorithms to meet benchmarking requirements for this type of algorithm. Specifically, this project will reproduce the algorithm proposed in the [WACV2022 paper](https://github.com/prachigarg23/MDIL-SS) on ianvs, and use three specified datasets (including Cityscapes, SYNTHIA, and the Cloud-Robotic dataset provided by KubeEdge SIG AI) to conduct baseline tests. In addition, a comprehensive test report (including rankings, time, algorithm name, dataset, dataset distribution type, and test metrics, among other details) will be generated.
+[KubeEdge-Ianvs](https://github.com/kubeedge/ianvs) is a distributed collaborative AI benchmarking project which can perform benchmarks with respect to several types of paradigms (e.g. single-task learning, incremental learning, etc.). This project aims to take advantage of the benchmarking capabilities of ianvs to develop the evaluation system for class incremental learning algorithms to meet benchmarking requirements for this type of algorithm. 
+
+### 1.2 Goals
+
+This project aims to build a benchmarking for class incremental learning on KubeEdge-Ianvs, it includes:
+ - Reproduce the Multi-Domain Incremental Learning for Semantic Segmentation (MDIL-SS) algorithm proposed in the [WACV2022 paper](https://github.com/prachigarg23/MDIL-SS).
+ - Use three specified datasets (including Cityscapes, SYNTHIA, and the Cloud-Robotic dataset provided by KubeEdge SIG AI) to conduct benchmarking tests.
+ - Generate a comprehensive test report (including rankings, time, algorithm name, dataset, dataset distribution type, and test metrics, among other details)
 
 ## 2 Proposal
 
