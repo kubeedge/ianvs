@@ -33,7 +33,7 @@ The scope of the system includes
 Targeting users include
 
 - Beginners: Familiarize with distributed synergy AI and lifelong learning, among other concepts.
-- Developers: Quickly integrate class increment algorithms into Ianvs and test the performance for further optimization.
+- Developers: Quickly integrate class-increment algorithms into Ianvs and test the performance for further optimization.
 
 
 ## 3 Design Details
