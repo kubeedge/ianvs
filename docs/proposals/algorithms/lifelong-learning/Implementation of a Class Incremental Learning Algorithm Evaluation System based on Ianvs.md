@@ -3,37 +3,38 @@
 ## 1 Motivation
 
 ### 1.1 Background
-Currently, lifelong learning is facing a challenge: new classes may appear when a model trains on a new data domain ( for example, in the figure below, three classes in red are new classes in `Domain 2` ), which makes it difficult for models to maintain generalization ability and results in a severe performance drop.
+Currently, lifelong learning is facing a challenge: new classes may appear when models are trained on a new data domain ( for example, in the figure below, three classes in red are new classes in `Domain 2` ), which makes it difficult for models to maintain generalization ability and results in a severe performance drop.
+
 <div align = center>
 <img src="images/OSPP_MDIL-SS_7.png" width = "300" height = "250" alt="MDIL-SS"  />
 </div>
 
-Many algorithms have been proposed to solve the class increment problem in domain-shift scenario. However, such algorithms lack a unified testing environment, which is not conducive to comparing algorithms. In some cases, new algorithms are only tested on certain datasets, which is not rigorous. 
+Many algorithms have been proposed to solve the class increment problem in domain shift scenario. However, such algorithms lack a unified testing environment, which is not conducive to comparing algorithms. In some cases, new algorithms are only tested on certain datasets, which is not rigorous. 
 
-In this context, it is necessary to develop an algorithm evaluation system that provides standardized testing for class incremental learning algorithms, which is increasingly widely used in the industry, and evaluates the effectiveness of these algorithms.
+In this context, it is necessary to develop an algorithm evaluation system that provides standardized testing for class-incremental learning algorithms, which is increasingly widely used in the industry, and evaluates the effectiveness of these algorithms.
 
-[KubeEdge-Ianvs](https://github.com/kubeedge/ianvs) is a distributed collaborative AI benchmarking project which can perform benchmarks with respect to several types of paradigms (e.g. single-task learning, incremental learning, etc.). This project aims to take advantage of the benchmarking capabilities of ianvs to develop the evaluation system for class incremental learning algorithms to meet benchmarking requirements for this type of algorithm. 
+[KubeEdge-Ianvs](https://github.com/kubeedge/ianvs) is a distributed collaborative AI benchmarking project which can perform benchmarks with respect to several types of paradigms (e.g. single-task learning, incremental learning, etc.). This project aims to leverage the benchmarking capabilities of Ianvs to develop an evaluation system for class-incremental learning algorithms, in order to fulfill the benchmarking requirements specific to this type of algorithm.
 
 ### 1.2 Goals
 
-This project aims to build a benchmarking for class incremental learning on KubeEdge-Ianvs, it includes:
+This project aims to build a benchmarking for class-incremental learning in domain shift scenario on KubeEdge-Ianvs, it includes:
  - Reproduce the Multi-Domain Incremental Learning for Semantic Segmentation (MDIL-SS) algorithm proposed in the [WACV2022 paper](https://github.com/prachigarg23/MDIL-SS).
- - Use three specified datasets (including Cityscapes, SYNTHIA, and the Cloud-Robotic dataset provided by KubeEdge SIG AI) to conduct benchmarking tests.
- - Generate a comprehensive test report (including rankings, time, algorithm name, dataset, dataset distribution type, and test metrics, among other details)
+ - Use three datasets (including Cityscapes, SYNTHIA, and the Cloud-Robotic dataset provided by KubeEdge SIG AI) to conduct benchmarking tests and generate a comprehensive test report (including rankings, time, algorithm name, dataset,  and test metrics, among other details).
 
 ## 2 Proposal
 
-`Implementation of a Class Incremental Learning Algorithm Evaluation System based on Ianvs` taking MDIL-SS algorithm as an example, aims to test the performance of class incremental learning models following benchmarking standards, to make the development more efficient and productive.
+`Implementation of a Class Incremental Learning Algorithm Evaluation System based on Ianvs` taking MDIL-SS algorithm as an example, aims to test the performance of class-incremental learning models following benchmarking standards, to make the development more efficient and productive.
 
 The scope of the system includes
 
-- A test case for lifelong learning semantic segmentation algorithms, in which a test report can be successfully generated following instructions.
+- A test case for class-incremental learning semantic segmentation algorithms, in which a test report can be successfully generated following instructions.
 - Easy to expand, allowing users to seamlessly integrate existing algorithms into the system for testing.
 
 Targeting users include
 
-- Developers: Quickly test the performance of lifelong learning semantic segmentation algorithms for further optimization.
 - Beginners: Familiarize with distributed synergy AI and lifelong learning, among other concepts.
+- Developers: Quickly integrate class increment algorithms into Ianvs and test the performance for further optimization.
+
 
 ## 3 Design Details
 
@@ -44,7 +45,7 @@ The following is the architecture diagram of this project system, and this proje
 Before entering this module, unknown tasks have been [detected](https://github.com/kubeedge/ianvs/tree/4ae10f0e5e1ab958e143b04fade4acc448009857/examples/scene-based-unknown-task-recognition/lifelong_learning_bench) and samples have been labeled by some means such as manual labeling. The core concern of this module is how to use unknown task samples (i.e., incremental class samples) to update the model.
 ![MDIL-SS](images/OSPP_MDIL-SS_6.png) 
 
-The following diagram shows how the algorithm works in ianvs.
+The following diagram shows how the algorithm works in Ianvs.
 
 ![MDIL-SS](images/OSPP_MDIL-SS_8.png) 
 
@@ -64,7 +65,7 @@ In addition, this project utilizes the CR dataset from KubeEdge.
 | :----------------------------------------------------------: |
 | ![MDIL-SS](images/OSPP_MDIL-SS_3.png) |
 
-The following code is an excerpt from the `train-index-mix.txt` file. The first column represents the path to the original image, and the second column represents the corresponding label image path. This training set consists of 2363 image pairs used for training.
+The following code is an excerpt from the `train-index-mix.txt` file. The first column represents the path to the original image, and the second column represents the corresponding label image path.
 
 ```txt
 rgb/train/20220420_garden/00480.png gtFine/train/20220420_garden/00480_TrainIds.png
@@ -72,7 +73,7 @@ rgb/train/20220420_garden/00481.png gtFine/train/20220420_garden/00481_TrainIds.
 rgb/train/20220420_garden/00483.png gtFine/train/20220420_garden/00483_TrainIds.png
 ```
 
-The following code snippet is an excerpt from the `test-index.txt` file, which follows a similar format to the training set. It contains 257 image pairs used for testing.
+The following code snippet is an excerpt from the `test-index.txt` file, which follows a similar format to the training set.
 
 ```txt
 rgb/test/20220420_garden/01357.png gtFine/test/20220420_garden/01357_TrainIds.png
@@ -101,7 +102,9 @@ The development consists of two main parts, which are **test environment (test e
 
 Test environment can be understood as an exam paper, which specifies the dataset, evaluation metrics, and the number of increments used for testing. It is used to evaluate the performance of the "students". And test algorithms can be seen as the students who will take the exam.
 
-![MDIL-SS](images/OSPP_MDIL-SS_4.png)
+<div align = center>
+<img src="images/OSPP_MDIL-SS_4.png"alt="MDIL-SS"  />
+</div>
 
 In addition, `benchmarkingjob.yaml` is used for integrating the configuration of test env and test algorithms, and is a necessary ianvs configuration file.
 
@@ -145,7 +148,7 @@ testenv:
 
 After each round of lifelong learning, the model will be evaluated on the validation set. In this project, **mIoU** (mean Intersection over Union) is used as the evaluation metric. If the model achieves an mIoU greater than the specified threshold on the validation set, the model will be updated. 
 
-**BWT** (Backward Transfer) and **FWT** (Forward Transfer) are two important concepts in the field of lifelong learning. BWT refers to the impact of previously learned knowledge on the learning of the current task, while FWT refers to the impact of the current task on the learning of future tasks. Along with mIoU, they serve as testing metrics to assess the lifelong learning capability of the model in semantic segmentation. Functions related to BWT and FWT have already been implemented in [ianvs repository](https://github.com/kubeedge/ianvs/blob/main/core/testcasecontroller/metrics/metrics.py).
+**BWT** (Backward Transfer) and **FWT** (Forward Transfer) are two important concepts in the field of lifelong learning. BWT refers to the impact of previously learned knowledge on the learning of the current task, while FWT refers to the impact of the current task on the learning of future tasks. Along with mIoU, they serve as testing metrics to assess the lifelong learning capability of the model in semantic segmentation. Functions related to BWT and FWT have already been implemented in [Ianvs repository](https://github.com/kubeedge/ianvs/blob/main/core/testcasecontroller/metrics/metrics.py).
 
 #### 3.3.2 Test Algorithm
 
@@ -200,19 +203,24 @@ The test report is designed as follows, which contains the ranking, algorithm na
 
 ### 4.1 Phase 1 (July 1st - August 15th)
 
-1. Engage in discussions with the project mentor and the community to finalize the development details.
+- Engage in discussions with the project mentor and the community to finalize the development details.
 
-2. Further refine the workflow of the MDIL-SS testing task, including the relationships between different components and modules.
+- Further refine the workflow of the MDIL-SS testing task, including the relationships between different components and modules.
 
-3. Develop the test environment, including datasets and model metrics.
+- Develop the test environment, including datasets and model metrics.
 
-4. Begin the development of the base model encapsulation for the test algorithms.
+- Begin the development of the base model encapsulation for the test algorithms.
 
 ### 4.2 Phase 2 (August 16th - September 30th)
 
-1. Summarize the progress of Phase 1 and generate relevant documentation.
-2. Complete the remaining development tasks, including models, test reports, etc. 
-3. Generate initial algorithm evaluation reports.
-4. Engage in discussions with the project mentor and the community to further supplement and improve the project.
-5. Organize the project code and related documentation, and merge them into the Ianvs repository.
-6. Upon merging into the repository, explore new research areas and produce additional outcomes based on this project (e.g., research papers).
+- Summarize the progress of Phase 1 and generate relevant documentation.
+
+- Complete the remaining development tasks, including models, test reports, etc. 
+
+- Generate initial algorithm evaluation reports.
+
+- Engage in discussions with the project mentor and the community to further supplement and improve the project.
+
+- Organize the project code and related documentation, and merge them into the Ianvs repository.
+
+- Upon merging into the repository, explore new research areas and produce additional outcomes based on this project.
