@@ -1,3 +1,23 @@
+<!-- TOC -->
+
+- [Implementation of a Class Incremental Learning Algorithm Evaluation System based on Ianvs](#implementation-of-a-class-incremental-learning-algorithm-evaluation-system-based-on-ianvs)
+    - [Motivation](#motivation)
+        - [Background](#background)
+        - [Goals](#goals)
+    - [Proposal](#proposal)
+    - [Design Details](#design-details)
+        - [Overall Design](#overall-design)
+        - [Dataset](#dataset)
+        - [File-level Design](#file-level-design)
+            - [Test Environment](#test-environment)
+            - [Test Algorithm](#test-algorithm)
+            - [Test Report](#test-report)
+    - [Roadmap](#roadmap)
+        - [Phase 1 July 1st - August 15th](#phase-1-july-1st---august-15th)
+        - [Phase 2 August 16th - September 30th](#phase-2-august-16th---september-30th)
+
+<!-- /TOC -->
+
 # Implementation of a Class Incremental Learning Algorithm Evaluation System based on Ianvs
 
 ## 1 Motivation
@@ -40,10 +60,10 @@ Targeting users include
 
 ### 3.1 Overall Design
 
-The following is the architecture diagram of this project system, and this project focuses on the `unknown task processing` module.
+The following is the [architecture diagram](https://github.com/kubeedge/sedna/blob/main/docs/proposals/lifelong-learning/unstructured-lifelong-learning.md) of this project system, and this project focuses on the `unseen task processing` module.
 
 Before entering this module, unknown tasks have been [detected](https://github.com/kubeedge/ianvs/tree/4ae10f0e5e1ab958e143b04fade4acc448009857/examples/scene-based-unknown-task-recognition/lifelong_learning_bench) and samples have been labeled by some means such as manual labeling. The core concern of this module is how to use unknown task samples (i.e., incremental class samples) to update the model.
-![MDIL-SS](images/OSPP_MDIL-SS_6.png) 
+![MDIL-SS](images/OSPP_MDIL-SS_9.png) 
 
 The following diagram shows how the algorithm works in Ianvs.
 
