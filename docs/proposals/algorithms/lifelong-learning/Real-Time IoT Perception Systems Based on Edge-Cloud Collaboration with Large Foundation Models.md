@@ -46,7 +46,7 @@ The benefits of cloud-edge collaborative reasoning are not only reflected in the
 
 The overall architecture of the Cloud-edge Collaborative IoT Real-time Perception System is shown in the figure below. This system architecture considers applications in typical lifelong learning scenarios. Edge devices continuously collect images of the environment they are located and efficiently process these images using the Cloud-edge Collaborative Real-time Perception System. At the same time, the edge model is continuously trained through lifelong learning, based on the exploration of hard sample patterns, to ensure that the model can continuously adapt to the dynamic changes in the edge environment.
 
-![joint-inference](images/joint-inference.jpg)
+![joint-inference](images/joint-inference and training.jpg)
 
 The overall workflow of the system is as follows:
 
@@ -60,6 +60,10 @@ The overall workflow of the system is as follows:
 8. Edge nodes download the cloud inference results, while cloud node storing hard samples and their cloud inference results in the cloud node's replay buffer.
 9. Edge nodes output the cloud inference results, while the cloud node performs lifelong learning training on the edge model based on the samples in the cloud node's replay buffer.
 10. The cloud node synchronizes the updated Edge Model to the edge nodes.
+
+![plugin-workflow](images/plugin-workflow.jpg)
+
+The Hard Example Mining Module will be implemented in the unknown sample recognition module of Ianvs. The Edge Inference Module will be implemented in the known sample inference module of Ianvs' edge-side knowledge management. The Cloud Inference Module will be implemented in the unknown task processing module of Ianvs' cloud-side knowledge management.
 
 ### 3.2 Implementation of SAM-based Semantic Segmentation
 
@@ -106,14 +110,12 @@ In this model architecture, AppealNet builds a predictor head on top of the feat
 ### July
 
 - Implement **SAM-based Semantic Segmentation** algorithm based on **Kubeedge/Ianvs**;
-- Implement **hard-example mining** algorithm based on **Kubeedge/Ianvs**.
 
 ### August
 
-- Port the implemented edge-cloud collaboration algorithms to the **Kubeedge/Sedna** platform;
-- Commit the codes for **Kubeedge/Ianvs**.
+- Implement **hard-example mining** algorithm based on **Kubeedge/Ianvs**.
 
 ### September
 
-- Deploy the edge-cloud collaboration real-time IoT perception system to **real edge-cloud environments**;
-- Commit the codes for **Kubeedge/Sedna**.
+- Port the implemented edge-cloud collaboration algorithms to the **Kubeedge/Sedna** platform;
+- Commit the codes for **Kubeedge/Ianvs**.
