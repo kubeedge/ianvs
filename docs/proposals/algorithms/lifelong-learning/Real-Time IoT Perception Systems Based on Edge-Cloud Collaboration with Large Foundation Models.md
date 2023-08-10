@@ -36,7 +36,7 @@ SAM is designed to perform promptable segmentation, which means it can generate 
 
 **Cloud-edge collaborative inference**, as an emerging technology, combines the processing capabilities of the cloud and edge devices to handle complex tasks more efficiently. The core idea of cloud-edge collaborative inference is to deploy large-scale models in the cloud, leveraging the powerful computing resources to handle complex tasks and challenging samples. On the other hand, deploying small-scale models on edge devices can meet the requirements for processing simple samples. In this architecture, edge devices only need to transmit sample data and communicate with the cloud, without bearing a large amount of computation tasks, greatly saving energy and computational resources.
 
-<img src="images/云边协同改进.png" alt="云边协同改进" style="zoom: 25%;" />
+<img src="images/云边协同改进.png" width="50%" >
 
 The benefits of cloud-edge collaborative reasoning are not only reflected in the optimization of computing resources but also in improving the real-time performance and stability of the system. The large model in the cloud can continuously improve its recognition ability through learning and training, while edge devices can process simple samples in real-time, thereby improving the overall system's response speed. At the same time, when the small model on the edge device encounters issues or requires updates, remote model updates can be performed through communication with the cloud to maintain system stability.
 
@@ -46,7 +46,7 @@ The benefits of cloud-edge collaborative reasoning are not only reflected in the
 
 The overall architecture of the Cloud-edge Collaborative IoT Real-time Perception System is shown in the figure below. This system architecture considers applications in typical lifelong learning scenarios. Edge devices continuously collect images of the environment they are located and efficiently process these images using the Cloud-edge Collaborative Real-time Perception System. At the same time, the edge model is continuously trained through lifelong learning, based on the exploration of hard sample patterns, to ensure that the model can continuously adapt to the dynamic changes in the edge environment.
 
-![joint-inference](images/joint-inference and training.jpg)
+![joint-inference](images/joint-inference.jpg)
 
 The overall workflow of the system is as follows:
 
