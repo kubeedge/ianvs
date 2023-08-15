@@ -17,7 +17,7 @@ from pathlib import Path
 
 import motmetrics as mm
 from loguru import logger
-from sedna.common.class_factory import ClassType, ClassFactory
+from sedna.common.class_factory import ClassFactory, ClassType
 
 __all__ = ["motp"]
 
@@ -28,7 +28,9 @@ def compare_dataframes(gts, ts):
     for k, tsacc in ts.items():
         if k in gts:
             logger.info(f"Comparing {k}...")
-            accs.append(mm.utils.compare_to_groundtruth(gts[k], tsacc, "iou", distth=0.5))
+            accs.append(
+                mm.utils.compare_to_groundtruth(gts[k], tsacc, "iou", distth=0.5)
+            )
             names.append(k)
         else:
             logger.warning(f"No ground truth for {k}, skipping.")
@@ -39,14 +41,19 @@ def compare_dataframes(gts, ts):
 @ClassFactory.register(ClassType.GENERAL, alias="motp")
 def metric(y_true, y_pred):
     gt = OrderedDict(
-        [(Path(f).parts[-3], mm.io.loadtxt(f, fmt="mot15-2D", min_confidence=1)) for f in y_true]
+        [
+            (Path(f).parts[-3], mm.io.loadtxt(f, fmt="mot15-2D", min_confidence=1))
+            for f in y_true
+        ]
     )
     mh = mm.metrics.create()
     accs, names = compare_dataframes(gt, y_pred)
 
     logger.info("Running metrics")
     metrics_name = ["motp"]
-    summary = mh.compute_many(accs, names=names, metrics=metrics_name, generate_overall=True)
+    summary = mh.compute_many(
+        accs, names=names, metrics=metrics_name, generate_overall=True
+    )
     logger.info("Completed")
 
     return round(float(summary.iloc[-1][metrics_name]), 4)

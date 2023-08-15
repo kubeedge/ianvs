@@ -4,24 +4,25 @@ import numpy as np
 class Evaluator(object):
     def __init__(self, num_class):
         self.num_class = num_class
-        self.confusion_matrix = np.zeros((self.num_class,)*2)  # shape:(num_class, num_class)
+        self.confusion_matrix = np.zeros(
+            (self.num_class,) * 2
+        )  # shape:(num_class, num_class)
 
     def Pixel_Accuracy(self):
         Acc = np.diag(self.confusion_matrix).sum() / self.confusion_matrix.sum()
         return Acc
-    
+
     def Pixel_Accuracy_Class_Curb(self):
         Acc = np.diag(self.confusion_matrix) / self.confusion_matrix.sum(axis=1)
-        print('-----------Acc of each classes-----------')
+        print("-----------Acc of each classes-----------")
         print("road         : %.6f" % (Acc[0] * 100.0), "%\t")
         print("sidewalk     : %.6f" % (Acc[1] * 100.0), "%\t")
         Acc = np.nanmean(Acc[:2])
         return Acc
-        
 
     def Pixel_Accuracy_Class(self):
         Acc = np.diag(self.confusion_matrix) / self.confusion_matrix.sum(axis=1)
-        print('-----------Acc of each classes-----------')
+        print("-----------Acc of each classes-----------")
         print("road         : %.6f" % (Acc[0] * 100.0), "%\t")
         print("sidewalk     : %.6f" % (Acc[1] * 100.0), "%\t")
         print("building     : %.6f" % (Acc[2] * 100.0), "%\t")
@@ -50,11 +51,13 @@ class Evaluator(object):
 
     def Mean_Intersection_over_Union(self):
         MIoU = np.diag(self.confusion_matrix) / (
-                    np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
-                    np.diag(self.confusion_matrix))
+            np.sum(self.confusion_matrix, axis=1)
+            + np.sum(self.confusion_matrix, axis=0)
+            - np.diag(self.confusion_matrix)
+        )
 
         # print MIoU of each class
-        print('-----------IoU of each classes-----------')
+        print("-----------IoU of each classes-----------")
         print("road         : %.6f" % (MIoU[0] * 100.0), "%\t")
         print("sidewalk     : %.6f" % (MIoU[1] * 100.0), "%\t")
         print("building     : %.6f" % (MIoU[2] * 100.0), "%\t")
@@ -81,17 +84,19 @@ class Evaluator(object):
 
         MIoU = np.nanmean(MIoU)
         return MIoU
-    
+
     def Mean_Intersection_over_Union_Curb(self):
         MIoU = np.diag(self.confusion_matrix) / (
-                    np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
-                    np.diag(self.confusion_matrix))
+            np.sum(self.confusion_matrix, axis=1)
+            + np.sum(self.confusion_matrix, axis=0)
+            - np.diag(self.confusion_matrix)
+        )
 
         # print MIoU of each class
-        print('-----------IoU of each classes-----------')
+        print("-----------IoU of each classes-----------")
         print("road         : %.6f" % (MIoU[0] * 100.0), "%\t")
         print("sidewalk     : %.6f" % (MIoU[1] * 100.0), "%\t")
-        
+
         if self.num_class == 20:
             print("small obstacles: %.6f" % (MIoU[19] * 100.0), "%\t")
 
@@ -101,26 +106,30 @@ class Evaluator(object):
     def Frequency_Weighted_Intersection_over_Union(self):
         freq = np.sum(self.confusion_matrix, axis=1) / np.sum(self.confusion_matrix)
         iu = np.diag(self.confusion_matrix) / (
-                    np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
-                    np.diag(self.confusion_matrix))
+            np.sum(self.confusion_matrix, axis=1)
+            + np.sum(self.confusion_matrix, axis=0)
+            - np.diag(self.confusion_matrix)
+        )
 
         FWIoU = (freq[freq > 0] * iu[freq > 0]).sum()
         CFWIoU = freq[freq > 0] * iu[freq > 0]
-        print('-----------FWIoU of each classes-----------')
+        print("-----------FWIoU of each classes-----------")
         print("road         : %.6f" % (CFWIoU[0] * 100.0), "%\t")
         print("sidewalk     : %.6f" % (CFWIoU[1] * 100.0), "%\t")
-       
+
         return FWIoU
 
     def Frequency_Weighted_Intersection_over_Union_Curb(self):
         freq = np.sum(self.confusion_matrix, axis=1) / np.sum(self.confusion_matrix)
         iu = np.diag(self.confusion_matrix) / (
-                np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
-                np.diag(self.confusion_matrix))
+            np.sum(self.confusion_matrix, axis=1)
+            + np.sum(self.confusion_matrix, axis=0)
+            - np.diag(self.confusion_matrix)
+        )
 
         # FWIoU = (freq[freq > 0] * iu[freq > 0]).sum()
         CFWIoU = freq[freq > 0] * iu[freq > 0]
-        print('-----------FWIoU of each classes-----------')
+        print("-----------FWIoU of each classes-----------")
         print("road         : %.6f" % (CFWIoU[0] * 100.0), "%\t")
         print("sidewalk     : %.6f" % (CFWIoU[1] * 100.0), "%\t")
 
@@ -128,7 +137,7 @@ class Evaluator(object):
 
     def _generate_matrix(self, gt_image, pre_image):
         mask = (gt_image >= 0) & (gt_image < self.num_class)
-        label = self.num_class * gt_image[mask].astype('int') + pre_image[mask]
+        label = self.num_class * gt_image[mask].astype("int") + pre_image[mask]
         count = np.bincount(label, minlength=self.num_class**2)
         confusion_matrix = count.reshape(self.num_class, self.num_class)
         return confusion_matrix
@@ -144,7 +153,3 @@ class Evaluator(object):
 
     def reset(self):
         self.confusion_matrix = np.zeros((self.num_class,) * 2)
-
-
-
-

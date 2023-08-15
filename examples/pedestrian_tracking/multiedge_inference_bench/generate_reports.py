@@ -14,9 +14,11 @@
 
 import argparse
 import datetime
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 from fpdf import FPDF
+
 from core.common import utils
 
 
@@ -75,7 +77,9 @@ def main():
         args = parser.parse_args()
         tracking_config_file = args.tracking_benchmarking_config_file
         if not utils.is_local_file(tracking_config_file):
-            raise SystemExit(f"not found benchmarking config({config_file}) file in local")
+            raise SystemExit(
+                f"not found benchmarking config({config_file}) file in local"
+            )
 
         tracking_config = utils.yaml2dict(args.tracking_benchmarking_config_file)
         tracking_rank = pd.read_csv(
@@ -91,7 +95,9 @@ def main():
 
         reid_config_file = args.reid_benchmarking_config_file
         if not utils.is_local_file(reid_config_file):
-            raise SystemExit(f"not found benchmarking config({config_file}) file in local")
+            raise SystemExit(
+                f"not found benchmarking config({config_file}) file in local"
+            )
         reid_config = utils.yaml2dict(args.reid_benchmarking_config_file)
         reid_rank = pd.read_csv(
             Path(
@@ -105,9 +111,14 @@ def main():
         reid_result = reid_rank.sort_values(by="time", ascending=False).iloc[0]
         pdf = PDF()
         pdf.print_page([tracking_result, reid_result])
-        output_dir = Path("./examples/pedestrian_tracking/multiedge_inference_bench/reports")
+        output_dir = Path(
+            "./examples/pedestrian_tracking/multiedge_inference_bench/reports"
+        )
         output_dir.mkdir(parents=True, exist_ok=True)
-        pdf.output(Path(output_dir, datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ".pdf"), "F")
+        pdf.output(
+            Path(output_dir, datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ".pdf"),
+            "F",
+        )
     except Exception as err:
         raise Exception(f"test report generation runs failed, error: {err}.") from err
 

@@ -16,8 +16,9 @@ from __future__ import absolute_import
 
 import math
 import random
-from torchvision.transforms import *
+
 from PIL import Image
+from torchvision.transforms import *
 
 
 class RectScale(object):
@@ -74,7 +75,9 @@ class RandomErasing(object):
         mean: Erasing value.
     """
 
-    def __init__(self, probability=0.5, sl=0.02, sh=0.4, r1=0.3, mean=(0.4914, 0.4822, 0.4465)):
+    def __init__(
+        self, probability=0.5, sl=0.02, sh=0.4, r1=0.3, mean=(0.4914, 0.4822, 0.4465)
+    ):
         self.probability = probability
         self.mean = mean
         self.sl = sl

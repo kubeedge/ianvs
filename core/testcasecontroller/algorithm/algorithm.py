@@ -20,12 +20,13 @@ from core.common.constant import ParadigmType
 from core.common.utils import load_module
 from core.testcasecontroller.algorithm.module import Module
 from core.testcasecontroller.algorithm.paradigm import (
-    SingleTaskLearning,
     IncrementalLearning,
-    MultiedgeInference,
     LifelongLearning,
+    MultiedgeInference,
+    SingleTaskLearning,
 )
 from core.testcasecontroller.generation_assistant import get_full_combinations
+
 
 class Algorithm:
     # pylint: disable=too-many-instance-attributes
@@ -62,7 +63,7 @@ class Algorithm:
         }
         self.lifelong_learning_data_setting: dict = {
             "train_ratio": 0.8,
-            "splitting_method": "default"
+            "splitting_method": "default",
         }
         self.initial_model_url: str = ""
         self.modules: list = []
@@ -108,7 +109,9 @@ class Algorithm:
 
     def _check_fields(self):
         if not self.name and not isinstance(self.name, str):
-            raise ValueError(f"algorithm name({self.name}) must be provided and be string type.")
+            raise ValueError(
+                f"algorithm name({self.name}) must be provided and be string type."
+            )
 
         if not self.paradigm_type and not isinstance(self.paradigm_type, str):
             raise ValueError(
@@ -131,7 +134,8 @@ class Algorithm:
         if not isinstance(self.lifelong_learning_data_setting, dict):
             raise ValueError(
                 f"algorithm lifelong_learning_data_setting"
-                f"({self.lifelong_learning_data_setting} must be dictionary type.")
+                f"({self.lifelong_learning_data_setting} must be dictionary type."
+            )
 
         if not isinstance(self.initial_model_url, str):
             raise ValueError(
@@ -184,5 +188,7 @@ class Algorithm:
             try:
                 load_module(url)
             except Exception as err:
-                raise RuntimeError(f"load third party packages(name={name}, url={url}) failed,"
-                                f" error: {err}.") from err
+                raise RuntimeError(
+                    f"load third party packages(name={name}, url={url}) failed,"
+                    f" error: {err}."
+                ) from err

@@ -1,10 +1,9 @@
-import torch
-from tqdm import tqdm
-from sedna.common.class_factory import ClassType, ClassFactory
-
-from RFNet.dataloaders import make_data_loader
 import RFNet.eval_config as valid_cfgs
+import torch
+from RFNet.dataloaders import make_data_loader
 from RFNet.utils.metrics import Evaluator
+from sedna.common.class_factory import ClassFactory, ClassType
+from tqdm import tqdm
 
 __all__ = "accuracy"
 

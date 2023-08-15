@@ -18,9 +18,9 @@ import importlib
 import os
 import sys
 import time
-
 from importlib import import_module
 from inspect import getfullargspec
+
 import yaml
 
 
@@ -63,7 +63,9 @@ def py2dict(url):
         mod = import_module(module_name)
         sys.path.pop(0)
         raw_dict = {
-            name: value for name, value in mod.__dict__.items() if not name.startswith("__")
+            name: value
+            for name, value in mod.__dict__.items()
+            if not name.startswith("__")
         }
         sys.modules.pop(module_name)
 

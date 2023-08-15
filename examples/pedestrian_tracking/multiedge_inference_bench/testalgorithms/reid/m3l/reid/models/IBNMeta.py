@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 
 import math
+
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -51,9 +52,13 @@ class Bottleneck_IBN(nn.Module):
             self.bn1 = IBN(planes)
         else:
             self.bn1 = MetaBatchNorm2d(planes)
-        self.conv2 = MetaConv2d(planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.conv2 = MetaConv2d(
+            planes, planes, kernel_size=3, stride=stride, padding=1, bias=False
+        )
         self.bn2 = MetaBatchNorm2d(planes)
-        self.conv3 = MetaConv2d(planes, planes * self.expansion, kernel_size=1, bias=False)
+        self.conv3 = MetaConv2d(
+            planes, planes * self.expansion, kernel_size=1, bias=False
+        )
         self.bn3 = MetaBatchNorm2d(planes * self.expansion)
         self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
@@ -87,7 +92,9 @@ class MetaResNet_IBN_a_base(MetaModule):
         scale = 64
         self.inplanes = scale
         super(MetaResNet_IBN_a_base, self).__init__()
-        self.conv1 = MetaConv2d(3, scale, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv1 = MetaConv2d(
+            3, scale, kernel_size=7, stride=2, padding=3, bias=False
+        )
         self.bn1 = MetaBatchNorm2d(scale)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.layer1 = self._make_layer(block, scale, layers[0])

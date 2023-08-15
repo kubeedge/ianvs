@@ -18,11 +18,11 @@ import os
 
 from core.common import utils
 from core.common.constant import TestObjectType
-from core.testenvmanager.testenv import TestEnv
 from core.storymanager.rank import Rank
 from core.testcasecontroller.simulation import Simulation
 from core.testcasecontroller.simulation_system_admin import build_simulation_enviroment
 from core.testcasecontroller.testcasecontroller import TestCaseController
+from core.testenvmanager.testenv import TestEnv
 
 
 # pylint: disable=too-few-public-methods
@@ -52,15 +52,19 @@ class BenchmarkingJob:
     def _check_fields(self):
         if not self.name and not isinstance(self.name, str):
             raise ValueError(
-                f"benchmarkingjob's name({self.name}) must be provided" f" and be string type."
+                f"benchmarkingjob's name({self.name}) must be provided"
+                f" and be string type."
             )
 
         if not isinstance(self.workspace, str):
-            raise ValueError(f"benchmarkingjob's workspace({self.workspace}) must be string type.")
+            raise ValueError(
+                f"benchmarkingjob's workspace({self.workspace}) must be string type."
+            )
 
         if not self.test_object and not isinstance(self.test_object, dict):
             raise ValueError(
-                f"benchmarkingjob's test_object({self.test_object})" f" must be dict type."
+                f"benchmarkingjob's test_object({self.test_object})"
+                f" must be dict type."
             )
 
         test_object_types = [e.value for e in TestObjectType.__members__.values()]
@@ -73,7 +77,8 @@ class BenchmarkingJob:
 
         if not self.test_object.get(test_object_type):
             raise ValueError(
-                f"benchmarkingjob' test_object doesn't find" f" the field({test_object_type})."
+                f"benchmarkingjob' test_object doesn't find"
+                f" the field({test_object_type})."
             )
 
     def run(self):
@@ -95,7 +100,9 @@ class BenchmarkingJob:
             test_env=self.test_env, test_object=self.test_object
         )
 
-        succeed_testcases, test_results = self.testcase_controller.run_testcases(self.workspace)
+        succeed_testcases, test_results = self.testcase_controller.run_testcases(
+            self.workspace
+        )
 
         if test_results:
             self.rank.save(succeed_testcases, test_results, output_dir=self.workspace)

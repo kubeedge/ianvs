@@ -30,7 +30,9 @@ class Bottleneck(nn.Module):
         super(Bottleneck, self).__init__()
         self.conv1 = MetaConv2d(inplanes, planes, kernel_size=1, bias=False)
         self.bn1 = MetaBatchNorm2d(planes)
-        self.conv2 = MetaConv2d(planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.conv2 = MetaConv2d(
+            planes, planes, kernel_size=3, stride=stride, padding=1, bias=False
+        )
         self.bn2 = MetaBatchNorm2d(planes)
         self.conv3 = MetaConv2d(planes, planes * 4, kernel_size=1, bias=False)
         self.bn3 = MetaBatchNorm2d(planes * 4)
@@ -73,7 +75,9 @@ class BasicBlock(nn.Module):
         )
         self.bn1 = MetaBatchNorm2d(planes)
         self.relu = nn.ReLU(inplace=True)
-        self.conv2 = MetaConv2d(planes, planes, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv2 = MetaConv2d(
+            planes, planes, kernel_size=3, stride=1, padding=1, bias=False
+        )
         self.bn2 = MetaBatchNorm2d(planes)
         self.downsample = downsample
         self.stride = stride

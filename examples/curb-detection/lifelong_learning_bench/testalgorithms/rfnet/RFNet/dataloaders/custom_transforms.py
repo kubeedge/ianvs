@@ -1,8 +1,9 @@
-import torch
 import random
-import numpy as np
 
-from PIL import Image, ImageOps, ImageFilter
+import numpy as np
+import torch
+from PIL import Image, ImageFilter, ImageOps
+
 
 class Normalize(object):
     """Normalize a tensor image with mean and standard deviation.
@@ -10,14 +11,15 @@ class Normalize(object):
         mean (tuple): means for each channel.
         std (tuple): standard deviations for each channel.
     """
-    def __init__(self, mean=(0., 0., 0.), std=(1., 1., 1.)):
+
+    def __init__(self, mean=(0.0, 0.0, 0.0), std=(1.0, 1.0, 1.0)):
         self.mean = mean
         self.std = std
 
     def __call__(self, sample):
-        img = sample['image']
-        depth = sample['depth']
-        mask = sample['label']
+        img = sample["image"]
+        depth = sample["depth"]
+        mask = sample["label"]
         img = np.array(img).astype(np.float32)
         depth = np.array(depth).astype(np.float32)
         mask = np.array(mask).astype(np.float32)
@@ -33,9 +35,7 @@ class Normalize(object):
         depth -= mean_depth
         depth /= std_depth
 
-        return {'image': img,
-                'depth': depth,
-                'label': mask}
+        return {"image": img, "depth": depth, "label": mask}
 
 
 class ToTensor(object):
@@ -45,9 +45,9 @@ class ToTensor(object):
         # swap color axis because
         # numpy image: H x W x C
         # torch image: C X H X W
-        img = sample['image']
-        depth = sample['depth']
-        mask = sample['label']
+        img = sample["image"]
+        depth = sample["depth"]
+        mask = sample["label"]
         img = np.array(img).astype(np.float32).transpose((2, 0, 1))
         depth = np.array(depth).astype(np.float32)
         mask = np.array(mask).astype(np.float32)
@@ -56,18 +56,18 @@ class ToTensor(object):
         depth = torch.from_numpy(depth).float()
         mask = torch.from_numpy(mask).float()
 
-        return {'image': img,
-                'depth': depth,
-                'label': mask}
+        return {"image": img, "depth": depth, "label": mask}
+
 
 class CropBlackArea(object):
     """
     crop black area for depth image
     """
+
     def __call__(self, sample):
-        img = sample['image']
-        depth = sample['depth']
-        mask = sample['label']
+        img = sample["image"]
+        depth = sample["depth"]
+        mask = sample["label"]
         width, height = img.size
         left = 140
         top = 30
@@ -78,31 +78,27 @@ class CropBlackArea(object):
         depth = depth.crop((left, top, right, bottom))
         mask = mask.crop((left, top, right, bottom))
         # resize
-        img = img.resize((width,height), Image.BILINEAR)
-        depth = depth.resize((width,height), Image.BILINEAR)
-        mask = mask.resize((width,height), Image.NEAREST)
+        img = img.resize((width, height), Image.BILINEAR)
+        depth = depth.resize((width, height), Image.BILINEAR)
+        mask = mask.resize((width, height), Image.NEAREST)
         # img = img.resize((512,1024), Image.BILINEAR)
         # depth = depth.resize((512,1024), Image.BILINEAR)
         # mask = mask.resize((512,1024), Image.NEAREST)
 
-        return {'image': img,
-                'depth': depth,
-                'label': mask}
+        return {"image": img, "depth": depth, "label": mask}
 
 
 class RandomHorizontalFlip(object):
     def __call__(self, sample):
-        img = sample['image']
-        depth = sample['depth']
-        mask = sample['label']
+        img = sample["image"]
+        depth = sample["depth"]
+        mask = sample["label"]
         if random.random() < 0.5:
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
             depth = depth.transpose(Image.FLIP_LEFT_RIGHT)
             mask = mask.transpose(Image.FLIP_LEFT_RIGHT)
 
-        return {'image': img,
-                'depth': depth,
-                'label': mask}
+        return {"image": img, "depth": depth, "label": mask}
 
 
 class RandomRotate(object):
@@ -110,31 +106,26 @@ class RandomRotate(object):
         self.degree = degree
 
     def __call__(self, sample):
-        img = sample['image']
-        depth = sample['depth']
-        mask = sample['label']
-        rotate_degree = random.uniform(-1*self.degree, self.degree)
+        img = sample["image"]
+        depth = sample["depth"]
+        mask = sample["label"]
+        rotate_degree = random.uniform(-1 * self.degree, self.degree)
         img = img.rotate(rotate_degree, Image.BILINEAR)
         depth = depth.rotate(rotate_degree, Image.BILINEAR)
         mask = mask.rotate(rotate_degree, Image.NEAREST)
 
-        return {'image': img,
-                'depth': depth,
-                'label': mask}
+        return {"image": img, "depth": depth, "label": mask}
 
 
 class RandomGaussianBlur(object):
     def __call__(self, sample):
-        img = sample['image']
-        depth = sample['depth']
-        mask = sample['label']
+        img = sample["image"]
+        depth = sample["depth"]
+        mask = sample["label"]
         if random.random() < 0.5:
-            img = img.filter(ImageFilter.GaussianBlur(
-                radius=random.random()))
+            img = img.filter(ImageFilter.GaussianBlur(radius=random.random()))
 
-        return {'image': img,
-                'depth': depth,
-                'label': mask}
+        return {"image": img, "depth": depth, "label": mask}
 
 
 class RandomScaleCrop(object):
@@ -144,11 +135,13 @@ class RandomScaleCrop(object):
         self.fill = fill
 
     def __call__(self, sample):
-        img = sample['image']
-        depth = sample['depth']
-        mask = sample['label']
+        img = sample["image"]
+        depth = sample["depth"]
+        mask = sample["label"]
         # random scale (short edge)
-        short_size = random.randint(int(self.base_size * 0.5), int(self.base_size * 2.0))
+        short_size = random.randint(
+            int(self.base_size * 0.5), int(self.base_size * 2.0)
+        )
         w, h = img.size
         if h > w:
             ow = short_size
@@ -164,7 +157,9 @@ class RandomScaleCrop(object):
             padh = self.crop_size - oh if oh < self.crop_size else 0
             padw = self.crop_size - ow if ow < self.crop_size else 0
             img = ImageOps.expand(img, border=(0, 0, padw, padh), fill=0)
-            depth = ImageOps.expand(depth, border=(0, 0, padw, padh), fill=0)  # depth多余的部分填0
+            depth = ImageOps.expand(
+                depth, border=(0, 0, padw, padh), fill=0
+            )  # depth多余的部分填0
             mask = ImageOps.expand(mask, border=(0, 0, padw, padh), fill=self.fill)
         # random crop crop_size
         w, h = img.size
@@ -174,9 +169,7 @@ class RandomScaleCrop(object):
         depth = depth.crop((x1, y1, x1 + self.crop_size, y1 + self.crop_size))
         mask = mask.crop((x1, y1, x1 + self.crop_size, y1 + self.crop_size))
 
-        return {'image': img,
-                'depth': depth,
-                'label': mask}
+        return {"image": img, "depth": depth, "label": mask}
 
 
 class FixScaleCrop(object):
@@ -184,9 +177,9 @@ class FixScaleCrop(object):
         self.crop_size = crop_size
 
     def __call__(self, sample):
-        img = sample['image']
-        depth = sample['depth']
-        mask = sample['label']
+        img = sample["image"]
+        depth = sample["depth"]
+        mask = sample["label"]
         w, h = img.size
         if w > h:
             oh = self.crop_size
@@ -199,24 +192,23 @@ class FixScaleCrop(object):
         mask = mask.resize((ow, oh), Image.NEAREST)
         # center crop
         w, h = img.size
-        x1 = int(round((w - self.crop_size) / 2.))
-        y1 = int(round((h - self.crop_size) / 2.))
+        x1 = int(round((w - self.crop_size) / 2.0))
+        y1 = int(round((h - self.crop_size) / 2.0))
         img = img.crop((x1, y1, x1 + self.crop_size, y1 + self.crop_size))
         depth = depth.crop((x1, y1, x1 + self.crop_size, y1 + self.crop_size))
         mask = mask.crop((x1, y1, x1 + self.crop_size, y1 + self.crop_size))
 
-        return {'image': img,
-                'depth': depth,
-                'label': mask}
+        return {"image": img, "depth": depth, "label": mask}
+
 
 class FixedResize(object):
     def __init__(self, size):
         self.size = (size, size)  # size: (h, w)
 
     def __call__(self, sample):
-        img = sample['image']
-        depth = sample['depth']
-        mask = sample['label']
+        img = sample["image"]
+        depth = sample["depth"]
+        mask = sample["label"]
 
         assert img.size == depth.size == mask.size
 
@@ -224,9 +216,8 @@ class FixedResize(object):
         depth = depth.resize(self.size, Image.BILINEAR)
         mask = mask.resize(self.size, Image.NEAREST)
 
-        return {'image': img,
-                'depth': depth,
-                'label': mask}
+        return {"image": img, "depth": depth, "label": mask}
+
 
 class Relabel(object):
     def __init__(self, olabel, nlabel):  # change trainid label from olabel to nlabel

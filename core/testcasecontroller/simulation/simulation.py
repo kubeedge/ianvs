@@ -57,16 +57,22 @@ class Simulation:
         check the fields of simulation config.
         """
         if not isinstance(self.cloud_number, int):
-            raise ValueError(f"simulation cloud_number" f"({self.cloud_number} must be int type.")
+            raise ValueError(
+                f"simulation cloud_number" f"({self.cloud_number} must be int type."
+            )
 
         if not isinstance(self.edge_number, int):
-            raise ValueError(f"simulation edge_number" f"({self.edge_number} must be int type.")
+            raise ValueError(
+                f"simulation edge_number" f"({self.edge_number} must be int type."
+            )
 
         if not isinstance(self.cluster_name, str):
             raise ValueError(f"simulation ({self.cluster_name}) must be string type.")
 
         if not isinstance(self.kubeedge_version, str):
-            raise ValueError(f"simulation ({self.kubeedge_version}) must be string type.")
+            raise ValueError(
+                f"simulation ({self.kubeedge_version}) must be string type."
+            )
 
         if not isinstance(self.sedna_version, str):
             raise ValueError(f"simulation ({self.sedna_version}) must be string type.")

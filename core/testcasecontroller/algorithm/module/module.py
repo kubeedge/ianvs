@@ -59,7 +59,9 @@ class Module:
 
     def _check_fields(self):
         if not self.type and not isinstance(self.type, str):
-            raise ValueError(f"module type({self.type}) must be provided and be string type.")
+            raise ValueError(
+                f"module type({self.type}) must be provided and be string type."
+            )
 
         types = [e.value for e in ModuleType.__members__.values()]
         if self.type not in types:
@@ -69,7 +71,9 @@ class Module:
             )
 
         if not self.name and not isinstance(self.name, str):
-            raise ValueError(f"module name({self.name}) must be provided and be string type.")
+            raise ValueError(
+                f"module name({self.name}) must be provided and be string type."
+            )
 
         if not isinstance(self.url, str):
             raise ValueError(f"module url({self.url}) must be string type.")
@@ -92,11 +96,13 @@ class Module:
         if module_type in [ModuleType.HARD_EXAMPLE_MINING.value]:
             class_factory_type = ClassType.HEM
 
-        elif module_type in [ModuleType.TASK_DEFINITION.value,
-                             ModuleType.TASK_RELATIONSHIP_DISCOVERY.value,
-                             ModuleType.TASK_REMODELING.value,
-                             ModuleType.TASK_ALLOCATION.value,
-                             ModuleType.INFERENCE_INTEGRATE.value]:
+        elif module_type in [
+            ModuleType.TASK_DEFINITION.value,
+            ModuleType.TASK_RELATIONSHIP_DISCOVERY.value,
+            ModuleType.TASK_REMODELING.value,
+            ModuleType.TASK_ALLOCATION.value,
+            ModuleType.INFERENCE_INTEGRATE.value,
+        ]:
             class_factory_type = ClassType.STP
 
         elif module_type in [ModuleType.TASK_UPDATE_DECISION.value]:
@@ -105,8 +111,10 @@ class Module:
         elif module_type in [ModuleType.UNSEEN_TASK_ALLOCATION.value]:
             class_factory_type = ClassType.UTP
 
-        elif module_type in [ModuleType.UNSEEN_SAMPLE_RECOGNITION.value,
-                             ModuleType.UNSEEN_SAMPLE_RE_RECOGNITION.value]:
+        elif module_type in [
+            ModuleType.UNSEEN_SAMPLE_RECOGNITION.value,
+            ModuleType.UNSEEN_SAMPLE_RE_RECOGNITION.value,
+        ]:
             class_factory_type = ClassType.UTD
 
         if self.url:
@@ -114,12 +122,15 @@ class Module:
                 utils.load_module(self.url)
                 # pylint: disable=E1134
                 func = ClassFactory.get_cls(
-                    type_name=class_factory_type, t_cls_name=self.name)(**self.hyperparameters)
+                    type_name=class_factory_type, t_cls_name=self.name
+                )(**self.hyperparameters)
 
                 return func
             except Exception as err:
-                raise RuntimeError(f"module(type={module_type} loads class(name={self.name}) "
-                                f"failed, error: {err}.") from err
+                raise RuntimeError(
+                    f"module(type={module_type} loads class(name={self.name}) "
+                    f"failed, error: {err}."
+                ) from err
 
         # call lib built-in module function
         module_func = {"method": self.name}
@@ -167,7 +178,8 @@ class Module:
         for hp_config_file in config_files:
             if not utils.is_local_file(hp_config_file):
                 raise RuntimeError(
-                    f"not found other hyperparameters config file" f"({hp_config_file}) in local"
+                    f"not found other hyperparameters config file"
+                    f"({hp_config_file}) in local"
                 )
 
             try:

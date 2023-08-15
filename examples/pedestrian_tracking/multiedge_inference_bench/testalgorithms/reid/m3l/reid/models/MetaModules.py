@@ -15,12 +15,13 @@
 from __future__ import absolute_import
 
 import math
+
 import numpy as np
 import torch
 from torch import nn
+from torch.autograd import Variable
 from torch.nn import functional as F
 from torch.nn import init
-from torch.autograd import Variable
 
 
 def to_var(x, requires_grad=True):
@@ -62,7 +63,13 @@ class MetaModule(nn.Module):
                 yield name, p
 
     def update_params(
-        self, lr_inner, source_params=None, solver="sgd", beta1=0.9, beta2=0.999, weight_decay=5e-4
+        self,
+        lr_inner,
+        source_params=None,
+        solver="sgd",
+        beta1=0.9,
+        beta2=0.999,
+        weight_decay=5e-4,
     ):
         if solver == "sgd":
             for tgt, src in zip(self.named_params(self), source_params):
@@ -73,7 +80,9 @@ class MetaModule(nn.Module):
         elif solver == "adam":
             for tgt, gradVal in zip(self.named_params(self), source_params):
                 name_t, param_t = tgt
-                exp_avg, exp_avg_sq = torch.zeros_like(param_t.data), torch.zeros_like(param_t.data)
+                exp_avg, exp_avg_sq = torch.zeros_like(param_t.data), torch.zeros_like(
+                    param_t.data
+                )
                 bias_correction1 = 1 - beta1
                 bias_correction2 = 1 - beta2
                 gradVal.add_(weight_decay, param_t)
@@ -118,7 +127,9 @@ class MetaModule(nn.Module):
         tarName = list(map(lambda v: v, newModel.state_dict().keys()))
 
         # requires_grad
-        partName, partW = list(map(lambda v: v[0], newModel.named_params(newModel))), list(
+        partName, partW = list(
+            map(lambda v: v[0], newModel.named_params(newModel))
+        ), list(
             map(lambda v: v[1], newModel.named_params(newModel))
         )  # new model's weight
 
@@ -206,7 +217,9 @@ class MetaLinear(MetaModule):
         self.register_buffer("weight", to_var(ignore.weight.data, requires_grad=True))
         self.register_buffer(
             "bias",
-            to_var(ignore.bias.data, requires_grad=True) if ignore.bias is not None else None,
+            to_var(ignore.bias.data, requires_grad=True)
+            if ignore.bias is not None
+            else None,
         )
 
     def forward(self, x):
@@ -237,7 +250,13 @@ class MetaConv2d(MetaModule):
 
     def forward(self, x):
         return F.conv2d(
-            x, self.weight, self.bias, self.stride, self.padding, self.dilation, self.groups
+            x,
+            self.weight,
+            self.bias,
+            self.stride,
+            self.padding,
+            self.dilation,
+            self.groups,
         )
 
     def named_leaves(self):
@@ -256,7 +275,9 @@ class MetaBatchNorm2d(MetaModule):
         self.track_running_stats = ignore.track_running_stats
 
         if self.affine:
-            self.register_buffer("weight", to_var(ignore.weight.data, requires_grad=True))
+            self.register_buffer(
+                "weight", to_var(ignore.weight.data, requires_grad=True)
+            )
             self.register_buffer("bias", to_var(ignore.bias.data, requires_grad=True))
 
         if self.track_running_stats:
@@ -298,7 +319,9 @@ class MetaBatchNorm1d(MetaModule):
         self.track_running_stats = ignore.track_running_stats
 
         if self.affine:
-            self.register_buffer("weight", to_var(ignore.weight.data, requires_grad=True))
+            self.register_buffer(
+                "weight", to_var(ignore.weight.data, requires_grad=True)
+            )
             self.register_buffer("bias", to_var(ignore.bias.data, requires_grad=True))
 
         if self.track_running_stats:
@@ -339,7 +362,9 @@ class MetaInstanceNorm2d(MetaModule):
         self.track_running_stats = ignore.track_running_stats
 
         if self.affine:
-            self.register_buffer("weight", to_var(ignore.weight.data, requires_grad=True))
+            self.register_buffer(
+                "weight", to_var(ignore.weight.data, requires_grad=True)
+            )
             self.register_buffer("bias", to_var(ignore.bias.data, requires_grad=True))
         else:
             self.register_buffer("weight", None)
@@ -379,7 +404,14 @@ class MetaInstanceNorm2d(MetaModule):
 
 
 class MixUpBatchNorm1d(MetaBatchNorm1d):
-    def __init__(self, num_features, eps=1e-5, momentum=0.1, affine=True, track_running_stats=True):
+    def __init__(
+        self,
+        num_features,
+        eps=1e-5,
+        momentum=0.1,
+        affine=True,
+        track_running_stats=True,
+    ):
         super(MixUpBatchNorm1d, self).__init__(
             num_features, eps, momentum, affine, track_running_stats
         )
@@ -427,8 +459,12 @@ class MixUpBatchNorm1d(MetaBatchNorm1d):
                 mean2 = inputmix2.mean(dim=0)
                 var2 = inputmix2.var(dim=0, unbiased=False)
 
-                output1 = (inputmix1 - mean1[None, :]) / (torch.sqrt(var1[None, :] + self.eps))
-                output2 = (inputmix2 - mean2[None, :]) / (torch.sqrt(var2[None, :] + self.eps))
+                output1 = (inputmix1 - mean1[None, :]) / (
+                    torch.sqrt(var1[None, :] + self.eps)
+                )
+                output2 = (inputmix2 - mean2[None, :]) / (
+                    torch.sqrt(var2[None, :] + self.eps)
+                )
                 if self.affine:
                     output1 = output1 * self.weight[None, :] + self.bias[None, :]
                     output2 = output2 * self.weight[None, :] + self.bias[None, :]

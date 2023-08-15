@@ -15,8 +15,8 @@
 from __future__ import absolute_import
 
 import numpy as np
+from sedna.common.class_factory import ClassFactory, ClassType
 from sklearn.metrics import average_precision_score
-from sedna.common.class_factory import ClassType, ClassFactory
 
 __all__ = ["mAP"]
 

@@ -14,8 +14,8 @@
 
 from __future__ import absolute_import
 
-import os
 import errno
+import os
 
 
 def mkdir_if_missing(dir_path):

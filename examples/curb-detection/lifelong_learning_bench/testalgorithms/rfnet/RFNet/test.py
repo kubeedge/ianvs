@@ -1,7 +1,7 @@
-import numpy as np
-import seaborn as sns
-import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 
 CPA_results = np.load("./cpa_results.npy").T
 ratios = [0.3, 0.5, 0.6, 0.7, 0.8, 0.9]
@@ -16,7 +16,7 @@ for i in range(len(CPA_results)):
 
 plt.figure(figsize=(45, 10))
 ratio_counts = pd.DataFrame(data=ratio_counts.T, index=ratios)
-sns.heatmap(data=ratio_counts, annot=True, cmap="YlGnBu", annot_kws={'fontsize': 15})
+sns.heatmap(data=ratio_counts, annot=True, cmap="YlGnBu", annot_kws={"fontsize": 15})
 plt.xticks(fontsize=20)
 plt.yticks(fontsize=25)
 plt.xlabel("Test images", fontsize=25)

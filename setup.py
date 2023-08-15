@@ -13,10 +13,10 @@
 # limitations under the License.
 
 """Setuptools of Ianvs"""
-import sys
 import os
+import sys
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 assert sys.version_info >= (3, 6), "Sorry, Python < 3.6 is not supported."
 
@@ -57,7 +57,9 @@ class InstallPrepare:
                     continue
                 if check:
                     approvers.add(line.strip().split()[-1])
-                check = line.startswith("approvers:") or (line.startswith(" -") and check)
+                check = line.startswith("approvers:") or (
+                    line.startswith(" -") and check
+                )
         return ",".join(approvers) or default_owner
 
     @property
@@ -66,7 +68,9 @@ class InstallPrepare:
 
     @staticmethod
     def _read_requirements(file_path, section="all"):
-        print(f"Start to install requirements of {section} " f"in ianvs from {file_path}")
+        print(
+            f"Start to install requirements of {section} " f"in ianvs from {file_path}"
+        )
         if not os.path.isfile(file_path):
             return []
         with open(file_path, "r", encoding="utf-8") as f:

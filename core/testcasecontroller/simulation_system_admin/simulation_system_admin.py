@@ -35,7 +35,9 @@ def check_host_docker():
         try:
             shell_install_docker = "curl -fsSL https://get.docker.com | \
 bash -s docker --mirror Aliyun"
-            install_docker = subprocess.run(shell_install_docker, shell=True, check=True)
+            install_docker = subprocess.run(
+                shell_install_docker, shell=True, check=True
+            )
 
             if install_docker.returncode == 0:
                 LOGGER.info("successfully installed docker")
@@ -79,7 +81,9 @@ def get_host_free_memory_size():
     return the current memory(free) on the host(in kB)
     """
     shell_cmd = "cat /proc/meminfo | grep MemFree"  # in kB
-    with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_memory_info:
+    with subprocess.Popen(
+        shell_cmd, shell=True, stdout=subprocess.PIPE
+    ) as get_memory_info:
         memory_info = get_memory_info.stdout.read()
         memory_free = int(str(memory_info).split(":")[1].strip().split(" ")[0])
         return memory_free
@@ -111,7 +115,9 @@ def get_host_number_of_cpus():
 
     """
     shell_cmd = "lscpu | grep CPU:"
-    with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_cpu_info:
+    with subprocess.Popen(
+        shell_cmd, shell=True, stdout=subprocess.PIPE
+    ) as get_cpu_info:
         cpu_info = get_cpu_info.stdout.read()
         number_of_cpus = int(str(cpu_info).split(":")[1].strip().split("\\")[0])
         return number_of_cpus

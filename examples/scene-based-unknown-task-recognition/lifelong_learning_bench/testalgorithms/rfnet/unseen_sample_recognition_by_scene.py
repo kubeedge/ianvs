@@ -5,13 +5,14 @@
 # pages = {4401-4410},
 # year = {2021}
 # }
-from typing import List, Any, Tuple
+from typing import Any, List, Tuple
 
-from sedna.datasources import BaseDataSource
-from sedna.common.class_factory import ClassType, ClassFactory
 from sedna.algorithms.seen_task_learning.artifact import Task
+from sedna.common.class_factory import ClassFactory, ClassType
+from sedna.datasources import BaseDataSource
 
-__all__ = ('UnseenSampleRecognitionByScene',)
+__all__ = ("UnseenSampleRecognitionByScene",)
+
 
 @ClassFactory.register(ClassType.UTD, alias="UnseenSampleRecognitionByScene")
 class UnseenSampleRecognitionByScene:
@@ -23,25 +24,25 @@ class UnseenSampleRecognitionByScene:
     model_path: string
         Path of the model
     """
+
     def __init__(self, **kwargs):
         self.model_path = kwargs.get("model_path")
 
-    def __call__(self,
-                 samples: BaseDataSource, **kwargs):
-        from torch.utils.data import DataLoader
+    def __call__(self, samples: BaseDataSource, **kwargs):
         import torch
         import torchvision
-        from torchvision import transforms
         from PIL import Image
+        from torch.utils.data import DataLoader
+        from torchvision import transforms
+
         d_type = samples.data_type
         x_data = samples.x
         y_data = samples.y
-        data_transforms = transforms.Compose([
-                    transforms.Resize([32,32]),
-                    transforms.ToTensor()
-                    ])
-        InferenceData=data_transforms(Image.open(x_data[0][0]))
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        data_transforms = transforms.Compose(
+            [transforms.Resize([32, 32]), transforms.ToTensor()]
+        )
+        InferenceData = data_transforms(Image.open(x_data[0][0]))
+        device = "cuda" if torch.cuda.is_available() else "cpu"
         pthfile = self.model_path
         state_dict = torch.load(pthfile)
         unseen_image = BaseDataSource(data_type=d_type)
@@ -57,5 +58,5 @@ class UnseenSampleRecognitionByScene:
             seen_image.x.append(x_data[0])
         if predicted[0] == 0:
             unseen_image.x.append(x_data[0])
-        
+
         return seen_image, unseen_image

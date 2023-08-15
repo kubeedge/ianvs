@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from FPN_TensorFlow.libs.label_name_dict.label_dict import NAME_LABEL_MAP
 from FPN_TensorFlow.data.io.read_tfrecord import convert_labels
 from FPN_TensorFlow.help_utils.tools import get_single_label_dict, single_label_eval
-from sedna.common.class_factory import ClassType, ClassFactory
+from FPN_TensorFlow.libs.label_name_dict.label_dict import NAME_LABEL_MAP
+from sedna.common.class_factory import ClassFactory, ClassType
 
 __all__ = ["f1_score"]
 
@@ -42,7 +42,9 @@ def f1_score(y_true, y_pred):
         recall = 0 if rec.shape[0] == 0 else rec[-1]
         precision = 0 if prec.shape[0] == 0 else prec[-1]
         f1_score = (
-            0 if not (recall + precision) else (2 * precision * recall / (recall + precision))
+            0
+            if not (recall + precision)
+            else (2 * precision * recall / (recall + precision))
         )
 
         f1_score_list.append(f1_score)

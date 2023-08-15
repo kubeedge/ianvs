@@ -18,7 +18,7 @@ import os
 import tempfile
 
 import pandas as pd
-from sedna.datasources import CSVDataParse, TxtDataParse, JSONDataParse
+from sedna.datasources import CSVDataParse, JSONDataParse, TxtDataParse
 
 from core.common import utils
 from core.common.constant import DatasetFormat
@@ -55,11 +55,15 @@ class Dataset:
     @classmethod
     def _check_dataset_url(cls, url):
         if not utils.is_local_file(url) and not os.path.isabs(url):
-            raise ValueError(f"dataset file({url}) is not a local file and not a absolute path.")
+            raise ValueError(
+                f"dataset file({url}) is not a local file and not a absolute path."
+            )
 
         file_format = utils.get_file_format(url)
         if file_format not in [v.value for v in DatasetFormat.__members__.values()]:
-            raise ValueError(f"dataset file({url})'s format({file_format}) is not supported.")
+            raise ValueError(
+                f"dataset file({url})'s format({file_format}) is not supported."
+            )
 
     @classmethod
     def _process_txt_index_file(cls, file_url):
@@ -79,15 +83,16 @@ class Dataset:
             tmp_file = os.path.join(tempfile.mkdtemp(), "index.txt")
             with open(tmp_file, "w", encoding="utf-8") as file:
                 for line in lines:
-                    #copy all the files in the line
+                    # copy all the files in the line
                     line = line.strip()
                     words = line.split(" ")
                     length = len(words)
-                    words[-1] = words[-1] + '\n'
+                    words[-1] = words[-1] + "\n"
                     for i in range(length):
                         file.writelines(
-                            f"{os.path.abspath(os.path.join(root, words[i]))}")
-                        if i < length-1:
+                            f"{os.path.abspath(os.path.join(root, words[i]))}"
+                        )
+                        if i < length - 1:
                             file.writelines(" ")
 
             new_file = tmp_file
@@ -160,21 +165,33 @@ class Dataset:
         """
 
         if method == "default":
-            return self._splitting_more_times(dataset_url, dataset_format, ratio,
-                                              data_types=dataset_types,
-                                              output_dir=output_dir,
-                                              times=times)
+            return self._splitting_more_times(
+                dataset_url,
+                dataset_format,
+                ratio,
+                data_types=dataset_types,
+                output_dir=output_dir,
+                times=times,
+            )
         # add new splitting method for semantic segmantation
         if method == "city_splitting":
-            return self._city_splitting(dataset_url, dataset_format, ratio,
-                                              data_types=dataset_types,
-                                              output_dir=output_dir,
-                                              times=times)
+            return self._city_splitting(
+                dataset_url,
+                dataset_format,
+                ratio,
+                data_types=dataset_types,
+                output_dir=output_dir,
+                times=times,
+            )
         if method == "fwt_splitting":
-            return self._fwt_splitting(dataset_url, dataset_format, ratio,
-                                              data_types=dataset_types,
-                                              output_dir=output_dir,
-                                              times=times)
+            return self._fwt_splitting(
+                dataset_url,
+                dataset_format,
+                ratio,
+                data_types=dataset_types,
+                output_dir=output_dir,
+                times=times,
+            )
 
         raise ValueError(
             f"dataset splitting method({method}) is not supported,"
@@ -261,8 +278,9 @@ class Dataset:
 
         return data_files
 
-    def _fwt_splitting(self, data_file, data_format, ratio,
-                              data_types=None, output_dir=None, times=1):
+    def _fwt_splitting(
+        self, data_file, data_format, ratio, data_types=None, output_dir=None, times=1
+    ):
         if not data_types:
             data_types = ("train", "eval")
 
@@ -275,33 +293,52 @@ class Dataset:
 
         all_num = len(all_data)
         step = int(all_num / times)
-        data_files.append((
-                self._get_dataset_file(all_data[:1], output_dir,
-                                       data_types[0], 0, data_format),
-                self._get_dataset_file(all_data[:1], output_dir,
-                                       data_types[1], 0, data_format)))
+        data_files.append(
+            (
+                self._get_dataset_file(
+                    all_data[:1], output_dir, data_types[0], 0, data_format
+                ),
+                self._get_dataset_file(
+                    all_data[:1], output_dir, data_types[1], 0, data_format
+                ),
+            )
+        )
         index = 1
         while index <= times:
             if index == times:
-                new_dataset = all_data[step * (index - 1):]
+                new_dataset = all_data[step * (index - 1) :]
             else:
-                new_dataset = all_data[step * (index - 1):step * index]
+                new_dataset = all_data[step * (index - 1) : step * index]
 
             new_num = len(new_dataset)
 
-            data_files.append((
-                self._get_dataset_file(new_dataset[:int(new_num * ratio)], output_dir,
-                                       data_types[0], index, data_format),
-                self._get_dataset_file(new_dataset[int(new_num * ratio):], output_dir,
-                                       data_types[1], index, data_format)))
+            data_files.append(
+                (
+                    self._get_dataset_file(
+                        new_dataset[: int(new_num * ratio)],
+                        output_dir,
+                        data_types[0],
+                        index,
+                        data_format,
+                    ),
+                    self._get_dataset_file(
+                        new_dataset[int(new_num * ratio) :],
+                        output_dir,
+                        data_types[1],
+                        index,
+                        data_format,
+                    ),
+                )
+            )
 
             index += 1
 
         return data_files
 
     # add new splitting method for semantic segmentation
-    def _city_splitting(self, data_file, data_format, ratio,
-                              data_types=None, output_dir=None, times=1):
+    def _city_splitting(
+        self, data_file, data_format, ratio, data_types=None, output_dir=None, times=1
+    ):
         if not data_types:
             data_types = ("train", "eval")
 
@@ -314,38 +351,68 @@ class Dataset:
 
         index0 = 0
         for i, data in enumerate(all_data):
-            if 'synthia_sim' in data:
+            if "synthia_sim" in data:
                 continue
             index0 = i
             break
 
         new_dataset = all_data[:index0]
-        data_files.append((
-                self._get_dataset_file(new_dataset[:int(len(new_dataset) * ratio)], output_dir,
-                                       data_types[0], 1, data_format),
-                self._get_dataset_file(new_dataset[int(len(new_dataset) * ratio):], output_dir,
-                                       data_types[1], 1, data_format)))
+        data_files.append(
+            (
+                self._get_dataset_file(
+                    new_dataset[: int(len(new_dataset) * ratio)],
+                    output_dir,
+                    data_types[0],
+                    1,
+                    data_format,
+                ),
+                self._get_dataset_file(
+                    new_dataset[int(len(new_dataset) * ratio) :],
+                    output_dir,
+                    data_types[1],
+                    1,
+                    data_format,
+                ),
+            )
+        )
         times = times - 1
-        step = int((len(all_data)-index0) / times)
+        step = int((len(all_data) - index0) / times)
         index = 1
         while index <= times:
             if index == times:
-                new_dataset = all_data[index0 + step * (index - 1):]
+                new_dataset = all_data[index0 + step * (index - 1) :]
             else:
-                new_dataset = all_data[index0 + step * (index - 1):index0 + step * index]
+                new_dataset = all_data[
+                    index0 + step * (index - 1) : index0 + step * index
+                ]
 
-            data_files.append((
-                self._get_dataset_file(new_dataset[:int(len(new_dataset) * ratio)], output_dir,
-                                       data_types[0], index+1, data_format),
-                self._get_dataset_file(new_dataset[int(len(new_dataset) * ratio):], output_dir,
-                                       data_types[1], index+1, data_format)))
+            data_files.append(
+                (
+                    self._get_dataset_file(
+                        new_dataset[: int(len(new_dataset) * ratio)],
+                        output_dir,
+                        data_types[0],
+                        index + 1,
+                        data_format,
+                    ),
+                    self._get_dataset_file(
+                        new_dataset[int(len(new_dataset) * ratio) :],
+                        output_dir,
+                        data_types[1],
+                        index + 1,
+                        data_format,
+                    ),
+                )
+            )
 
             index += 1
 
         return data_files
 
     @classmethod
-    def load_data(cls, file: str, data_type: str, label=None, use_raw=False, feature_process=None):
+    def load_data(
+        cls, file: str, data_type: str, label=None, use_raw=False, feature_process=None
+    ):
         """
         load data
 
@@ -377,7 +444,7 @@ class Dataset:
 
         if data_format == DatasetFormat.TXT.value:
             data = TxtDataParse(data_type=data_type, func=feature_process)
-            #print(file)
+            # print(file)
             data.parse(file, use_raw=use_raw)
 
         if data_format == DatasetFormat.JSON.value:

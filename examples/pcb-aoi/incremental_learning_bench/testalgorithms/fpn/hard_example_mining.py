@@ -106,4 +106,6 @@ class IBTFilter(BaseFilter, abc.ABC):
             for box_score in data_check_list
             if float(box_score) <= self.threshold_box
         ]
-        return len(confidence_score_list) / len(infer_result) >= (1 - self.threshold_img)
+        return len(confidence_score_list) / len(infer_result) >= (
+            1 - self.threshold_img
+        )

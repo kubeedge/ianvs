@@ -1,23 +1,44 @@
-from sedna.datasources import BaseDataSource
-from sedna.common.class_factory import ClassFactory, ClassType
-from mmcls.apis import init_model
-from mmcv.parallel import collate, scatter
+from mmcls.apis import init_model, set_random_seed
 from mmcls.datasets.pipelines import Compose
-from mmcls.apis import set_random_seed
+from mmcv.parallel import collate, scatter
+from sedna.common.class_factory import ClassFactory, ClassType
+from sedna.datasources import BaseDataSource
+
 set_random_seed(0, deterministic=True)
-import torch
-import numpy as np
 import heapq
 
-__all__ = ('TaskAllocationByOrigin',)
-config_file = 'examples/bdd/lifelong_learning_bench/testalgorithms/yolo/model_selector/choose_net_b64.py'# 神经网络配置文件
-checkpoint_file = 'examples/bdd/lifelong_learning_bench/testalgorithms/yolo/model_selector/adaptive_selector_7w5_6w.pth'  # 神经网络权重参数
-device = 'cuda:0'  # 推理设备
-weight_list = ['all.pt', 'bdd.pt', 'traffic_0.pt', 'bdd_street.pt', 'bdd_clear.pt', 'bdd_daytime.pt',
-                'bdd_highway.pt', 'traffic_2.pt', 'bdd_overcast.pt', 'bdd_residential.pt', 'traffic_1.pt', 
-                'bdd_snowy.pt', 'bdd_rainy.pt', 'bdd_night.pt', 'soda.pt', 'bdd_cloudy.pt', 'bdd_cloudy_night.pt',
-                'bdd_highway_residential.pt', 'bdd_snowy_rainy.pt', 'soda_t1.pt']
+import numpy as np
+import torch
+
+__all__ = ("TaskAllocationByOrigin",)
+config_file = "examples/bdd/lifelong_learning_bench/testalgorithms/yolo/model_selector/choose_net_b64.py"  # 神经网络配置文件
+checkpoint_file = "examples/bdd/lifelong_learning_bench/testalgorithms/yolo/model_selector/adaptive_selector_7w5_6w.pth"  # 神经网络权重参数
+device = "cuda:0"  # 推理设备
+weight_list = [
+    "all.pt",
+    "bdd.pt",
+    "traffic_0.pt",
+    "bdd_street.pt",
+    "bdd_clear.pt",
+    "bdd_daytime.pt",
+    "bdd_highway.pt",
+    "traffic_2.pt",
+    "bdd_overcast.pt",
+    "bdd_residential.pt",
+    "traffic_1.pt",
+    "bdd_snowy.pt",
+    "bdd_rainy.pt",
+    "bdd_night.pt",
+    "soda.pt",
+    "bdd_cloudy.pt",
+    "bdd_cloudy_night.pt",
+    "bdd_highway_residential.pt",
+    "bdd_snowy_rainy.pt",
+    "soda_t1.pt",
+]
 model_selector = init_model(config_file, checkpoint_file, device=device)
+
+
 def inference_model(model, img):
     """Inference image(s) with the classifier.
 
@@ -33,11 +54,11 @@ def inference_model(model, img):
     device = next(model.parameters()).device  # model device
     # build the data pipeline
     if isinstance(img, str):
-        if cfg.data.test.pipeline[0]['type'] != 'LoadImageFromFile':
-            cfg.data.test.pipeline.insert(0, dict(type='LoadImageFromFile'))
+        if cfg.data.test.pipeline[0]["type"] != "LoadImageFromFile":
+            cfg.data.test.pipeline.insert(0, dict(type="LoadImageFromFile"))
         data = dict(img_info=dict(filename=img), img_prefix=None)
     else:
-        if cfg.data.test.pipeline[0]['type'] == 'LoadImageFromFile':
+        if cfg.data.test.pipeline[0]["type"] == "LoadImageFromFile":
             cfg.data.test.pipeline.pop(0)
         data = dict(img=img)
     test_pipeline = Compose(cfg.data.test.pipeline)
@@ -52,8 +73,16 @@ def inference_model(model, img):
         pred_score = np.max(scores[0])
         pred_label = np.argmax(scores[0])
         top5_index = heapq.nlargest(5, range(len(scores[0])), scores[0].__getitem__)
-        top15_index = heapq.nlargest(len(weight_list), range(len(scores[0])), scores[0].__getitem__)
-        result = {'pred_label': pred_label, 'pred_score': float(pred_score), 'scores': scores[0], 'top5':top5_index, 'top15':top15_index}
+        top15_index = heapq.nlargest(
+            len(weight_list), range(len(scores[0])), scores[0].__getitem__
+        )
+        result = {
+            "pred_label": pred_label,
+            "pred_score": float(pred_score),
+            "scores": scores[0],
+            "top5": top5_index,
+            "top15": top15_index,
+        }
 
     return result
 
@@ -74,9 +103,9 @@ class TaskAllocationByOrigin:
 
     def __init__(self, **kwargs):
         self.default_origin = kwargs.get("default", None)
-    
+
     def __call__(self, task_extractor, samples: BaseDataSource):
         result = inference_model(model_selector, samples.x[0][0])  # 默认传入数据地址，传入数据的值也可以
-        allocations = result['top5']
+        allocations = result["top5"]
 
         return samples, allocations

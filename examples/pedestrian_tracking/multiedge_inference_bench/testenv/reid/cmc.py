@@ -17,11 +17,11 @@ from __future__ import absolute_import
 import datetime
 from pathlib import Path
 
-import numpy as np
 import matplotlib.ticker as mtick
+import numpy as np
 import seaborn as sns
+from sedna.common.class_factory import ClassFactory, ClassType
 from sklearn.metrics import average_precision_score
-from sedna.common.class_factory import ClassType, ClassFactory
 
 __all__ = ["cmc"]
 
@@ -47,7 +47,9 @@ def plot_cmc(distmat, query_ids, gallery_ids, topk):
     fig = cmc.get_figure()
     output_dir = Path("./examples/pedestrian_tracking/multiedge_inference_bench/cmc")
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = Path(output_dir, datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ".png")
+    output_file = Path(
+        output_dir, datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ".png"
+    )
     fig.savefig(output_file)
     return output_file
 

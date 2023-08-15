@@ -2,12 +2,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-def decode_seg_map_sequence(label_masks, dataset='pascal'):
+
+def decode_seg_map_sequence(label_masks, dataset="pascal"):
     rgb_masks = []
     for label_mask in label_masks:
         rgb_mask = decode_segmap(label_mask, dataset)
         rgb_masks.append(rgb_mask)
-    rgb_masks = torch.from_numpy(np.array(rgb_masks).transpose([0, 3, 1, 2]))  # change for val
+    rgb_masks = torch.from_numpy(
+        np.array(rgb_masks).transpose([0, 3, 1, 2])
+    )  # change for val
     return rgb_masks
 
 
@@ -21,28 +24,28 @@ def decode_segmap(label_mask, dataset, plot=False):
     Returns:
         (np.ndarray, optional): the resulting decoded color image.
     """
-    if dataset == 'pascal' or dataset == 'coco':
+    if dataset == "pascal" or dataset == "coco":
         n_classes = 21
         label_colours = get_pascal_labels()
-    elif dataset == 'cityscapes':
+    elif dataset == "cityscapes":
         n_classes = 19
         label_colours = get_cityscapes_labels()
-    elif dataset == 'target':
+    elif dataset == "target":
         n_classes = 24
         label_colours = get_cityscapes_labels()
-    elif dataset == 'cityrand':
+    elif dataset == "cityrand":
         n_classes = 19
         label_colours = get_cityscapes_labels()
-    elif dataset == 'citylostfound':
+    elif dataset == "citylostfound":
         n_classes = 20
         label_colours = get_citylostfound_labels()
-    elif dataset == 'xrlab':
+    elif dataset == "xrlab":
         n_classes = 25
         label_colours = get_cityscapes_labels()
-    elif dataset == 'e1':
+    elif dataset == "e1":
         n_classes = 24
         label_colours = get_cityscapes_labels()
-    elif dataset == 'mapillary':
+    elif dataset == "mapillary":
         n_classes = 24
         label_colours = get_cityscapes_labels()
     else:
@@ -92,57 +95,64 @@ def encode_segmap(mask):
 
 
 def get_cityscapes_labels():
-    return np.array([
-        [128, 64, 128],
-        [244, 35, 232],
-        [70, 70, 70],
-        [102, 102, 156],
-        [190, 153, 153],
-        [153, 153, 153],
-        [250, 170, 30],
-        [220, 220, 0],
-        [107, 142, 35],
-        [152, 251, 152],
-        [0, 130, 180],
-        [220, 20, 60],
-        [255, 0, 0],
-        [0, 0, 142],
-        [0, 0, 70],
-        [0, 60, 100],
-        [0, 80, 100],
-        [0, 0, 230],
-        [119, 11, 32],
-        [119, 11, 119],
-        [128, 64, 64],
-        [102, 10,  156],
-        [102, 102,  15],
-        [10, 102,  156],
-        [10, 102,  156],
-        [10, 102,  156],
-        [10, 102,  156]])
+    return np.array(
+        [
+            [128, 64, 128],
+            [244, 35, 232],
+            [70, 70, 70],
+            [102, 102, 156],
+            [190, 153, 153],
+            [153, 153, 153],
+            [250, 170, 30],
+            [220, 220, 0],
+            [107, 142, 35],
+            [152, 251, 152],
+            [0, 130, 180],
+            [220, 20, 60],
+            [255, 0, 0],
+            [0, 0, 142],
+            [0, 0, 70],
+            [0, 60, 100],
+            [0, 80, 100],
+            [0, 0, 230],
+            [119, 11, 32],
+            [119, 11, 119],
+            [128, 64, 64],
+            [102, 10, 156],
+            [102, 102, 15],
+            [10, 102, 156],
+            [10, 102, 156],
+            [10, 102, 156],
+            [10, 102, 156],
+        ]
+    )
+
 
 def get_citylostfound_labels():
-    return np.array([
-        [128, 64, 128],
-        [244, 35, 232],
-        [70, 70, 70],
-        [102, 102, 156],
-        [190, 153, 153],
-        [153, 153, 153],
-        [250, 170, 30],
-        [220, 220, 0],
-        [107, 142, 35],
-        [152, 251, 152],
-        [0, 130, 180],
-        [220, 20, 60],
-        [255, 0, 0],
-        [0, 0, 142],
-        [0, 0, 70],
-        [0, 60, 100],
-        [0, 80, 100],
-        [0, 0, 230],
-        [119, 11, 32],
-        [111, 74,  0]])
+    return np.array(
+        [
+            [128, 64, 128],
+            [244, 35, 232],
+            [70, 70, 70],
+            [102, 102, 156],
+            [190, 153, 153],
+            [153, 153, 153],
+            [250, 170, 30],
+            [220, 220, 0],
+            [107, 142, 35],
+            [152, 251, 152],
+            [0, 130, 180],
+            [220, 20, 60],
+            [255, 0, 0],
+            [0, 0, 142],
+            [0, 0, 70],
+            [0, 60, 100],
+            [0, 80, 100],
+            [0, 0, 230],
+            [119, 11, 32],
+            [111, 74, 0],
+        ]
+    )
 
 
 def get_pascal_labels():
@@ -150,76 +160,96 @@ def get_pascal_labels():
     Returns:
         np.ndarray with dimensions (21, 3)
     """
-    return np.asarray([[0, 0, 0], [128, 0, 0], [0, 128, 0], [128, 128, 0],
-                       [0, 0, 128], [128, 0, 128], [0, 128, 128], [128, 128, 128],
-                       [64, 0, 0], [192, 0, 0], [64, 128, 0], [192, 128, 0],
-                       [64, 0, 128], [192, 0, 128], [64, 128, 128], [192, 128, 128],
-                       [0, 64, 0], [128, 64, 0], [0, 192, 0], [128, 192, 0],
-                       [0, 64, 128]])
+    return np.asarray(
+        [
+            [0, 0, 0],
+            [128, 0, 0],
+            [0, 128, 0],
+            [128, 128, 0],
+            [0, 0, 128],
+            [128, 0, 128],
+            [0, 128, 128],
+            [128, 128, 128],
+            [64, 0, 0],
+            [192, 0, 0],
+            [64, 128, 0],
+            [192, 128, 0],
+            [64, 0, 128],
+            [192, 0, 128],
+            [64, 128, 128],
+            [192, 128, 128],
+            [0, 64, 0],
+            [128, 64, 0],
+            [0, 192, 0],
+            [128, 192, 0],
+            [0, 64, 128],
+        ]
+    )
 
 
 def colormap_bdd(n):
-    cmap=np.zeros([n, 3]).astype(np.uint8)
-    cmap[0,:] = np.array([128, 64, 128])
-    cmap[1,:] = np.array([244, 35, 232])
-    cmap[2,:] = np.array([ 70, 70, 70])
-    cmap[3,:] = np.array([102, 102, 156])
-    cmap[4,:] = np.array([190, 153, 153])
-    cmap[5,:] = np.array([153, 153, 153])
+    cmap = np.zeros([n, 3]).astype(np.uint8)
+    cmap[0, :] = np.array([128, 64, 128])
+    cmap[1, :] = np.array([244, 35, 232])
+    cmap[2, :] = np.array([70, 70, 70])
+    cmap[3, :] = np.array([102, 102, 156])
+    cmap[4, :] = np.array([190, 153, 153])
+    cmap[5, :] = np.array([153, 153, 153])
 
-    cmap[6,:] = np.array([250, 170, 30])
-    cmap[7,:] = np.array([220, 220, 0])
-    cmap[8,:] = np.array([107, 142, 35])
-    cmap[9,:] = np.array([152, 251, 152])
-    cmap[10,:]= np.array([70, 130, 180])
+    cmap[6, :] = np.array([250, 170, 30])
+    cmap[7, :] = np.array([220, 220, 0])
+    cmap[8, :] = np.array([107, 142, 35])
+    cmap[9, :] = np.array([152, 251, 152])
+    cmap[10, :] = np.array([70, 130, 180])
 
-    cmap[11,:]= np.array([220, 20, 60])
-    cmap[12,:]= np.array([255, 0, 0])
-    cmap[13,:]= np.array([0, 0, 142])
-    cmap[14,:]= np.array([0, 0, 70])
-    cmap[15,:]= np.array([0, 60, 100])
+    cmap[11, :] = np.array([220, 20, 60])
+    cmap[12, :] = np.array([255, 0, 0])
+    cmap[13, :] = np.array([0, 0, 142])
+    cmap[14, :] = np.array([0, 0, 70])
+    cmap[15, :] = np.array([0, 60, 100])
 
-    cmap[16,:]= np.array([0, 80, 100])
-    cmap[17,:]= np.array([0, 0, 230])
-    cmap[18,:]= np.array([119, 11, 32])
-    cmap[19,:]= np.array([111, 74, 0]) #多加了一类small obstacle
+    cmap[16, :] = np.array([0, 80, 100])
+    cmap[17, :] = np.array([0, 0, 230])
+    cmap[18, :] = np.array([119, 11, 32])
+    cmap[19, :] = np.array([111, 74, 0])  # 多加了一类small obstacle
 
     return cmap
+
 
 def colormap_bdd0(n):
-    cmap=np.zeros([n, 3]).astype(np.uint8)
-    cmap[0,:] = np.array([0, 0, 0])
-    cmap[1,:] = np.array([70, 130, 180])
-    cmap[2,:] = np.array([70, 70, 70])
-    cmap[3,:] = np.array([128, 64, 128])
-    cmap[4,:] = np.array([244, 35, 232])
-    cmap[5,:] = np.array([64, 64, 128])
+    cmap = np.zeros([n, 3]).astype(np.uint8)
+    cmap[0, :] = np.array([0, 0, 0])
+    cmap[1, :] = np.array([70, 130, 180])
+    cmap[2, :] = np.array([70, 70, 70])
+    cmap[3, :] = np.array([128, 64, 128])
+    cmap[4, :] = np.array([244, 35, 232])
+    cmap[5, :] = np.array([64, 64, 128])
 
-    cmap[6,:] = np.array([107, 142, 35])
-    cmap[7,:] = np.array([153, 153, 153])
-    cmap[8,:] = np.array([0, 0, 142])
-    cmap[9,:] = np.array([220, 220, 0])
-    cmap[10,:]= np.array([220, 20, 60])
+    cmap[6, :] = np.array([107, 142, 35])
+    cmap[7, :] = np.array([153, 153, 153])
+    cmap[8, :] = np.array([0, 0, 142])
+    cmap[9, :] = np.array([220, 220, 0])
+    cmap[10, :] = np.array([220, 20, 60])
 
-    cmap[11,:]= np.array([119, 11, 32])
-    cmap[12,:]= np.array([0, 0, 230])
-    cmap[13,:]= np.array([250, 170, 160])
-    cmap[14,:]= np.array([128, 64, 64])
-    cmap[15,:]= np.array([250, 170, 30])
+    cmap[11, :] = np.array([119, 11, 32])
+    cmap[12, :] = np.array([0, 0, 230])
+    cmap[13, :] = np.array([250, 170, 160])
+    cmap[14, :] = np.array([128, 64, 64])
+    cmap[15, :] = np.array([250, 170, 30])
 
-    cmap[16,:]= np.array([152, 251, 152])
-    cmap[17,:]= np.array([255, 0, 0])
-    cmap[18,:]= np.array([0, 0, 70])
-    cmap[19,:]= np.array([0, 60,  100]) #small obstacle
-    cmap[20,:]= np.array([0, 80,  100])
-    cmap[21,:]= np.array([102, 102,  156])
-    cmap[22,:]= np.array([102, 102,  156])
+    cmap[16, :] = np.array([152, 251, 152])
+    cmap[17, :] = np.array([255, 0, 0])
+    cmap[18, :] = np.array([0, 0, 70])
+    cmap[19, :] = np.array([0, 60, 100])  # small obstacle
+    cmap[20, :] = np.array([0, 80, 100])
+    cmap[21, :] = np.array([102, 102, 156])
+    cmap[22, :] = np.array([102, 102, 156])
 
     return cmap
 
-class Colorize:
 
-    def __init__(self, n=24): # n = nClasses
+class Colorize:
+    def __init__(self, n=24):  # n = nClasses
         # self.cmap = colormap(256)
         self.cmap = colormap_bdd(256)
         self.cmap[n] = self.cmap[-1]

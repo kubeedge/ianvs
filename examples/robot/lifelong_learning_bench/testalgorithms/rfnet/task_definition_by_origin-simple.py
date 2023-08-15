@@ -1,10 +1,10 @@
-from typing import List, Any, Tuple
+from typing import Any, List, Tuple
 
-from sedna.datasources import BaseDataSource
-from sedna.common.class_factory import ClassType, ClassFactory
 from sedna.algorithms.seen_task_learning.artifact import Task
+from sedna.common.class_factory import ClassFactory, ClassType
+from sedna.datasources import BaseDataSource
 
-__all__ = ('TaskDefinitionByOrigin',)
+__all__ = ("TaskDefinitionByOrigin",)
 
 
 @ClassFactory.register(ClassType.STP, alias="TaskDefinitionByOrigin")
@@ -21,13 +21,10 @@ class TaskDefinitionByOrigin:
     def __init__(self, **kwargs):
         self.origins = kwargs.get("origins", ["front", "garden"])
 
-    def __call__(self,
-                 samples: BaseDataSource, **kwargs) -> Tuple[List[Task],
-                                                             Any,
-                                                             BaseDataSource]:
-        cities = [
-            "front"
-            ]
+    def __call__(
+        self, samples: BaseDataSource, **kwargs
+    ) -> Tuple[List[Task], Any, BaseDataSource]:
+        cities = ["front"]
 
         tasks = []
         d_type = samples.data_type

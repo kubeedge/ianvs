@@ -14,6 +14,6 @@
 
 # pylint: disable=missing-module-docstring
 from .incremental_learning import IncrementalLearning
-from .singletask_learning import SingleTaskLearning
-from .multiedge_inference import MultiedgeInference
 from .lifelong_learning import LifelongLearning
+from .multiedge_inference import MultiedgeInference
+from .singletask_learning import SingleTaskLearning

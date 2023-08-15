@@ -35,7 +35,7 @@ algorithm:
       url: "./examples/bdd/lifelong_learning_bench/testalgorithms/yolo/task_allocation_by_origin.py"
       # config_file: "/mnt/disk/shifan/ianvs/examples/bdd/lifelong_learning_bench/testalgorithms/yolo/model_selector/choose_net_b64.py"
       # checkpoint_file: "/mnt/disk/shifan/ianvs/examples/bdd/lifelong_learning_bench/testalgorithms/yolo/model_selector/adaptive_selector_7w5_6w.pth"
-    
+
      #  3> "task_remodeling"
     - type: "task_remodeling"
       # name of python module; string type;

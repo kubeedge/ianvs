@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 
 from core.common import utils
-from core.storymanager.visualization import get_visualization_func, draw_heatmap_picture
+from core.storymanager.visualization import draw_heatmap_picture, get_visualization_func
 
 
 # pylint: disable=R0902
@@ -59,11 +59,14 @@ class Rank:
 
     def _check_fields(self):
         if not self.sort_by and not isinstance(self.sort_by, list):
-            raise ValueError(f"rank's sort_by({self.sort_by}) must be provided and be list type.")
+            raise ValueError(
+                f"rank's sort_by({self.sort_by}) must be provided and be list type."
+            )
 
         if not self.visualization and not isinstance(self.visualization, dict):
             raise ValueError(
-                f"rank's visualization({self.visualization}) " f"must be provided and be dict type."
+                f"rank's visualization({self.visualization}) "
+                f"must be provided and be dict type."
             )
 
         if not self.selected_dataitem and not isinstance(self.selected_dataitem, dict):
@@ -83,7 +86,8 @@ class Rank:
 
         if not self.save_mode and not isinstance(self.save_mode, list):
             raise ValueError(
-                f"rank's save_mode({self.save_mode}) " f"must be provided and be list type."
+                f"rank's save_mode({self.save_mode}) "
+                f"must be provided and be list type."
             )
 
     @classmethod
@@ -149,7 +153,9 @@ class Rank:
             all_df.loc[i][0] = algorithm.name
             # fill metric columns of algorithm
             for metric_name in test_results[test_case.id][0]:
-                all_df.loc[i][metric_name] = test_results[test_case.id][0].get(metric_name)
+                all_df.loc[i][metric_name] = test_results[test_case.id][0].get(
+                    metric_name
+                )
 
             # file paradigm column of algorithm
             all_df.loc[i]["paradigm"] = algorithm.paradigm_type
@@ -192,7 +198,15 @@ class Rank:
         if metric_names == ["all"]:
             metric_names = self._get_all_metric_names(test_results)
 
-        header = ["algorithm", *metric_names, "paradigm", *module_types, *hps_names, "time", "url"]
+        header = [
+            "algorithm",
+            *metric_names,
+            "paradigm",
+            *module_types,
+            *hps_names,
+            "time",
+            "url",
+        ]
 
         all_df = copy.deepcopy(self.all_df)
         selected_df = pd.DataFrame(all_df, columns=header)
@@ -207,15 +221,17 @@ class Rank:
         # pylint: disable=E1101
         selected_df = self._get_selected(test_cases, test_results)
         selected_df.index = pd.np.arange(1, len(selected_df) + 1)
-        selected_df.to_csv(self.selected_rank_file, index_label="rank", encoding="utf-8", sep=" ")
+        selected_df.to_csv(
+            self.selected_rank_file, index_label="rank", encoding="utf-8", sep=" "
+        )
 
     def _draw_pictures(self, test_cases, test_results):
         # pylint: disable=E1101
         for test_case in test_cases:
             out_put = test_case.output_dir
             test_result = test_results[test_case.id][0]
-            matrix = test_result.get('Matrix')
-            #print(out_put)
+            matrix = test_result.get("Matrix")
+            # print(out_put)
             for key in matrix.keys():
                 draw_heatmap_picture(out_put, key, matrix[key])
 

@@ -1,19 +1,19 @@
 # Quick Start
 
-Welcome to Ianvs! Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, 
-in order to facilitate more efficient and effective development. Quick start helps you to test your algorithm on Ianvs 
-with a simple example of industrial defect detection. You can reduce manual procedures to just a few steps so that you can 
-build and start your distributed synergy AI solution development within minutes. 
+Welcome to Ianvs! Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards,
+in order to facilitate more efficient and effective development. Quick start helps you to test your algorithm on Ianvs
+with a simple example of industrial defect detection. You can reduce manual procedures to just a few steps so that you can
+build and start your distributed synergy AI solution development within minutes.
 
-Before using Ianvs, you might want to have the device ready: 
+Before using Ianvs, you might want to have the device ready:
 - One machine is all you need, i.e., a laptop or a virtual machine is sufficient and a cluster is not necessary
 - 2 CPUs or more
 - 4GB+ free memory, depends on algorithm and simulation setting
 - 10GB+ free disk space
 - Internet connection for GitHub and pip, etc
 - Python 3.6+ installed
-  
-In this example, we are using the Linux platform with Python 3.8.5. If you are using Windows, most steps should still apply but a few like commands and package requirements might be different. 
+
+In this example, we are using the Linux platform with Python 3.8.5. If you are using Windows, most steps should still apply but a few like commands and package requirements might be different.
 
 ## Step 1. Ianvs Preparation
 
@@ -26,24 +26,24 @@ cd /ianvs #One might use another path preferred
 
 mkdir project
 cd project
-git clone https://github.com/kubeedge/ianvs.git   
+git clone https://github.com/kubeedge/ianvs.git
 ```
 
 
-Then, we install third-party dependencies for ianvs. 
+Then, we install third-party dependencies for ianvs.
 ``` shell
 sudo apt-get update
 sudo apt-get install libgl1-mesa-glx -y
 python -m pip install --upgrade pip
 
-cd ianvs 
+cd ianvs
 python -m pip install ./examples/resources/third_party/*
 python -m pip install -r requirements.txt
 ```
 
-We are now ready to install Ianvs. 
+We are now ready to install Ianvs.
 ``` shell
-python setup.py install  
+python setup.py install
 ```
 
 ## Step 2. Dataset Preparation
@@ -53,7 +53,7 @@ not include origin datasets. Then developers do not need to download non-necessa
 
 ``` shell
 cd /root #One might use another path preferred
-mkdir data   
+mkdir data
 cd data
 wget https://kubeedge.obs.cn-north-1.myhuaweicloud.com/sedna-robo/semantic_segmentation_dataset.zip
 unzip semantic_segmentation_dataset.zip
@@ -71,7 +71,7 @@ cp /ianvs/project/ianvs/examples/semantic_segmentation/lifelong_learning_bench/i
 <!-- Please put the downloaded dataset on the above dataset path, e.g., `/ianvs/dataset`. One can transfer the dataset to the path, e.g., on a remote Linux system using [XFTP].  -->
 
 
-Related algorithm is also ready in this quick start. 
+Related algorithm is also ready in this quick start.
 ``` shell
 export PYTHONPATH=$PYTHONPATH:/ianvs/project/ianvs/examples/semantic_segmentation/lifelong_learning_bench/testalgorithms/rfnet/RFNet
 ```
@@ -81,7 +81,7 @@ start, we have done that for you and the interested readers can refer to [algori
 
 ## Step 3. Ianvs Execution and Presentation
 
-We are now ready to run the ianvs for benchmarking. 
+We are now ready to run the ianvs for benchmarking.
 
 ``` shell
 cd /ianvs/project/ianvs
@@ -93,9 +93,9 @@ e.g. `/ianvs/lifelong_learning_bench/workspace`) defined in the benchmarking con
 e.g. `benchmarkingjob.yaml`). In this quick start, we have done all configurations for you and the interested readers
 can refer to [benchmarkingJob.yaml](https://ianvs.readthedocs.io/en/latest/guides/how-to-test-algorithms.html#step-1-test-environment-preparation) for more details.
 
-The final output might look like this:   
+The final output might look like this:
 
-|rank  |algorithm                |accuracy  |samples_transfer_ratio|paradigm            |basemodel  |task_definition       |task_allocation        |basemodel-learning_rate  |task_definition-origins|task_allocation-origins |                                                                                                    
+|rank  |algorithm                |accuracy  |samples_transfer_ratio|paradigm            |basemodel  |task_definition       |task_allocation        |basemodel-learning_rate  |task_definition-origins|task_allocation-origins |
 |:----:|:-----------------------:|:--------:|:--------------------:|:------------------:|:---------:|:--------------------:|:---------------------:|:-----------------------:|:----------------------|:-----------------------|
 |1     |rfnet_lifelong_learning for small test | 0.3009   |0.4807               |lifelonglearning    | BaseModel |TaskDefinitionByOrigin| TaskAllocationByOrigin|0.0001                   |['real', 'sim']        |['real', 'sim']         |
 
@@ -104,6 +104,6 @@ This ends the quick start experiment.
 
 # What is next
 
-If any problems happen, the user can refer to [the issue page on Github](https://github.com/kubeedge/ianvs/issues) for help and are also welcome to raise any new issue. 
+If any problems happen, the user can refer to [the issue page on Github](https://github.com/kubeedge/ianvs/issues) for help and are also welcome to raise any new issue.
 
 Enjoy your journey on Ianvs!

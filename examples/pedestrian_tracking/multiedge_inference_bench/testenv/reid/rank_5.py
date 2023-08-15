@@ -15,7 +15,7 @@
 from __future__ import absolute_import
 
 import numpy as np
-from sedna.common.class_factory import ClassType, ClassFactory
+from sedna.common.class_factory import ClassFactory, ClassType
 
 __all__ = ["rank_5"]
 

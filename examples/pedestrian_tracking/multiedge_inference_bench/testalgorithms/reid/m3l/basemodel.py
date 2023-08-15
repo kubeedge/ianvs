@@ -12,26 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
+
 import os
-import time
 import random
 import re
+import time
 from collections import OrderedDict
 from pathlib import Path
 
 import numpy as np
 import torch
-from torch import nn
-from torch.backends import cudnn
-from torch.utils.data import DataLoader
-from sedna.common.class_factory import ClassType, ClassFactory
-
 from reid import models
+from reid.utils import to_torch
 from reid.utils.data import transforms as T
 from reid.utils.data.preprocessor import Preprocessor
 from reid.utils.meters import AverageMeter
-from reid.utils import to_torch
+from sedna.common.class_factory import ClassFactory, ClassType
+from torch import nn
+from torch.backends import cudnn
+from torch.utils.data import DataLoader
 
 __all__ = ["BaseModel"]
 
@@ -54,7 +54,9 @@ class BaseModel:
         if model_url:
             arch = re.compile("_([a-zA-Z]+).pth").search(model_url).group(1)
             # Create model
-            self.model = models.create(arch, num_features=0, dropout=0, norm=True, BNNeck=True)
+            self.model = models.create(
+                arch, num_features=0, dropout=0, norm=True, BNNeck=True
+            )
             # use CUDA
             self.model.cuda()
             self.model = nn.DataParallel(self.model)
@@ -70,12 +72,18 @@ class BaseModel:
     def predict(self, data, input_shape=None, **kwargs):
         train_dataset = kwargs.get("train_dataset")
         gallery = [
-            (x, int(y.split("/")[-1]), -1, 1) for x, y in zip(train_dataset.x, train_dataset.y)
+            (x, int(y.split("/")[-1]), -1, 1)
+            for x, y in zip(train_dataset.x, train_dataset.y)
         ]
         root = Path(train_dataset.x[0]).parents[2]
         query = [(x, -1, -1, 1) for x in data]
         test_loader = self._get_test_loader(
-            Path(root, "query"), list(set(query) | set(gallery)), 256, 128, self.batch_size, 4
+            Path(root, "query"),
+            list(set(query) | set(gallery)),
+            256,
+            128,
+            self.batch_size,
+            4,
         )
         features = self._extract_features(self.model, test_loader)
         distmat = self._pairwise_distance(features, query, gallery)
@@ -83,7 +91,9 @@ class BaseModel:
         gallery_ids = np.asarray([pid for _, pid, _, _ in gallery])
         return distmat, gallery_ids
 
-    def _get_test_loader(self, data_dir, data, height, width, batch_size, workers, testset=None):
+    def _get_test_loader(
+        self, data_dir, data, height, width, batch_size, workers, testset=None
+    ):
         normalizer = T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         test_transformer = T.Compose(
             [T.Resize((height, width), interpolation=3), T.ToTensor(), normalizer]

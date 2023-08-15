@@ -22,9 +22,9 @@
 
 # encoding: utf-8
 import os
+
 import torch
 import torch.distributed as dist
-
 from yolox.exp import Exp as MyExp
 
 
@@ -65,7 +65,9 @@ class Exp(MyExp):
 
         if is_distributed:
             batch_size = batch_size // dist.get_world_size()
-            sampler = torch.utils.data.distributed.DistributedSampler(valdataset, shuffle=False)
+            sampler = torch.utils.data.distributed.DistributedSampler(
+                valdataset, shuffle=False
+            )
         else:
             sampler = torch.utils.data.SequentialSampler(valdataset)
 

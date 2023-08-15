@@ -14,27 +14,26 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
 import os
 import zipfile
-import logging
 
 import numpy as np
-from PIL import Image
+import RFNet.eval_config as valid_cfgs
+import RFNet.train_config as train_cfgs
 import torch
-from torch.utils.data import DataLoader
-from torchvision import transforms
-from sedna.common.class_factory import ClassType, ClassFactory
+from PIL import Image
+from RFNet.dataloaders import custom_transforms as tr
+from RFNet.dataloaders import make_data_loader
+from RFNet.eval import Validator, load_my_state_dict
+from RFNet.train import Trainer
+from RFNet.utils.lr_scheduler import LR_Scheduler
+from RFNet.utils.saver import Saver
+from sedna.common.class_factory import ClassFactory, ClassType
 from sedna.common.config import Context
 from sedna.common.file_ops import FileOps
-from RFNet.dataloaders import make_data_loader
-from RFNet.dataloaders import custom_transforms as tr
-from RFNet.utils.lr_scheduler import LR_Scheduler
-from RFNet.train import Trainer
-from RFNet.eval import Validator
-from RFNet.utils.saver import Saver
-from RFNet.eval import load_my_state_dict
-import RFNet.train_config as train_cfgs
-import RFNet.eval_config as valid_cfgs
+from torch.utils.data import DataLoader
+from torchvision import transforms
 
 logging.disable(logging.WARNING)
 
@@ -90,7 +89,8 @@ class BaseModel:
             self.trainer.training(epoch)
 
             if self.trainer.args.no_val and (
-                epoch % self.trainer.args.eval_interval == (self.trainer.args.eval_interval - 1)
+                epoch % self.trainer.args.eval_interval
+                == (self.trainer.args.eval_interval - 1)
                 or epoch == self.trainer.args.epochs - 1
             ):
                 # save checkpoint when it meets eval_interval or the training finished
@@ -146,14 +146,19 @@ class BaseModel:
             data = data.tolist()
 
         self.validator.test_loader = DataLoader(
-            data, batch_size=self.validator.args.test_batch_size, shuffle=False, pin_memory=True
+            data,
+            batch_size=self.validator.args.test_batch_size,
+            shuffle=False,
+            pin_memory=True,
         )
         return self.validator.validate()
 
     def load(self, model_url):
         model_url = "/home/wxc/dev/ianvs/models/model_best_mapi_only.pth"
         if FileOps.exists(model_url):
-            self.validator.new_state_dict = torch.load(model_url, map_location=torch.device("cpu"))
+            self.validator.new_state_dict = torch.load(
+                model_url, map_location=torch.device("cpu")
+            )
         else:
             raise Exception("model url does not exist.")
         self.validator.model = load_my_state_dict(

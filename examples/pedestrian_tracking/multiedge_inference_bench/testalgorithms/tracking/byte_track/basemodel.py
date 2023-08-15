@@ -18,17 +18,16 @@ import os
 from collections import OrderedDict
 from pathlib import Path
 
+import motmetrics as mm
 import torch
 import torch.backends.cudnn as cudnn
-import motmetrics as mm
+from dataset import MOTDataset
 from loguru import logger
-from sedna.common.class_factory import ClassType, ClassFactory
+from sedna.common.class_factory import ClassFactory, ClassType
 from yolox.data import ValTransform
+from yolox.evaluators import MOTEvaluator
 from yolox.exp import get_exp
 from yolox.utils import fuse_model, get_model_info, setup_logger
-from yolox.evaluators import MOTEvaluator
-
-from dataset import MOTDataset
 
 __all__ = ["BaseModel"]
 
@@ -61,7 +60,9 @@ def make_parser():
         default=0.9,
         help="matching threshold for tracking",
     )
-    parser.add_argument("--min-box-area", type=float, default=100, help="filter out tiny boxes")
+    parser.add_argument(
+        "--min-box-area", type=float, default=100, help="filter out tiny boxes"
+    )
     parser.add_argument(
         "--mot20", dest="mot20", default=False, action="store_true", help="test mot20."
     )
@@ -74,7 +75,9 @@ def make_parser():
 class BaseModel:
     def __init__(self, **kwargs) -> None:
         self.args = make_parser().parse_args()
-        self.exp = get_exp(str(Path(Path(__file__).parent.resolve(), "yolox_x_ablation.py")), None)
+        self.exp = get_exp(
+            str(Path(Path(__file__).parent.resolve(), "yolox_x_ablation.py")), None
+        )
         self.exp.merge(self.args.opts)
         self.args.experiment_name = self.exp.exp_name
 
@@ -87,7 +90,9 @@ class BaseModel:
         file_name = os.path.join(self.exp.output_dir, self.args.experiment_name)
         os.makedirs(file_name, exist_ok=True)
 
-        setup_logger(file_name, distributed_rank=self.rank, filename="val_log.txt", mode="a")
+        setup_logger(
+            file_name, distributed_rank=self.rank, filename="val_log.txt", mode="a"
+        )
         logger.info(f"args: {self.args}")
         self.exp.test_conf = self.args.conf
         self.exp.nmsthre = self.args.nms
@@ -125,7 +130,14 @@ class BaseModel:
         inference_output_dir = os.getenv("RESULT_SAVED_URL")
         os.makedirs(inference_output_dir, exist_ok=True)
         val_loader = self._get_eval_loader(
-            data_dir, coco, ids, class_ids, annotations, self.batch_size, self.is_distributed, False
+            data_dir,
+            coco,
+            ids,
+            class_ids,
+            annotations,
+            self.batch_size,
+            self.is_distributed,
+            False,
         )
         self.evaluator = MOTEvaluator(
             args=self.args,
@@ -170,7 +182,15 @@ class BaseModel:
         return ts
 
     def _get_eval_loader(
-        self, data_dir, coco, ids, class_ids, annotations, batch_size, is_distributed, testdev=False
+        self,
+        data_dir,
+        coco,
+        ids,
+        class_ids,
+        annotations,
+        batch_size,
+        is_distributed,
+        testdev=False,
     ):
         valdataset = MOTDataset(
             data_dir=data_dir,
@@ -187,7 +207,9 @@ class BaseModel:
 
         if is_distributed:
             batch_size = batch_size // dist.get_world_size()
-            sampler = torch.utils.data.distributed.DistributedSampler(valdataset, shuffle=False)
+            sampler = torch.utils.data.distributed.DistributedSampler(
+                valdataset, shuffle=False
+            )
         else:
             sampler = torch.utils.data.SequentialSampler(valdataset)
 

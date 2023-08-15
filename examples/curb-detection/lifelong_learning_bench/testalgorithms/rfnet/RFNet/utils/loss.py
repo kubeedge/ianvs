@@ -1,28 +1,38 @@
 import torch
 import torch.nn as nn
 
+
 class SegmentationLosses(object):
-    def __init__(self, weight=None, size_average=True, batch_average=True, ignore_index=255, cuda=False): # ignore_index=255
+    def __init__(
+        self,
+        weight=None,
+        size_average=True,
+        batch_average=True,
+        ignore_index=255,
+        cuda=False,
+    ):  # ignore_index=255
         self.ignore_index = ignore_index
         self.weight = weight
         self.size_average = size_average
         self.batch_average = batch_average
         self.cuda = cuda
 
-    def build_loss(self, mode='ce'):
+    def build_loss(self, mode="ce"):
         """Choices: ['ce' or 'focal']"""
-        if mode == 'ce':
+        if mode == "ce":
             return self.CrossEntropyLoss
-        elif mode == 'focal':
+        elif mode == "focal":
             return self.FocalLoss
         else:
             raise NotImplementedError
 
     def CrossEntropyLoss(self, logit, target):
         n, c, h, w = logit.size()
-        #criterion = nn.CrossEntropyLoss(weight=self.weight, ignore_index=self.ignore_index,
-                                        #size_average=self.size_average)
-        criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=self.ignore_index)
+        # criterion = nn.CrossEntropyLoss(weight=self.weight, ignore_index=self.ignore_index,
+        # size_average=self.size_average)
+        criterion = nn.CrossEntropyLoss(
+            reduction="mean", ignore_index=self.ignore_index
+        )
         if self.cuda:
             criterion = criterion.cuda()
 
@@ -35,8 +45,11 @@ class SegmentationLosses(object):
 
     def FocalLoss(self, logit, target, gamma=2, alpha=0.5):
         n, c, h, w = logit.size()
-        criterion = nn.CrossEntropyLoss(weight=self.weight, ignore_index=self.ignore_index,
-                                        size_average=self.size_average)
+        criterion = nn.CrossEntropyLoss(
+            weight=self.weight,
+            ignore_index=self.ignore_index,
+            size_average=self.size_average,
+        )
         if self.cuda:
             criterion = criterion.cuda()
 
@@ -51,6 +64,7 @@ class SegmentationLosses(object):
 
         return loss
 
+
 if __name__ == "__main__":
     loss = SegmentationLosses(cuda=True)
     a = torch.rand(1, 3, 7, 7).cuda()
@@ -58,7 +72,3 @@ if __name__ == "__main__":
     print(loss.CrossEntropyLoss(a, b).item())
     print(loss.FocalLoss(a, b, gamma=0, alpha=None).item())
     print(loss.FocalLoss(a, b, gamma=2, alpha=0.5).item())
-
-
-
-

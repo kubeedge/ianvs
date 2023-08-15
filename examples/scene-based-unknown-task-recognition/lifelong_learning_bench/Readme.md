@@ -23,7 +23,7 @@ cd /ianvs #One might use another path preferred
 
 mkdir project
 cd project
-git clone https://github.com/kubeedge/ianvs.git   
+git clone https://github.com/kubeedge/ianvs.git
 ```
 
 Then, we install third-party dependencies for ianvs.
@@ -33,7 +33,7 @@ sudo apt-get update
 sudo apt-get install libgl1-mesa-glx -y
 python -m pip install --upgrade pip
 
-cd ianvs 
+cd ianvs
 python -m pip install ./examples/resources/third_party/*
 python -m pip install -r requirements.txt
 ```
@@ -41,7 +41,7 @@ python -m pip install -r requirements.txt
 We are now ready to install Ianvs.
 
 ```shell
-python setup.py install 
+python setup.py install
 ```
 
 ## Step 2. Dataset and Model Preparation
@@ -50,7 +50,7 @@ Datasets and models can be large. To avoid over-size projects in the GitHub repo
 
 ```shell
 cd /ianvs #One might use another path preferred
-mkdir dataset   
+mkdir dataset
 cd dataset
 wget https://kubeedge.obs.cn-north-1.myhuaweicloud.com/ianvs/curb-detection/curb-detection.zip
 unzip dataset.zip

@@ -14,36 +14,39 @@
 
 from __future__ import absolute_import, division, print_function
 
+import logging
 import os
 import tempfile
 import time
 import zipfile
-import cv2
-import logging
 
+import cv2
 import numpy as np
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
-from sedna.common.config import Context
-from sedna.common.class_factory import ClassType, ClassFactory
-from FPN_TensorFlow.help_utils.help_utils import draw_box_cv
-from FPN_TensorFlow.libs.label_name_dict.label_dict import NAME_LABEL_MAP
-from FPN_TensorFlow.data.io.read_tfrecord import next_batch_for_tasks, convert_labels
 from FPN_TensorFlow.data.io import image_preprocess
+from FPN_TensorFlow.data.io.read_tfrecord import convert_labels, next_batch_for_tasks
+from FPN_TensorFlow.help_utils.help_utils import draw_box_cv
 from FPN_TensorFlow.help_utils.tools import (
-    mkdir,
-    view_bar,
     get_single_label_dict,
+    mkdir,
     single_label_eval,
+    view_bar,
 )
-from FPN_TensorFlow.libs.configs import cfgs
 from FPN_TensorFlow.libs.box_utils.show_box_in_tensor import (
     draw_box_with_color,
     draw_boxes_with_categories,
 )
+from FPN_TensorFlow.libs.configs import cfgs
 from FPN_TensorFlow.libs.fast_rcnn import build_fast_rcnn
-from FPN_TensorFlow.libs.networks.network_factory import get_flags_byname, get_network_byname
+from FPN_TensorFlow.libs.label_name_dict.label_dict import NAME_LABEL_MAP
+from FPN_TensorFlow.libs.networks.network_factory import (
+    get_flags_byname,
+    get_network_byname,
+)
 from FPN_TensorFlow.libs.rpn import build_rpn
+from sedna.common.class_factory import ClassFactory, ClassType
+from sedna.common.config import Context
 
 FLAGS = get_flags_byname(cfgs.NET_NAME)
 
@@ -167,13 +170,17 @@ class BaseModel:
                 rpn_object_boxes_indices = tf.reshape(
                     tf.where(tf.greater(rpn_proposals_scores, 0.5)), [-1]
                 )
-                rpn_object_boxes = tf.gather(rpn_proposals_boxes, rpn_object_boxes_indices)
+                rpn_object_boxes = tf.gather(
+                    rpn_proposals_boxes, rpn_object_boxes_indices
+                )
 
                 rpn_proposals_objcet_boxes_in_img = draw_box_with_color(
                     train_data, rpn_object_boxes, text=tf.shape(rpn_object_boxes)[0]
                 )
                 rpn_proposals_boxes_in_img = draw_box_with_color(
-                    train_data, rpn_proposals_boxes, text=tf.shape(rpn_proposals_boxes)[0]
+                    train_data,
+                    rpn_proposals_boxes,
+                    text=tf.shape(rpn_proposals_boxes)[0],
                 )
             # ***********************************************************************************************
             # *                                         Fast RCNN                                           *
@@ -211,8 +218,13 @@ class BaseModel:
                 num_of_objects,
                 detection_category,
             ) = fast_rcnn.fast_rcnn_predict()
-            fast_rcnn_location_loss, fast_rcnn_classification_loss = fast_rcnn.fast_rcnn_loss()
-            fast_rcnn_total_loss = fast_rcnn_location_loss + fast_rcnn_classification_loss
+            (
+                fast_rcnn_location_loss,
+                fast_rcnn_classification_loss,
+            ) = fast_rcnn.fast_rcnn_loss()
+            fast_rcnn_total_loss = (
+                fast_rcnn_location_loss + fast_rcnn_classification_loss
+            )
 
             with tf.name_scope("draw_boxes_with_categories"):
                 fast_rcnn_predict_boxes_in_imgs = draw_boxes_with_categories(
@@ -252,7 +264,9 @@ class BaseModel:
             tf.summary.scalar("rpn/rpn_classification_loss", rpn_classification_loss)
             tf.summary.scalar("rpn/rpn_total_loss", rpn_total_loss)
 
-            tf.summary.scalar("fast_rcnn/fast_rcnn_location_loss", fast_rcnn_location_loss)
+            tf.summary.scalar(
+                "fast_rcnn/fast_rcnn_location_loss", fast_rcnn_location_loss
+            )
             tf.summary.scalar(
                 "fast_rcnn/fast_rcnn_classification_loss", fast_rcnn_classification_loss
             )
@@ -267,7 +281,9 @@ class BaseModel:
             tf.summary.scalar("learning_rate", lr)
 
             summary_op = tf.summary.merge_all()
-            init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
+            init_op = tf.group(
+                tf.global_variables_initializer(), tf.local_variables_initializer()
+            )
 
             restorer = self._get_restorer()
             saver = tf.train.Saver(max_to_keep=3)
@@ -294,7 +310,9 @@ class BaseModel:
                 summary_writer = tf.summary.FileWriter(summary_path, graph=sess.graph)
 
                 for step in range(cfgs.MAX_ITERATION):
-                    training_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
+                    training_time = time.strftime(
+                        "%Y-%m-%d %H:%M:%S", time.localtime(time.time())
+                    )
                     start = time.time()
 
                     (
@@ -404,7 +422,9 @@ class BaseModel:
             restorer = self._get_restorer()
 
             config = tf.ConfigProto()
-            init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
+            init_op = tf.group(
+                tf.global_variables_initializer(), tf.local_variables_initializer()
+            )
 
             with tf.Session(config=config) as sess:
                 sess.run(init_op)
@@ -448,11 +468,14 @@ class BaseModel:
                             temp_dict = {}
                             temp_dict["name"] = label
 
-                            ind = np.where(_detection_category == NAME_LABEL_MAP[label])[0]
+                            ind = np.where(
+                                _detection_category == NAME_LABEL_MAP[label]
+                            )[0]
                             temp_boxes = _fast_rcnn_decode_boxes[ind]
                             temp_score = np.reshape(_fast_rcnn_score[ind], [-1, 1])
                             temp_dict["bbox"] = np.array(
-                                np.concatenate([temp_boxes, temp_score], axis=1), np.float64
+                                np.concatenate([temp_boxes, temp_score], axis=1),
+                                np.float64,
                             )
                             predict_dict[str(img_names[i])].append(temp_dict)
 
@@ -467,8 +490,12 @@ class BaseModel:
 
                     if inference_output_dir:
                         mkdir(inference_output_dir)
-                        cv2.imwrite(f"{inference_output_dir}/{img_names[i]}_fpn.jpg", img_np)
-                        view_bar(f"{img_names[i]} cost {end - start}s", i + 1, len(imgs))
+                        cv2.imwrite(
+                            f"{inference_output_dir}/{img_names[i]}_fpn.jpg", img_np
+                        )
+                        view_bar(
+                            f"{img_names[i]} cost {end - start}s", i + 1, len(imgs)
+                        )
                         print(
                             f"\nInference results have been saved to directory:{inference_output_dir}."
                         )
@@ -503,7 +530,9 @@ class BaseModel:
         if callable(metric_func):
             return {"f1_score": metric_func(data.y, predict_dict)}
         else:
-            raise Exception(f"not found model metric func(name={metric_name}) in model eval phase")
+            raise Exception(
+                f"not found model metric func(name={metric_name}) in model eval phase"
+            )
 
     def _get_restorer(self):
         model_variables = slim.get_model_variables()
@@ -521,7 +550,9 @@ class BaseModel:
                 [103.939, 116.779, 123.68]
             )
             self.img_batch = image_preprocess.short_side_resize_for_inference_data(
-                self.img_tensor, target_shortside_len=cfgs.SHORT_SIDE_LEN, is_resize=True
+                self.img_tensor,
+                target_shortside_len=cfgs.SHORT_SIDE_LEN,
+                is_resize=True,
             )
 
     def _fast_rcnn_predict(self):

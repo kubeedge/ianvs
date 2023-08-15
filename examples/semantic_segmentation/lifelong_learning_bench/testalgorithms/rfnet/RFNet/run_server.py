@@ -13,22 +13,22 @@
 # limitations under the License.
 
 import os
+import time
 from io import BytesIO
-from typing import Optional, Any
+from typing import Any, Optional
 
 import cv2
 import numpy as np
-from PIL import Image
+import sedna_predict
 import uvicorn
-import time
-from pydantic import BaseModel
-from fastapi import FastAPI, UploadFile, File
-from fastapi.routing import APIRoute
+from dataloaders.datasets.cityscapes import CityscapesSegmentation
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-import sedna_predict
+from fastapi.routing import APIRoute
+from PIL import Image
+from pydantic import BaseModel
 from sedna.common.utils import get_host_ip
-from dataloaders.datasets.cityscapes import CityscapesSegmentation
 
 
 class ImagePayload(BaseModel):
@@ -56,19 +56,20 @@ class BaseServer:
     WAIT_TIME = 15
 
     def __init__(
-            self,
-            servername: str,
-            host: str,
-            http_port: int = 8080,
-            grpc_port: int = 8081,
-            workers: int = 1,
-            ws_size: int = 16 * 1024 * 1024,
-            ssl_key=None,
-            ssl_cert=None,
-            timeout=300):
+        self,
+        servername: str,
+        host: str,
+        http_port: int = 8080,
+        grpc_port: int = 8081,
+        workers: int = 1,
+        ws_size: int = 16 * 1024 * 1024,
+        ssl_key=None,
+        ssl_cert=None,
+        timeout=300,
+    ):
         self.server_name = servername
         self.app = None
-        self.host = host or '0.0.0.0'
+        self.host = host or "0.0.0.0"
         self.http_port = http_port or 80
         self.grpc_port = grpc_port
         self.workers = workers
@@ -82,8 +83,11 @@ class BaseServer:
     def run(self, app, **kwargs):
         if hasattr(app, "add_middleware"):
             app.add_middleware(
-                CORSMiddleware, allow_origins=["*"], allow_credentials=True,
-                allow_methods=["*"], allow_headers=["*"],
+                CORSMiddleware,
+                allow_origins=["*"],
+                allow_credentials=True,
+                allow_methods=["*"],
+                allow_headers=["*"],
             )
 
         uvicorn.run(
@@ -94,11 +98,14 @@ class BaseServer:
             ssl_certfile=self.certfile,
             workers=self.workers,
             timeout_keep_alive=self.timeout,
-            **kwargs)
+            **kwargs,
+        )
 
     def get_all_urls(self):
-        url_list = [{"path": route.path, "name": route.name}
-                    for route in getattr(self.app, 'routes', [])]
+        url_list = [
+            {"path": route.path, "name": route.name}
+            for route in getattr(self.app, "routes", [])
+        ]
         return url_list
 
 
@@ -108,19 +115,16 @@ class InferenceServer(BaseServer):  # pylint: disable=too-many-arguments
     """
 
     def __init__(
-            self,
-            servername,
-            host: str,
-            http_port: int = 5000,
-            max_buffer_size: int = 104857600,
-            workers: int = 1):
-        super(
-            InferenceServer,
-            self).__init__(
-            servername=servername,
-            host=host,
-            http_port=http_port,
-            workers=workers)
+        self,
+        servername,
+        host: str,
+        http_port: int = 5000,
+        max_buffer_size: int = 104857600,
+        workers: int = 1,
+    ):
+        super(InferenceServer, self).__init__(
+            servername=servername, host=host, http_port=http_port, workers=workers
+        )
 
         self.job, self.detection_validator = sedna_predict.init_ll_job()
 
@@ -136,7 +140,7 @@ class InferenceServer(BaseServer):  # pylint: disable=too-many-arguments
                     f"/{servername}/predict",
                     self.predict,
                     methods=["POST"],
-                    response_model=ResultResponse
+                    response_model=ResultResponse,
                 ),
             ],
             log_level="trace",
@@ -152,31 +156,40 @@ class InferenceServer(BaseServer):  # pylint: disable=too-many-arguments
         return HTMLResponse(
             """<h1>Welcome to the RestNet API!</h1>
             <p>To use this service, send a POST HTTP request to {this-url}/predict</p>
-            <p>The JSON payload has the following format: {"image": "BASE64_STRING_OF_IMAGE", 
+            <p>The JSON payload has the following format: {"image": "BASE64_STRING_OF_IMAGE",
             "depth": "BASE64_STRING_OF_DEPTH"}</p>
-            """)
+            """
+        )
 
-    async def predict(self, image: UploadFile = File(...), depth: Optional[UploadFile] = None) -> ResultResponse:
+    async def predict(
+        self, image: UploadFile = File(...), depth: Optional[UploadFile] = None
+    ) -> ResultResponse:
         contents = await image.read()
         recieve_img_time = time.time()
         print("Recieve image from the robo:", recieve_img_time)
 
-        image = Image.open(BytesIO(contents)).convert('RGB')
+        image = Image.open(BytesIO(contents)).convert("RGB")
 
         img_dep = None
         self.index_frame = self.index_frame + 1
 
         if depth:
             depth_contents = await depth.read()
-            depth = Image.open(BytesIO(depth_contents)).convert('RGB')
-            img_dep = cv2.resize(np.array(depth), (2048, 1024), interpolation=cv2.INTER_CUBIC)
+            depth = Image.open(BytesIO(depth_contents)).convert("RGB")
+            img_dep = cv2.resize(
+                np.array(depth), (2048, 1024), interpolation=cv2.INTER_CUBIC
+            )
             img_dep = Image.fromarray(img_dep)
 
-        img_rgb = cv2.resize(np.array(image), (2048, 1024), interpolation=cv2.INTER_CUBIC)
+        img_rgb = cv2.resize(
+            np.array(image), (2048, 1024), interpolation=cv2.INTER_CUBIC
+        )
         img_rgb = Image.fromarray(img_rgb)
 
-        sample = {'image': img_rgb, "depth": img_dep, "label": img_rgb}
-        results = sedna_predict.predict(self.job, data=sample, validator=self.detection_validator)
+        sample = {"image": img_rgb, "depth": img_dep, "label": img_rgb}
+        results = sedna_predict.predict(
+            self.job, data=sample, validator=self.detection_validator
+        )
 
         predict_finish_time = time.time()
         print(f"Prediction costs {predict_finish_time - recieve_img_time} seconds")
@@ -190,7 +203,7 @@ class InferenceServer(BaseServer):  # pylint: disable=too-many-arguments
             results["result"]["curr"] = curr
             results["result"]["future"] = future
             results["result"]["box"] = None
-            print("Post process cost at worker:", (time.time()-predict_finish_time))
+            print("Post process cost at worker:", (time.time() - predict_finish_time))
         else:
             results["result"]["curr"] = None
             results["result"]["future"] = None
@@ -198,8 +211,12 @@ class InferenceServer(BaseServer):  # pylint: disable=too-many-arguments
         print("Result transmit to robo time:", time.time())
         return results
 
+
 def parse_result(label, count):
-    label_map = ['road', 'sidewalk', ]
+    label_map = [
+        "road",
+        "sidewalk",
+    ]
     count_d = dict(zip(label, count))
     curb_count = count_d.get(19, 0)
     if curb_count / np.sum(count) > 0.3:
@@ -212,31 +229,29 @@ def parse_result(label, count):
 
     return c
 
+
 def get_curb(results):
     results = np.array(results[0])
     input_height, input_width = results.shape
-    
-    closest = np.array([
-        [0, int(input_height)],
-        [int(input_width),
-         int(input_height)],
-        [int(0.118 * input_width + .5),
-         int(.8 * input_height + .5)],
-        [int(0.882 * input_width + .5),
-         int(.8 * input_height + .5)],
-    ])
-    
-    future = np.array([
-        [int(0.118 * input_width + .5),
-         int(.8 * input_height + .5)],
-        [int(0.882 * input_width + .5),
-         int(.8 * input_height + .5)],
-        [int(.765 * input_width + .5),
-         int(.66 * input_height + .5)],
-        [int(.235 * input_width + .5),
-         int(.66 * input_height + .5)]
-    ])
-    
+
+    closest = np.array(
+        [
+            [0, int(input_height)],
+            [int(input_width), int(input_height)],
+            [int(0.118 * input_width + 0.5), int(0.8 * input_height + 0.5)],
+            [int(0.882 * input_width + 0.5), int(0.8 * input_height + 0.5)],
+        ]
+    )
+
+    future = np.array(
+        [
+            [int(0.118 * input_width + 0.5), int(0.8 * input_height + 0.5)],
+            [int(0.882 * input_width + 0.5), int(0.8 * input_height + 0.5)],
+            [int(0.765 * input_width + 0.5), int(0.66 * input_height + 0.5)],
+            [int(0.235 * input_width + 0.5), int(0.66 * input_height + 0.5)],
+        ]
+    )
+
     mask = np.zeros((input_height, input_width), dtype=np.uint8)
     mask = cv2.fillPoly(mask, [closest], 1)
     mask = cv2.fillPoly(mask, [future], 2)
@@ -244,9 +259,10 @@ def get_curb(results):
     d2, c2 = np.unique(results[mask == 2], return_counts=True)
     c = parse_result(d1, c1)
     f = parse_result(d2, c2)
-    
+
     return c, f
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     web_app = InferenceServer("lifelong-learning-robo", host=get_host_ip())
     web_app.start()

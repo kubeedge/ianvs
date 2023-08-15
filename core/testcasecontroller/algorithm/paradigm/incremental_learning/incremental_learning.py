@@ -21,9 +21,9 @@ import tempfile
 import numpy as np
 
 from core.common.constant import ParadigmType, SystemMetricType
+from core.common.utils import get_file_format, is_local_dir
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 from core.testcasecontroller.metrics import get_metric_func
-from core.common.utils import get_file_format, is_local_dir
 
 
 class IncrementalLearning(ParadigmBase):
@@ -56,7 +56,9 @@ class IncrementalLearning(ParadigmBase):
     def __init__(self, workspace, **kwargs):
         ParadigmBase.__init__(self, workspace, **kwargs)
 
-        self.incremental_learning_data_setting = kwargs.get("incremental_learning_data_setting")
+        self.incremental_learning_data_setting = kwargs.get(
+            "incremental_learning_data_setting"
+        )
         self.initial_model = kwargs.get("initial_model_url")
 
         self.incremental_rounds = kwargs.get("incremental_rounds", 2)
@@ -97,7 +99,9 @@ class IncrementalLearning(ParadigmBase):
             if len(hard_examples) <= 0:
                 continue
 
-            train_dataset_file = self._get_train_dataset(hard_examples, inference_dataset_file)
+            train_dataset_file = self._get_train_dataset(
+                hard_examples, inference_dataset_file
+            )
 
             new_model = self._train(current_model, train_dataset_file, r)
 
@@ -106,13 +110,17 @@ class IncrementalLearning(ParadigmBase):
             if self._trigger_model_update(eval_results):
                 current_model = new_model
 
-        test_res, hard_examples = self._inference(current_model, self.dataset.test_url, "test")
+        test_res, hard_examples = self._inference(
+            current_model, self.dataset.test_url, "test"
+        )
         samples_transfer_ratio_info.append((test_res, hard_examples))
 
         return test_res, self.system_metric_info
 
     def _prepare_inference(self, model, rounds):
-        inference_output_dir = os.path.join(self.workspace, f"output/inference/results/{rounds}")
+        inference_output_dir = os.path.join(
+            self.workspace, f"output/inference/results/{rounds}"
+        )
         if not is_local_dir(inference_output_dir):
             os.makedirs(inference_output_dir)
 
@@ -141,7 +149,9 @@ class IncrementalLearning(ParadigmBase):
             inference_results.update(res)
             if is_hard_example:
                 shutil.copy(data, hard_example_saved_dir)
-                new_hard_example = os.path.join(hard_example_saved_dir, os.path.basename(data))
+                new_hard_example = os.path.join(
+                    hard_example_saved_dir, os.path.basename(data)
+                )
                 hard_examples.append((data, new_hard_example))
         del job
 
@@ -203,7 +213,9 @@ class IncrementalLearning(ParadigmBase):
         }
 
         if operator not in operator_map:
-            raise ValueError(f"operator {operator} use to compare is not allow, set to <")
+            raise ValueError(
+                f"operator {operator} use to compare is not allow, set to <"
+            )
 
         operator_func = operator_map[operator]
 
@@ -223,7 +235,9 @@ class IncrementalLearning(ParadigmBase):
 
     def _preprocess_dataset(self, splitting_dataset_times=1):
         train_dataset_ratio = self.incremental_learning_data_setting.get("train_ratio")
-        splitting_dataset_method = self.incremental_learning_data_setting.get("splitting_method")
+        splitting_dataset_method = self.incremental_learning_data_setting.get(
+            "splitting_method"
+        )
 
         return self.dataset.split_dataset(
             self.dataset.train_url,

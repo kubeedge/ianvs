@@ -15,8 +15,9 @@
 from __future__ import absolute_import
 
 import os.path as osp
-from torch.utils.data import Dataset
+
 from PIL import Image
+from torch.utils.data import Dataset
 
 
 class Preprocessor(Dataset):

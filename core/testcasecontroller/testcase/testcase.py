@@ -69,7 +69,9 @@ class TestCase:
                 test_env_config[k] = v
 
             self.output_dir = self._get_output_dir(workspace)
-            paradigm = self.algorithm.paradigm(workspace=self.output_dir, **test_env_config)
+            paradigm = self.algorithm.paradigm(
+                workspace=self.output_dir, **test_env_config
+            )
             res, system_metric_info = paradigm.run()
             test_result = self.compute_metrics(res, dataset, **system_metric_info)
 
@@ -111,7 +113,7 @@ class TestCase:
         metric_res = {}
         system_metric_types = [e.value for e in SystemMetricType.__members__.values()]
         for metric_name, metric_func in metric_funcs.items():
-            #print(metric_name)
+            # print(metric_name)
             if metric_name in system_metric_types:
                 metric_res[metric_name] = metric_func(kwargs)
             else:

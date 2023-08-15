@@ -129,7 +129,9 @@ def ultimateReplace(app, docname, source):
 
         docs_url = os.path.join(_base_path, "docs")
         for line in source[0].split("\n"):
-            line = re.sub("\[`([^\]]+)`\]\[", "[\g<1>][", line)  # fix html render error: [`title`]
+            line = re.sub(
+                "\[`([^\]]+)`\]\[", "[\g<1>][", line
+            )  # fix html render error: [`title`]
             replace_line = []
             prev_start = 0
             href_list = list(INLINE_LINK_RE.finditer(line)) + list(
@@ -156,7 +158,9 @@ def ultimateReplace(app, docname, source):
                         continue
                     if os.path.isdir(sp):
                         sp += "/"
-                    _relpath = os.path.join(docs_url, _relpath[len(_base_path) :].lstrip("/"))
+                    _relpath = os.path.join(
+                        docs_url, _relpath[len(_base_path) :].lstrip("/")
+                    )
                     break
 
                 # If relative path looks like:
@@ -170,12 +174,24 @@ def ultimateReplace(app, docname, source):
                     or os.path.splitext(_relpath)[-1]
                     .lower()
                     .startswith(
-                        (".md", ".rst", ".txt", "html", ".png", ".jpg", ".jpeg", ".svg", ".gif")
+                        (
+                            ".md",
+                            ".rst",
+                            ".txt",
+                            "html",
+                            ".png",
+                            ".jpg",
+                            ".jpeg",
+                            ".svg",
+                            ".gif",
+                        )
                     )
                 ):
                     link = os.path.relpath(_relpath, os.path.dirname(path))
                     if not os.path.isdir(_relpath):  # suffix edit
-                        link = re.sub("(?:\.md|\.rst|\.txt)(\W+\w+)?$", ".html\g<1>", link)
+                        link = re.sub(
+                            "(?:\.md|\.rst|\.txt)(\W+\w+)?$", ".html\g<1>", link
+                        )
                 else:  # redirect to `github`
                     _relpath = os.path.abspath(os.path.join(tmp, link.lstrip("/")))
                     _rel_root = os.path.relpath(_relpath, _base_path)

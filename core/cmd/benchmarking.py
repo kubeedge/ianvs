@@ -14,13 +14,13 @@
 
 """main"""
 
-import sys
 import argparse
+import sys
 
-from core.common.log import LOGGER
-from core.common import utils
-from core.cmd.obj import BenchmarkingJob
 from core.__version__ import __version__
+from core.cmd.obj import BenchmarkingJob
+from core.common import utils
+from core.common.log import LOGGER
 
 
 def main():
@@ -30,7 +30,9 @@ def main():
         args = parser.parse_args()
         config_file = args.benchmarking_config_file
         if not utils.is_local_file(config_file):
-            raise SystemExit(f"not found benchmarking config({config_file}) file in local")
+            raise SystemExit(
+                f"not found benchmarking config({config_file}) file in local"
+            )
 
         config = utils.yaml2dict(args.benchmarking_config_file)
         job = BenchmarkingJob(config[str.lower(BenchmarkingJob.__name__)])
@@ -50,7 +52,8 @@ def _generate_parser():
         "--benchmarking_config_file",
         nargs="?",
         type=str,
-        help="run a benchmarking job, " "and the benchmarking config file must be yaml/yml file.",
+        help="run a benchmarking job, "
+        "and the benchmarking config file must be yaml/yml file.",
     )
 
     parser.add_argument(

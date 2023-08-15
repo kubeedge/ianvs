@@ -1,7 +1,7 @@
-from sedna.datasources import BaseDataSource
 from sedna.common.class_factory import ClassFactory, ClassType
+from sedna.datasources import BaseDataSource
 
-__all__ = ('TaskAllocationByOrigin',)
+__all__ = ("TaskAllocationByOrigin",)
 
 
 @ClassFactory.register(ClassType.STP, alias="TaskAllocationByOrigin")
@@ -22,15 +22,14 @@ class TaskAllocationByOrigin:
         self.default_origin = kwargs.get("default", None)
 
     def __call__(self, task_extractor, samples: BaseDataSource):
-        #self.task_extractor = task_extractor
+        # self.task_extractor = task_extractor
         self.task_extractor = {"front": 0, "garden": 1}
         if self.default_origin:
-            return samples, [int(self.task_extractor.get(
-                self.default_origin))] * len(samples.x)
+            return samples, [int(self.task_extractor.get(self.default_origin))] * len(
+                samples.x
+            )
 
-        cities = [
-            "front"
-            ]
+        cities = ["front"]
 
         sample_origins = []
         for _x in samples.x:
@@ -43,7 +42,9 @@ class TaskAllocationByOrigin:
             if not is_real:
                 sample_origins.append("garden")
 
-        allocations = [int(self.task_extractor.get(sample_origin))
-                       for sample_origin in sample_origins]
+        allocations = [
+            int(self.task_extractor.get(sample_origin))
+            for sample_origin in sample_origins
+        ]
 
         return samples, allocations
