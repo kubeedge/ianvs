@@ -120,7 +120,7 @@ class BaseModel:
                                                 pin_memory=True)
         
         #print("predict starting 75")
-        predictions, scores = self.validator.validate()
+        predictions = self.validator.validate_cloud()
         return predictions
     
     def predict_score(self, data, **kwargs):

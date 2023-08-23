@@ -21,7 +21,7 @@ class TrainArgs:
         self.gpu_ids = 0
 
         self.seed = 1
-        self.resume = None
+        self.resume = '/home/hsj/ianvs/project/pretrain/pretrain_model.pth'
         self.checkname = 'RFNet'
         self.ft = True
         self.eval_interval = kwargs.get("eval_interval", 50)
