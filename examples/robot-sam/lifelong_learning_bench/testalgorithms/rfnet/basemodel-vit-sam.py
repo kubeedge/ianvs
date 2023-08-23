@@ -99,7 +99,7 @@ class BaseModel:
                                                 pin_memory=True)
         
         #print("predict starting 75")
-        predictions, scores = self.validator.validate()
+        predictions = self.validator.vit_validate()
         return predictions
     
     def predict_cloud(self, data, **kwargs):
@@ -120,7 +120,7 @@ class BaseModel:
                                                 pin_memory=True)
         
         #print("predict starting 75")
-        predictions, scores = self.validator.validate()
+        predictions = self.validator.vit_validate_cloud()
         return predictions
     
     def predict_score(self, data, **kwargs):

@@ -2,11 +2,13 @@ benchmarkingjob:
   # job name of bechmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  workspace: "/home/vipuser/ianvs/lifelong_learning_bench/robot-workspace-test"
+  workspace: "/ianvs/sam_bench/robot-workspace"
+  #workspace: "/home/hsj/ianvs/sam_bench/cloud-robot-workspace"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/robot/lifelong_learning_bench/testenv/testenv-robot.yaml"
+  testenv: "./examples/robot-sam/lifelong_learning_bench/testenv/testenv-robot-small.yaml"
+  #testenv: "./examples/robot-sam/lifelong_learning_bench/testenv/testenv-robot.yaml"
 
   # the configuration of test object
   test_object:
@@ -16,16 +18,24 @@ benchmarkingjob:
     # test algorithm configuration files; list type;
     algorithms:
       # algorithm name; string type;
-      - name: "rfnet_lifelong_learning"
+      #- name: "rfnet_lifelong_learning"
+      - name: "sam_rfnet_lifelong_learning"
+      #- name: "vit_lifelong_learning"
+      #- name: "sam_vit_lifelong_learning"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
-        url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm-simple.yaml"
+        #url: "./examples/robot-sam/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml"
+        url: "./examples/robot-sam/lifelong_learning_bench/testalgorithms/rfnet/sam_algorithm.yaml"
+        #url: "./examples/robot-sam/lifelong_learning_bench/testalgorithms/rfnet/vit_algorithm.yaml"
+        #url: "./examples/robot-sam/lifelong_learning_bench/testalgorithms/rfnet/sam_vit_algorithm.yaml"
+        # the url address of test algorithm configuration file; string type;
+        # the file format supports yaml/yml
 
   # the configuration of ranking leaderboard
   rank:
     # rank leaderboard with metric of test case's evaluation and order ; list type;
     # the sorting priority is based on the sequence of metrics in the list from front to back;
-    sort_by: [ { "accuracy": "descend" }, { "BWT": "descend" } ]
+    sort_by: [ { "accuracy": "descend" } ]
 
     # visualization configuration
     visualization:
@@ -57,7 +67,7 @@ benchmarkingjob:
       # currently the options of value are as follows:
       #   1> "all": select all metrics in the leaderboard;
       #   2> metrics in the leaderboard, e.g., "F1_SCORE"
-      metrics: [ "accuracy", "Task_Avg_Acc", "BWT", "FWT"]
+      metrics: [ "accuracy", "Task_Avg_Acc"]
 
     # model of save selected and all dataitems in workspace `./rank` ; string type;
     # currently the options of value are as follows:
