@@ -63,7 +63,7 @@ The overall workflow of the system is as follows:
 
 ![plugin-workflow](images/plugin-workflow.jpg)
 
-The Hard Example Mining Module will be implemented in the unknown sample recognition module of Ianvs. The Edge Inference Module will be implemented in the known sample inference module of Ianvs' edge-side knowledge management. The Cloud Inference Module will be implemented in the unknown task processing module of Ianvs' cloud-side knowledge management.
+The Hard Example Mining Module will be implemented in the unknown sample recognition module of Ianvs. The Edge Inference Module will be implemented in the known sample inference module of Ianvs' edge-side knowledge management. The Cloud Inference Module will be implemented in the unknown sample inference module. The Liflelong Training module will be implemented in the unknown task processing module of Ianvs' cloud-side knowledge management.
 
 ### 3.2 Implementation of SAM-based Semantic Segmentation
 
