@@ -37,7 +37,7 @@ In this context, it is necessary to develop an algorithm evaluation system that 
 
 ### 1.2 Goals
 
-This project aims to build a benchmarking for class-incremental learning in domain shift scenario on KubeEdge-Ianvs, it includes:
+This project aims to build a benchmarking for class-incremental learning in domain shift scenario on KubeEdge-Ianvs, which includes:
  - Reproduce the Multi-Domain Incremental Learning for Semantic Segmentation (MDIL-SS) algorithm proposed in the [WACV2022 paper](https://github.com/prachigarg23/MDIL-SS).
  - Use three datasets (including Cityscapes, SYNTHIA, and the Cloud-Robotic dataset provided by KubeEdge SIG AI) to conduct benchmarking tests and generate a comprehensive test report (including rankings, time, algorithm name, dataset,  and test metrics, among other details).
 
@@ -60,15 +60,15 @@ Targeting users include
 
 ### 3.1 Overall Design
 
-The following is the [architecture diagram](https://github.com/kubeedge/sedna/blob/main/docs/proposals/lifelong-learning/unstructured-lifelong-learning.md) of this project system, and this project focuses on the `unseen task processing` module.
+As shown in the [diagram](https://github.com/kubeedge/sedna/blob/main/docs/proposals/lifelong-learning/unstructured-lifelong-learning.md) below, the training process of lifelong learning consists of three parts: `Unseen Task Detection`, `Labelling`, and `Unseen Task Processing`. Firstly, samples are recognized through Unseen Sample Recognition module. Then, the unseen samples will be transferred to the cloud for labelling (through manual labelling or assisted labelling algorithms). Finally, the labelled unseen samples will be used for model training. 
 
-Before entering this module, unknown tasks have been [detected](https://github.com/kubeedge/ianvs/tree/4ae10f0e5e1ab958e143b04fade4acc448009857/examples/scene-based-unknown-task-recognition/lifelong_learning_bench) and samples have been labeled by some means such as manual labeling. The core concern of this module is how to use unknown task samples (i.e., incremental class samples) to update the model.
+![MDIL-SS](images/OSPP_MDIL-SS_9.png )  
 
-![MDIL-SS](images/OSPP_MDIL-SS_9.png) 
+In this project, the testing of the upper lifelong learning process will be executed, as shown in the diagram below. 
 
-The following diagram shows how the algorithm works in Ianvs.
+In the development of the project, we will simplify `Unseen Task Detection` and `Labelling` and focus on algorithm development, that is `Unseen Task Processing` (red box in the upper diagram). More specifically, we assume unknown tasks have been detected and samples have been labelled, and use three well-processed datasets mentioned in `3.2` to conduct training and testing. The core concern is to test the ability of the algorithm to update the model based on the labeled unknown samples (i.e., incremental class samples).
 
-![MDIL-SS](images/OSPP_MDIL-SS_8.png) 
+![MDIL-SS](images/OSPP_MDIL-SS_8.png)
 
 ### 3.2 Dataset
 
