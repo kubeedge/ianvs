@@ -60,13 +60,21 @@ Targeting users include
 
 ### 3.1 Overall Design
 
-As shown in the [diagram](https://github.com/kubeedge/sedna/blob/main/docs/proposals/lifelong-learning/unstructured-lifelong-learning.md) below, the training process of lifelong learning consists of three parts: `Unseen Task Detection`, `Labelling`, and `Unseen Task Processing`. Firstly, samples are recognized through Unseen Sample Recognition module. Then, the unseen samples will be transferred to the cloud for labelling (through manual labelling or assisted labelling algorithms). Finally, the labelled unseen samples will be used for model training. 
+The [diagram](https://github.com/kubeedge/sedna/blob/main/docs/proposals/lifelong-learning/unstructured-lifelong-learning.md) below shows the workflow of lifelong learning.
+
+ `Training` phase consists of three parts: `Unseen Task Detection`, `Labelling`, and `Unseen Task Processing`. Firstly, samples are recognized through Unseen Sample Recognition module. Then, the unseen samples will be transferred to the cloud for labelling (through manual labelling or assisted labelling algorithms). Finally, the labelled unseen samples will be used for model training. 
 
 ![MDIL-SS](images/OSPP_MDIL-SS_9.png )  
 
-In this project, the testing of the upper lifelong learning process will be executed, as shown in the diagram below. 
+In this project, our lifelong learning model will successively train on three domains (Cityscapes, SYNTHIA and Cloud-Robotics, which will be introduced in `3.2`). The figure below shows the specific classes in each domain.
 
-In the development of the project, we will simplify `Unseen Task Detection` and `Labelling` and focus on algorithm development, that is `Unseen Task Processing` (red box in the upper diagram). More specifically, we assume unknown tasks have been detected and samples have been labelled, and use three well-processed datasets mentioned in `3.2` to conduct training and testing. The core concern is to test the ability of the algorithm to update the model based on the labeled unknown samples (i.e., incremental class samples).
+<div align = center>
+<img src="images/OSPP_MDIL-SS_10.png" width = "220" height = "400" alt="MDIL-SS"  />
+</div>
+
+When our model comes to a new domain (domain shift happens), for using new-domain-samples to update our model, unseen tasks need to be detected and labelling is also required. For accurately dectecting and labelling unseen task samples, we conduct `Unseen Task Detection` and `Labelling` in a manual way, and these three datasets are the result of our manual labor.
+
+To summarize, we use three datasets to conduct training and testing, and the core concern is to test the ability of the algorithm to update the model based on the labeled unseen task samples (i.e., `Unseen Task Processing`).
 
 ![MDIL-SS](images/OSPP_MDIL-SS_8.png)
 
@@ -216,9 +224,9 @@ Second, **hyperparameters** setting for the model is also defined in this yaml f
 
 The test report is designed as follows, which contains the ranking, algorithm name, three metrics, dataset name, base model, three hyperparameters, and time.
 
-| Rank | Algorithm | mIoU   | BWT   | FWT   | Paradigm         | Round | Dataset   | Basemodel | Learning_rate | Epoch | Batch_size | Time                |
-| ---- | :-------: | ------ | ----- | ----- | ---------------- | ----- | --------- | --------- | ------------- | ----- | ---------- | ------------------- |
-| 1    |  MDIL-SS  | 0.6521 | 0.075 | 0.021 | Lifelonglearning | 3     | CS SYN CR | ERFNet    | 0.0001        | 1     | 10         | 2023-05-28 17:05:15 |
+| Rank | Algorithm | mIoU_Overall |mIoU_Seen_Tasks |mIoU_Unseen_Tasks   | BWT   | FWT   | Paradigm         | Round | Dataset   | Basemodel | Learning_rate | Epoch | Batch_size | Time                |
+| :-------: | :-------: | :------:| :-------: | :------:  | :-----: | :-----: | :----------------: | :-----: | :--------------: | :---------: | :-------------: | :-----: | :----------: | :-------------------: |
+| 1    |  MDIL-SS  | 0.6521| 0.3764| 0.8734 | 0.075 | 0.021 | Lifelonglearning | 3     | CS SYN CR | ERFNet    | 0.0001        | 1     | 10         | 2023-05-28 17:05:15 |
 
 ## 4 Roadmap
 
