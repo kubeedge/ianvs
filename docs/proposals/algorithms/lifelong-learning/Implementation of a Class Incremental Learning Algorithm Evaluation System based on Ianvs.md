@@ -70,7 +70,7 @@ The scenario of this project is set as follows:
 Lifelong learning model will be trained and tested on 3 data domains successively (namely Cityscapes, SYNTHIA, and Cloud-Robotics, overall 3 rounds of training-testing ). And when domain shifts, classes also changes. The figure below shows the specific classes in each domain.
 
 <div align = center>
-<img src="images/OSPP_MDIL-SS_10.png" width = "220" height = "400" alt="MDIL-SS"  />
+<img src="images/OSPP_MDIL-SS_10.png" width = "280" height = "500" alt="MDIL-SS"  />
 </div>
 
 When our model comes to a new domain, for using new-domain-samples to update our model, we need to carry out the flow of `Unseen Task Detection -> Labelling -> Unseen Task Processing`. More specifically, samples are first recognized through Unseen Task Detection module. Then, the unseen samples will be transferred to the cloud for labelling (through manual labelling or assisted labelling algorithms). Finally, labelled unseen samples will be used for model training. 
