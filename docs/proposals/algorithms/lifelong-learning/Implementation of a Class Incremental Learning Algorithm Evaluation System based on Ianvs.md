@@ -81,7 +81,7 @@ All in all, we use the three class-different datasets to conduct training (i.e.,
 
 ![MDIL-SS](images/OSPP_MDIL-SS_8.png)
 
-### 3.2 Dataset
+### 3.2 Datasets
 
 This project will use three datasets, namely **Cityscapes**, **SYNTHIA**, and KubeEdge SIG AI's **Cloud-Robotics** dataset (**CS**, **SYN**, **CR**).
 
