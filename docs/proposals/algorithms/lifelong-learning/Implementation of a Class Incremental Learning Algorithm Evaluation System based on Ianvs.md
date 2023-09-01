@@ -37,7 +37,7 @@ In this context, it is necessary to develop an algorithm evaluation system that 
 
 ### 1.2 Goals
 
-This project aims to build a benchmarking for class-incremental learning in domain shift scenario on KubeEdge-Ianvs, it includes:
+This project aims to build a benchmarking for class-incremental learning in domain shift scenario on KubeEdge-Ianvs, which includes:
  - Reproduce the Multi-Domain Incremental Learning for Semantic Segmentation (MDIL-SS) algorithm proposed in the [WACV2022 paper](https://github.com/prachigarg23/MDIL-SS).
  - Use three datasets (including Cityscapes, SYNTHIA, and the Cloud-Robotic dataset provided by KubeEdge SIG AI) to conduct benchmarking tests and generate a comprehensive test report (including rankings, time, algorithm name, dataset,  and test metrics, among other details).
 
@@ -60,15 +60,26 @@ Targeting users include
 
 ### 3.1 Overall Design
 
-The following is the [architecture diagram](https://github.com/kubeedge/sedna/blob/main/docs/proposals/lifelong-learning/unstructured-lifelong-learning.md) of this project system, and this project focuses on the `unseen task processing` module.
+The [diagram](https://github.com/kubeedge/sedna/blob/main/docs/proposals/lifelong-learning/unstructured-lifelong-learning.md) below shows the workflow of lifelong learning. The evaluation system developed in this project mainly aims at testing the ability of the model to process unknown tasks, namely the red box part.
 
-Before entering this module, unknown tasks have been [detected](https://github.com/kubeedge/ianvs/tree/4ae10f0e5e1ab958e143b04fade4acc448009857/examples/scene-based-unknown-task-recognition/lifelong_learning_bench) and samples have been labeled by some means such as manual labeling. The core concern of this module is how to use unknown task samples (i.e., incremental class samples) to update the model.
 
-![MDIL-SS](images/OSPP_MDIL-SS_9.png) 
+![MDIL-SS](images/OSPP_MDIL-SS_9.png )  
 
-The following diagram shows how the algorithm works in Ianvs.
 
-![MDIL-SS](images/OSPP_MDIL-SS_8.png) 
+The scenario of this project is set as follows: 
+Lifelong learning model will be trained and tested on 3 data domains successively (namely Cityscapes, SYNTHIA, and Cloud-Robotics, overall 3 rounds of training-testing ). And when domain shifts, classes also changes. The figure below shows the specific classes in each domain.
+
+<div align = center>
+<img src="images/OSPP_MDIL-SS_10.png" width = "220" height = "400" alt="MDIL-SS"  />
+</div>
+
+When our model comes to a new domain, for using new-domain-samples to update our model, we need to carry out the flow of `Unseen Task Detection -> Labelling -> Unseen Task Processing`. More specifically, samples are first recognized through Unseen Task Detection module. Then, the unseen samples will be transferred to the cloud for labelling (through manual labelling or assisted labelling algorithms). Finally, labelled unseen samples will be used for model training. 
+
+To provide precise labelled unseen samples to `Unseen Task Processing` module, we manually conduct `Unseen Task Detection` and `Labelling` in this project, and three datasets in `3.2` are the result of manual labor.
+
+All in all, we use the three class-different datasets to conduct training (i.e., Unseen Task Processing) and testing, and the core concern is to test the ability of the algorithm to update the model using labelled unseen samples (i.e., evaluating `Unseen Task Processing` ability).
+
+![MDIL-SS](images/OSPP_MDIL-SS_8.png)
 
 ### 3.2 Dataset
 
@@ -216,9 +227,9 @@ Second, **hyperparameters** setting for the model is also defined in this yaml f
 
 The test report is designed as follows, which contains the ranking, algorithm name, three metrics, dataset name, base model, three hyperparameters, and time.
 
-| Rank | Algorithm | mIoU   | BWT   | FWT   | Paradigm         | Round | Dataset   | Basemodel | Learning_rate | Epoch | Batch_size | Time                |
-| ---- | :-------: | ------ | ----- | ----- | ---------------- | ----- | --------- | --------- | ------------- | ----- | ---------- | ------------------- |
-| 1    |  MDIL-SS  | 0.6521 | 0.075 | 0.021 | Lifelonglearning | 3     | CS SYN CR | ERFNet    | 0.0001        | 1     | 10         | 2023-05-28 17:05:15 |
+| Rank | Algorithm | mIoU_Overall |mIoU_Seen_Tasks |mIoU_Unseen_Tasks   | BWT   | FWT   | Paradigm         | Round | Dataset   | Basemodel | Learning_rate | Epoch | Batch_size | Time                |
+| :-------: | :-------: | :------:| :-------: | :------:  | :-----: | :-----: | :----------------: | :-----: | :--------------: | :---------: | :-------------: | :-----: | :----------: | :-------------------: |
+| 1    |  MDIL-SS  | 0.6521| 0.3764| 0.8734 | 0.075 | 0.021 | Lifelonglearning | 3     | CS SYN CR | ERFNet    | 0.0001        | 1     | 10         | 2023-05-28 17:05:15 |
 
 ## 4 Roadmap
 
