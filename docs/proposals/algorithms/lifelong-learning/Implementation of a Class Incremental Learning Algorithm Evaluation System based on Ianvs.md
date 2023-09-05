@@ -7,7 +7,7 @@
     - [Proposal](#proposal)
     - [Design Details](#design-details)
         - [Overall Design](#overall-design)
-        - [Dataset](#dataset)
+        - [Datasets](#datasets)
         - [File-level Design](#file-level-design)
             - [Test Environment](#test-environment)
             - [Test Algorithm](#test-algorithm)
@@ -73,13 +73,16 @@ Lifelong learning model will be trained and tested on 3 data domains successivel
 <img src="images/OSPP_MDIL-SS_10.png" width = "280" height = "500" alt="MDIL-SS"  />
 </div>
 
-When our model comes to a new domain, for using new-domain-samples to update our model, we need to carry out the flow of `Unseen Task Detection -> Labelling -> Unseen Task Processing`. More specifically, samples are first recognized through Unseen Task Detection module. Then, the unseen samples will be transferred to the cloud for labelling (through manual labelling or assisted labelling algorithms). Finally, labelled unseen samples will be used for model training. 
+When our model comes to a new domain, for using new-domain-samples to update our model, we need to carry out the workflow of `Unseen Task Detection -> Labelling -> Unseen Task Processing`. More specifically, samples are first recognized through Unseen Task Detection module. Then, the unseen samples will be transferred to the cloud for labelling (through manual labelling or assisted labelling algorithms). Finally, labelled unseen samples will be used for model training. 
+
+![MDIL-SS](images/OSPP_MDIL-SS_8.png)
 
 To provide precise labelled unseen samples to `Unseen Task Processing` module, we manually conduct `Unseen Task Detection` and `Labelling` in this project, and three datasets in `3.2` are the result of manual labor.
 
 All in all, we use the three class-different datasets to conduct training (i.e., Unseen Task Processing) and testing, and the core concern is to test the ability of the algorithm to update the model using labelled unseen samples (i.e., evaluating `Unseen Task Processing` ability).
 
-![MDIL-SS](images/OSPP_MDIL-SS_8.png)
+
+![MDIL-SS](images/OSPP_MDIL-SS_11.png)
 
 ### 3.2 Datasets
 
