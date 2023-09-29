@@ -60,29 +60,38 @@ Targeting users include
 
 ### 3.1 Overall Design
 
-The [diagram](https://github.com/kubeedge/sedna/blob/main/docs/proposals/lifelong-learning/unstructured-lifelong-learning.md) below shows the workflow of lifelong learning. The evaluation system developed in this project mainly aims at testing the ability of the model to process unknown tasks, namely the red box part.
 
+First, let's introduce the training process for lifelong learning: 
+- When the model enters a data domain (e.g., the Cloud-Robotic dataset) for training, the first step is `Unseen Task Detection`. This is done to assess the value of the domain data for updating the model. We consider that samples of unknown tasks have learning value, while samples from known tasks are not worth annotating and using for model training, meaning they provide no value for model updating. 
+- Once samples from unknown tasks are detected, in order to utilize these samples for model updating, we need to label them (through manual labelling or assisted labelling algorithms).
+- Finally, we utilize samples with `Unseen Task Processing`, which means updating the model using labelled samples from unseen tasks.
+- In summary, the workflow is `Unseen Task Detection -> Labeling -> Unseen Task Processing`.
 
-![MDIL-SS](images/OSPP_MDIL-SS_9.png )  
+Next, let's outline the class-incremental learning algorithm evaluating process for this project, as shown in the figure below:
 
-
-The scenario of this project is set as follows: 
-Lifelong learning model will be trained and tested on 3 data domains successively (namely Cityscapes, SYNTHIA, and Cloud-Robotics, overall 3 rounds of training-testing ). And when domain shifts, classes also changes. The figure below shows the specific classes in each domain.
+![MDIL-SS](images/OSPP_MDIL-SS_11.png)
+- In the first round, an ERFNet model initially enters the Synthia data domain for learning. As this is the model's first encounter with this data domain, all samples are considered as unseen task samples. We manually label all of these samples and utilize them for the model's first update, meaning that the model is trained using the Synthia dataset.
+- During the testing phase of the first round, we evaluate the model using samples from three data domains. One of the three domains is seen by the model, which is Synthia, while the other two domains are unseen to the model, namely Cityscapes and Cloud-Robotic.
+- Before the start of the second round of training, we manually detect and label all Cityscapes samples. Since unseen task detection and labeling are crucial for training effectiveness, we employ the most reliable method, which is manual way.
+- In the second round, the model is updated using the already labeled Cityscapes samples, meaning it is trained with the Cityscapes dataset.
+- Similarly, before commencing the final round of training, we manually detect and label all Cloud-Robotic samples. These samples are then used to update the model in the third round, where the model is trained on the Cloud-Robotic dataset.
+- In each round, we conduct testing using the same three datasets, and the final test report will demonstrate the model's lifelong learning capabilities.
+- Please note that the lifelong learning model will undergo training and testing across three successive data domains, namely Cityscapes, SYNTHIA, and Cloud-Robotics, comprising a total of three rounds of training and testing. As the model shifts among data domains, class also changes, signifying class increments. The following diagram illustrates the differences of classes among these three data domains.
 
 <div align = center>
 <img src="images/OSPP_MDIL-SS_10.png" width = "280" height = "500" alt="MDIL-SS"  />
 </div>
 
-When our model comes to a new domain, for using new-domain-samples to update our model, we need to carry out the workflow of `Unseen Task Detection -> Labelling -> Unseen Task Processing`. More specifically, samples are first recognized through Unseen Task Detection module. Then, the unseen samples will be transferred to the cloud for labelling (through manual labelling or assisted labelling algorithms). Finally, labelled unseen samples will be used for model training. 
+
+In this project, we have maintained a relatively default setup for Unseen Task Detection and Labelling. Our primary focus lies on the `Unseen Task Processing`, which corresponds to the red-boxed section in the ianvs lifelong learning architecture:
+
+![MDIL-SS](images/OSPP_MDIL-SS_9.png )  
+
+The architecture diagram for the project is as follows:
 
 ![MDIL-SS](images/OSPP_MDIL-SS_8.png)
 
-To provide precise labelled unseen samples to `Unseen Task Processing` module, we manually conduct `Unseen Task Detection` and `Labelling` in this project, and three datasets in `3.2` are the result of manual labor.
-
 All in all, we use the three class-different datasets to conduct training (i.e., Unseen Task Processing) and testing, and the core concern is to test the ability of the algorithm to update the model using labelled unseen samples (i.e., evaluating `Unseen Task Processing` ability).
-
-
-![MDIL-SS](images/OSPP_MDIL-SS_11.png)
 
 ### 3.2 Datasets
 
