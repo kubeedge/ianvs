@@ -13,7 +13,8 @@ algorithm:
     # currently the options of value are as follows:
     #   1> "default": the dataset is evenly divided based train_ratio;
     #splitting_method: "default"
-    splitting_method: "fwt_splitting"
+    #splitting_method: "fwt_splitting"
+    splitting_method: "hard-example_splitting"
 
   # algorithm module configuration in the paradigm; list type;
   modules:
@@ -25,7 +26,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "BaseModel"
       # the url address of python module; string type;
-      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/basemodel-simple.py"
+      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/basemodel-vit-simple.py"
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
         # name of the hyperparameter; string type;
@@ -61,3 +62,13 @@ algorithm:
         - origins:
             values:
               - [ "front", "garden" ]
+
+    - type: "unseen_sample_recognition"
+      # name of python module; string type;
+      name: "HardSampleMining"
+      # the url address of python module; string type;
+      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/hard_sample_mining.py"
+      hyperparameters:
+        - threhold:
+            values:
+              - 0.95

@@ -40,16 +40,6 @@ class BaseModel:
     
     def set_weights(self, weights):
         self.trainer.set_weight(weights)
-        
-        epoch_num = 0
-        print("Total epoch: ", epoch_num)
-        loss_all = []
-        for epoch in range(epoch_num):
-            train_loss = self.trainer.my_training(epoch)
-            loss_all.append(train_loss)
-        with open('/home/shijing.hu/ianvs/project/ianvs/train_loss_2.txt', 'a+') as file:
-            np.savetxt(file, loss_all)
-        file.close
 
     def train(self, train_data, valid_data=None, **kwargs):
         self.trainer = Trainer(self.train_args, train_data=train_data)
@@ -82,70 +72,60 @@ class BaseModel:
         return self.train_model_url
 
     def predict(self, data, **kwargs):
+        """
+        Use the Segformer model to predict at the edge 
+        """
         if len(data) > 10:
-            print("predict start for big data")
             my_kwargs = {'num_workers': self.val_args.workers, 'pin_memory': True}
             _, _, self.validator.test_loader, _ = make_data_loader(self.val_args, test_data=data, **my_kwargs)
         else:
-            print("predict start for small data")
             if not isinstance(data[0][0], dict):
                 data = self._preprocess(data)
-                #print("predict starting 69")
             if type(data) is np.ndarray:
                 data = data.tolist()
-                #print("predict starting 72")
-            #print("predict starting 73")
             self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
                                                 pin_memory=True)
         
-        #print("predict starting 75")
-        predictions, scores = self.validator.validate()
+        predictions = self.validator.vit_validate()
         return predictions
     
     def predict_cloud(self, data, **kwargs):
+        """
+        Use the SAM model to predict at the cloud 
+        """
         if len(data) > 10:
-            print("predict start for big data")
             my_kwargs = {'num_workers': self.val_args.workers, 'pin_memory': True}
             _, _, self.validator.test_loader, _ = make_data_loader(self.val_args, test_data=data, **my_kwargs)
         else:
-            print("predict start for small data")
             if not isinstance(data[0][0], dict):
                 data = self._preprocess(data)
-                #print("predict starting 69")
             if type(data) is np.ndarray:
                 data = data.tolist()
-                #print("predict starting 72")
-            #print("predict starting 73")
             self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
                                                 pin_memory=True)
         
-        #print("predict starting 75")
-        predictions = self.validator.validate_cloud()
+        predictions = self.validator.vit_validate_cloud()
         return predictions
     
     def predict_score(self, data, **kwargs):
+        """
+        Get the prediction scores of RFNet model 
+        """
         if len(data) > 10:
-            print("predict start for big data")
             my_kwargs = {'num_workers': self.val_args.workers, 'pin_memory': True}
             _, _, self.validator.test_loader, _ = make_data_loader(self.val_args, test_data=data, **my_kwargs)
         else:
-            print("predict start for small data")
             if not isinstance(data[0][0], dict):
                 data = self._preprocess(data)
-                #print("predict starting 69")
             if type(data) is np.ndarray:
                 data = data.tolist()
-                #print("predict starting 72")
-            #print("predict starting 73")
             self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
                                                 pin_memory=True)
         
-        #print("predict starting 75")
         predictions, scores = self.validator.validate()
         return scores
 
     def evaluate(self, data, **kwargs):
-        #print("evaluate starting 77")
         self.val_args.save_predicted_image = kwargs.get("save_predicted_image", True)
         samples = self._preprocess(data.x)
         predictions = self.predict(samples)

@@ -19,6 +19,8 @@ from RFNet.utils.args import TrainArgs, ValArgs
 # set backend
 os.environ['BACKEND_TYPE'] = 'PYTORCH'
 
+os.environ["OMP_NUM_THREADS"] = "1" 
+os.environ["MKL_NUM_THREADS"] = "1"
 
 @ClassFactory.register(ClassType.GENERAL, alias="BaseModel")
 class BaseModel:
@@ -38,17 +40,6 @@ class BaseModel:
     
     def set_weights(self, weights):
         self.trainer.set_weight(weights)
-        
-        epoch_num = 0
-        print("Total epoch: ", epoch_num)
-        loss_all = []
-        for epoch in range(epoch_num):
-            train_loss = self.trainer.my_training(epoch)
-            #train_loss = self.trainer.training(epoch)
-            loss_all.append(train_loss)
-        with open('/home/shijing.hu/ianvs/project/ianvs/train_loss_2.txt', 'a+') as file:
-            np.savetxt(file, loss_all)
-        file.close
 
     def train(self, train_data, valid_data=None, **kwargs):
         self.trainer = Trainer(self.train_args, train_data=train_data)
@@ -59,12 +50,7 @@ class BaseModel:
                 self.trainer.args.epochs):
             if epoch == 0 and self.trainer.val_loader:
                 self.trainer.validation(epoch)
-            if self.train_args.resume:
-                print("my_training:", self.train_args.resume)
-                loss = self.trainer.my_training(epoch)
-                #loss = self.trainer.training(epoch)
-            else:
-                loss = self.trainer.training(epoch)
+            loss = self.trainer.training(epoch)
             loss_all.append(loss)
             if self.trainer.args.no_val and (
                     epoch %
@@ -83,33 +69,63 @@ class BaseModel:
                 }, is_best)
 
         self.trainer.writer.close()
-        with open('/home/shijing.hu/ianvs/project/ianvs/train_loss.txt', 'a+') as file:
-            np.savetxt(file, loss_all)
-        file.close
         return self.train_model_url
 
     def predict(self, data, **kwargs):
+        """
+        Use the RFNet model to predict at the edge 
+        """
         if len(data) > 10:
-            print("predict start for big data")
             my_kwargs = {'num_workers': self.val_args.workers, 'pin_memory': True}
             _, _, self.validator.test_loader, _ = make_data_loader(self.val_args, test_data=data, **my_kwargs)
         else:
-            print("predict start for small data")
             if not isinstance(data[0][0], dict):
                 data = self._preprocess(data)
-                #print("predict starting 69")
             if type(data) is np.ndarray:
                 data = data.tolist()
-                #print("predict starting 72")
-            #print("predict starting 73")
             self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
                                                 pin_memory=True)
         
-        #print("predict starting 75")
-        return self.validator.validate()
+        predictions, scores = self.validator.validate()
+        return predictions
+    
+    def predict_cloud(self, data, **kwargs):
+        """
+        Use the SAM model to predict at the cloud 
+        """
+        if len(data) > 10:
+            my_kwargs = {'num_workers': self.val_args.workers, 'pin_memory': True}
+            _, _, self.validator.test_loader, _ = make_data_loader(self.val_args, test_data=data, **my_kwargs)
+        else:
+            if not isinstance(data[0][0], dict):
+                data = self._preprocess(data)
+            if type(data) is np.ndarray:
+                data = data.tolist()
+            self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
+                                                pin_memory=True)
+        
+        predictions = self.validator.validate_cloud()
+        return predictions
+    
+    def predict_score(self, data, **kwargs):
+        """
+        Get the prediction scores of RFNet model 
+        """
+        if len(data) > 10:
+            my_kwargs = {'num_workers': self.val_args.workers, 'pin_memory': True}
+            _, _, self.validator.test_loader, _ = make_data_loader(self.val_args, test_data=data, **my_kwargs)
+        else:
+            if not isinstance(data[0][0], dict):
+                data = self._preprocess(data)
+            if type(data) is np.ndarray:
+                data = data.tolist()
+            self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
+                                                pin_memory=True)
+        
+        predictions, scores = self.validator.validate()
+        return scores
 
     def evaluate(self, data, **kwargs):
-        print("evaluate starting 77")
         self.val_args.save_predicted_image = kwargs.get("save_predicted_image", True)
         samples = self._preprocess(data.x)
         predictions = self.predict(samples)
