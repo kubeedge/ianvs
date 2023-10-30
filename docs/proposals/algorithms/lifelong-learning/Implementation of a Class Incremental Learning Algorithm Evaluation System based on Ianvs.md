@@ -71,11 +71,11 @@ Next, let's outline the class-incremental learning algorithm evaluating process 
 
 ![MDIL-SS](images/OSPP_MDIL-SS_11.png)
 - In the first round, an ERFNet model initially enters the Synthia data domain for learning. As this is the model's first encounter with this data domain, all samples are considered as unseen task samples. We manually label all of these samples and utilize them for the model's first update, meaning that the model is trained using the Synthia dataset.
-- During the testing phase of the first round, we evaluate the model using samples from three data domains. One of the three domains is seen by the model, which is Synthia, while the other two domains are unseen to the model, namely Cityscapes and Cloud-Robotic.
+- During the testing phase of the first round, some of the testing samples are seen by the model, which is Synthia, while the other samples are unseen.
 - Before the start of the second round of training, we manually detect and label all Cityscapes samples. Since unseen task detection and labeling are crucial for training effectiveness, we employ the most reliable method, which is manual way.
 - In the second round, the model is updated using the already labeled Cityscapes samples, meaning it is trained with the Cityscapes dataset.
 - Similarly, before commencing the final round of training, we manually detect and label all Cloud-Robotic samples. These samples are then used to update the model in the third round, where the model is trained on the Cloud-Robotic dataset.
-- In each round, we conduct testing using the same three datasets, and the final test report will demonstrate the model's lifelong learning capabilities.
+- In each round, we conduct testing using the same three datasets for lifelong learning metric, and the final test report will demonstrate the model's lifelong learning capabilities.
 - Please note that the lifelong learning model will undergo training and testing across three successive data domains, namely Cityscapes, SYNTHIA, and Cloud-Robotics, comprising a total of three rounds of training and testing. As the model shifts among data domains, class also changes, signifying class increments. The following diagram illustrates the differences of classes among these three data domains.
 
 <div align = center>
