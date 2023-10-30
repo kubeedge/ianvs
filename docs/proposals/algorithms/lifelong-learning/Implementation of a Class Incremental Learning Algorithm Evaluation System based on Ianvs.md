@@ -239,9 +239,9 @@ Second, **hyperparameters** setting for the model is also defined in this yaml f
 
 The test report is designed as follows, which contains the ranking, algorithm name, three metrics, dataset name, base model, three hyperparameters, and time.
 
-| Rank | Algorithm | mIoU_Overall |mIoU_Seen_Tasks |mIoU_Unseen_Tasks   | BWT   | FWT   | Paradigm         | Round | Dataset   | Basemodel | Learning_rate | Epoch | Batch_size | Time                |
-| :-------: | :-------: | :------:| :-------: | :------:  | :-----: | :-----: | :----------------: | :-----: | :--------------: | :---------: | :-------------: | :-----: | :----------: | :-------------------: |
-| 1    |  MDIL-SS  | 0.6521| 0.3764| 0.8734 | 0.075 | 0.021 | Lifelonglearning | 3     | CS SYN CR | ERFNet    | 0.0001        | 1     | 10         | 2023-05-28 17:05:15 |
+| Rank | Algorithm | mIoU_Overall | BWT   | FWT   | Paradigm         | Round | Dataset   | Basemodel | Learning_rate | Epoch | Batch_size | Time                |
+| :-------: | :-------: |  :------:  | :-----: | :-----: | :----------------: | :-----: | :--------------: | :---------: | :-------------: | :-----: | :----------: | :-------------------: |
+| 1    |  MDIL-SS  |  0.8734 | 0.075 | 0.021 | Lifelonglearning | 3     | CS SYN CR | ERFNet    | 0.0001        | 1     | 10         | 2023-05-28 17:05:15 |
 
 ## 4 Roadmap
 
