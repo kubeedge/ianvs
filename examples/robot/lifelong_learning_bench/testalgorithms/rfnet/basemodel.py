@@ -89,6 +89,9 @@ class BaseModel:
         return self.train_model_url
 
     def predict(self, data, **kwargs):
+        """
+        Use the RFNet model to predict at the edge 
+        """
         if len(data) > 10:
             print("predict start for big data")
             my_kwargs = {'num_workers': self.val_args.workers, 'pin_memory': True}

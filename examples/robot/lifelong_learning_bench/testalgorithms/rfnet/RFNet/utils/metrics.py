@@ -190,6 +190,8 @@ class Evaluator(object):
         print(gt_image.shape, pre_image.shape)
         if gt_image.shape != pre_image.shape:
             pre_image = pre_image[0]
+        if gt_image.shape != pre_image.shape:
+            pre_image = pre_image[0]
         assert gt_image.shape == pre_image.shape
         self.confusion_matrix += self._generate_matrix(gt_image, pre_image)
 
