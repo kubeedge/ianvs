@@ -87,9 +87,13 @@ can refer to [benchmarkingJob.yaml](https://ianvs.readthedocs.io/en/latest/guide
 
 The final output might look like this:   
 
-| rank |        algorithm         |       accuracy       |     Task_Avg_Acc     |         BWT          |         FWT          |     paradigm     | basemodel |    task_definition     |    task_allocation     | basemodel-learning_rate | basemodel-epochs |           task_definition-origins           |           task_allocation-origins           |         time        |                                                                url                                                               |
-|:----:|:------------------------:|:--------------------:|:--------------------:|:--------------------:|:--------------------:|:----------------:|:---------:|:----------------------:|:----------------------:|:-----------------------:|:----------------:|:-----------------------------------------:|:-----------------------------------------:|:-------------------:|:-------------------------------------------------------------------------------------------------------------------------------:|
-|  1   | erfnet_lifelong_learning | 0.026371129781296826 | 0.027414088670437726 | 0.010395591126145793 | 0.002835451693721201 | lifelonglearning | BaseModel | TaskDefinitionByDomain | TaskAllocationByDomain |         0.0001          |        1         | ['Cityscapes', 'Synthia', 'Cloud-Robotics'] | ['Cityscapes', 'Synthia', 'Cloud-Robotics'] | 2023-09-26 20:13:21 | ./ianvs-workspace/mdil-ss/lifelong_learning_bench/benchmarkingjob/erfnet_lifelong_learning/3a8c73ba-5c64-11ee-8ebd-b07b25dd6922 |
+| rank |        algorithm         |          Task_Avg_Acc     |         BWT          |         FWT          |     paradigm     | basemodel |    task_definition     |    task_allocation     | basemodel-learning_rate | basemodel-epochs |           task_definition-origins           |           task_allocation-origins           |         time        |                                                                url                                                               |
+|:----:|:------------------------:|:--------------------:|:--------------------:|:--------------------:|:----------------:|:---------:|:----------------------:|:----------------------:|:-----------------------:|:----------------:|:-----------------------------------------:|:-----------------------------------------:|:-------------------:|:-------------------------------------------------------------------------------------------------------------------------------:|
+|  1   | erfnet_lifelong_learning |  0.027414088670437726 | 0.010395591126145793 | 0.002835451693721201 | lifelonglearning | BaseModel | TaskDefinitionByDomain | TaskAllocationByDomain |         0.0001          |        1         | ['Cityscapes', 'Synthia', 'Cloud-Robotics'] | ['Cityscapes', 'Synthia', 'Cloud-Robotics'] | 2023-09-26 20:13:21 | ./ianvs-workspace/mdil-ss/lifelong_learning_bench/benchmarkingjob/erfnet_lifelong_learning/3a8c73ba-5c64-11ee-8ebd-b07b25dd6922 |
+
+
+In addition, in the log displayed at the end of the test, you can see the accuracy of known and unknown tasks in each round, as shown in the table below.
+
 
 This ends the quick start experiment.
 
