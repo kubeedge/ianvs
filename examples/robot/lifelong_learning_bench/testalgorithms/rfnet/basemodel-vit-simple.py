@@ -73,7 +73,7 @@ class BaseModel:
 
     def predict(self, data, **kwargs):
         """
-        Use the RFNet model to predict at the edge 
+        Use the Segformer model to predict at the edge 
         """
         if len(data) > 10:
             my_kwargs = {'num_workers': self.val_args.workers, 'pin_memory': True}
@@ -86,7 +86,7 @@ class BaseModel:
             self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
                                                 pin_memory=True)
         
-        predictions, scores = self.validator.validate()
+        predictions = self.validator.vit_validate()
         return predictions
     
     def predict_cloud(self, data, **kwargs):
@@ -104,7 +104,7 @@ class BaseModel:
             self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
                                                 pin_memory=True)
         
-        predictions, scores = self.validator.validate()
+        predictions = self.validator.vit_validate()
         return predictions
     
     def predict_score(self, data, **kwargs):

@@ -104,7 +104,7 @@ class BaseModel:
             self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
                                                 pin_memory=True)
         
-        predictions, scores = self.validator.validate()
+        predictions = self.validator.validate_cloud()
         return predictions
     
     def predict_score(self, data, **kwargs):

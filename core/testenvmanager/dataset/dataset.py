@@ -168,6 +168,12 @@ class Dataset:
                                               output_dir=output_dir,
                                               times=times)
 
+        if method == "hard-example_splitting":
+            return self._hard_example_splitting(dataset_url, dataset_format, ratio,
+                                              data_types=dataset_types,
+                                              output_dir=output_dir,
+                                              times=times)
+
         raise ValueError(f"dataset splitting method({method}) is not supported,"
                          f"currently, method supports 'default'.")
 
@@ -315,6 +321,44 @@ class Dataset:
                                        data_types[0], index+1, data_format),
                 self._get_dataset_file(new_dataset[int(len(new_dataset) * ratio):], output_dir,
                                        data_types[1], index+1, data_format)))
+
+            index += 1
+
+        return data_files
+
+    def _hard_example_splitting(self, data_file, data_format, ratio,
+                              data_types=None, output_dir=None, times=1):
+        if not data_types:
+            data_types = ("train", "eval")
+
+        if not output_dir:
+            output_dir = tempfile.mkdtemp()
+
+        all_data = self._read_data_file(data_file, data_format)
+
+        data_files = []
+
+        all_num = len(all_data)
+        step = int(all_num / (times*2))
+        data_files.append((
+            self._get_dataset_file(all_data[:int((all_num * ratio)/2)], output_dir,
+                                       data_types[0], 0, data_format),
+            self._get_dataset_file(all_data[int((all_num * ratio)/2):int(all_num/2)], output_dir,
+                                       data_types[1], 0, data_format)))
+        index = 1
+        while index <= times:
+            if index == times:
+                new_dataset = all_data[int(all_num/2)+step*(index-1):]
+            else:
+                new_dataset = all_data[int(all_num/2)+step*(index-1): int(all_num/2)+step*index]
+
+            new_num = len(new_dataset)
+
+            data_files.append((
+                self._get_dataset_file(new_dataset[:int(new_num * ratio)], output_dir,
+                                       data_types[0], index, data_format),
+                self._get_dataset_file(new_dataset[int(new_num * ratio):], output_dir,
+                                       data_types[1], index, data_format)))
 
             index += 1
 
