@@ -52,7 +52,10 @@ def compute(key, matrix):
     Compute BWT and FWT scores for a given matrix.
     """
     # pylint: disable=C0103
+    # pylint: disable=C0301
+    # pylint: disable=C0303
     # pylint: disable=R0912
+
     print(f"compute function: key={key}, matrix={matrix}, type(matrix)={type(matrix)}")
     
     length = len(matrix)
