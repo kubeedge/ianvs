@@ -24,7 +24,7 @@ from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 from core.testcasecontroller.metrics import get_metric_func
 from core.common.utils import get_file_format, is_local_dir
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 
 class LifelongLearning(ParadigmBase):
     # pylint: disable=too-many-locals
@@ -162,6 +162,102 @@ class LifelongLearning(ParadigmBase):
                 #BWT, FWT = self.compute(key, matrix)
                 self.system_metric_info[SystemMetricType.Matrix.value][key] = matrix
 
+        elif mode == 'hard-example-mining':
+            dataset_files = self._split_dataset(splitting_dataset_times=rounds)
+            # pylint: disable=C0103
+            # pylint: disable=C0206
+            # pylint: disable=C0201
+            # pylint: disable=W1203
+            my_dict = {}
+            for r in range(rounds + 1):
+                train_dataset_file, eval_dataset_file = dataset_files[r]
+                if r == 0:
+                    self.cloud_task_index = self._train(self.cloud_task_index,
+                                                    train_dataset_file,
+                                                    r)
+
+                    self.edge_task_index, tasks_detail, res = self.my_eval(
+                                                    self.cloud_task_index,
+                                                    eval_dataset_file,
+                                                    r)
+
+                else:
+                    infer_dataset_file, eval_dataset_file = dataset_files[r]
+                    inference_results, unseen_task_train_samples = self._inference(
+                                                    self.cloud_task_index,
+                                                    infer_dataset_file,
+                                                    r)
+                    samples_transfer_ratio_info.append((inference_results,
+                                                unseen_task_train_samples.x))
+
+                    # If no unseen task samples in the this round, starting the next round
+                    if len(unseen_task_train_samples.x) <= 0:
+                        continue
+
+                    self.cloud_task_index = self._train(self.cloud_task_index,
+                                                        unseen_task_train_samples,
+                                                        r)
+
+                tmp_dict = {}
+                for j in range(1, rounds+1):
+                    _, eval_dataset_file = dataset_files[j]
+                    self.edge_task_index, tasks_detail, res = self.my_eval(
+                                                    self.cloud_task_index,
+                                                    eval_dataset_file,
+                                                    r)
+                    LOGGER.info(f"train from round {r}")
+                    LOGGER.info(f"test round {j}")
+                    LOGGER.info(f"all scores: {res}")
+                    score_list = tmp_dict.get("all", ['' for i in range(rounds)])
+                    score_list[j-1] = res
+                    tmp_dict["all"] = score_list
+                    task_avg_score = {'accuracy':0.0}
+                    i = 0
+                    for detail in tasks_detail:
+                        i += 1
+                        scores = detail.scores
+                        entry = detail.entry
+                        LOGGER.info(f"{entry} scores: {scores}")
+                        task_avg_score['accuracy'] += scores['accuracy']
+                        score_list = tmp_dict.get(entry, ['' for i in range(rounds)])
+                        score_list[j-1] = scores
+                        tmp_dict[entry] = score_list
+                    task_avg_score['accuracy'] = task_avg_score['accuracy']/i
+                    score_list = tmp_dict.get("task_avg", [{'accuracy':0.0} for i in range(rounds)])
+                    score_list[j-1] = task_avg_score
+                    tmp_dict["task_avg"] = score_list
+
+                for key in tmp_dict.keys():
+                    scores_list = my_dict.get(key, [])
+                    scores_list.append(tmp_dict[key])
+                    my_dict[key] = scores_list
+                    LOGGER.info(f"{key} scores: {scores_list}")
+
+
+            self.edge_task_index, tasks_detail, res = self.my_eval(self.cloud_task_index,
+                                                      self.dataset.test_url,
+                                                      rounds + 1)
+            task_avg_score = {'accuracy':0.0}
+            i = 0
+            for detail in tasks_detail:
+                i += 1
+                scores = detail.scores
+                entry = detail.entry
+                LOGGER.info(f"{entry} scores: {scores}")
+                task_avg_score['accuracy'] += scores['accuracy']
+            task_avg_score['accuracy'] = task_avg_score['accuracy']/i
+            self.system_metric_info[SystemMetricType.Task_Avg_Acc.value] = task_avg_score
+            LOGGER.info(task_avg_score)
+            test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
+                                                              self.dataset.test_url,
+                                                              "test")
+            for key in my_dict.keys():
+                LOGGER.info(f"{key} scores: {my_dict[key]}")
+            for key in my_dict.keys():
+                matrix = my_dict[key]
+                #BWT, FWT = self.compute(key, matrix)
+                self.system_metric_info[SystemMetricType.Matrix.value][key] = matrix
+
         elif mode != 'multi-inference':
             dataset_files = self._split_dataset(splitting_dataset_times=rounds)
             # pylint: disable=C0103
@@ -214,6 +310,7 @@ class LifelongLearning(ParadigmBase):
             os.makedirs(unseen_task_saved_dir)
 
         os.environ["INFERENCE_RESULT_DIR"] = output_dir
+        os.environ["OUTPUT_URL"] = output_dir
         os.environ["MODEL_URLS"] = f"{edge_task_index}"
 
         inference_dataset = self.dataset.load_data(data_index_file, "eval",
@@ -234,7 +331,7 @@ class LifelongLearning(ParadigmBase):
         for i, _ in enumerate(inference_dataset.x):
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
-            res, is_unseen_task, _ = job.inference(data, **kwargs)
+            res, is_unseen_task, _ = job.inference_2(data, **kwargs)
             inference_results.append(res)
             if is_unseen_task:
                 unseen_tasks.append(inference_dataset.x[i])
@@ -257,7 +354,7 @@ class LifelongLearning(ParadigmBase):
 
         os.environ["CLOUD_KB_INDEX"] = cloud_task_index
         os.environ["OUTPUT_URL"] = train_output_dir
-        if rounds <= 1:
+        if rounds < 1:
             os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'False'
         else:
             os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'True'

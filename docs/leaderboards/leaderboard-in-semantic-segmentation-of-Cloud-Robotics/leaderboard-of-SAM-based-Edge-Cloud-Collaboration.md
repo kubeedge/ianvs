@@ -1,0 +1,6 @@
+# Leaderboard of SAM-based Edge-Cloud Collaboration
+
+
+| rank |          algorithm          |      accuracy      |    Task_Avg_Acc    |     paradigm     | basemodel |    task_definition     |    task_allocation     | unseen_sample_recognition | basemodel-learning_rate | basemodel-epochs | task_definition-origins | task_allocation-origins | unseen_sample_recognition-threhold | time                |
+| :--: | :-------------------------: | :----------------: | :----------------: | :--------------: | :-------: | :--------------------: | :--------------------: | :-----------------------: | :---------------------: | :--------------: | :---------------------: | :---------------------: | :--------------------------------: | ------------------- |
+|  1   | sam_rfnet_lifelong_learning | 0.7052917006987501 | 0.6258875117354328 | lifelonglearning | BaseModel | TaskDefinitionByOrigin | TaskAllocationByOrigin |     HardSampleMining      |         0.0001          |        1         |   ['front', 'garden']   |   ['front', 'garden']   |                0.95                | 2023-08-24 12:43:19 |

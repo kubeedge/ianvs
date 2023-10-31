@@ -196,7 +196,7 @@ class Rank:
         all_df = copy.deepcopy(self.all_df)
         selected_df = pd.DataFrame(all_df, columns=header)
         selected_df = selected_df.drop_duplicates(header[:-2])
-
+        # pylint: disable=E1136
         paradigms = self.selected_dataitem.get("paradigms")
         if paradigms != ["all"]:
             selected_df = selected_df.loc[selected_df["paradigm"].isin(paradigms)]
