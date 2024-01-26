@@ -58,8 +58,8 @@ def compute(key, matrix):
 
     length = len(matrix)
     accuracy = 0.0
-    BWT_score = 0.0
-    FWT_score = 0.0
+    bwt_score = 0.0
+    fwt_score = 0.0
     flag = True
 
     for row in matrix:
@@ -68,27 +68,27 @@ def compute(key, matrix):
             break
 
     if not flag:
-        BWT_score = np.nan
-        FWT_score = np.nan
-        return BWT_score, FWT_score
+        bwt_score = np.nan
+        fwt_score = np.nan
+        return bwt_score, fwt_score
 
     for i in range(length-1):
         for j in range(length-1):
             if 'accuracy' in matrix[i+1][j] and 'accuracy' in matrix[i][j]:
                 accuracy += matrix[i+1][j]['accuracy']
-                BWT_score += matrix[i+1][j]['accuracy'] - \
+                bwt_score += matrix[i+1][j]['accuracy'] - \
                     matrix[i][j]['accuracy']
 
     for i in range(0, length-1):
         if 'accuracy' in matrix[i][i] and 'accuracy' in matrix[0][i]:
-            FWT_score += matrix[i][i]['accuracy'] - matrix[0][i]['accuracy']
+            fwt_score += matrix[i][i]['accuracy'] - matrix[0][i]['accuracy']
 
     accuracy = accuracy / ((length-1) * (length-1))
-    BWT_score = BWT_score / ((length-1) * (length-1))
-    FWT_score = FWT_score / (length-1)
+    bwt_score = bwt_score / ((length-1) * (length-1))
+    fwt_score = fwt_score / (length-1)
 
-    print(f"{key} BWT_score: {BWT_score}")
-    print(f"{key} FWT_score: {FWT_score}")
+    print(f"{key} BWT_score: {bwt_score}")
+    print(f"{key} FWT_score: {fwt_score}")
 
     my_matrix = []
     for i in range(length-1):
@@ -97,7 +97,7 @@ def compute(key, matrix):
             if 'accuracy' in matrix[i+1][j]:
                 my_matrix[i].append(matrix[i+1][j]['accuracy'])
 
-    return my_matrix, BWT_score, FWT_score
+    return my_matrix, bwt_score, fwt_score
 
 
 def bwt_func(system_metric_info: dict):
