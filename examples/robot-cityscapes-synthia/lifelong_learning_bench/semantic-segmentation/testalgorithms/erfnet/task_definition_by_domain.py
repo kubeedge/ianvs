@@ -34,7 +34,8 @@ class TaskDefinitionByOrigin:
 
         task_index = dict(zip(categories, range(len(categories))))
 
-        data_sources = {category: BaseDataSource(data_type=d_type) for category in categories}
+        data_sources = {category: BaseDataSource(
+            data_type=d_type) for category in categories}
         print(data_sources)
 
         for category in data_sources.values():
@@ -50,7 +51,8 @@ class TaskDefinitionByOrigin:
 
         for category, data_source in data_sources.items():
             task_name = f"{category}_semantic_segmentation_model"
-            task_obj = Task(entry=task_name, samples=data_source, meta_attr=category)
+            task_obj = Task(entry=task_name,
+                            samples=data_source, meta_attr=category)
             tasks.append(task_obj)
 
         return tasks, task_index, samples
