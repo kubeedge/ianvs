@@ -106,7 +106,7 @@ def bwt_func(system_metric_info: dict):
     """
     # pylint: disable=C0103
     # pylint: disable=W0632
-    info = system_metric_info.get(SystemMetricType.Matrix.value)
+    info = system_metric_info.get(SystemMetricType.MATRIX.value)
     _, BWT_score, _ = compute("all", info["all"])
     return BWT_score
 
@@ -117,7 +117,7 @@ def fwt_func(system_metric_info: dict):
     """
     # pylint: disable=C0103
     # pylint: disable=W0632
-    info = system_metric_info.get(SystemMetricType.Matrix.value)
+    info = system_metric_info.get(SystemMetricType.MATRIX.value)
     _, _, FWT_score = compute("all", info["all"])
     return FWT_score
 
@@ -128,7 +128,7 @@ def matrix_func(system_metric_info: dict):
     """
     # pylint: disable=C0103
     # pylint: disable=W0632
-    info = system_metric_info.get(SystemMetricType.Matrix.value)
+    info = system_metric_info.get(SystemMetricType.MATRIX.value)
     my_dict = {}
     for key in info.keys():
         my_matrix, _, _ = compute(key, info[key])
@@ -138,9 +138,9 @@ def matrix_func(system_metric_info: dict):
 
 def task_avg_acc_func(system_metric_info: dict):
     """
-    compute Task_Avg_Acc
+    compute task average accuracy
     """
-    info = system_metric_info.get(SystemMetricType.Task_Avg_Acc.value)
+    info = system_metric_info.get(SystemMetricType.TASK_AVG_ACC.value)
     return info["accuracy"]
 
 
