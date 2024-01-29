@@ -1,4 +1,4 @@
-# Using simulation controller build the edge-cloud AI simulation environment with just one host
+# How to build simulation env
 
 This document introduces how to build a edge-cloud AI simulation environment(e.g. kubeedge sedna) with just one host.
 
