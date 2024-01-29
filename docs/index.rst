@@ -40,6 +40,7 @@ Start your journey on Ianvs with the following links:
 
     guides/how-to-install-ianvs
     guides/how-to-test-algorithms
+    guides/how-to-build-simulation-env
 
 
 .. toctree::
@@ -56,7 +57,8 @@ Start your journey on Ianvs with the following links:
 
     Single Task Learning: FPN <proposals/algorithms/single-task-learning/fpn>
     Incremental Learning: BasicIL-FPN <proposals/algorithms/incremental-learning/basicIL-fpn>
-
+    Lifelong Learning: RFNet <proposals/algorithms/lifelong-learning/Cloud-Robotic AI Benchmarking for Edge-cloud Collaborative Lifelong Learning>
+    
 .. toctree::
     :maxdepth: 1
     :titlesonly:
@@ -76,6 +78,8 @@ Start your journey on Ianvs with the following links:
 
     Leaderboard: Single Task Learning on PCB-AoI <leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning>
     Leaderboard: Incremental Learning on PCB-AoI <leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-incremental-learning>
+    Leaderboard: Lifelong Learning on Cloud-Robotics <leaderboards/leaderboard-in-semantic-segmentation-of-Cloud-Robotics/leaderboard-of-lifelong-learning>
+    Leaderboard: Edge-Cloud Collaboration on Cloud-Robotics <leaderboards/leaderboard-in-semantic-segmentation-of-Cloud-Robotics/leaderboard-of-SAM-based-Edge-Cloud-Collaboration>
     Test Report: Single Task Learning on PCB-AoI <proposals/test-reports/testing-single-task-learning-in-industrial-defect-detection-with-pcb-aoi>
     Test Report: Incremental Learning on PCB-AoI <proposals/test-reports/testing-incremental-learning-in-industrial-defect-detection-with-pcb-aoi>
 
