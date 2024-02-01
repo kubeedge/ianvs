@@ -6,6 +6,7 @@ from sedna.common.class_factory import ClassType, ClassFactory
 
 __all__ = ('accuracy')
 
+
 @ClassFactory.register(ClassType.GENERAL)
 def accuracy(y_true, y_pred, **kwargs):
     args = val_args()

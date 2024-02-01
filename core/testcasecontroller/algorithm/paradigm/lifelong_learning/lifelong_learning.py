@@ -64,8 +64,8 @@ class LifelongLearning(ParadigmBase):
         self.cloud_task_index = '/tmp/cloud_task/index.pkl'
         self.edge_task_index = '/tmp/edge_task/index.pkl'
         self.system_metric_info = {SystemMetricType.SAMPLES_TRANSFER_RATIO.value: [],
-                                   SystemMetricType.Matrix.value : {},
-                                   SystemMetricType.Task_Avg_Acc.value: {}}
+                                   SystemMetricType.MATRIX.value : {},
+                                   SystemMetricType.TASK_AVG_ACC.value: {}}
 
     def run(self):
         # pylint:disable=duplicate-code
@@ -147,7 +147,7 @@ class LifelongLearning(ParadigmBase):
                 LOGGER.info(f"{entry} scores: {scores}")
                 task_avg_score['accuracy'] += scores['accuracy']
             task_avg_score['accuracy'] = task_avg_score['accuracy']/i
-            self.system_metric_info[SystemMetricType.Task_Avg_Acc.value] = task_avg_score
+            self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value] = task_avg_score
             LOGGER.info(task_avg_score)
             job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
             inference_dataset = self.dataset.load_data(self.dataset.test_url, "eval",
@@ -160,7 +160,7 @@ class LifelongLearning(ParadigmBase):
             for key in my_dict.keys():
                 matrix = my_dict[key]
                 #BWT, FWT = self.compute(key, matrix)
-                self.system_metric_info[SystemMetricType.Matrix.value][key] = matrix
+                self.system_metric_info[SystemMetricType.MATRIX.value][key] = matrix
 
         elif mode == 'hard-example-mining':
             dataset_files = self._split_dataset(splitting_dataset_times=rounds)
@@ -246,7 +246,7 @@ class LifelongLearning(ParadigmBase):
                 LOGGER.info(f"{entry} scores: {scores}")
                 task_avg_score['accuracy'] += scores['accuracy']
             task_avg_score['accuracy'] = task_avg_score['accuracy']/i
-            self.system_metric_info[SystemMetricType.Task_Avg_Acc.value] = task_avg_score
+            self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value] = task_avg_score
             LOGGER.info(task_avg_score)
             test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
                                                               self.dataset.test_url,
@@ -256,7 +256,7 @@ class LifelongLearning(ParadigmBase):
             for key in my_dict.keys():
                 matrix = my_dict[key]
                 #BWT, FWT = self.compute(key, matrix)
-                self.system_metric_info[SystemMetricType.Matrix.value][key] = matrix
+                self.system_metric_info[SystemMetricType.MATRIX.value][key] = matrix
 
         elif mode != 'multi-inference':
             dataset_files = self._split_dataset(splitting_dataset_times=rounds)
