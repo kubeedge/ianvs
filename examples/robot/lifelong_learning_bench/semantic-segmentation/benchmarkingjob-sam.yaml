@@ -67,7 +67,7 @@ benchmarkingjob:
       # currently the options of value are as follows:
       #   1> "all": select all metrics in the leaderboard;
       #   2> metrics in the leaderboard, e.g., "F1_SCORE"
-      metrics: [ "accuracy", "Task_Avg_Acc"]
+      metrics: [ "accuracy", "task_avg_acc"]
 
     # model of save selected and all dataitems in workspace `./rank` ; string type;
     # currently the options of value are as follows:

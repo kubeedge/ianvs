@@ -22,12 +22,14 @@ class TaskAllocationByOrigin:
         self.default_origin = kwargs.get("default", None)
 
     def __call__(self, task_extractor, samples: BaseDataSource):
-        self.task_extractor = {"Synthia": 0, "Cityscapes": 1, "Cloud-Robotics": 2}  # Mapping of origins to task indices
+        # Mapping of origins to task indices
+        self.task_extractor = {"Synthia": 0, "Cityscapes": 1, "Cloud-Robotics": 2}
 
         if self.default_origin:
             return samples, [int(self.task_extractor.get(self.default_origin))] * len(samples.x)
 
-        categories = ["Cityscapes", "Synthia", "Cloud-Robotics"]  # List of all possible origins
+        # List of all possible origins
+        categories = ["Cityscapes", "Synthia", "Cloud-Robotics"]
 
         sample_origins = []
         for _x in samples.x:
@@ -41,6 +43,7 @@ class TaskAllocationByOrigin:
                 sample_origin = self.default_origin if self.default_origin else categories[0]
             sample_origins.append(sample_origin)
 
-        allocations = [int(self.task_extractor.get(sample_origin)) for sample_origin in sample_origins]
+        allocations = [int(self.task_extractor.get(sample_origin))
+                       for sample_origin in sample_origins]
 
         return samples, allocations

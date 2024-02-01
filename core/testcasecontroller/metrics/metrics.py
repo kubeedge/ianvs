@@ -39,7 +39,8 @@ def samples_transfer_ratio_func(system_metric_info: dict):
 
     """
 
-    info = system_metric_info.get(SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
+    info = system_metric_info.get(
+        SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
     inference_num = 0
     transfer_num = 0
     for inference_data, transfer_data in info:
@@ -47,36 +48,19 @@ def samples_transfer_ratio_func(system_metric_info: dict):
         transfer_num += len(transfer_data)
     return round(float(transfer_num) / (inference_num + 1), 4)
 
+
 def compute(key, matrix):
     """
     Compute BWT and FWT scores for a given matrix.
     """
-    # pylint: disable=C0103
-    # pylint: disable=C0301
-    # pylint: disable=C0303
-    # pylint: disable=R0912
+    print(
+        f"compute function: key={key}, matrix={matrix}, type(matrix)={type(matrix)}")
 
-    print(f"compute function: key={key}, matrix={matrix}, type(matrix)={type(matrix)}")
-    
     length = len(matrix)
     accuracy = 0.0
-    BWT_score = 0.0
-    FWT_score = 0.0
+    bwt_score = 0.0
+    fwt_score = 0.0
     flag = True
-
-    if key == 'all':
-        for i in range(length-1, 0, -1):
-            sum_before_i = sum(item['accuracy'] for item in matrix[i][:i])
-            sum_after_i = sum(item['accuracy'] for item in matrix[i][-(length - i - 1):])
-            if i == 0:
-                seen_class_accuracy = 0.0  
-            else:
-                seen_class_accuracy = sum_before_i / i
-            if length - 1 - i == 0:
-                unseen_class_accuracy = 0.0  
-            else:
-                unseen_class_accuracy = sum_after_i / (length - 1 - i)
-            print(f"round {i} : unseen class accuracy is {unseen_class_accuracy}, seen class accuracy is {seen_class_accuracy}")
 
     for row in matrix:
         if not isinstance(row, list) or len(row) != length-1:
@@ -84,26 +68,27 @@ def compute(key, matrix):
             break
 
     if not flag:
-        BWT_score = np.nan
-        FWT_score = np.nan
-        return BWT_score, FWT_score
+        bwt_score = np.nan
+        fwt_score = np.nan
+        return bwt_score, fwt_score
 
     for i in range(length-1):
         for j in range(length-1):
             if 'accuracy' in matrix[i+1][j] and 'accuracy' in matrix[i][j]:
                 accuracy += matrix[i+1][j]['accuracy']
-                BWT_score += matrix[i+1][j]['accuracy'] - matrix[i][j]['accuracy']
-    
+                bwt_score += matrix[i+1][j]['accuracy'] - \
+                    matrix[i][j]['accuracy']
+
     for i in range(0, length-1):
         if 'accuracy' in matrix[i][i] and 'accuracy' in matrix[0][i]:
-            FWT_score += matrix[i][i]['accuracy'] - matrix[0][i]['accuracy']
+            fwt_score += matrix[i][i]['accuracy'] - matrix[0][i]['accuracy']
 
     accuracy = accuracy / ((length-1) * (length-1))
-    BWT_score = BWT_score / ((length-1) * (length-1))
-    FWT_score = FWT_score / (length-1)
+    bwt_score = bwt_score / ((length-1) * (length-1))
+    fwt_score = fwt_score / (length-1)
 
-    print(f"{key} BWT_score: {BWT_score}")
-    print(f"{key} FWT_score: {FWT_score}")
+    print(f"{key} BWT_score: {bwt_score}")
+    print(f"{key} FWT_score: {fwt_score}")
 
     my_matrix = []
     for i in range(length-1):
@@ -112,7 +97,8 @@ def compute(key, matrix):
             if 'accuracy' in matrix[i+1][j]:
                 my_matrix[i].append(matrix[i+1][j]['accuracy'])
 
-    return my_matrix, BWT_score, FWT_score
+    return my_matrix, bwt_score, fwt_score
+
 
 def bwt_func(system_metric_info: dict):
     """
@@ -120,9 +106,10 @@ def bwt_func(system_metric_info: dict):
     """
     # pylint: disable=C0103
     # pylint: disable=W0632
-    info = system_metric_info.get(SystemMetricType.Matrix.value)
+    info = system_metric_info.get(SystemMetricType.MATRIX.value)
     _, BWT_score, _ = compute("all", info["all"])
     return BWT_score
+
 
 def fwt_func(system_metric_info: dict):
     """
@@ -130,9 +117,10 @@ def fwt_func(system_metric_info: dict):
     """
     # pylint: disable=C0103
     # pylint: disable=W0632
-    info = system_metric_info.get(SystemMetricType.Matrix.value)
+    info = system_metric_info.get(SystemMetricType.MATRIX.value)
     _, _, FWT_score = compute("all", info["all"])
     return FWT_score
+
 
 def matrix_func(system_metric_info: dict):
     """
@@ -140,19 +128,21 @@ def matrix_func(system_metric_info: dict):
     """
     # pylint: disable=C0103
     # pylint: disable=W0632
-    info = system_metric_info.get(SystemMetricType.Matrix.value)
+    info = system_metric_info.get(SystemMetricType.MATRIX.value)
     my_dict = {}
     for key in info.keys():
         my_matrix, _, _ = compute(key, info[key])
         my_dict[key] = my_matrix
     return my_dict
 
+
 def task_avg_acc_func(system_metric_info: dict):
     """
-    compute Task_Avg_Acc
+    compute task average accuracy
     """
-    info = system_metric_info.get(SystemMetricType.Task_Avg_Acc.value)
+    info = system_metric_info.get(SystemMetricType.TASK_AVG_ACC.value)
     return info["accuracy"]
+
 
 def get_metric_func(metric_dict: dict):
     """
@@ -175,9 +165,11 @@ def get_metric_func(metric_dict: dict):
     if url:
         try:
             load_module(url)
-            metric_func = ClassFactory.get_cls(type_name=ClassType.GENERAL, t_cls_name=name)
+            metric_func = ClassFactory.get_cls(
+                type_name=ClassType.GENERAL, t_cls_name=name)
             return name, metric_func
         except Exception as err:
-            raise RuntimeError(f"get metric func(url={url}) failed, error: {err}.") from err
+            raise RuntimeError(
+                f"get metric func(url={url}) failed, error: {err}.") from err
 
     return name, getattr(sys.modules[__name__], str.lower(name) + "_func")

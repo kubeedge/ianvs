@@ -19,8 +19,9 @@ from ERFNet.utils.args import TrainArgs, ValArgs
 # set backend
 os.environ['BACKEND_TYPE'] = 'PYTORCH'
 
-os.environ["OMP_NUM_THREADS"] = "1" 
+os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
+
 
 @ClassFactory.register(ClassType.GENERAL, alias="BaseModel")
 class BaseModel:
@@ -29,18 +30,21 @@ class BaseModel:
         self.trainer = None
 
         self.val_args = ValArgs(**kwargs)
-        label_save_dir = Context.get_parameters("INFERENCE_RESULT_DIR", "./inference_results")
-        self.val_args.color_label_save_path = os.path.join(label_save_dir, "color")
-        self.val_args.merge_label_save_path = os.path.join(label_save_dir, "merge")
+        label_save_dir = Context.get_parameters(
+            "INFERENCE_RESULT_DIR", "./inference_results")
+        self.val_args.color_label_save_path = os.path.join(
+            label_save_dir, "color")
+        self.val_args.merge_label_save_path = os.path.join(
+            label_save_dir, "merge")
         self.val_args.label_save_path = os.path.join(label_save_dir, "label")
         self.validator = Validator(self.val_args)
 
     def get_weights(self):
         return self.trainer.get_weight()
-    
+
     def set_weights(self, weights):
         self.trainer.set_weight(weights)
-        
+
         epoch_num = 0
         print("Total epoch: ", epoch_num)
         loss_all = []
@@ -62,8 +66,8 @@ class BaseModel:
             if self.trainer.args.no_val and (
                     epoch %
                     self.trainer.args.eval_interval == (
-                            self.trainer.args.eval_interval -
-                            1) or epoch == self.trainer.args.epochs -
+                        self.trainer.args.eval_interval -
+                        1) or epoch == self.trainer.args.epochs -
                     1):
                 is_best = False
                 self.train_model_url = self.trainer.saver.save_checkpoint({
@@ -79,8 +83,10 @@ class BaseModel:
     def predict(self, data, **kwargs):
         if len(data) > 10:
             print("predict start for big data")
-            my_kwargs = {'num_workers': self.val_args.workers, 'pin_memory': True}
-            _, _, self.validator.test_loader, _ = make_data_loader(self.val_args, test_data=data, **my_kwargs)
+            my_kwargs = {'num_workers': self.val_args.workers,
+                         'pin_memory': True}
+            _, _, self.validator.test_loader, _ = make_data_loader(
+                self.val_args, test_data=data, **my_kwargs)
         else:
             print("predict start for small data")
             if not isinstance(data[0][0], dict):
@@ -88,28 +94,32 @@ class BaseModel:
             if type(data) is np.ndarray:
                 data = data.tolist()
             self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
-                                                pin_memory=True)
-        
+                                                    pin_memory=True)
+
         return self.validator.validate()
 
     def evaluate(self, data, **kwargs):
-        self.val_args.save_predicted_image = kwargs.get("save_predicted_image", True)
+        self.val_args.save_predicted_image = kwargs.get(
+            "save_predicted_image", True)
         samples = self._preprocess(data.x)
         predictions = self.predict(samples)
         metric_name, metric_func = kwargs.get("metric")
         if callable(metric_func):
             return metric_func(data.y, predictions)
         else:
-            raise Exception(f"not found model metric func(name={metric_name}) in model eval phase")
+            raise Exception(
+                f"not found model metric func(name={metric_name}) in model eval phase")
 
     def load(self, model_url, **kwargs):
         if model_url:
-            print("load model url: ",model_url)
-            self.validator.new_state_dict = torch.load(model_url, map_location=torch.device("cpu"))
+            print("load model url: ", model_url)
+            self.validator.new_state_dict = torch.load(
+                model_url, map_location=torch.device("cpu"))
             self.train_args.resume = model_url
         else:
             raise Exception("model url does not exist.")
-        self.validator.model = load_my_state_dict(self.validator.model, self.validator.new_state_dict['state_dict'])
+        self.validator.model = load_my_state_dict(
+            self.validator.model, self.validator.new_state_dict['state_dict'])
 
     def save(self, model_path=None):
         if not model_path:
@@ -134,7 +144,8 @@ class BaseModel:
             del _img
             gc.collect()
             composed_transforms = transforms.Compose([
-                tr.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+                tr.Normalize(mean=(0.485, 0.456, 0.406),
+                             std=(0.229, 0.224, 0.225)),
                 tr.ToTensor()])
 
             transformed_images.append((composed_transforms(sample), img_path))
