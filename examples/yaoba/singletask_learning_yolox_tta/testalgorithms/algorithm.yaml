@@ -1,0 +1,30 @@
+algorithm:
+  # paradigm name; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  paradigm_type: "singletasklearning_tta"
+  # the url address of initial model; string type; optional;
+  initial_model_url: "examples/yaoba/singletask_learning_yolox_tta/resource/epoch_300.pth"
+
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # kind of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel"
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "mmlab"
+      # the url address of python module; string type;
+      url: "examples/yaoba/singletask_learning_yolox_tta/testalgorithms/basemodel.py"
+
+      # hyperparameters configuration for the python module; list type;
+      hyperparameters:
+        # name of the hyperparameter; string type;
+        - config:
+            values:
+              - "examples/yaoba/singletask_learning_yolox_tta/resource/yolox_s_8x8_300e_yaoba.py"
+        - work_dir:
+            values:
+              - "examples/yaoba/singletask_learning_yolox_tta/work_dir"

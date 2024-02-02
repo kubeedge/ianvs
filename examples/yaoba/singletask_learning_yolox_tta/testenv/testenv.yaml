@@ -1,0 +1,21 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of training set index; string type;
+    train_url: "examples/yaoba/singletask_learning_yolox_tta/dataset/train.json"
+
+    # the url address of validation set index; string type;
+    val_url: "examples/yaoba/singletask_learning_yolox_tta/dataset/val.json"
+
+    # the url address of test set index; string type;
+    test_url: "examples/yaoba/singletask_learning_yolox_tta/dataset/test.json"
+
+    # the image folder url address of train, val, and test sets; string type;
+    image_folder_url: "/media/huawei_YaoBa/Images"
+    # classes: ""
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "map"
+      # the url address of python file
+      url: "examples/yaoba/singletask_learning_yolox_tta/testenv/map.py"

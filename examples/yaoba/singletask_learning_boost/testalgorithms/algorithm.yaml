@@ -1,0 +1,37 @@
+algorithm:
+  # paradigm name; string type;
+  # The paradigm determines how to execute the test program,
+  # In active_boost learning, the paradigm is singletasklearning_acboost
+  paradigm_type: "singletasklearning_acboost"
+  # The folder URL address for accessing some important base files
+  # e.g, the mmdet train script file train.py,
+  # the base config file base_config.py for active learning
+  initial_model_url: ""
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # kind of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel"
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "FPN_ac_boost"
+      # the url address of python module; string type;
+      url: "examples/yaoba/singletask_learning_boost/testalgorithms/basemodel.py"
+
+      # hyperparameters configuration for the python module; list type;
+      hyperparameters:
+        # name of the hyperparameter; string type;
+        # The config file URL address of the model to run the benchmark
+        # This case uses the FPN config file of mmdet, which is a python file
+        # you can refer to https://github.com/open-mmlab/mmdetection for more details of mmdet
+        - config:
+            values:
+              - "examples/yaoba/singletask_learning_boost/resource/FPN_model_config.py"
+        # The folder URL address to save the training log, checkpoints, training JSON file, etc.
+        - work_dir:
+            values:
+              - "examples/yaoba/singletask_learning_boost/work_dir"
+        - resource_dir:
+            values:
+              - "examples/yaoba/singletask_learning_boost/resource"
