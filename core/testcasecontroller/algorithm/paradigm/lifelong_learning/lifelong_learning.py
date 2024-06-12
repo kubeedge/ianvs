@@ -24,7 +24,7 @@ from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 from core.testcasecontroller.metrics import get_metric_func
 from core.common.utils import get_file_format, is_local_dir
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+
 
 class LifelongLearning(ParadigmBase):
     # pylint: disable=too-many-locals
