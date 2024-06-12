@@ -71,6 +71,8 @@ class LifelongLearning(ParadigmBase):
         # pylint:disable=duplicate-code
         # pylint: disable=R0912
         # pylint: disable=R0915
+        # pylint: disable=W0012
+        # pylint: disable=E0606
         """
         run the test flow of incremental learning paradigm.
 
