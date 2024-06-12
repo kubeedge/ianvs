@@ -147,6 +147,8 @@ class IncrementalLearning(ParadigmBase):
         return inference_results, hard_examples
 
     def _get_train_dataset(self, hard_examples, data_label_file):
+        # pylint: disable=W0012
+        # pylint: disable=E0606
         data_labels = self.dataset.load_data(data_label_file, "train label")
         temp_dir = tempfile.mkdtemp()
         train_dataset_file = os.path.join(temp_dir, os.path.basename(data_label_file))
