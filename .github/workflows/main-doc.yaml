@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+    paths:
+      - '**.md'
+  pull_request:
+
+jobs:
+  pylint:
+    runs-on: ubuntu-20.04
+    name: pylint
+    strategy:
+      matrix:
+        python-version: [ "3.7", "3.8", "3.9" ]
+    steps:
+      - run: 'echo "only docs modified, no need to trigger CI"'
