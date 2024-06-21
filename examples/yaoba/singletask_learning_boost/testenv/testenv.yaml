@@ -1,0 +1,24 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_url: "examples/yaoba/singletask_learning_boost/resource/json/known_train.json"
+    # the url address of val dataset index; string type;
+    val_url: "examples/yaoba/singletask_learning_boost/resource/json/known_train.json"
+    # the url address of test dataset index; string type;
+    test_url: "examples/yaoba/singletask_learning_boost/resource/json/NG_test.json"
+    # the URL address of known dataset for training;
+    # string type; The data format type is MS COCO JSON format, which is commonly used in object detection;
+    # which you can refer https://zhuanlan.zhihu.com/p/29393415 for the format details
+    known_dataset_url: "examples/yaoba/singletask_learning_boost/resource/json/known_train.json"
+    # the URL address of unknown dataset for training;
+    # string type; the same as above known_data_url;
+    unknown_dataset_url: "examples/yaoba/singletask_learning_boost/resource/json/NG_labeled.json"
+    # the image folder URL address of known and unknown datasets above;
+    image_folder_url: "/home/wjj/wjj/Public/code/ianvs/dataset/yaoba/images"
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+    # metric name; string type;
+    - name: "map"
+      # the python file URL address for calculating the above metric
+      url: "examples/yaoba/singletask_learning_boost/testenv/map.py"
