@@ -103,6 +103,8 @@ cd mmdetection
 python -m pip install -v -e .
 ```
 
+P.S. The mmcv is heavily relying on the versions of the PyTorch and Cuda installed. The installation of mmcv should ref to [this link](https://mmcv.readthedocs.io/zh-cn/latest/get_started/installation.html#install-with-pip).
+
 In case that your computer couldn't run SAM model, we prepare a cache for all the SAM inference results in Cloud-Robotics dataset. You could download the cache from [this link](https://pan.baidu.com/s/1oGGBa8TjZn0ccbznQsl48g?pwd=wpp1) and put the cache file in "/ianvs/project/":
 
 ```bash

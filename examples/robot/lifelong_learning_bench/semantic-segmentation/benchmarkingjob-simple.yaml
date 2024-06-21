@@ -63,7 +63,7 @@ benchmarkingjob:
     # currently the options of value are as follows:
     #  1> "selected_and_all": save selected and all dataitems;
     #  2> "selected_only": save selected dataitems;
-    save_mode: "selected_and_all_and_picture"
+    save_mode: "selected_and_all"
 
 
 
