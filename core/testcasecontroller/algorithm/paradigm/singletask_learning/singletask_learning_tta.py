@@ -34,6 +34,8 @@ class SingleTaskLearningTTA(SingleTaskLearning):
         return inference_result, self.system_metric_info
 
     def _inference_w_tta(self, job, trained_model, strategy):
+        # pylint:disable=duplicate-code
+        # pylint: disable=R0801
         # Load test set data
         img_prefix = self.dataset.image_folder_url
         ann_file_path = self.dataset.test_url

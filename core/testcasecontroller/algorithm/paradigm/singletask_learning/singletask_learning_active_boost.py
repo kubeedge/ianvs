@@ -37,6 +37,8 @@ class SingleTaskLearningACBoost(SingleTaskLearning):
         return trained_model_path
 
     def _inference(self, job, trained_model):
+        # pylint:disable=duplicate-code
+        # pylint: disable=R0801
         # Load test set data
         img_prefix = self.dataset.image_folder_url
         ann_file_path = self.dataset.test_url
