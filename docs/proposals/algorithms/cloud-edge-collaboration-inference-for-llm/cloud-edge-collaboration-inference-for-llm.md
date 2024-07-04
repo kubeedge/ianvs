@@ -1,22 +1,23 @@
-* [Cloud-Edge collaborative inference for LLM based on KubeEdge-Ianvs](#incremental-learning)
-   * [Motivation](#motivation)
-     * [Goals](#goals)
-   * [Proposal](#proposal)
-     * [Use Cases](#use-cases)
-   * [Design Details](#design-details)
-     * [Benchmark Construction](#benchmark-construction)
-     * [LLM Background](#llm-background)
-       * [LLM Architecture](#llm-architecture)
-       * [LLM Overhead Analysis](#llm-overhead-analysis)
-       * [Efficient Inference with LLM](#efficient-inference-with-llm)
-     * [Collaboration Strategies](#collaboration-strategies)
-       * [Query Routing Strategy](#query-routing-strategy)
-       * [Speculative Decoding Strategy](#speculative-decoding-strategy)
-     * [Summary](#summary)
-   * [Road Map](#road-map)
-   * [References](#references)
+* [Cloud-Edge collaborative inference for LLM based on KubeEdge-Ianvs](#cloud-edge-collaborative-inference-for-llm-based-on-kubeedge-ianvs)
+  * [Motivation](#motivation)
+    * [Goals](#goals)
+  * [Proposal](#proposal)
+    * [Use Cases](#use-cases)
+  * [Design Details](#design-details)
+    * [Benchmark Construction](#benchmark-construction)
+    * [LLM Background](#llm-background)
+      * [LLM Architecture](#llm-architecture)
+      * [LLM Overhead Analysis](#llm-overhead-analysis)
+      * [Efficient Inference with LLM](#efficient-inference-with-llm)
+    * [Collaboration Strategies](#collaboration-strategies)
+      * [Query Routing Strategy](#query-routing-strategy)
+      * [Speculative Decoding Strategy](#speculative-decoding-strategy)
+    * [Summary](#summary)
+  * [Road Map](#road-map)
+  * [References](#references)
 
 # Cloud-Edge collaborative inference for LLM based on KubeEdge-Ianvs
+
 ## Motivation
 
 Large language model (LLM) technologies represented by GPT-4, LLaMA-2, and Qwen have demonstrated high usability in a wide range of tasks due to their powerful semantic understanding capabilities, bringing great hope for the realization of general artificial intelligence.
@@ -38,7 +39,7 @@ Edge-cloud collaboration is a more practical way to benefit from edge computing 
 
 
 * Task 1: Implement a benchmark for an LLM task in KubeEdge-Ianvs (e.g., user Q&A, code generation, or text translation).
-* Task 2:Implement an query routing example of LLM cloud-edge collaborative inference in KubeEdge-Ianvs.
+* Task 2:Implement an *query routing* example of LLM cloud-edge collaborative inference in KubeEdge-Ianvs.
 * Advanced Task: Implement *speculative decoding* for LLM cloud-edge collaborative inference. 
 
 ## Proposal
@@ -113,23 +114,25 @@ Additionally, in order to overcome Python's inherent limitations, certain engine
 
 ### Collaboration Strategies
 
-The edge cloud collaboration strategy mainly includes three types of strategies: slicing strategy, query routing strategy and speculative decoding strategy.
+The edge cloud collaboration strategy mainly includes three types of strategies: *slicing* strategy, *query routing* strategy and *speculative decoding* strategy.
 
-1. The slicing strategy refers to slicing the LLM according to the computing power requirements and time overhead of each layer, and allocating it to be executed on edge servers and cloud servers. The slicing strategy can solve the privacy issues of requests, but communication overhead is still significant.
-2. The query routing strategy involves deploying a small model on the edge server and a large model on the cloud side, routing user requests to the edge or cloud based on performance needs. The collaboration strategy can greatly reduce communication overhead, but there are still some privacy issues as some requests will go to the cloud.
-3. The speculative decoding strategy also involves deploying a small model on the edge server and a large model on the cloud side. Different from query routing, this strategy needs the small model and large model to collaboration   through all the generation process of one query.
+1. The *slicing* strategy refers to slicing the LLM according to the computing power requirements and time overhead of each layer, and allocating it to be executed on edge servers and cloud servers. The slicing strategy can solve the privacy issues of requests, but communication overhead is still significant.
+2. The *query routing* strategy involves deploying a small model on the edge server and a large model on the cloud side, routing user requests to the edge or cloud based on performance needs. The collaboration strategy can greatly reduce communication overhead, but there are still some privacy issues as some requests will go to the cloud.
+3. The *speculative decoding* strategy also involves deploying a small model on the edge server and a large model on the cloud side. Different from query routing, this strategy needs the small model and large model to collaboration   through all the generation process of one query.
 
 #### Query Routing Strategy
 
-This project aims to implement a collaboration strategy as shown in the following figure.
+The principle of *query routing* strategy is shown in the following figure.
 
 <img src="./images/image-20240602112744993.png" alt="image-20240602112744993" style="zoom: 33%;" />
 
-The core of this strategy is designing a routing model $R$ that can predict the performance of user request $q$ in both the large cloud model $L$ and small edge model $S$. This model takes request $q$ as input and outputs two labels, 0 or 1, representing preference for either edge or cloud. This is essentially a text classification task which can be accomplished by training an NLP model. Training such a model involves considerations such as selecting models, datasets, loss functions, evaluation metrics etc.
+The core of this strategy is designing a routing model $R$ that can predict the performance of user request $q$ in both the large cloud model $L$ and small edge model $S$. This model takes request $q$ as input and outputs two labels, 0 or 1, representing preference for either edge or cloud. 
+
+This is essentially a text classification task which can be accomplished by training an NLP model. Training such a model involves considerations such as selecting models, datasets, loss functions, evaluation metrics etc.
 
 ##### Model Selection
 
-Typically BERT completes text classification tasks. There are many variants of BERT models including BERT-large, ALBERT, RoBERTa etc. Based on relevant literature references we plan to fine-tune a RoBERTa variant for completing text classification tasks$^{[3]}$. RoBERTa is an excellent multilingual variant of BERT with better performance across multiple metrics compared to other models; hence it's planned for adoption.
+Typically BERT completes text classification tasks. There are many variants of BERT models including BERT-large, ALBERT, RoBERTa etc. Based on relevant references we plan to fine-tune a RoBERTa variant for completing text classification tasks$^{[3]}$. RoBERTa is an excellent multilingual variant of BERT with better performance across multiple metrics compared to other models.
 
 With LLM coming into existence there have been examples using LLM for text classification tasks too. We could also attempt fine-tuning a lightweight LLM like TinyLlama for performing classification tasks.
 
@@ -143,9 +146,9 @@ To fine-tune our models we need training data formatted as follows:
 | 1    | Explain the principles behind BERT. | 1     |
 | ...  | ...                                 | ...   |
 
-We could refer Hybrid LLMs$^{[3]}$, use MixInstruct dataset generation queries from MixInstruct, which is an extensive collection real instructions covering various tasks aiding classifiers in obtaining strong generalization capabilities. We can extract around 10K instructions from MixInstruct dataset where each instruction $q_i$ would be answered by both edge servering small model and cloud-serving large model with responses $A_s$ and $A_l$. 
+We could refer to Hybrid LLMs$^{[3]}$ and use MixInstruct dataset to generate queries. This dataset contains a wide range of real instructions for various tasks, which helps classifiers develop strong generalization capabilities. We can extract around 10K instructions from MixInstruct dataset where each instruction $q_i$ would be answered by both edge-serving small model and cloud-serving large model with responses $A_s$ and $A_l$. 
 
-For responses $A_s$ and $A_l$ we could evaluate their quality using [BART Score](https://github.com/neulab/BARTScore) getting quality scores $S_s$ and $S_l$ respectively where BART score measures textual generation quality easily obtainable through code snippet provided below:
+For responses $A_s$ and $A_l$ we could evaluate their quality using [BART Score](https://github.com/neulab/BARTScore) getting quality scores $S_s$ and $S_l$ respectively where BART score can measure textual generation quality easily through code snippet provided below:
 
 ```python
 >>> from bart_score import BARTScorer
@@ -156,20 +159,15 @@ For responses $A_s$ and $A_l$ we could evaluate their quality using [BART Score]
 ```
 
 Then we can get label $y_i$ through the formula below:
-$$
-y_i = \begin{cases}
-0 &\text{if} ~~~ S_s \geq S_l - \epsilon \\
-1 &\text{if} ~~~ S_s < S_l - \epsilon
-\end{cases}  
-$$
+
+$$ y_i = \begin{cases} 0 &\text{if} ~~~ S_s \geq S_l - \epsilon \\\\ 1 &\text{if} ~~~ S_s < S_l - \epsilon\end{cases}$$
+
 where $\epsilon$ represents permissible performance loss margin.
 
 ##### Loss Function
 
 We could utilize binary cross entropy function during the training process of the classifier:
-$$
-\mathcal{L}(w)=-\frac{1}{N} \sum_{i=1}^{N}\left(y_{i} \log \left(p_{w}\left(q_{i}\right)\right)+\left(1-y_{i}\right) \log \left(1-p_{w}\left(q_{i}\right)\right)\right)
-$$
+$$\mathcal{L}(w)=-\frac{1}{N} \sum_{i=1}^{N}\bigg[y_{i} \log \big(p_{w}(q_{i})\big)+(1-y_{i}) \log \big(1-p_{w}(q_{i})\big)\bigg]$$
 where $p_w(q_i)$ denotes logits generated by the classifier.
 
 ##### Evaluation Metrics
@@ -186,9 +184,11 @@ In a long-running cloud-based collaborative inference system for LLM, we can col
 
 #### Speculative Decoding Strategy
 
-Speculative decoding serves as an acceleration method during LLM decoding phase.
+Speculative decoding serves as an acceleration method during LLM decoding phase. Over the past few years, several studies have explored speculative decoding, as shown below:
 
-The core idea behind speculative decoding lies in utilizing smaller-scale models predicting future multiple words quickly during decoding followed by parallel validation via larger-scale models; if validation fails then re-generation by larger-scale occurs. In traditional auto-regressive decoding phase, every token is generated one at time, which limits the speed of generation. Speculative decoding combines fast predictions made by smaller size models along with parallel validations done by larger ones and significantly speeds up the generation.$^{[9]}$
+<img src="./images/image-20240531131022026.png" alt="image-20240531131022026" style="zoom:50%;" />
+
+The core idea behind speculative decoding lies in utilizing smaller-scale models predicting future multiple words quickly during decoding followed by parallel validation via larger-scale models; if validation fails then re-generation by larger-scale occurs. In traditional auto-regressive decoding phase, every token is generated one at time, which limits the speed of generation. Speculative decoding combines fast predictions made by smaller size models along with parallel validations done by larger ones and significantly speeds up the generation $^{[9]}$.
 
 <img src="./images/image-20240531131935416.png" alt="image-20240531131935416" style="zoom:33%;" />
 
@@ -196,11 +196,7 @@ Speculative Decoding requires probability distributions being identical between 
 
 For most cases, the majority part tokens predicted by smaller scaled modes get adopted. The worst case is that all tokens predicted rejected. however due faster speeds brought about these additional time costs remain minimal relative accelerated effects brought about .
 
-Over past few years several researches have delved into speculative decodings depicted below :
-
-<img src="./images/image-20240531131022026.png" alt="image-20240531131022026" style="zoom:50%;" />
-
-Additionally HuggingFace has implemented open source solution related Speculative Decoding available here : [Assisted Generation](https://huggingface.co/blog/assisted-generation).
+HuggingFace has implemented open source solution related to Speculative Decoding, which is available at [Assisted Generation](https://huggingface.co/blog/assisted-generation).
 
 ### Summary
 
@@ -212,15 +208,15 @@ Task 2 is planned to be implemented as follows:
 
 - Model selection: Qwen-1.8B model will be used at the edge, and Qwen-72B-Chat model will be used in the cloud.
 - Classifier design: Train a RoBERTa-base as a classifier. If time allows, also train a TinyLlama for classifier comparison.
-- Inference optimization: Plan to use low-bit quantization technology to achieve 4-bit and 8-bit quantized deployment, and introduce llama.cpp or vllm to form the inference framework.
+- Inference optimization: Plan to use low-bit quantization technology to achieve 4-bit and 8-bit quantized deployment, and introduce vllm to form the inference framework.
 
 Advanced task is planned to be implemented as follows:
 
 - Combine HuggingFace code examples to complete speculative decoding of LLM.
-- Implement the speculative decoding process in the edge-cloud collaborative framework used in Task 2.
+- Implement the speculative decoding strategy in the edge-cloud collaborative framework.
 
 
-## Roadmap
+## Road map
 
 ### July
 
