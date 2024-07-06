@@ -18,7 +18,7 @@ import os
 import tempfile
 
 import pandas as pd
-from sedna.datasources import CSVDataParse, TxtDataParse, JSONDataParse
+from sedna.datasources import CSVDataParse, TxtDataParse, JSONDataParse, JsonlDataParse
 
 from core.common import utils
 from core.common.constant import DatasetFormat
@@ -38,12 +38,22 @@ class Dataset:
     def __init__(self, config):
         self.train_url: str = ""
         self.test_url: str = ""
+        self.train_index: str = ""
+        self.test_index: str = ""
+        self.train_data: str = ""
+        self.test_data: str = ""
         self.label: str = ""
         self._parse_config(config)
 
     def _check_fields(self):
-        self._check_dataset_url(self.train_url)
-        self._check_dataset_url(self.test_url)
+        if self.train_index:
+            self._check_dataset_url(self.train_index)
+        if self.test_index:
+            self._check_dataset_url(self.test_index)
+        if self.train_data:
+            self._check_dataset_url(self.train_data)
+        if self.test_data:
+            self._check_dataset_url(self.test_data)
 
     def _parse_config(self, config):
         for attr, value in config.items():
@@ -103,6 +113,13 @@ class Dataset:
 
         return None
 
+    def _process_data_file(self, file_url):
+        file_format = utils.get_file_format(file_url)
+        if file_format == DatasetFormat.JSONL.value:
+            return file_url
+
+        return None
+
     def process_dataset(self):
         """
         process dataset:
@@ -111,9 +128,15 @@ class Dataset:
               in the index file(e.g.: txt index file).
 
         """
+        if self.train_index:
+            self.train_url = self._process_index_file(self.train_index)
+        else:
+            self.train_url = self._process_data_file(self.train_data)
 
-        self.train_url = self._process_index_file(self.train_url)
-        self.test_url = self._process_index_file(self.test_url)
+        if self.test_index:
+            self.test_url = self._process_index_file(self.test_index)
+        else:
+            self.test_url = self._process_data_file(self.test_data)
 
     # pylint: disable=too-many-arguments
     def split_dataset(self, dataset_url, dataset_format, ratio, method="default",
@@ -402,6 +425,10 @@ class Dataset:
 
         if data_format == DatasetFormat.JSON.value:
             data = JSONDataParse(data_type=data_type, func=feature_process)
+            data.parse(file)
+
+        if data_format == DatasetFormat.JSONL.value:
+            data = JsonlDataParse(data_type=data_type, func=feature_process)
             data.parse(file)
 
         return data
