@@ -33,7 +33,7 @@ The data of simple-qa example structure is:
 
 You need to install the changed-sedna package, which added `JsonlDataParse` in `sedna.datasources`
 
-Replace the file in yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna with examples/resources/sedna-with-jsonl.zip
+Replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `examples/resources/sedna-with-jsonl.zip`
 
 
 ### Run Ianvs
