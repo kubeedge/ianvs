@@ -16,10 +16,16 @@
 
 import os
 import tempfile
-
 import pandas as pd
-from sedna.datasources import CSVDataParse, TxtDataParse, JSONDataParse
-
+# pylint: disable=no-name-in-module
+# pylint: disable=too-many-instance-attributes
+from sedna.datasources import (
+    CSVDataParse,
+    TxtDataParse,
+    JSONDataParse,
+    JsonlDataParse,
+    JSONMetaDataParse,
+)
 from core.common import utils
 from core.common.constant import DatasetFormat
 
@@ -38,12 +44,28 @@ class Dataset:
     def __init__(self, config):
         self.train_url: str = ""
         self.test_url: str = ""
+        self.train_index: str = ""
+        self.test_index: str = ""
+        self.train_data: str = ""
+        self.test_data: str = ""
+        self.train_data_info: str = ""
+        self.test_data_info: str = ""
         self.label: str = ""
         self._parse_config(config)
 
     def _check_fields(self):
-        self._check_dataset_url(self.train_url)
-        self._check_dataset_url(self.test_url)
+        if self.train_index:
+            self._check_dataset_url(self.train_index)
+        if self.test_index:
+            self._check_dataset_url(self.test_index)
+        if self.train_data:
+            self._check_dataset_url(self.train_data)
+        if self.test_data:
+            self._check_dataset_url(self.test_data)
+        if self.train_data_info:
+            self._check_dataset_url(self.train_data_info)
+        if self.test_data_info:
+            self._check_dataset_url(self.test_data_info)
 
     def _parse_config(self, config):
         for attr, value in config.items():
@@ -103,6 +125,20 @@ class Dataset:
 
         return None
 
+    def _process_data_file(self, file_url):
+        file_format = utils.get_file_format(file_url)
+        if file_format == DatasetFormat.JSONL.value:
+            return file_url
+
+        return None
+
+    def _process_data_info_file(self, file_url):
+        file_format = utils.get_file_format(file_url)
+        if file_format == DatasetFormat.JSON.value:
+            return file_url
+
+        return None
+
     def process_dataset(self):
         """
         process dataset:
@@ -111,9 +147,26 @@ class Dataset:
               in the index file(e.g.: txt index file).
 
         """
+        if self.train_index:
+            self.train_url = self._process_index_file(self.train_index)
+        elif self.train_data:
+            self.train_url = self._process_data_file(self.train_data)
+        elif self.train_data_info:
+            self.train_url = self._process_data_info_file(self.train_data_info)
+            # raise NotImplementedError('to be done')
+        else:
+            raise NotImplementedError('not one of train_index/train_data/train_data_info')
 
-        self.train_url = self._process_index_file(self.train_url)
-        self.test_url = self._process_index_file(self.test_url)
+        if self.test_index:
+            self.test_url = self._process_index_file(self.test_index)
+        elif self.test_data:
+            self.test_url = self._process_data_file(self.test_data)
+        elif self.test_data_info:
+            self.test_url = self._process_data_info_file(self.test_data_info)
+            # raise NotImplementedError('to be done')
+        else:
+            raise NotImplementedError('not one of test_index/test_data/test_data_info')
+
 
     # pylint: disable=too-many-arguments
     def split_dataset(self, dataset_url, dataset_format, ratio, method="default",
@@ -388,6 +441,11 @@ class Dataset:
             e.g.: TxtDataParse, CSVDataParse.
 
         """
+        if file.split('/')[-1] == "metadata.json":
+            data = JSONMetaDataParse(data_type=data_type, func=feature_process)
+            data.parse(file)
+            return data
+
         data_format = utils.get_file_format(file)
 
         data = None
@@ -397,11 +455,14 @@ class Dataset:
 
         if data_format == DatasetFormat.TXT.value:
             data = TxtDataParse(data_type=data_type, func=feature_process)
-            #print(file)
             data.parse(file, use_raw=use_raw)
 
         if data_format == DatasetFormat.JSON.value:
             data = JSONDataParse(data_type=data_type, func=feature_process)
+            data.parse(file)
+
+        if data_format == DatasetFormat.JSONL.value:
+            data = JsonlDataParse(data_type=data_type, func=feature_process)
             data.parse(file)
 
         return data
