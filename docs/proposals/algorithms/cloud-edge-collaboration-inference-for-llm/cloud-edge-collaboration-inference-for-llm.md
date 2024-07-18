@@ -1,23 +1,33 @@
-* [Cloud-Edge collaborative inference for LLM based on KubeEdge-Ianvs](#cloud-edge-collaborative-inference-for-llm-based-on-kubeedge-ianvs)
-  * [Motivation](#motivation)
-    * [Goals](#goals)
-  * [Proposal](#proposal)
-    * [Use Cases](#use-cases)
-  * [Design Details](#design-details)
-    * [Benchmark Construction](#benchmark-construction)
-    * [LLM Background](#llm-background)
-      * [LLM Architecture](#llm-architecture)
-      * [LLM Overhead Analysis](#llm-overhead-analysis)
-      * [Efficient Inference with LLM](#efficient-inference-with-llm)
-    * [Collaboration Strategies](#collaboration-strategies)
-      * [Query Routing Strategy](#query-routing-strategy)
-      * [Speculative Decoding Strategy](#speculative-decoding-strategy)
-    * [Summary](#summary)
-  * [Road Map](#road-map)
-  * [References](#references)
+- [Cloud-Edge collaborative inference for LLM based on KubeEdge-Ianvs](#cloud-edge-collaborative-inference-for-llm-based-on-kubeedge-ianvs)
+  - [Motivation](#motivation)
+    - [Goals](#goals)
+  - [Proposal](#proposal)
+    - [Use Cases](#use-cases)
+  - [Design Details](#design-details)
+    - [Benchmark Construction](#benchmark-construction)
+      - [Construction Method](#construction-method)
+      - [Metric Selection](#metric-selection)
+    - [Constructure Detail](#constructure-detail)
+    - [LLM Background](#llm-background)
+      - [LLM Architecture](#llm-architecture)
+      - [LLM Overhead Analysis](#llm-overhead-analysis)
+      - [Efficient Inference with LLM](#efficient-inference-with-llm)
+    - [Collaboration Strategies](#collaboration-strategies)
+      - [Query Routing Strategy](#query-routing-strategy)
+        - [Model Selection](#model-selection)
+        - [Dataset](#dataset)
+        - [Loss Function](#loss-function)
+        - [Evaluation Metrics](#evaluation-metrics)
+        - [Lifelong Learning](#lifelong-learning)
+      - [Speculative Decoding Strategy](#speculative-decoding-strategy)
+    - [Summary](#summary)
+  - [Roadmap](#roadmap)
+    - [July](#july)
+    - [August](#august)
+    - [Septembter](#septembter)
+  - [References](#references)
 
 # Cloud-Edge collaborative inference for LLM based on KubeEdge-Ianvs
-
 ## Motivation
 
 Large language model (LLM) technologies represented by GPT-4, LLaMA-2, and Qwen have demonstrated high usability in a wide range of tasks due to their powerful semantic understanding capabilities, bringing great hope for the realization of general artificial intelligence.
@@ -60,7 +70,7 @@ The architecture of this proposal is shown in the figure below. We leverage the 
 - In *StoryManager*, we plan to show Leaderboard and Test Report for users.
 - In *ModelServer*, we plan to support small-scale models such as Qwen-1.8B and large-scale models such as Qwen-72B-Chat. We plan to support serving frameworks like PyTorch and vLLM with low bit quantization compatibility.
 
-<img src="./images/image-20240703213446953.png" alt="image-20240703213446953" style="zoom:33%;" />
+<img src="./images/image-20240718083459836.png" alt="image-20240718083459836.png" style="zoom:33%;" />
 
 ### Benchmark Construction
 
@@ -77,6 +87,20 @@ OpenCompass was released by Shanghai Artificial Intelligence Laboratory and inte
 Among the supported lists in OpenCompass mentioned above，Examination、Knowledge、Reasoning、Code have strong reference significance and can more fully reflect the abilities of LLMs. 
 
 For simplicity, we can choose MMLU / CMMLU in Examination category as our evaluation benchmark.
+
+### Constructure Detail
+
+Edge-cloud collaborative reasoning requires a clear understanding of the performance of edge-side models and cloud-side models. To this end, we need to support evaluations for three types of architectures:
+
+- Edge only
+- Cloud only
+- Cloud-Edge collaboration
+
+In order to achieve unified data distribution between the edge and the cloud, we plan to deploy Benchmark on a small server with a public IP address and distribute dataset data to the edge and cloud in the form of WebSocket. Once these data are distributed to the corresponding devices, inference will be performed by the models on the devices, and the responses obtained will be sent back to Benchmark Server for statistical analysis and metric calculation.
+
+<img src="./images/image_20240718085103296.png" alt="image_20240718085103" style="zoom:33%;" />
+
+We are aware that the bandwidth resources at the edge of the cloud may be limited, which could cause inconvenience for transferring large datasets. However, considering that LLM datasets are often pure text and occupy a small volume, the bandwidth requirement for transmission is relatively low. In contrast, large language model inference is a computationally intensive task, and the time taken for inference upon receiving data will far exceed the time taken for transmission. Therefore, the bottleneck of the system lies mainly in LLM inference rather than benchmark data transmission, so bandwidth will not have a significant impact.
 
 ### LLM Background
 
@@ -159,15 +183,22 @@ For responses $A_s$ and $A_l$ we could evaluate their quality using [BART Score]
 ```
 
 Then we can get label $y_i$ through the formula below:
-
-$$ y_i = \begin{cases} 0 &\text{if} ~~~ S_s \geq S_l - \epsilon \\\\ 1 &\text{if} ~~~ S_s < S_l - \epsilon\end{cases}$$
-
+$$
+y_i = \begin{cases}
+0 &\text{if} ~~~ S_s \geq S_l - \epsilon \\
+1 &\text{if} ~~~ S_s < S_l - \epsilon
+\end{cases}  
+$$
 where $\epsilon$ represents permissible performance loss margin.
+
+According to recent generative evaluation progress, we can also consider using LLMs like GPT-4 to give scores for the generated response. The best solution needs to wait for the results of the experiment.
 
 ##### Loss Function
 
 We could utilize binary cross entropy function during the training process of the classifier:
-$$\mathcal{L}(w)=-\frac{1}{N} \sum_{i=1}^{N}\bigg[y_{i} \log \big(p_{w}(q_{i})\big)+(1-y_{i}) \log \big(1-p_{w}(q_{i})\big)\bigg]$$
+$$
+\mathcal{L}(w)=-\frac{1}{N} \sum_{i=1}^{N}\bigg[y_{i} \log \big(p_{w}(q_{i})\big)+(1-y_{i}) \log \big(1-p_{w}(q_{i})\big)\bigg]
+$$
 where $p_w(q_i)$ denotes logits generated by the classifier.
 
 ##### Evaluation Metrics
@@ -188,7 +219,7 @@ Speculative decoding serves as an acceleration method during LLM decoding phase.
 
 <img src="./images/image-20240531131022026.png" alt="image-20240531131022026" style="zoom:50%;" />
 
-The core idea behind speculative decoding lies in utilizing smaller-scale models predicting future multiple words quickly during decoding followed by parallel validation via larger-scale models; if validation fails then re-generation by larger-scale occurs. In traditional auto-regressive decoding phase, every token is generated one at time, which limits the speed of generation. Speculative decoding combines fast predictions made by smaller size models along with parallel validations done by larger ones and significantly speeds up the generation $^{[9]}$.
+The core idea behind speculative decoding lies in utilizing smaller-scale models predicting future multiple words quickly during decoding followed by parallel validation via larger-scale models; if validation fails then re-generation by larger-scale occurs. In traditional auto-regressive decoding phase, every token is generated one at time, which limits the speed of generation. Speculative decoding combines fast predictions made by smaller size models along with parallel validations done by larger ones and significantly speeds up the generation.$^{[9]}$
 
 <img src="./images/image-20240531131935416.png" alt="image-20240531131935416" style="zoom:33%;" />
 
@@ -206,7 +237,7 @@ Task 1 is planned to be implemented as follows:
 
 Task 2 is planned to be implemented as follows:
 
-- Model selection: Qwen-1.8B model will be used at the edge, and Qwen-72B-Chat model will be used in the cloud.
+- Model selection: Qwen-1.8B model will be used at the edge, and Qwen-72B-Chat model will be used in the cloud. (For simplicity, also may choose to use LLM service like GPT-4, GLM-4, Claude as our cloud model)
 - Classifier design: Train a RoBERTa-base as a classifier. If time allows, also train a TinyLlama for classifier comparison.
 - Inference optimization: Plan to use low-bit quantization technology to achieve 4-bit and 8-bit quantized deployment, and introduce vllm to form the inference framework.
 
@@ -216,7 +247,7 @@ Advanced task is planned to be implemented as follows:
 - Implement the speculative decoding strategy in the edge-cloud collaborative framework.
 
 
-## Road map
+## Roadmap
 
 ### July
 
