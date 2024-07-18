@@ -338,17 +338,28 @@ cmmlu-world_religions                        1d0f4b     accuracy  gen           
 结合上面对 BenchMark 的调研分析，以及对 OpenCompass 项目中集成不同的 BenchMark 的方法参考，总结认为 BenchMark 的接口应该提供以下信息：
 
 1. 推理部分
-1.1 data
-这个部分就是数据集本身，但是有一个要求，那就是数据必须要分字段，例如对于 jsonl 格式的数据，可以是 {"question": "xxx", "answer": "xxx"} 这样
-1.2 Prompt Template
-这个部分需要和 1.1 data 相结合使用，prompt 中有的部分需要替换成 data 中的字段，例如：The Question is {question}. The Answer is {answer} 这样
-1.3 Retriever
-这个 Retriever 提供检索的相关内容，可以是 Zeroshot、OneShot、Fewshot，其中对于Fewshot，又可以分为FixKRetriever（固定的几个样例）、RandomRetriever（随机的样例）、TopkRetriever（例如可以通过SentenceTransformer和faiss来计算相似度，检索出来最相似的K个样例）等
+
+    1.1 data
+
+    这个部分就是数据集本身，但是有一个要求，那就是数据必须要分字段，例如对于 jsonl 格式的数据，可以是 {"question": "xxx", "answer": "xxx"} 这样
+
+    1.2 Prompt Template
+
+    这个部分需要和 1.1 data 相结合使用，prompt 中有的部分需要替换成 data 中的字段，例如：The Question is {question}. The Answer is {answer} 这样
+
+    1.3 Retriever
+
+    这个 Retriever 提供检索的相关内容，可以是 Zeroshot、OneShot、Fewshot，其中对于Fewshot，又可以分为FixKRetriever（固定的几个样例）、RandomRetriever（随机的样例）、TopkRetriever（例如可以通过SentenceTransformer和faiss来计算相似度，检索出来最相似的K个样例）等
+
 2. 评估部分
-2.1 字符串处理
-由于模型的回答可能除了真正的答案，还有很多不相关的部分，需要从回答中提取出来真正需要的答案
-2.2 评估打分
-给出打分的算法
+
+    2.1 字符串处理
+
+    由于模型的回答可能除了真正的答案，还有很多不相关的部分，需要从回答中提取出来真正需要的答案
+
+    2.2 评估打分
+
+    给出打分的算法
 
 ## 时间规划
 
