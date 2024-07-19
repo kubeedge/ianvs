@@ -127,7 +127,9 @@ simple_qa 是我设计的一个简单的QA问答任务，测试集部分内容�
 
 通过LLM来回答所选答案，提取回答中的答案的方式，来与正确答案进行比对，计算acc准确率
 
-另外这里不同于一般的使用 `index.txt` 索引文件的方式，我实现了另外一套机制。
+另外这里不同于一般的使用 `index.txt` 索引文件的方式，我实现了另外一套机制，如图。
+
+![](images/data_process_change.png)
 
 在之前的项目中，我们需要在 `testenv.yaml` 文件中配置 `train_url` 和 `test_url` 索引文件的路径，索引文件中会放 (输入x, 期望输出y) 的文件路径，这个设计是存在一些局限性的。
 
@@ -183,6 +185,10 @@ Ianvs 项目现阶段想要实现对大模型的使用以及评估，在大模�
 OpenCompass 是一个评估大模型效果的项目，目前适配了很多的大模型和不同的benchmark。考虑到OpenCompass项目本身也一直在更新，为了防止OpenCompass的版本更新产生的影响，把OpenCompass打包成whl文件，然后通过 `pip install opencompass-xxx.whl` 的方式来安装。
 
 通过这样的方式引入 OpenCompass 项目之后，我又在 `core` 目录下添加了原 OpenCompass 项目 `configs` 目录下的配置文件，并转换成 python 包的形式。这一步的目的是仍然能使用原来 OpenCompass 中的数据集配置文件。另外，我仿照 OpenCompass 的启动方式，在 Ianvs 项目根目录中添加了 `run_op.py` 来调用 OpenCompass 的 `opencompass.cli.main` 里面的 `main()` 函数启动评测。
+
+整理的结构设计如图：
+
+![](images/structure.png)
 
 评测数据集方面，依然需要按照 [OpenCompass Doc](https://opencompass.readthedocs.io/zh-cn/latest/get_started/installation.html#id2) 的方法下载解压数据集。
 
@@ -353,13 +359,94 @@ cmmlu-world_religions                        1d0f4b     accuracy  gen           
 
 2. 评估部分
 
-    2.1 字符串处理
+    2.1 客观评估
 
-    由于模型的回答可能除了真正的答案，还有很多不相关的部分，需要从回答中提取出来真正需要的答案
+        2.1.1 字符串处理
 
-    2.2 评估打分
+        由于模型的回答可能除了真正的答案，还有很多不相关的部分，需要从回答中提取出来真正需要的答案
 
-    给出打分的算法
+        2.1.2 评估打分
+
+        给出打分的算法，算法需要直接返回分数，分数是一个json，可以有多个维度的分数
+
+    2.2 主观评估
+
+        2.2.1 Prompt Template
+
+        这个 Template 是 GPT-4 这种 Judge Model 的 Prompt，需要留一个 infer_result 的字段。Judge Model 会根据这个 Prompt 来打分。
+
+        2.2.2 获取分数
+
+        从 Judge Model 的结果中获取分数，分数是一个json，可以有多个维度的分数
+
+
+### BenchMark 格式示例
+
+BenchMark 的相关信息数据都需要设计成单独存储，以保持稳定性。
+
+`data.json`
+
+只保存和数据本身有关的部分。
+
+```json
+{
+    "keys": ["key1", "key2", "answer_key"],
+    "answer_key": "answer_key",
+    "data": [{"key1": "xxx", "key2": "xxx", "answer_key": "xxx"}, {"key1": "xxx", "key2": "xxx", "answer_key": "xxx"}],
+}
+```
+
+`prompt.json`
+
+提供 model infer 的 prompt 模版。例如：
+
+```json
+{
+    "infer_system_prompt": "You ara a xxxx assistant.",
+    "infer_user_template": "Question: The question type is {type}, the question is {question}, What is the answer?",
+    "infer_answer_template": "The Answer is {answer_key}",
+    "eval_prompt_template": "The model infer answer is {infer_answer}, the reference data is {ref}, Please give a score between 1 to 10."
+}
+```
+
+至于是使用 ZeroShot/OneShot/FewShot，其实都是用增加 chat message history 的方式，这部分由不同模型自己实现即可。
+
+chat history：
+
+```
+chat = [
+   {"role": "user", "content": "Hello, how are you?"},
+   {"role": "assistant", "content": "I'm doing great. How can I help you today?"},
+   {"role": "user", "content": "I'd like to show off how chat templating works!"},
+]
+```
+
+可以看到在这一轮 user 的问题之前，已经有了一轮 user 和 assistant 的对话。这整个 chat 是直接传给模型的。
+模型可以根据上下文进行学习。
+
+举个例子，如果是 3-shot，以 HuggingFace 上的 zephyr-7b-beta 模型为例：
+
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+checkpoint = "HuggingFaceH4/zephyr-7b-beta"
+tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+model = AutoModelForCausalLM.from_pretrained(checkpoint)
+
+messages = [
+    {"role": "system","content": "You are an expert at solving problems."},
+    {"role": "user", "content": "以下是关于{_ch_name}的单项选择题，请直接给出正确答案的选项。\n题目：{{question}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}"},
+    {"role": "assistant", "content": "答案是{answer}。"}
+    {"role": "user", "content": "以下是关于{_ch_name}的单项选择题，请直接给出正确答案的选项。\n题目：{{question}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}"},
+    {"role": "assistant", "content": "答案是{answer}。"}
+    {"role": "user", "content": "以下是关于{_ch_name}的单项选择题，请直接给出正确答案的选项。\n题目：{{question}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}"},
+    {"role": "assistant", "content": "答案是{answer}。"}
+    {"role": "user", "content": "以下是关于{_ch_name}的单项选择题，请直接给出正确答案的选项。\n题目：{{question}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}"},
+]
+tokenized_chat = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True, return_tensors="pt")
+print(tokenizer.decode(tokenized_chat[0]))
+```
+
 
 ## 时间规划
 
