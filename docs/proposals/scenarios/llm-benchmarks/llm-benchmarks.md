@@ -409,6 +409,8 @@ BenchMark 的相关信息数据都需要设计成单独存储，以保持稳定�
 }
 ```
 
+如果需要有别的prompt信息，也可以加进去。
+
 至于是使用 ZeroShot/OneShot/FewShot，其实都是用增加 chat message history 的方式，这部分由不同模型自己实现即可。
 
 chat history：
@@ -450,13 +452,13 @@ print(tokenizer.decode(tokenized_chat[0]))
 
 ## 时间规划
 
-- 6月到7月中旬
+- **6月到7月中旬**
 实现 OpenCompass 项目的集成，在 Ianvs 上实现 LLM single task learning 样例
-- 7月中旬到8月中旬
+- **7月中旬到8月中旬**
 以政务数据集为例，构建一套测试集、测试指标、测试环境、使用指南
-- 8月中旬到9月中旬
+- **8月中旬到9月中旬**
 优化 Ianvs 上的评估，实现任务监控、可视化等功能
-- 9月中旬到9月底
+- **9月中旬到9月底**
 如果有时间精力，看情况实现工业/医疗大模型测试套件，包括指标和样例
 
 
