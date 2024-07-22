@@ -5,6 +5,7 @@
 # pylint: disable=R1725
 # pylint: disable=R1732
 # pylint: disable=R0913
+# pylint: disable=R0801
 import json
 import os
 import os.path as osp
