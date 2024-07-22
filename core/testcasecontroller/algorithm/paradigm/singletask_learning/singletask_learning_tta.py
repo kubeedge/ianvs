@@ -1,3 +1,11 @@
+# pylint: disable=C0114
+# pylint: disable=E0401
+# pylint: disable=C0115
+# pylint: disable=W0246
+# pylint: disable=R1725
+# pylint: disable=R1732
+# pylint: disable=C0103
+# pylint: disable=R0801
 import json
 import os
 import torch
