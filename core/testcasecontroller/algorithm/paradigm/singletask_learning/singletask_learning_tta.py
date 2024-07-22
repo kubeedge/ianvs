@@ -5,6 +5,7 @@
 # pylint: disable=R1725
 # pylint: disable=R1732
 # pylint: disable=C0103
+# pylint: disable=R0801
 import json
 import os
 import torch
