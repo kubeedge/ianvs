@@ -188,7 +188,7 @@ Here is our first design of the algorithm process:
 
 
 
-![image-20240711115659340](FCI_SSL_image/algorithm design)
+![image-20240711115659340](FCI_SSL_image/algorithm_design)
 
 
 
