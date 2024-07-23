@@ -45,17 +45,6 @@ The scope of this project includes:
 
   - We will conduct a series of benchmarking not only some classic baseline methods, but also our SOTA algorithm.
 
-  - The benchmarking setting as shown follow:
-
-    | benchmarking setting  | value                             |
-    | --------------------- | --------------------------------- |
-    | client_number         | 2                                 |
-    | communication round   | 100                               |
-    | dataset               | CIFAR-100/ILSVRC2012/TinyImageNet |
-    | dataset_split         | non-iid                           |
-    | labeled dataset ratio | 0.3                               |
-    | local model           | ResNet-10 or LeNet-5              |
-    | task_size             | 10 classes per task               |
 
 
 Target users:
@@ -68,7 +57,11 @@ Target users:
 
 In applications such as video surveillance, the camera continuously acquires new data over time, and there may be new categories in these data, such as unseen faces. It is expensive to confirm the class of the data, and only a small amount of data is labeled. Traditional centralized machine learning needs to collect user data to the cloud, which has huge data transmission overhead and privacy issues. However, federated learning is based on supervised learning,  which cannot use unlabeled samples and does not consider the dynamic change of data sets. There are various limitations on edge devices, such as limited resources, so it is necessary to train the model through cloud-edge collaboration.
 
+
+
 <img src="FCI_SSL_image/problem_definition_1" alt="image-20240702160532648"  /><img src="FCI_SSL_image/problem_definition_2" alt="image-20240702160611560"  />
+
+
 
 In order to combine federated class incremental learning and semi supervised learning, we propose the Federated class-incremental Semi-Supervised Learning (FCI-SSL) to solve the above problem of Class Incremental learning with sparse labels in the edge environment.
 
@@ -89,6 +82,8 @@ min L = \lambda_1L_s + \lambda_2L_u + \lambda_3 L_{c}
 $$
 Where $L_s$represents the supervised loss, $L_u$represents the unsupervised loss, and $L_c$represents the class incremental loss, which is a correction term that minimizes the above loss so that the model can recognize unlabeled data during training and prevent catastrophic forgetting.
 
+
+
 ![image-20240710154405170](FCI_SSL_image/Fcil_ssl)
 
 
@@ -106,7 +101,11 @@ First, Let's introduce the training process for FCI-SSL :
 
  The timing diagram of the entire Benchmarking system is presented below: 
 
+
+
 ![image-20240719162639293](FCI_SSL_image/architecture_design_ 2)
+
+
 
 We will leverage the existed *TestEnvManager*, *TestCaseController* and *StoryManager* in Ianvs. In order to perform the process of federated class incremental learning for label scarcity, we also add a new paradigm —— federated class incremental learning paradigm （FCI Paradigm). Basically, we will add some feature in ianvs:
 
@@ -120,11 +119,19 @@ We will leverage the existed *TestEnvManager*, *TestCaseController* and *StoryMa
 
 The overall architecture is shown as follow: 
 
+
+
 ![image-20240719164944919](FCI_SSL_image/architecture_design)
+
+
 
 We design a novel algorithm paradigm namely Federated-Class-Incremental-Learning Paradigm,  We specify the process of the algorithm paradigm as follows:
 
+
+
 ![image-20240721191942458](FCI_SSL_image/paradigm_process)
+
+
 
 In order to provide functionality extensibility and convenience to users, we have specified a process where most of the functionality can be replaced by user-implemented functionality(block in yellow). In addition, we require users to implement the server and client modules （block in green and orange） to complete the whole algorithm process. 
 
@@ -142,8 +149,7 @@ ILSVRC2012: [ImageNet (image-net.org)](https://image-net.org/challenges/LSVRC/20
 
 TinyImageNet: [Tiny ImageNet Dataset | Papers With Code](https://paperswithcode.com/dataset/tiny-imagenet)
 
-We provide three kinds of classical data sets for incremental learning. When users implement their own algorithms, for the allocation of data sets, they can download them through the tool API provided by us and save them locally in the data processing format of Ianvs. After that, we will set the parameters according to the following benchmarking setting, and partition the data to meet the requirements of non-iid. For example, we will set the data partition for different client as follow: 
-![image-20240721182619091](FCI_SSL_image/data_partition)
+We provide three kinds of classical data sets for incremental learning. When users implement their own algorithms, for the allocation of data sets, they can download them through the tool API provided by us and save them locally in the data processing format of Ianvs. After that, we will set the parameters according to the following benchmarking setting, and partition the data to meet the requirements of non-iid. 
 
 **Construction Setting**
 
@@ -153,15 +159,15 @@ You can then define custom metrics functions such as `accuracy` to measure how a
 
 The benchmarking setting items  are  as shown follow:
 
-| benchmarking setting  | type                    | value                             |
-| --------------------- | ----------------------- | --------------------------------- |
-| client_number         | optional                | 2/5/10                            |
-| communication round   | configurable            | 10/20/50/100                      |
-| dataset               | configurable            | CIFAR-100/ILSVRC2012/TinyImageNet |
-| dataset_split         | fixed                   | non-iid                           |
-| labeled dataset ratio | optional                | 0.1/0.2/0.3                       |
-| local model           | self define or optional | self define or ResNet-10/LetNet5  |
-| task_size             | optional                | 5/10/20                           |
+| benchmarking setting  | type         | value                             |
+| --------------------- | ------------ | --------------------------------- |
+| client_number         | optional     | 2/5/10                            |
+| communication round   | configurable | 10/20/50/100                      |
+| dataset               | configurable | CIFAR-100/ILSVRC2012/TinyImageNet |
+| dataset_split         | optional     | non-iid/iid                       |
+| labeled dataset ratio | optional     | 0.1/0.2/0.3                       |
+| local model           | self define  | self define                       |
+| task_size             | optional     | 5/10/20                           |
 
 
 
@@ -180,27 +186,45 @@ In this project we need to design a FCI_SSL algorithm that can no only utilize t
 
 Here is our first design of the algorithm process:  
 
+
+
 ![image-20240711115659340](FCI_SSL_image/algorithm design)
+
+
 
 **Agreement-Base Consistency Unsupervised loss**
 
 we propose **agreement-base consistency unsupervised loss** to utilize the unlabeled data in edge . Consistency regularization is one of most popular approaches to learn from unlabeled examples in a semi-supervised learning setting.  Consistency-regularization methods enforce the predictions from the augmented examples and original (or weakly augmented) instances to output the same class label.  Based on the assumption that class semantics are unaffected by small input perturbations, these methods basically ensures consistency of the prediction across the multiple perturbations of same input.  So our unsupervised loss will be defined as follow:
+
+
 $$
 L_u = \frac{1}{N^k_u}\sum_{u^k \in D^k_u}CrossEntropy(\hat{y}, P(A(u^k),\theta^k))
 $$
+
+
 where $A(u^k)$ performs RandAugment on unlabeled data u at task k. $\hat{y}$ is the agreement-base pseudo-label, defined as follow:
+
+
 $$
 \hat{y} = Max( \frac{1}{H}\sum_{\theta^h \in H}P(\alpha(u^k),\theta^h) + onehot(P(\alpha(u^k), \theta^k)) )
 $$
+
+
 where H is the number of helpers and  $\theta^h$ is the corresponding model parameters. $\alpha(u^k)$ performs a week augment on unlabeled data at task k.
 
 **Class Forgetting Compensate Loss**
 
 We propose class-forgetting compensate loss to alleviate catastrophic forgetting. Our class compensation loss is mainly composed of two parts. The first part is the  gradient compensation mechanism proposed by GLFC[1], According to GLFC[1], we believe that adjust the gradient updates can help mitigate catastrophic forgetting. Specifically, for a single sample $(x^k_i, y^k_i)$ , we calculate its gradient measurement. $G^k_i$ with respect to the $y^k_i$-th neuron of the last output layer(the classifier layer) in $\theta$:
+
+
 $$
 G^k_i = P^k(x^k_i, \theta^k)_{y^k_i} - 1
 $$
+
+
 where $P^k(x^k_i, \theta)_{y^k_i}$ is the $y^k_i$-th softmax output of the i-th sample. To adjust the gradient update, GLFC perform a re-weight method. Given a mini-batch $\{x^k_i, y^k_i\}^b_{i=1}$, define:
+
+
 $$
 G_{new} = \frac{1}{sum^b_{i=1} \mathbb I_{y^k_i\in Y^k}}\sum^b_{i=1}|G^k_i| \mathbb I_{y^k_i\in Y^k}
 $$
@@ -209,22 +233,33 @@ $$
 G_{old} = \frac{1}{sum^b_{i=1} \mathbb I_{y^k_i\in \cup^{k-1}_{j=1}Y^j}}\sum^b_{i=1}|G^k_i| \mathbb I_{y^k_i\in \cup^{k-1}_{j=1}Y^j}
 $$
 
+
+
 as the gradient mean for new and old classes. where $\mathbb I(\cdot)$ is the indicator function that if the subscript condition is true,  $\mathbb I_{True} = 1$, otherwise, $\mathbb I_{False} = 0$。 
 
 And the gradient compensation  loss will be denote as follow:
+
+
 $$
 L_{C} = \frac{1}{b} \sum^b_{i=1} \frac{|G^k_i|}{\bar{G}} \cdot CrossEntropy(P^k(x^k_i, \theta^k)y^k_i)
 $$
+
+
 The Second part is the feature fusion loss.  We will keep a local best old model to guide the training of our local model, as the best-old model keeps the old class information of the past task. The best old model will only be updated at the beginning of the task, and it fuses the local best old model, as well as the features of the assisting models:
 $$
 \theta^k_{best} = \alpha \theta^{k-1}_{best} + (1 - \alpha) \cdot \frac{1}{H} sum^H_{j=1} \theta^k_j
 $$
 
 
+
  As a result, Given a mini batch data $(X^k_b, Y^k_b)$the feature fusion loss will be denote as follow:
+
+
 $$
 L_F = KL(P^k(X^k_b, \theta^k) || P^k(X^k_b, \theta^k_{best}))
 $$
+
+
 The optimization object for client is :
 $$
 L = \lambda_1 Lu + \lambda_2L_C + \lambda3 L_F
