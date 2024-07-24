@@ -153,8 +153,6 @@ We provide three kinds of classical data sets for incremental learning. When use
 
 To be precise, our benchmarking framework allows users to test their code multiple times with controllable parameters. For example, when benchmarking GLFC on CIFAR-100, you can specify the *proportion of labeled data*, *the size of each incremental task*, *the number of communication rounds*, and *the number of clients*.  So that user can focus to the algorithm testing and ignore the detail of the class-incremental setting. 
 
-You can then define custom metrics functions such as `accuracy` to measure how accurate the algorithm is,`error_rates` to count the number of wrong labels, and `forget_rate` to measure how much the algorithm forgets.
-
 The benchmarking setting items  are  as shown follow:
 
 | benchmarking setting  | type         | value                             |
@@ -163,11 +161,19 @@ The benchmarking setting items  are  as shown follow:
 | communication round   | configurable | 10/20/50/100                      |
 | dataset               | configurable | CIFAR-100/ILSVRC2012/TinyImageNet |
 | dataset_split         | optional     | non-iid/iid                       |
-| labeled dataset ratio | optional     | 0.1/0.2/0.3                       |
+| labeled dataset ratio | optional     | 0.1/0.2/0.3/1.0                   |
 | local model           | self define  | self define                       |
 | task_size             | optional     | 5/10/20                           |
 
+**Metrics Setting**
 
+- *accuracy*
+
+  Different from ordinary accuracy testing, accuracy testing in federated incremental learning needs to be performed in incremental tasks. After each task is completed, all the class data that have appeared need to be tested and finally we need to calculate the average accuracy for whole task and the final accuracy for test data.
+
+- *forget rate*
+
+  In addition to the model accuracy, we also need to test the degree of forgetting of the algorithm, which is also counted throughout the incremental learning process. After each round of tasks, the forgetting rate of the current model for the old categories needs to be tested.
 
 ### 3.4 Algorithm Design
 
