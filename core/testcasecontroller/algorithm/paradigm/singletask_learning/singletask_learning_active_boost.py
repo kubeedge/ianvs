@@ -1,11 +1,19 @@
+# pylint: disable=C0301
+# pylint: disable=C0114
+# pylint: disable=C0115
+# pylint: disable=W0246
+# pylint: disable=R1725
+# pylint: disable=R1732
+# pylint: disable=R0913
+# pylint: disable=R0801
 import json
 import os
+import os.path as osp
 from core.common.constant import ParadigmType
 from examples.yaoba.singletask_learning_boost.resource.utils.infer_and_error import infer_anno, merge_predict_results, \
     compute_error, gen_txt_according_json, get_new_train_json
 from examples.yaoba.singletask_learning_boost.resource.utils.transform_unkonwn import aug_image_bboxes
 from .singletask_learning import SingleTaskLearning
-import os.path as osp
 
 
 class SingleTaskLearningACBoost(SingleTaskLearning):

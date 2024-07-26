@@ -6,6 +6,8 @@ on:
       - main
     tags:
   pull_request:
+    paths-ignore:
+      - '**.md'
 
 jobs:
   pylint:
@@ -24,7 +26,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install libgl1-mesa-glx -y
-          python -m pip install --upgrade pip
+          python -m pip install pip==24.0
           python -m pip install  pylint
           python -m pip install ${{github.workspace}}/examples/resources/third_party/*
           python -m pip install -r ${{github.workspace}}/requirements.txt
