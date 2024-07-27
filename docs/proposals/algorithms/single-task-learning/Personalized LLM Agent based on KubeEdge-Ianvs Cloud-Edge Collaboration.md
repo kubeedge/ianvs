@@ -63,14 +63,13 @@ Therefore, this project proposes a **Personalized LLM Agent based on KubeEdge-Ia
 
 ## 3.1 Demo
 
-<img src="images/llm_agent_demo.png" alt="LLM agent Demo" style="zoom:50%;" />
+<img src="images/personalized_agent.png" alt="Personal_Instruction" style="zoom:100%;" />
 
+This project presents three scenarios, which are audio task, human posture classification task and face and object recognition task.
 
-This project plans to complete a demo for human pose detection through video. The steps are as follows:
-
-1. Users input commands to query the corresponding video based on time.
-2. The video is split into frames for object detection, detecting the position of people.
-3. Perform human identity recognition.\3. Perform action pose recognition."
+What happens if you put a trained Agent model in a mismatched scenario? Here are two examples:
+1. Set ***Agent #1*** to ***Scene #3***: Data source does not match;
+2. Place ***Agent #3*** in ***Scene #2***: A task planning error occurred.
 
 ## 3.2 DataSet
 
@@ -96,15 +95,17 @@ This project implements automated task definition and task orchestration through
 ### 3.4.1 Task Decomposition
 #### Rouge-N
 The ROUGE-N metric is a method used to evaluate the quality of automatic summarization or machine translation, focusing on recall, which is the degree of overlap between the system-generated text and the reference text. The "N" in ROUGE-N represents the length of the longest common subsequence considered. Here is the calculation formula for ROUGE-N:
-$$ROUGE\_N=\frac{\displaystyle\sum^{}_{S\in\{ReferenceSummaries\}}\sum^{}_{grams_n\in S}Count_{match} (gram_n) }{\displaystyle\sum^{}_{S\in\{ReferenceSummaries\}}\sum^{}_{grams_n\in S}Count (gram_n)}$$
+$$ ROUGE\_N=\frac{\displaystyle\sum^{}_{S\in\{ReferenceSummaries\}}\sum^{}_{grams_n\in S}Count_{match} (gram_n) }{\displaystyle\sum^{}_{S\in\{ReferenceSummaries\}}\sum^{}_{grams_n\in S}Count (gram_n)} $$
 
 ####  Bertscore
-[Bert_score](https://github.com/Tiiiger/bert_score?tab=readme-ov-file#readme) leverages the pre-trained contextual embeddings from BERT and matches words in candidate and reference sentences by cosine similarity. It has been shown to correlate with human judgment on sentence-level and system-level evaluation. Moreover, BERTScore computes precision, recall, and F1 measure, which can be useful for evaluating different language generation tasks.
+[Bert_score](https://github.com/Tiiiger/bert_score?tab=readme-ov-file#readme) leverages the pre-trained contextual embeddings from BERT and matches words in candidate and reference sentences by cosine similarity. It has been shown to correlate with human judgment on sentence-level and system-level evaluation. Moreover, BERTScore computes precision, recall, and F1 measures, which can be useful for evaluating different language generation tasks.
 
 <img src="images/bert_score.png" alt="bert_score" style="zoom:100%;" />
 
 
-$$R_{\mathrm{BERT}}=\frac{1}{|x|} \sum_{x_{i} \in x} \max _{\hat{x}_{j} \in \hat{x}} \mathbf{x}_{i}^{\top} \hat{\mathbf{x}}_{j}, \quad P_{\mathrm{BERT}}=\frac{1}{|\hat{x}|} \sum_{\hat{x}_{j} \in \hat{x}} \max _{x_{i} \in x} \mathbf{x}_{i}^{\top} \hat{\mathbf{x}}_{j}, \quad F_{\mathrm{BERT}}=2 \frac{P_{\mathrm{BERT}} \cdot R_{\mathrm{BERT}}}{P_{\mathrm{BERT}}+R_{\mathrm{BERT}}}$$
+$$ R_{\mathrm{BERT}}=\frac{1}{|x|} \sum_{x_{i} \in x} \max _{\hat{x}_{j} \in \hat{x}} \mathbf{x}_{i}^{\top} \hat{\mathbf{x}}_{j}$$ 
+$$P_{\mathrm{BERT}}=\frac{1}{|\hat{x}|} \sum_{\hat{x}_{j} \in \hat{x}} \max _{x_{i} \in x} \mathbf{x}_{i}^{\top} \hat{\mathbf{x}}_{j}$$ 
+$$F_{\mathrm{BERT}}=2 \frac{P_{\mathrm{BERT}} \cdot R_{\mathrm{BERT}}}{P_{\mathrm{BERT}}+R_{\mathrm{BERT}}} $$
 
 
 # 4 Roadmap
