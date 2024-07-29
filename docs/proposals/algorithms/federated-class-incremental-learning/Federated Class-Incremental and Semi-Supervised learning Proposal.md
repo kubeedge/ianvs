@@ -31,7 +31,7 @@ The scope of this project includes:
 - Define a Federated Class-Incremental learning paradigm base on Ianvs.
 
   - Sedna is a distributed synergy AI framework, which support plenty of distributed algorithm including incremental learning, federated learning.
-  - Ianvs is a distributed synergy AI benchmarking, many benchmarking example can be found in ianvs. However, Ianvs did not support federated class incremental learning paradigm. Our project will fill this gap in the ianvs project.
+  - Ianvs is a distributed synergy AI benchmarking, many benchmarking example can be found in ianvs. However, Ianvs did not support federated class incremental learning paradigm. Our project will fill this gap in the Ianvs project.
   
 - Propose a new and effective federated class incremental learning algorithm to utilize the unlabeled data in the edge.
 
@@ -97,7 +97,23 @@ First, Let's introduce the training process for FCI-SSL :
 5. The server receives client parameters, aggregates them, and maybe will performs some helper functions to help alleviate catastrophic forgetting both locally and globally.
 6. Then repeat steps 1-5 until all tasks are completed.
 
- The timing diagram of the entire Benchmarking system is presented below: 
+Federated incremental learning is a special kind of federated learning. However Ianvs did not support federated learning algorithm paradigm. So before we begin to design the federated class incremental learning algorithm, we have to design a simple and single node version of federated learning. 
+
+Sedna is a edge-cloud collaborative training AI framework. It support federated learning ability. Base on Sedna, we can have a simple federated learning architecture: 
+
+![image-20240729150049512](FCI_SSL_image/federated_learning_architecture)
+
+
+
+It is quite clear and specific that the paradigm need to start the server and client in single node and then perform federated learning, the whole process can be shown as follow:
+
+
+
+![image-20240729150728176](FCI_SSL_image/paradigm_process_2)
+
+
+
+Base on the above paradigm, we can conduct our federated-class-incremental learning paradigm and the timing diagram of the entire Benchmarking system is presented below: 
 
 
 
@@ -105,13 +121,14 @@ First, Let's introduce the training process for FCI-SSL :
 
 
 
-We will leverage the existed *TestEnvManager*, *TestCaseController* and *StoryManager* in Ianvs. In order to perform the process of federated class incremental learning for label scarcity, we also add a new paradigm —— federated class incremental learning paradigm （FCI Paradigm). Basically, we will add some feature in ianvs:
+We will leverage the existed *TestEnvManager*, *TestCaseController* and *StoryManager* in Ianvs. In order to perform the process of federated class incremental learning for label scarcity, we also add a new paradigm —— federated class incremental learning paradigm （FCI Paradigm). Basically, we will add some feature in Ianvs:
 
 - In *Test Env Manager*: 
   - Add new benchmarking Accuracy and Forget Rate as metrics. 
   - Add a new auto generate dataset function to generate dataset.
 - In *Test Case Controller*
-  - Add a new Algorithm Paradigm——Federated Class Incremental learning Algorithm Paradigm to normalize the whole process of federated class incremental learning. User have to specify two part of the paradigm —— server and client.
+  - Add a new type of Algorithm Paradigm——Federated  learning Algorithm Paradigm.
+  - Add  Federated  Class Incremental learning Algorithm Paradigm base on Federated learning Paradigm to normalize the whole process of federated class incremental learning. User have to specify two part of the paradigm —— server and client.
 - In *Story Manager*
   -  Show Leaderboard and Test Report for users.
 
@@ -127,13 +144,13 @@ We design a novel algorithm paradigm namely Federated-Class-Incremental-Learning
 
 
 
-![image-20240721191942458](FCI_SSL_image/paradigm_process)
+![image-20240729151355604](FCI_SSL_image/paradigm_process)
 
 
 
 In order to provide functionality extensibility and convenience to users, we have specified a process where most of the functionality can be replaced by user-implemented functionality(block in yellow). In addition, we require users to implement the server and client modules （block in green and orange） to complete the whole algorithm process. 
 
-Federated incremental learning is a special kind of federated learning, so if the user does not specify the `Task definition module` and does not implement the `exemplar update`, then  the above process will degenerate into a naive federated learning process.
+
 
 ### 3.3 Benchmarking Design 
 
@@ -174,9 +191,11 @@ The benchmarking setting items  are  as shown follow:
   Different from ordinary accuracy testing, accuracy testing in federated incremental learning needs to be performed in incremental tasks. After each task is completed, all the class data that have appeared need to be tested and finally we need to calculate the average accuracy for whole task and the final accuracy for test data. The accuracy of the model for incremental round $t > 1$ is calculated by the following:
 
   
+
   $$
   acc_t = \frac{1}{N} \sum^C_{j=1} \sum^{N_j}_{i=1}  \mathbb  I(\theta(x_i) == y_j)
   $$
+
   
 
   where $N$ is the total number of the  test set, and $C \in {C_1,..,C_t}$ is the class number of the test set, $N_j$ is the number of class $j$
@@ -188,9 +207,11 @@ The benchmarking setting items  are  as shown follow:
   We need to evaluate the forgetting of the algorithm which can reflect the model's performance on old classes. The forget rate for incremental round $t > 1$ is calculated by the following:
   
   
+  
   $$
   f_{t} = \frac{1}{C_{old}}\sum^{C_{old}}_{i=1} \underset{j\in1,..,t-1}{max} acc_{i,j}-acc_{i,t}
   $$
+  
   
   
   where $C_{old}$ is the number of old classes, $acc_{i,j}$ is the accuracy of class i at incremental round j.
@@ -300,7 +321,7 @@ The road map of this project will be list as follow:
 - **4.1 Phase 1 Paradigm (July 1st - August 25th)**
   - Engage in discussions with the project mentor and the community to finalize the development details.
   - Further refine the workflow of the FCI_SSL testing task, including the relationships between different components and modules.
-  - Develop the FCI_SSL Paradigm so that ianvs can support the FCI_SSL process.
+  - Develop the FCI_SSL Paradigm so that Ianvs can support the FCI_SSL process.
   - Develop the test environment, including datasets and model metrics.
   - Begin the development of the base model encapsulation for the test algorithms.
 
