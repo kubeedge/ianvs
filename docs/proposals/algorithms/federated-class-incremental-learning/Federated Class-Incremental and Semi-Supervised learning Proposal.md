@@ -133,6 +133,8 @@ We design a novel algorithm paradigm namely Federated-Class-Incremental-Learning
 
 In order to provide functionality extensibility and convenience to users, we have specified a process where most of the functionality can be replaced by user-implemented functionality(block in yellow). In addition, we require users to implement the server and client modules （block in green and orange） to complete the whole algorithm process. 
 
+Federated incremental learning is a special kind of federated learning, so if the user does not specify the `Task definition module` and does not implement the `exemplar update`, then  the above process will degenerate into a naive federated learning process.
+
 ### 3.3 Benchmarking Design 
 
 **Datasets Setting**  
