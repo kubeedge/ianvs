@@ -12,7 +12,6 @@ AS a result, we will implement a novel Federated Incremental Learning algorithm 
 
 - Lacking of the ability to benchmarking federated class incremental learning. 
 - The Paradigm Ianvs support did not provide a distributed benchmarking environment.
-- The Simulation module needs to be updated.
 
 ### 1.2 Goals
 
@@ -33,8 +32,7 @@ The scope of this project includes:
 
   - Sedna is a distributed synergy AI framework, which support plenty of distributed algorithm including incremental learning, federated learning.
   - Ianvs is a distributed synergy AI benchmarking, many benchmarking example can be found in ianvs. However, Ianvs did not support federated class incremental learning paradigm. Our project will fill this gap in the ianvs project.
-  - We will combine the simulation ability and proposal a general federated class-incremental learning paradigm.
-
+  
 - Propose a new and effective federated class incremental learning algorithm to utilize the unlabeled data in the edge.
 
   - A combination of semi-supervised learning and federated class incremental learning.
@@ -42,8 +40,6 @@ The scope of this project includes:
 - Conduct a series of federated class incremental learning benchmarking 
 
   - We will conduct a series of benchmarking not only some classic baseline methods, but also our SOTA algorithm.
-
-
 
 Target users:
 
@@ -63,7 +59,7 @@ In applications such as video surveillance, the camera continuously acquires new
 
 In order to combine federated class incremental learning and semi supervised learning, we propose the Federated class-incremental Semi-Supervised Learning (FCI-SSL) to solve the above problem of Class Incremental learning with sparse labels in the edge environment.
 
-The scenario of FCI-SSL can refer to the standard scenario in data partitioning of federated semi-supervised learning. At present, incremental semi-supervised learning for disjoint scenarios faces many challenges. Firstly, the data held by client $c$ is unlabeled data, so the source of incremental labeled samples cannot be determined, which is contradictory with the federated learning setting. So consider standard scenario, there is a server, used to aggregate model from the client, have $$N $$ client, each client $c$  in the task $i$  holds  a sequence data set $D= \{D_ {is}, D_ {iu}\}$, The total number of samples in labeled data sets is much smaller than that in unlabeled data sets, that is, $|D^c_{is}| \ll |D^c_{iu}|$, and the data distribute on different clients is usually non-IID.
+The scenario of FCI-SSL can refer to the standard scenario in data partitioning of federated semi-supervised learning. At present, incremental semi-supervised learning for disjoint scenarios faces many challenges. Firstly, the data held by client $c$ is unlabeled data, so the source of incremental labeled samples cannot be determined, which is contradictory with the federated learning setting. So consider standard scenario, there is a server, used to aggregate model from the client, have $N$ client, each client $c$  in the task $i$  holds  a sequence data set $D= \{D_ {is}, D_ {iu}\}$, The total number of samples in labeled data sets is much smaller than that in unlabeled data sets, that is, $|D^c_{is}| \ll |D^c_{iu}|$, and the data distribute on different clients is usually non-IID.
 
 In federated learning, the server and the client use the same feature extractor, which is denoted as $G^s$ for the server and $\theta_{G^s}$ for its parameters. The feature extractor of the client is denoted as $\{L^c\}^N_{c=1}$, and its parameters are denoted as $\theta_{L^c}$.
 
@@ -75,9 +71,13 @@ Federated incremental semi-supervised learning is based on the following assumpt
 5. Each client is allowed to keep a certain memory of examples, and $|M| \ll |D^c_{is}|$
 
 The training objective of Federated Class Incremental Semi-supervised learning (FCI-SSL) is
+
+
 $$
 min L = \lambda_1L_s + \lambda_2L_u + \lambda_3 L_{c}
 $$
+
+
 Where $L_s$represents the supervised loss, $L_u$represents the unsupervised loss, and $L_c$represents the class incremental loss, which is a correction term that minimizes the above loss so that the model can recognize unlabeled data during training and prevent catastrophic forgetting.
 
 
@@ -101,7 +101,7 @@ First, Let's introduce the training process for FCI-SSL :
 
 
 
-![image-20240719162639293](FCI_SSL_image/architecture_design_ 2)
+![image-20240719162639293](FCI_SSL_image/architecture_design_2)
 
 
 
@@ -119,7 +119,7 @@ The overall architecture is shown as follow:
 
 
 
-![image-20240719164944919](FCI_SSL_image/architecture_design)
+![img](FCI_SSL_image/architecture_design)
 
 
 
@@ -158,7 +158,7 @@ The benchmarking setting items  are  as shown follow:
 | benchmarking setting  | type         | value                             |
 | --------------------- | ------------ | --------------------------------- |
 | client_number         | optional     | 2/5/10                            |
-| communication round   | configurable | 10/20/50/100                      |
+| incremental round     | configurable | 10/20/50/100                      |
 | dataset               | configurable | CIFAR-100/ILSVRC2012/TinyImageNet |
 | dataset_split         | optional     | non-iid/iid                       |
 | labeled dataset ratio | optional     | 0.1/0.2/0.3/1.0                   |
@@ -169,11 +169,31 @@ The benchmarking setting items  are  as shown follow:
 
 - *accuracy*
 
-  Different from ordinary accuracy testing, accuracy testing in federated incremental learning needs to be performed in incremental tasks. After each task is completed, all the class data that have appeared need to be tested and finally we need to calculate the average accuracy for whole task and the final accuracy for test data.
+  Different from ordinary accuracy testing, accuracy testing in federated incremental learning needs to be performed in incremental tasks. After each task is completed, all the class data that have appeared need to be tested and finally we need to calculate the average accuracy for whole task and the final accuracy for test data. The accuracy of the model for incremental round $t > 1$ is calculated by the following:
 
-- *forget rate*
+  
+  $$
+  acc_t = \frac{1}{N} \sum^C_{j=1} \sum^{N_j}_{i=1}  \mathbb  I(\theta(x_i) == y_j)
+  $$
+  
 
-  In addition to the model accuracy, we also need to test the degree of forgetting of the algorithm, which is also counted throughout the incremental learning process. After each round of tasks, the forgetting rate of the current model for the old categories needs to be tested.
+  where $N$ is the total number of the  test set, and $C \in {C_1,..,C_t}$ is the class number of the test set, $N_j$ is the number of class $j$
+
+  
+
+- *forget rate*[7]
+
+  We need to evaluate the forgetting of the algorithm which can reflect the model's performance on old classes. The forget rate for incremental round $t > 1$ is calculated by the following:
+  
+  
+  $$
+  f_{t} = \frac{1}{C_{old}}\sum^{C_{old}}_{i=1} \underset{j\in1,..,t-1}{max} acc_{i,j}-acc_{i,t}
+  $$
+  
+  
+  where $C_{old}$ is the number of old classes, $acc_{i,j}$ is the accuracy of class i at incremental round j.
+  
+  
 
 ### 3.4 Algorithm Design
 
@@ -302,4 +322,6 @@ The road map of this project will be list as follow:
 
 [5] ResNet: [[1512.03385\] Deep Residual Learning for Image Recognition (arxiv.org)](https://arxiv.org/abs/1512.03385)
 
-[6] LeNet5: [Gradient-based learning applied to document recognition | IEEE Journals & Magazine | IEEE Xplore](https://ieeexplore.ieee.org/document/726791?reload=true&arnumber=726791)
+[6] LeNet5: [Gradient-based learning applied to document recognition | IEEE Journals & Magazine | IEEE Xplore\](https://ieeexplore.ieee.org/document/726791?reload=true&arnumber=726791)
+
+[7]  Federated Class-Incremental Learning With Dynamic Feature Extractor Fusion [Federated Class-Incremental Learning With Dynamic Feature Extractor Fusion | IEEE Journals & Magazine | IEEE Xplore](https://ieeexplore.ieee.org/document/10574196)
