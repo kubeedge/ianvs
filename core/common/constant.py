@@ -35,6 +35,8 @@ class ParadigmType(Enum):
     INCREMENTAL_LEARNING = "incrementallearning"
     MULTIEDGE_INFERENCE = "multiedgeinference"
     LIFELONG_LEARNING = "lifelonglearning"
+    FEDERATED_LEARNING = "federatedlearning"
+    FEDERATED_CLASS_INCREMENTAL_LEARNING = "federatedclassincrementallearning"
 
 
 class ModuleType(Enum):
@@ -63,6 +65,8 @@ class ModuleType(Enum):
     UNSEEN_SAMPLE_RECOGNITION = "unseen_sample_recognition"
     UNSEEN_SAMPLE_RE_RECOGNITION = "unseen_sample_re_recognition"
 
+    # FL_AGG
+    AGGREGATION = "aggregation"
 
 class SystemMetricType(Enum):
     """

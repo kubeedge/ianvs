@@ -43,6 +43,8 @@ class TestEnv:
         }
         self.metrics = []
         self.incremental_rounds = 2
+        self.task_size = 1
+        self.round = 1
         self.dataset = None
         self._parse_config(config)
 

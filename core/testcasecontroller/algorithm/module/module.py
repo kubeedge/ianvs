@@ -106,6 +106,19 @@ class Module:
         elif module_type in [ModuleType.UNSEEN_SAMPLE_RECOGNITION.value,
                              ModuleType.UNSEEN_SAMPLE_RE_RECOGNITION.value]:
             class_factory_type = ClassType.UTD
+        elif module_type in [ModuleType.AGGREGATION.value]:
+            class_factory_type = ClassType.FL_AGG
+            agg = None
+            print(self.url)
+            if self.url :
+                try:
+                    agg = utils.load_module(self.url)
+                except Exception as err:
+                    raise RuntimeError(f"module(type={module_type} loads class(name={self.name}) "
+                                    f"failed, error: {err}.") from err
+            return self.name, agg
+
+
 
         if self.url:
             try:

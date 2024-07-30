@@ -227,7 +227,9 @@ class Rank:
 
     def _prepare(self, test_cases, test_results, output_dir):
         all_metric_names = self._get_all_metric_names(test_results)
+        print(f"in_prepare all_metric_names: {all_metric_names}")
         all_hps_names = self._get_all_hps_names(test_cases)
+        print(f"in_prepare all_hps_names: {all_hps_names}")
         all_module_types = self._get_all_module_types(test_cases)
         self.all_df_header = [
             "algorithm", *all_metric_names,

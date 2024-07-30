@@ -24,6 +24,8 @@ from core.testcasecontroller.algorithm.paradigm import (
     IncrementalLearning,
     MultiedgeInference,
     LifelongLearning,
+    FederatedLearning,
+    FederatedClassIncrementalLearning
 )
 from core.testcasecontroller.generation_assistant import get_full_combinations
 
@@ -64,6 +66,12 @@ class Algorithm:
             "train_ratio": 0.8,
             "splitting_method": "default"
         }
+        self.fl_data_setting: dict = {
+            "train_ratio": 1.0,
+            "splitting_method": "default",
+            "data_partition": "iid",
+            "label_data_ratio": 1.0
+        }
         self.initial_model_url: str = ""
         self.modules: list = []
         self.modules_list = None
@@ -103,6 +111,12 @@ class Algorithm:
 
         if self.paradigm_type == ParadigmType.LIFELONG_LEARNING.value:
             return LifelongLearning(workspace, **config)
+
+        if self.paradigm_type == ParadigmType.FEDERATED_LEARNING.value:
+            return FederatedLearning(workspace, **config)
+
+        if self.paradigm_type == ParadigmType.FEDERATED_CLASS_INCREMENTAL_LEARNING.value:
+            return FederatedClassIncrementalLearning(workspace, **config)
 
         return None
 

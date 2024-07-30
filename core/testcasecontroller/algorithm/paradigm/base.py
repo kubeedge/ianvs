@@ -18,7 +18,7 @@ import os
 
 from sedna.core.incremental_learning import IncrementalLearning
 from sedna.core.lifelong_learning import LifelongLearning
-
+from sedna.core.federated_learning import FederatedLearning
 from core.common.constant import ModuleType, ParadigmType
 
 
@@ -125,5 +125,14 @@ class ParadigmBase:
         # pylint: disable=E1101
         if paradigm_type == ParadigmType.MULTIEDGE_INFERENCE.value:
             return self.modules_funcs.get(ModuleType.BASEMODEL.value)()
+
+        if paradigm_type == ParadigmType.FEDERATED_LEARNING.value:
+            agg_name, agg = self.module_instances.get(ModuleType.AGGREGATION.value)
+            return FederatedLearning(
+                estimator=self.module_instances.get(ModuleType.BASEMODEL.value),
+                aggregation= agg_name
+
+            )
+            # return self.module_instances.get(ModuleType.BASEMODEL.value)
 
         return None
