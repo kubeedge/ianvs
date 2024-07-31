@@ -1,27 +1,23 @@
-# Industry Large-Scale Model Benchmarking Suite: Implemented Based on KubeEdge-Ianvs
+# 行业大模型基准测试套件：基于KubeEdge-Ianvs实现
 
-As large-scale models enter the era of large-scale application, the cloud has provided infrastructure and services for large-scale models. Related customers have further proposed targeted application demands on the edge side, including personalization, data compliance, and real-time capabilities, and cloud-edge collaborative artificial intelligence services have become a major trend. However, there are currently two major challenges in terms of product definition, service quality, service qualifications, and industry influence: general competitiveness and customer trust issues. The crux lies in the fact that the current large-scale model benchmarking focuses on the assessment of general basic capabilities and has not driven the application of large-scale models from an industry perspective. This project reflects the real value of large-scale models from the perspective of the large-scale model industry and cloud-edge collaborative artificial intelligence, and drives the incubation of large-scale model applications through industry benchmarking. This project is based on the collaborative artificial intelligence benchmarking suite KubeEdge-Ianvs, supplements the large-scale model testing tool interface, supports the testing dataset, and constructs a large-scale model testing suite for industries such as government affairs.
+大模型进入规模化应用时代，云已为大模型提供基础设施和服务，相关客户进一步提出包括个性化、数据合规、实时性等边缘侧的针对性应用需求，而云边协同的人工智能服务成为大趋势。但是，当前在产品定义、服务质量、服务资质、行业影响力等方面，存在通用竞争力和客户信任问题两大挑战，其症结在于，当前大模型基准测试聚焦对通用基础能力的考核，未能从行业角度牵引大模型应用。本项目从大模型产业以及云边协同人工智能角度、藉由行业应用反映大模型真实价值，以行业基准测试牵引大模型应用孵化。本项目基于协同人工智能基准测试套件KubeEdge-Ianvs，补充大模型测试工具接口，配套测试数据集，并构建政务等行业大模型测试套件。
 
-The Ianvs project currently has the following issues that need to be resolved:
+目前Ianvs项目有以下问题需要解决：
 
-1. Lack of a Flexible Dataset Reading Method
-The current dataset reading part of Ianvs is implemented by the [simulation part](https://github.com/kubeedge/ianvs/blob/main/docs/proposals/simulation/simulation.md) introduced two years ago, which currently only supports a few ways of reading datasets, such as using the index.txt configuration, and depends on the 'sedna.datasources' library. If a new dataset reading class needs to be implemented, not only does the Ianvs project need to be modified, but also the corresponding code of the sedna project needs to be modified.
-
-2. Lack of a Large-Scale Model Example
-The Ianvs project has mainly focused on image processing models in the past, and there are no related examples for large-scale language models. This may cause some difficulties for users who want to use large-scale models on the Ianvs project. If there is an example of a large-scale model, they will find it easier to get started.
-
-3. Lack of a Large-Scale Model Benchmark
-The format of the dataset is diverse, and to adapt to the evaluation of the effect of large-scale models, it is necessary to establish a large-scale model benchmark test. It is necessary to define a common interface in this process, which requires researching various forms of modal data and finding the best interface design.
-
+1. 缺少灵活的数据集读取方式
+Ianvs当前的数据集读取部分是由两年前的[simulation部分](https://github.com/kubeedge/ianvs/blob/main/docs/proposals/simulation/simulation.md)实现引入，目前仅支持少数几种数据集读取方式，例如使用index.txt配置，并且依赖于`sedna.datasources`这个库，如果需要实现新的数据集读取类，不仅需要修改Ianvs项目，还需要对应的修改sedna项目的代码
+2. 缺少一个大模型的example
+Ianvs项目在之前主要关注于图像处理的模型，对于大规模语言模型并没有相关示例，这可能会对想在Iavns项目上使用大模型的用户造成一些困难，如果能有一个大模型的示例，他们会更容易上手使用
+3. 缺少一个大模型benchmark
+数据集的格式多种多样，想要对大模型的效果评估进行适配，建立一个大模型的基准测试，需要定义好一个通用的接口，这个过程中需要调研多种模态的数据形式，并找到一个最好的接口设计
 
 ## Goals
 
-1. Investigate datasets to form a comprehensive dataset map that includes various industry scenarios for testing datasets.
-2. Complete an example of single task learning for large models to help users who want to use Large Language Models (LLMs) in Ianvs to get started.
-3. Integrate open-source projects such as OpenCompass to enable online calling of large models by providing model API addresses and keys.
-4. Compare the advantages and disadvantages of various dataset interfaces and specify a common benchmark interface format.
-5. Focus on NLP or multimodal tasks, taking the government affairs industry as an example to build a suite, including test datasets, test metrics, testing environments, and user guides.
-
+1. 调研数据集，形成一份较为全面的包括多种行业场景的测试数据集的数据集地图
+2. 完成大模型的single task learning的example，帮助想在Ianvs中使用LLM的用户上手使用
+3. 集成OpenCompass等开源项目，通过提供模型API地址和Key实现在线大模型调用
+4. 比较各种数据集接口的优劣，并指定一个通用的benchmark接口格式
+5. 聚焦NLP或多模态类任务，以政务行业为例构筑套件，包括测试集、测试指标、测试环境、使用指南
 
 ## Design Details
 
@@ -102,7 +98,7 @@ The format of the dataset is diverse, and to adapt to the evaluation of the effe
 
 ### LLM Single-Task-Learning Example
 
-`examples/llm` directory structure：
+`examples/llm` 目录结构：
 
 ```
 llm
@@ -119,46 +115,25 @@ llm
             └── testenv.yaml
 ```
 
-simple_qa is a simple QA task designed by me，the content is as follows：
+simple_qa 是我设计的一个简单的QA问答任务，测试集部分内容如下：
 
 ```
-{"question": "If Xiao Ming has 5 apples and gives 3 to Xiao Hua, how many apples does Xiao Ming have left?
-A. 2
-B. 3
-C. 4
-D. 5", "answer": "A"}
-{"question": "Which of the following numbers is the smallest prime number?
-A. 0
-B. 1
-C. 2
-D. 4", "answer": "C"}
-{"question": "If the length of a rectangle is 10 centimeters and the width is 5 centimeters, what is its perimeter in centimeters?
-A. 20 centimeters
-B. 30 centimeters
-C. 40 centimeters
-D. 50 centimeters", "answer": "B"}
-{"question": "Which of the following fractions is closest to 1?
-A. 1/2
-B. 3/4
-C. 4/5
-D. 5/6", "answer": "D"}
-{"question": "If a number plus 10 equals 30, what is the number?
-A. 20
-B. 21
-C. 22
-D. 23", "answer": "A"}
+{"question": "如果小明有5个苹果，他给了小华3个，那么小明还剩下多少个苹果？\nA. 2个\nB. 3个\nC. 4个\nD. 5个", "answer": "A"}
+{"question": "下列哪个数是最小的质数？\nA. 0\nB. 1\nC. 2\nD. 4", "answer": "C"}
+{"question": "一个长方形的长是10厘米，宽是5厘米，它的周长是多少厘米？\nA. 20厘米\nB. 30厘米\nC. 40厘米\nD. 50厘米", "answer": "B"}
+{"question": "下列哪个分数是最接近1的？\nA. 1/2\nB. 3/4\nC. 4/5\nD. 5/6", "answer": "D"}
+{"question": "如果一个数加上10等于30，那么这个数是多少？\nA. 20\nB. 21\nC. 22\nD. 23", "answer": "A"}
 ```
 
-Using LLM to answer selected questions, extract the answer from the response, and compare it with the correct answer to calculate the accuracy rate.
+通过LLM来回答所选答案，提取回答中的答案的方式，来与正确答案进行比对，计算acc准确率
 
-Additionally, this is different from the usual method of using an `index.txt` index file. I have implemented another mechanism, as shown in the figure.
+另外这里不同于一般的使用 `index.txt` 索引文件的方式，我实现了另外一套机制，如图。
 
 ![](images/data_process_change.png)
 
-In previous projects, we needed to configure the paths of the `train_url` and `test_url` index files in the `testenv.yaml` file. The index files would contain file paths for (input x, expected output y) pairs, and this design has some limitations.
+在之前的项目中，我们需要在 `testenv.yaml` 文件中配置 `train_url` 和 `test_url` 索引文件的路径，索引文件中会放 (输入x, 期望输出y) 的文件路径，这个设计是存在一些局限性的。
 
-The previous Ianvs projects seem to be focused on computer vision (CV), and there do not appear to be examples for natural language processing (NLP), so in terms of dataset reading, the common approach is to write an `index.txt` file that contains (data, annotation) pairs. There would also be a folder for data, a folder for annotations, and each file represents a single piece of data. An image corresponds to a single data point, which is understandable in the CV field. However, if you switch to the NLP field, you can't have a single text file contain just one piece of data. The common practice is to not even need an index file, but to write both data and labels directly into a data.json or jsonl file. For example:
-
+以往的ianvs项目似乎是以cv为主，对于nlp的example似乎没有，所以数据集读取方面，一般采用的方式是写一个index.txt，这个文件里面放（数据，标注）对，然后又有一个放数据的文件夹，一个放标注的文件夹，一个文件就是一个数据。一张图片一个数据，这在cv领域是可以理解的，但是如果换到nlp领域，没法做到一个txt文件只放一个数据，一般的做法是连index文件都不需要，直接一个data.json/jsonl/文件就把数据和标签都写进去了，例如
 
 ```
 {"question": xxx, "answer": xxx}
@@ -166,58 +141,58 @@ The previous Ianvs projects seem to be focused on computer vision (CV), and ther
 {"question": xxx, "answer": xxx}
 ```
 
-In summary, I believe that the Ianvs project needs to add a processing mechanism that does not require an index file, but instead directly provides the data file. Considering the need to make as little impact as possible on the original examples, I have implemented the following mechanism.
+综上所述，我认为 Ianvs 项目需要添加不需要索引文件，而是直接提供数据文件的处理机制。考虑到需要尽可能对原来的 example 产生较小的影响，我通过以下的机制实现。
 
-In `core/testenvmanager/dataset/dataset.py`, I have changed the logic of `process_dataset()` to: if it detects that the `train_index` or `test_index` is configured in the configuration file, it will use the original index processing method to handle the dataset. If it is configured with `train_data` or `test_data`, it will be processed directly as data.
+在 `core/testenvmanager/dataset/dataset.py` 中，把 `process_dataset()` 的逻辑改成：如果发现配置文件中配置了 `train_index` 或者 `test_index`，则采用原来 index 的处理方法处理数据集，如果是配置了 `train_data` 或者 `test_data`，则直接作为数据来处理。
 
-Additionally, I have added the JSONL format in `DatasetFormat` and added the handling code for the JSONL format `JsonlDataParse` in `sedna.datasources`, which reads the `question` and `answer` fields from the JSONL file as x and y.
+另外，我在 `DatasetFormat` 中添加了 JSONL 格式，并在 `sedna.datasources` 中添加了对 JSONL 格式的处理代码 `JsonlDataParse`，读取 JSONL 文件的 `question` 和 `answer` 字段作为 x, y。
 
 
-### OpenCompass Integration
+### OpenCompass 集成
 
-#### Why Integrate OpenCompass / The Necessity of Integration
+#### 为什么需要集成 OpenCompass / 集成的必要性
 
-Let's start with some official information about OpenCompass:
+首先给出 OpenCompass 官方的一些资料：
 
-- [OpenCompass Official Website](https://opencompass.org.cn/home)
+- [OpenCompass 官网](https://opencompass.org.cn/home)
 - [OpenCompass Github](https://github.com/open-compass/opencompass)
 
-OpenCompass is a one-stop evaluation project for large language models/multimodal models, which has already implemented support for hundreds of BenchMarks and has also provided configuration methods for common mainstream large models. By writing configuration files, selecting datasets and models (i.e., BenchMarks and models for running evaluations), you can directly run evaluations, supporting the evaluation of multiple BenchMarks on multiple models at once.
+OpenCompass 是一个大语言模型/多模态模型的一站式评测项目，里面已经实现了对上百个 BenchMark 的支持，也给出了常见主流大模型的配置方法。通过编写配置文件，选择 datasets 和 models（也即  BenchMark 和运行评测的模型）即可直接运行评测，支持一次性在多个模型上跑多个 BenchMark 的评测。
 
-For example, in the OpenCompass example [eval_demo.py](https://github.com/open-compass/opencompass/blob/main/configs/eval_demo.py), you can achieve evaluation with just a few lines of code:
+例如 OpenCompass 示例中的 [eval_demo.py](https://github.com/open-compass/opencompass/blob/main/configs/eval_demo.py)，只需要下面的几行代码就可以实现评测：
 
 ```python
 from mmengine.config import read_base
 
 with read_base():
-    # Import dataset configuration, this part can be used directly
+    # 导入数据集配置，这个部分直接用就行了
     from .datasets.siqa.siqa_gen import siqa_datasets
     from .datasets.winograd.winograd_ppl import winograd_datasets
-    # Import model configuration, this part can be changed to your own model
+    # 导入模型配置，这个部分可以改成自己的模型
     from .models.opt.hf_opt_125m import opt125m
     from .models.opt.hf_opt_350m import opt350m
 
-# Put the BenchMarks to be evaluated in datasets
+# 把要评测的 BenchMark 放在 datasets 中
 datasets = [*siqa_datasets, *winograd_datasets]
-# Put the models to be evaluated in models
+# 把要评测的模型放在 models 中
 models = [opt125m, opt350m]
 ```
 
-The Ianvs project currently wants to implement the use and evaluation of large models. In terms of the basic capabilities of the large models themselves, it can reuse the achievements of the OpenCompass project. By integrating OpenCompass into the Ianvs project, it can achieve the evaluation of some basic capabilities of the corresponding large models.
+Ianvs 项目现阶段想要实现对大模型的使用以及评估，在大模型本身基础能力方面，可以复用 OpenCompass 这个项目的成果，通过把 OpenCompass 集成进 Ianvs 项目的方式，实现相应大模型的一些基础能力的评测。
 
-#### Integration Plan Design
+#### 集成的方案设计
 
-OpenCompass is a project for evaluating the effectiveness of large models and has been adapted to many large models and various benchmarks. Considering that the OpenCompass project itself is constantly being updated, to prevent the impact of version updates, OpenCompass is packaged into a .whl file and installed using the command `pip install opencompass-xxx.whl`.
+OpenCompass 是一个评估大模型效果的项目，目前适配了很多的大模型和不同的benchmark。考虑到OpenCompass项目本身也一直在更新，为了防止OpenCompass的版本更新产生的影响，把OpenCompass打包成whl文件，然后通过 `pip install opencompass-xxx.whl` 的方式来安装。
 
-After introducing the OpenCompass project in this way, I added the configuration files from the original OpenCompass project's `configs` directory under the `core` directory and converted them into a Python package. The purpose of this step is to continue using the original dataset configuration files from OpenCompass. In addition, following the startup method of OpenCompass, I added `run_op.py` in the root directory of the Ianvs project to call the `main()` function inside `opencompass.cli.main` to start the evaluation.
+通过这样的方式引入 OpenCompass 项目之后，我又在 `core` 目录下添加了原 OpenCompass 项目 `configs` 目录下的配置文件，并转换成 python 包的形式。这一步的目的是仍然能使用原来 OpenCompass 中的数据集配置文件。另外，我仿照 OpenCompass 的启动方式，在 Ianvs 项目根目录中添加了 `run_op.py` 来调用 OpenCompass 的 `opencompass.cli.main` 里面的 `main()` 函数启动评测。
 
-The organized structural design is shown in the figure:
+整理的结构设计如图：
 
 ![](images/structure.png)
 
-For the evaluation dataset, it is still necessary to download and unzip the datasets according to the method described in [OpenCompass Doc](https://opencompass.readthedocs.io/zh-cn/latest/get_started/installation.html#id2).
+评测数据集方面，依然需要按照 [OpenCompass Doc](https://opencompass.readthedocs.io/zh-cn/latest/get_started/installation.html#id2) 的方法下载解压数据集。
 
-After integration, to evaluate the models in the Ianvs project, you only need to write an additional Python configuration file, for example, write an `op_eval.py` in the same directory level as the model file in the `testalgorithms` directory:
+集成之后，想要对在 Ianvs 项目中的模型进行评测，只需要额外写一个 python 的配置文件，例如在 `testalgorithms` 目录下的模型文件同级目录下写一个 `op_eval.py`：
 
 ```python
 from mmengine.config import read_base
@@ -231,9 +206,9 @@ datasets = [*cmmlu_datasets]
 models = [
     dict(
         type=HuggingFacewithChatTemplate,
-        # Model alias
+        # 模型别名
         abbr='qwen1.5-1.8b-chat-hf',
-        # The path parameter should be consistent with the model path in the Ianvs algorithm file
+        # path 参数和 Ianvs 算法文件中的模型路径保持一致即可
         path='/home/icyfeather/models/Qwen1.5-1.8B-Chat',
         max_out_len=1024,
         batch_size=2,
@@ -243,12 +218,11 @@ models = [
 ]
 ```
 
-The model configuration here can refer to the content in OpenCompass's [`configs/models`](https://github.com/open-compass/opencompass/tree/main/configs/models) to find the corresponding model example for writing.
+此处的 models 配置，可以参考 OpenCompass 中的[`configs/models`](https://github.com/open-compass/opencompass/tree/main/configs/models) 中的内容，找到对应的模型示例进行编写。
 
-Finally, running `python run_op.py examples/llm/singletask_learning_bench/simple_qa/testalgorithms/gen/op_eval.py` will start the evaluation.
+最后，运行 `python run_op.py examples/llm/singletask_learning_bench/simple_qa/testalgorithms/gen/op_eval.py` 即可开启评测。
 
-The evaluation will output a summary like this: 
-
+评测成功会输出这样的 summary：
 
 ```bash
 dataset                                      version    metric    mode      qwen1.5-1.8b-chat-hf
@@ -324,98 +298,95 @@ cmmlu-world_religions                        1d0f4b     accuracy  gen           
 07/02 18:37:34 - OpenCompass - INFO - write csv to /home/icyfeather/project/ianvs/outputs/default/20240702_180158/summary/summary_20240702_180158.csv
 ```
 
-### Analysis of Formats for Different Benchmarks
+### 不同 BenchMark 的格式分析
 
-| Domain | Typical Examples | Question Type | Answer Verification Method |
-| ------- | --------------- | ------------- | -------------------------- |
-| NLP     | MMLU, CMMLU, C-EVAL, CCPM etc. | Multiple choice questions, requiring the output of options | Utilize few-shot learning to master the output format, extract the answer for comparison |
-| NLP     | GSM8K           | Elementary school math problems, infer and calculate the answer | Utilize few-shot learning to master the output format, extract the answer for comparison |
-| NLP     | HumanEval       | Programming problems, requiring the completion of Python code | Conduct unit testing |
-| NLP     | AlignBench, MTBench | Open-ended, subjective evaluation questions | Score using GPT-4 |
-| NLP     | Flores           | Multilingual translation | Calculate BLEU score |
-
-
-### Analysis of Prompts in Benchmarks
-
-| Category | Prompt |
-| -------- | ------ |
-| Task + Format + Question Stem (Zeroshot) | Read the following function signature and docstring, and fully implement the function described. Your response should only contain the code for this function.\n{prompt} |
-| Role + Requirements + Question Stem (Zeroshot) | You are an intelligent programming assistant tasked with producing Python algorithmic solutions.\nCan you complete the following Python function?\n```python\n{prompt}\n``` |
-| Question Stem + Let's think step by step (Zeroshot/Fewshot) | Question: {question}\nLet's think step by step.\nAnswer: |
-| Question Stem (Fewshot/Zeroshot) | Translate the following {_src_inst} statements to {_tgt_inst}.\n{{sentence_{_flores_source}}} |
-| Question Stem + Direct Answer Output (Zeroshot) | Below is a {question_type} from the {exam_class} {exam_type} in China. No analysis or explanation is needed; just output the answer option directly.\n{question}\n{option_str} \n Answer: |
-| Judge Prompt - Provide Scoring Direction + Directly Score the Answer | [Guidance] Please act as an impartial judge to assess the quality of the AI assistant's response to the following user question. Your assessment should consider factors such as practicality, relevance, accuracy, depth, creativity, and level of detail in the response. Begin your assessment and provide a brief explanation. Please be as objective as possible. After providing your explanation, you must strictly give a score to the response in the following format: "[[Score]]", for example: "Score: [[5]]". [Question]{question}[Start of the assistant's response]{response}[End of the assistant's response] |
-| Judge Prompt - Provide Scoring Direction + Reference Answer + Reference-Style Scoring | You are an assistant skilled in evaluating the quality of text. Please act as an impartial judge to assess the quality of an AI assistant's response to a user's question. Since the type of response you are evaluating is professional ability, you need to assess the response from the following dimensions: 1. Factual Accuracy: Whether the information provided in the response is accurate and based on credible facts and data. 2. Meeting User Needs: Whether the response meets the purpose and needs of the user's question and whether it has responded comprehensively and appropriately to the question. 3. Clarity: Whether the response is expressed clearly and understandably, using concise language and structure so that users can easily understand. 4. Completeness: Whether the response provides sufficient information and details to meet the user's needs, and whether important aspects have been omitted. We will provide you with the user's question, high-quality reference answers, and the AI assistant's answer that you need to evaluate. When you start your assessment, you need to follow the following process: 1. Compare the AI assistant's answer with the reference answer, point out the shortcomings of the AI assistant's answer, and further explain. 2. Evaluate the AI assistant's answer from different dimensions, and give a score of 1 to 10 for each dimension after the evaluation. 3. Finally, give a comprehensive score of 1 to 10 for the AI assistant's answer based on the assessment of each dimension. 4. Your scoring must be as strict as possible and follow the scoring rules below: Generally speaking, the higher the quality of the model's response, the higher the score. Among them, factual accuracy and meeting user needs are the most important dimensions, and the scores of these two dimensions dominate the final comprehensive score. When the model's response is irrelevant to the question, or there are fundamental factual errors, or harmful content is generated, the total score must be 1 to 2 points; when the model's response has no serious errors and is basically harmless, but the quality is low and does not meet user needs, the total score is 3 to 4 points; when the model's response basically meets user requirements, but performs poorly in some dimensions, the quality is medium, and the total score can be 5 to 6 points; when the model's response quality is similar to the reference answer, and performs well in all dimensions, the total score is 7 to 8 points; only when the model's response quality significantly exceeds the reference answer, fully solves the user's problem and all needs, and approaches full marks in all dimensions, can it get 9 to 10 points. As an example, the reference answer can get 8 points. Remember, you must evaluate and explain before you score. After your explanation for each dimension, you need to add the score for that dimension. After your response, return all your scoring results in the following dictionary format (including parentheses), and make sure your scoring results are integers: {'Dimension One': Score, 'Dimension Two': Score, ..., 'Comprehensive Score': Score}, for example: {'Factual Accuracy': 9, 'Meeting User Needs': 6, ..., 'Comprehensive Score': 7}. The user's question: Are the clarinet and the soprano saxophone in the same key? If so, state their key. If not, state their keys separately. [Start of the reference answer] The clarinet and the soprano saxophone are not in the same key. The clarinet is usually in the key of E♭, while the soprano saxophone is in the key of B♭. [End of the reference answer] [Start of the assistant's answer] The keys of the two instruments are different. The clarinet is in the key of B-flat (B♭), and the soprano saxophone is in the key of B (B). [End of the assistant's answer] |
+| 领域 | 典型举例 | 题型 | 答案验证方法 |
+| ---- | -------- | ---- | ------------ |
+| NLP | MMLU、CMMLU、C-EVAL、CCPM etc. | 多项选择题，要求输出选项 | 利用 few-shot 学会输出格式，提取答案进行比较 |
+| NLP | GSM8K | 小学数学题，推理计算并输出答案 | 利用 few-shot 学会输出格式，提取答案进行比较 |
+| NLP | HumanEval | 编程题，要求完成python代码 | 进行单元测试 |
+| NLP | AlignBench、MTBench | 开放式、主观评价的问题 | 用GPT-4来打分 |
+| NLP | Flores | 多语言翻译 | 计算 BLUE 指标 |
 
 
+### BenchMark 中的 Prompt 分析
 
-### Data Generation Methods in Benchmarks
-
-| Category | Detailed Description |
-| -------- | -------------------- |
-| Manual Collection | Collecting questions from publicly available online exams and materials |
-| Manual Writing | Entirely hand-written |
-| Seed Questions + Human | Some seed questions are written and contractors are asked to construct data by referring to these seed questions |
-| Similar Examples with Random Replacement | Searching for data with similarity between (0.5, 0.8) as negative examples to confuse the options |
-| Similar Examples + Random Examples | The candidate option list consists of three parts: the correct answer, similar answers, and random answers |
-| GPT Generation + Human Modification | First, use GPT4 to generate, and then manually fine-tune the answers |
-
-
-### Benchmark Difficulty
-
-In terms of effectiveness, a Benchmark must serve to differentiate the capabilities of models, hence it must possess a certain level of difficulty. Overall, it is generally at a level where large models can only score between 20%-60%.
-
-From a design perspective, a Benchmark needs to encompass assessments across multiple dimensions, and some even have varying levels of difficulty. Objectively, there is inherent difficulty, so it is expected that large models will not score very high.
+| 类别 |  Prompt |
+| ---- | ------ |
+| 任务+格式+题干(Zeroshot) | Read the following function signature and docstring, and fully implement the function described. Your response should only contain the code for this function.\n{prompt} |
+| 角色+要求+题干(Zeroshot) | You are an intelligent programming assistant to produce Python algorithmic solutions.\nCan you complete the following Python function?\n```python\n{prompt}\n``` |
+| 题干+Let's think step by step(Zeroshot/Fewshot) | Question: {question}\nLet's think step by step\nAnswer: |
+| 题干(Fewshot/Zeroshot) | Translate the following {_src_inst} statements to {_tgt_inst}.\n{{sentence_{_flores_source}}} |
+| 题干+直接输出答案(Zeroshot) | 以下是中国{{exam_type}}中{{exam_class}}考试的一道{{question_type}}，不需要做任何分析和解释，直接输出答案选项。\n{{question}}\n{{option_str}} \n 答案: |
+| Judge Prompt - 给出打分方向 + 直接对答案打分 | [指导]请充当一个公正的评委，评估AI助手对以下用户问题的回应质量。您的评估应考虑回应的实用性、相关性、准确性、深度、创造性和详细程度等因素。开始您的评估，提供简要解释。请尽量客观。在提供解释后，您必须按照以下格式严格给出对回应的评分，使用这个格式：“[[评分]]”，例如：“评分：[[5]]”。[问题]{问题}[助手回答的开始]{回答}[助手回答的结束] |
+| Judge Prompt - 给出打分方向+参考答案+答案进行参考式打分 | 你是一个擅长评价文本质量的助手。\n请你以公正的评判者的身份，评估一个AI助手对于用户提问的回答的质量。由于您评估的回答类型是专业能力，因此你需要从下面的几个维度对回答进行评估:\n1. 事实正确性: 回答中提供的信息是否准确无误，是否基于可信的事实和数据。\n2. 满足用户需求: 回答是否满足了用户提出问题的目的和需求，是否对问题进行了全面而恰当的回应。\n3. 清晰度: 回答是否表达清晰、易懂，是否使用了简洁的语言和结构，以便用户可以轻松理解。\n4. 完备性: 回答是否提供了足够的信息和细节，以满足用户的需求，是否遗漏了重要的方面。\n我们会给您提供用户的提问，高质量的参考答案，和需要你评估的AI助手的答案。当你开始你的评估时，你需要按照遵守以下的流程：\n1. 将AI助手的答案与参考答案进行比较，指出AI助手的答案有哪些不足，并进一步解释。\n2. 从不同维度对AI助手的答案进行评价，在每个维度的评价之后，给每一个维度一个1～10的分数。\n3. 最后，综合每个维度的评估，对AI助手的回答给出一个1～10的综合分数。\n4. 你的打分需要尽可能严格，并且要遵守下面的评分规则：总的来说，模型回答的质量越高，则分数越高。其中，事实正确性和满足用户需求这两个维度是最重要的，这两个维度的分数主导了最后的综合分数。当模型回答存在与问题不相关，或者有本质性的事实错误，或生成了有害内容时，总分必须是1到2分；当模型回答没有严重错误而且基本无害，但是质量较低，没有满足用户需求，总分为3到4分；当模型回答基本满足用户要求，但是在部分维度上表现较差，质量中等，总分可以得5到6分；当模型回答质量与参考答案相近，在所有维度上表现良好，总分得7到8分；只有当模型回答质量显著超过参考答案，充分地解决了用户问题和所有需求，并且在所有维度上都接近满分的情况下，才能得9到10分。作为示例，参考答案可以得到8分。\n请记住，你必须在你打分前进行评价和解释。在你对每个维度的解释之后，需要加上对该维度的打分。之后，在你回答的末尾，按照以下字典格式（包括括号）返回你所有的打分结果，并确保你的打分结果是整数：\n{'维度一': 打分, '维度二': 打分, ..., '综合得分': 打分}，例如：{'事实正确性': 9, '满足用户需求': 6, ..., '综合得分': 7}。\n用户的提问： 高音单簧管和高音萨克斯的调性相同吗？如果相同，请说出他们的调性，如果不同，请分别说出他们的调性\n[参考答案开始]\n高音单簧管和高音萨克斯的调性不同。高音单簧管的调性通常为E♭，而高音萨克斯的调性则为B♭。\n\n[参考答案结束]\n[助手的答案开始]\n两种乐器的调性是不同的。高音单簧管的调性是bB（B-flat），而高音萨克斯（Soprano saxophone）的调性是B（B）。\n[助手的答案结束] 
 
 
-### Benchmark Summary - Interface Design Approach
+### BenchMark 中的数据生成方法
 
-Based on the research and analysis of Benchmarks mentioned above, and referring to the methods of integrating different Benchmarks in the OpenCompass project, it is concluded that the interface of a Benchmark should provide the following information:
+| 类别 | 详细描述 |
+| ---- | -------- |
+| 人工收集 | 从网上公开的考试、资料中收集题目 |
+| 人工编写 | 全部手动编写 |
+| 种子问题+人工 | 写好一些种子问题，找承包商参考种子问题构造数据 |
+| 相似样例随机替换 | 检索相似度在(0.5, 0.8)之间的（相似但是不那么相似）数据作为负样例混淆选项 |
+| 相似样例 + 随机样例 | 候选选项列表由三部分组成：正确答案、 相似答案、随机答案 |
+| GPT生成 + 人工修改 | 先利用GPT4生成，然后再人工精细修改答案 |
 
-1. Inference Section
+### BenchMark 难度
 
-    1.1 Data
+从效果上来说，BenchMark 需要能起到区分模型能力的作用，所以 BenchMark 必须具有一定的难度，综合来看，基本上是大模型只能拿个20%-60%分数的水平。
 
-    This part is the dataset itself, but there is a requirement that the data must be field-separated. For example, for data in jsonl format, it could be {"question": "xxx", "answer": "xxx"}.
+从设计上来说，BenchMark 需要覆盖多个维度的能力评估、有的还会分不同的难度等级，客观上本身就存在难度，所以大模型得分不高是意料之中的事情。
+
+### BenchMark 总结 - 接口设计方法
+
+结合上面对 BenchMark 的调研分析，以及对 OpenCompass 项目中集成不同的 BenchMark 的方法参考，总结认为 BenchMark 的接口应该提供以下信息：
+
+1. 推理部分
+
+    1.1 data
+
+    这个部分就是数据集本身，但是有一个要求，那就是数据必须要分字段，例如对于 jsonl 格式的数据，可以是 {"question": "xxx", "answer": "xxx"} 这样
 
     1.2 Prompt Template
 
-    This part needs to be used in conjunction with 1.1 Data. Some parts of the prompt need to be replaced with fields from the data, such as: The Question is {question}. The Answer is {answer}.
+    这个部分需要和 1.1 data 相结合使用，prompt 中有的部分需要替换成 data 中的字段，例如：The Question is {question}. The Answer is {answer} 这样
 
     1.3 Retriever
 
-    This Retriever provides the content for retrieval and can be Zeroshot, OneShot, or Fewshot. For Fewshot, it can be further divided into FixKRetriever (a fixed number of examples), RandomRetriever (random examples), TopkRetriever (for example, using SentenceTransformer and faiss to calculate similarity and retrieve the top K most similar examples), etc.
+    这个 Retriever 提供检索的相关内容，可以是 Zeroshot、OneShot、Fewshot，其中对于Fewshot，又可以分为FixKRetriever（固定的几个样例）、RandomRetriever（随机的样例）、TopkRetriever（例如可以通过SentenceTransformer和faiss来计算相似度，检索出来最相似的K个样例）等
 
-2. Evaluation Section
+2. 评估部分
 
-    2.1 Objective Assessment
+    2.1 客观评估
 
-        2.1.1 String Processing
+        2.1.1 字符串处理
 
-        Since the model's response may contain a lot of irrelevant parts in addition to the actual answer, it is necessary to extract the real answer needed from the response.
+        由于模型的回答可能除了真正的答案，还有很多不相关的部分，需要从回答中提取出来真正需要的答案
 
-        2.1.2 Scoring Algorithm
+        2.1.2 评估打分
 
-        Provide an algorithm for scoring. The algorithm should directly return a score, which is a JSON and can have scores for multiple dimensions.
+        给出打分的算法，算法需要直接返回分数，分数是一个json，可以有多个维度的分数
 
-    2.2 Subjective Assessment
+    2.2 主观评估
 
         2.2.1 Prompt Template
 
-        This Template is for the Prompt of a Judge Model like GPT-4, and it should have a field for infer_result. The Judge Model will score based on this Prompt.
+        这个 Template 是 GPT-4 这种 Judge Model 的 Prompt，需要留一个 infer_result 的字段。Judge Model 会根据这个 Prompt 来打分。
 
-        2.2.2 Obtaining Scores
+        2.2.2 获取分数
 
-        Obtain scores from the results of the Judge Model. The scores are in JSON format and can have scores for multiple dimensions.
+        从 Judge Model 的结果中获取分数，分数是一个json，可以有多个维度的分数
 
 
-### Benchmark Format Example
+### BenchMark 格式示例
 
-All relevant data for the Benchmark should be designed for separate storage to maintain stability.
+BenchMark 的相关信息数据都需要设计成单独存储，以保持稳定性。
 
 `data.json`
 
-Only the parts related to the data itself are saved.
+只保存和数据本身有关的部分。
 
 ```json
 {
@@ -427,8 +398,7 @@ Only the parts related to the data itself are saved.
 
 `prompt.json`
 
-Provide a prompt template for model inference. For example:
-
+提供 model infer 的 prompt 模版。例如：
 
 ```json
 {
@@ -439,10 +409,9 @@ Provide a prompt template for model inference. For example:
 }
 ```
 
-If there is a need for additional prompt information, it can also be incorporated.
+如果需要有别的prompt信息，也可以加进去。
 
-As for whether to use ZeroShot/OneShot/FewShot, it essentially involves adding to the chat message history, and this part can be implemented by different models themselves.
-
+至于是使用 ZeroShot/OneShot/FewShot，其实都是用增加 chat message history 的方式，这部分由不同模型自己实现即可。
 
 chat history：
 
@@ -454,11 +423,10 @@ chat = [
 ]
 ```
 
-It can be observed that before this round of the user's question, there has already been a round of dialogue between the user and the assistant. This entire chat is directly passed to the model.
-The model can learn based on the context.
+可以看到在这一轮 user 的问题之前，已经有了一轮 user 和 assistant 的对话。这整个 chat 是直接传给模型的。
+模型可以根据上下文进行学习。
 
-For example, if it's a 3-shot, taking the zephyr-7b-beta model on HuggingFace as an example:
-
+举个例子，如果是 3-shot，以 HuggingFace 上的 zephyr-7b-beta 模型为例：
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -468,31 +436,30 @@ tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 model = AutoModelForCausalLM.from_pretrained(checkpoint)
 
 messages = [
-    {"role": "system", "content": "You are an expert at solving problems."},
-    {"role": "user", "content": "Below is a single-choice question about {_ch_name}. Please directly provide the option of the correct answer.\nQuestion: {{question}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}"},
-    {"role": "assistant", "content": "The answer is {answer}."}
-    {"role": "user", "content": "Below is a single-choice question about {_ch_name}. Please directly provide the option of the correct answer.\nQuestion: {{question}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}"},
-    {"role": "assistant", "content": "The answer is {answer}."}
-    {"role": "user", "content": "Below is a single-choice question about {_ch_name}. Please directly provide the option of the correct answer.\nQuestion: {{question}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}"},
-    {"role": "assistant", "content": "The answer is {answer}."}
-    {"role": "user", "content": "Below is a single-choice question about {_ch_name}. Please directly provide the option of the correct answer.\nQuestion: {{question}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}"},
+    {"role": "system","content": "You are an expert at solving problems."},
+    {"role": "user", "content": "以下是关于{_ch_name}的单项选择题，请直接给出正确答案的选项。\n题目：{{question}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}"},
+    {"role": "assistant", "content": "答案是{answer}。"}
+    {"role": "user", "content": "以下是关于{_ch_name}的单项选择题，请直接给出正确答案的选项。\n题目：{{question}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}"},
+    {"role": "assistant", "content": "答案是{answer}。"}
+    {"role": "user", "content": "以下是关于{_ch_name}的单项选择题，请直接给出正确答案的选项。\n题目：{{question}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}"},
+    {"role": "assistant", "content": "答案是{answer}。"}
+    {"role": "user", "content": "以下是关于{_ch_name}的单项选择题，请直接给出正确答案的选项。\n题目：{{question}}\nA. {{A}}\nB. {{B}}\nC. {{C}}\nD. {{D}}"},
 ]
 tokenized_chat = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True, return_tensors="pt")
 print(tokenizer.decode(tokenized_chat[0]))
 ```
 
 
-## RoadMap
+## 时间规划
 
-- **June to Mid-July**
-  Implement the integration of the OpenCompass project, and realize the LLM single task learning example on Ianvs.
-- **Mid-July to Mid-August**
-  Taking the government affairs dataset as an example, construct a set of test suites, test metrics, testing environments, and user guides.
-- **Mid-August to Mid-September**
-  Optimize the evaluation on Ianvs, and implement task monitoring, visualization, and other features.
-- **Mid-September to End of September**
-  If time and energy permit, consider implementing an industrial/medical large model testing suite, including metrics and examples.
-
+- **6月到7月中旬**
+实现 OpenCompass 项目的集成，在 Ianvs 上实现 LLM single task learning 样例
+- **7月中旬到8月中旬**
+以政务数据集为例，构建一套测试集、测试指标、测试环境、使用指南
+- **8月中旬到9月中旬**
+优化 Ianvs 上的评估，实现任务监控、可视化等功能
+- **9月中旬到9月底**
+如果有时间精力，看情况实现工业/医疗大模型测试套件，包括指标和样例
 
 
 
