@@ -14,7 +14,9 @@
 
 """Federated Class-Incremental Semi-Supervised  Learning Paradigm"""
 import threading
-
+import multiprocessing as mp
+import asyncio 
+from multiprocessing import Process
 from sedna.service.server import AggregationServer
 
 from core.common.constant import ParadigmType, ModuleType
@@ -101,14 +103,16 @@ class FederatedLearning(ParadigmBase):
         server_thead = threading.Thread(target=self.run_server)
         server_thead.start()
         print(f"server is start and server is alive:  {server_thead.is_alive()}")
-        self.init_client()
+        # self.init_client()
         rounds = self.rounds
         dataset_files = self._split_dataset(1) # only one split ——all the data
         train_dataset_file, eval_dataset_file = dataset_files[0]
         train_datasets = self.train_data_partition(train_dataset_file)
-        for r in range(rounds):
-            print(f"Round {r} train dataset: {train_dataset_file}")
-            self._train(train_datasets, r)
+        # for r in range(rounds):
+        #     print(f"Round {r} train dataset: {train_dataset_file}")
+        self._train(train_datasets, rounds=rounds)
+        print(f'finish trianing for fedavg')
+        server_thead.join()
         test_res = self.predict(self.dataset.test_url, "test")
         return test_res, self.system_metric_info
 
@@ -147,20 +151,37 @@ class FederatedLearning(ParadigmBase):
                                                      self.fl_data_setting.get("data_partition"))
         return train_datasets
 
-    def _train(self, train_datasets, round):
-
+    def client_train(self, train_datasets, validation_datasets, post_process, **kwargs):
+        
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        client = self.build_paradigm_job(ParadigmType.FEDERATED_LEARNING.value)
+        
+        client.train(train_datasets, validation_datasets, post_process, **kwargs)
+        loop.close()
+        self.clients.append(client)
+        
+    def _train(self, train_datasets, **kwargs):
+        
+        mp.set_start_method('spawn')
+      
         # config = {"round": round}
         clients_threads = []
-        for i, client in enumerate(self.clients):
-            config = {
-                "round": round,
-            }
-            client.train(train_datasets[i], None, None, **config)
-        #     t = threading.Thread(target=client.train, args=(train_datasets[i], None, None), kwargs=config)
-        #     clients_threads.append(t)
-        #     t.start()
-        # for t in clients_threads:
-        #     t.join()
+        for i in range(self.clients_number):
+            print(i , self.clients_number)
+            # config = {
+            #     "round": round,
+            # }
+            # self.clients[i].train(train_datasets[i], None, None, **kwargs)
+            t = threading.Thread(target=self.client_train, args=(train_datasets[i], None, None), kwargs=kwargs)
+            # t = Process(target=self.clients[i].train, args=(train_datasets[i], None, None), kwargs=kwargs)
+
+            clients_threads.append(t)
+            t.start()
+        for t in clients_threads:
+            print(f"client process is alive: {t.is_alive()}")
+            t.join()
+            print(f"finish training {t}")
         return
 
     def local_eval(self, train_dataset_file, round):
