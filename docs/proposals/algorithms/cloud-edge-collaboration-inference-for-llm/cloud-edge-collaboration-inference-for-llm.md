@@ -4,10 +4,12 @@
   - [Proposal](#proposal)
     - [Use Cases](#use-cases)
   - [Design Details](#design-details)
+    - [Implementation Detail](#implementation-detail)
+      - [Change of Ianvs](#change-of-ianvs)
+      - [Example Implementation](#example-implementation)
     - [Benchmark Construction](#benchmark-construction)
       - [Construction Method](#construction-method)
       - [Metric Selection](#metric-selection)
-    - [Constructure Detail](#constructure-detail)
     - [LLM Background](#llm-background)
       - [LLM Architecture](#llm-architecture)
       - [LLM Overhead Analysis](#llm-overhead-analysis)
@@ -62,15 +64,244 @@ We propose KubeEdge-Ianvs to adopt the edge-cloud collaboration strategy to enha
 
 ## Design Details
 
-The architecture of this proposal is shown in the figure below. We leverage the existed *TestEnvManager*, *TestCaseController* and *StoryManager* in Ianvs. For LLM inference, we also add a serving module named *ModelServer* to use the state-of-the-art inference frameworks to  deploy LLM services.
+The architecture of this proposal is shown in the figure below. We leverage the existed *TestEnvManager*, *TestCaseController* and *StoryManager* in Ianvs. 
 
 - In *TestEnvManager*, we plan to add MMLU and CMMLU as LLM benchmark and *Accuracy*, *Latency*, *Throughput*, *Bandwith* as metrics.
-
 - In *TestCaseController*, we plan to add two cloud-edge collaboration algorithm named *Query Routing* and *Speculative Decoding*.
 - In *StoryManager*, we plan to show Leaderboard and Test Report for users.
-- In *ModelServer*, we plan to support small-scale models such as Qwen-1.8B and large-scale models such as Qwen-72B-Chat. We plan to support serving frameworks like PyTorch and vLLM with low bit quantization compatibility.
 
-<img src="./images/image-20240718083459836.png" alt="image-20240718083459836.png" style="zoom:33%;" />
+<img src="./images/image-20240801165243035.png" alt="image-20240801165243035.png" style="zoom:33%;" />
+
+### Implementation Detail 
+
+#### Change of Ianvs
+
+For implementation details, we plan to add a module named `llm_joint_inference` under `core/testcasecontroller/algorithm/paradigm`:
+
+- `query_routing.py` serves as the entry point for the query routing algorithm (the algorithm planned for implementation in Task 2);
+
+- `speculative_decoding.py` serves as the entry point for the speculative decoding algorithm (the algorithm planned for implementation in advanced tasks);
+
+- `sedna_joint_inference.py` is a modified version of the `JointInference` module from `sedna`, which we will modify internally to support collaborative inference with LLMs (in the future, this file should be located in `KubeEdge/sedna` instead of `KubeEdge/ianvs`).
+
+The folder structure will be as follows:
+
+```bash
+.
+├── testcasecontroller
+│   ├── algorithm
+│   │   └── paradigm
+│   │       ├── __init__.py
+│   │       ├── base.py
+│   │       ├── llm_joint_inference
+│   │       │   ├── __init__.py
+│   │       │   ├── query_routing.py
+│   │       │   ├── speculative_decoding.py
+│   │       │   └── sedna_joint_inference.py
+```
+
+We will add enumerations for these two algorithms in `ParadigmType` within `core/common/constant`.
+
+```python
+class ParadigmType(Enum):
+    SINGLE_TASK_LEARNING = "singletasklearning"
+    INCREMENTAL_LEARNING = "incrementallearning"
+    MULTIEDGE_INFERENCE = "multiedgeinference"
+    LIFELONG_LEARNING = "lifelonglearning"
+    LLM_QUERY_ROUTING = "llmqueryrouting"
+    LLM_SPECULATIVE_DECODING = "llmsepeculativedecoding"
+```
+
+We will also modify the `build_paradigm_job()` function in `core/testcasecontroller/algorithm/base.py` to add support for these two algorithms:
+
+```python
+from llm_joint_inference.sedna_joint_inference import JointInference
+
+class ParadigmBase:
+    def build_paradigm_job(self, paradigm_type):
+        if paradigm_type == ParadigmType.LLM_QUERY_ROUTING.value:
+            # Sedna 中的 JointInference 接口
+            # 与 IncrementalLearning、LifelongLearning 算法与 Sedna 接口的对齐方式保持一致
+            return JointInference(
+                estimator=self.module_instances.get(
+                    ModuleType.BASEMODEL.value),
+                hard_example_mining=self.module_instances.get(
+                    ModuleType.HARD_EXAMPLE_MINING.value)
+            )
+        if paradigm_type == ParadigmType.LLM_SPECULATIVE_DECODING.value:
+            # 预留接口，与 LLM Speculative Decoding 的具体实现有关，后续进阶任务中可进一步考虑
+            pass
+        
+        return None
+```
+
+Needed fields will also be added to `core/testcasecontroller/algorithm/algorithm.py` to support the new algorithm.
+
+```python
+from core.testcasecontroller.algorithm.paradigm import (
+    SingleTaskLearning,
+    IncrementalLearning,
+    MultiedgeInference,
+    LifelongLearning,
+    LLM_QUERY_ROUTING,
+    LLM_SPECULATIVE_DECODING
+)
+
+class Algorithm:
+    def paradigm(self, workspace: str, **kwargs):
+        if self.paradigm_type == ParadigmType.LLM_QUERY_ROUTING.value:
+            return JointInference(workspace, **config)
+        if self.paradigm_type == ParadigmType.LLM_SPECULATIVE_DECODING.value:
+            # 预留接口
+            pass
+
+        return None
+```
+
+#### Example Implementation
+
+We will add a folder named `cloud-edge-collaborative-inference-for-llm` under the `examples/` directory, which will contain two subprojects: `query-routing` and `speculative-decoding`.
+
+```bash
+├── cloud-edge-collaborative-inference-for-llm
+│   ├── README.md
+│   ├── benchmarkingjob.yaml
+│   ├── testalgorithms
+│   │   ├── query-routing
+│   │   │   ├── basemodel.py
+│   │   │   ├── test_queryrouting.yaml
+│   │   │   ├── hard_example_mining.py
+│   │   │   ├── models
+│   │   │   │   ├── joint_inference.py
+│   │   │   │   └── llm.py
+│   │   └── sepeculative-decoding
+│   │   │   └── ...
+│   └── testenv
+│       ├── acc.py
+│       ├── lantency.py
+│       ├── throughput.py
+│       ├── bandwith.py
+│       └── testenv.yaml
+```
+
+We will create the following content in `query-routing/basemodel.py` to implement the registration of the query-routing base class.
+
+```python
+from models.joint_inference import JointInference, BigModelService
+from models.llm import LLM_HuggingFace, LLM_vLLM, LLM_via_API, 
+
+@ClassFactory.register(ClassType.GENERAL, alias="query-routing")
+class BaseModel:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+        self.backend = kwargs.get("backend", "huggingface") 
+        self.quantization = kwargs.get("quantization", "full") 
+        # 'backend' means serving framework: "huggingface", "vllm"
+        # 'quantization' means quantization mode："full","4-bit","8-bit"
+
+    def load(self, model_url=None):
+        # TODO BigModelService needs to be edited to remove app start progress.
+        # TODO quantization needs to be passed to estimator.
+
+        if self.backend == "huggingface":
+            estimator = LLM_HuggingFace(model_url, self.quantization)
+        elif self.backend == "vllm":
+            estimator = LLM_vLLM(model_url, self.quantization)
+        else:
+            raise Exception(f"Backend {self.backend} is not supported")
+            
+        # TODO cloud service must be configured in JointInference
+        # TODO JointInference needs to be rewrite to support.
+        self.pipeline = JointInference(
+            estimator=estimator, 
+            hard_example_mining={
+                "method": "BERT-Classifier",
+                "param": {
+                    "xxxxx": 0.9
+                }
+            }
+        )
+        print("BaseModel load")
+
+    def predict(self, data, input_shape=None, **kwargs):
+        print("BaseModel predict")
+        answer_list = []
+        for line in data:
+            response = self.pipeline.inference(line)
+            answer_list.append(response)
+        return answer_list
+```
+
+We will also construct a BERT classifier in `query-routing/hard_example_mining` to achieve the classification of hard examples.
+
+```python
+@ClassFactory.register(ClassType.HEM, alias="BERT-Classifier")
+class BERTFilter(BaseFilter, abc.ABC):
+    def __init__(self, model_path, **kwargs):
+        self.classifier = pipeline(
+            "text-classification", 
+            model=model_path, 
+            trust_remote_code=True
+        )
+    
+    def _predict(self, data):
+        result = self.classifier(data)
+        return result
+
+    def __call__(self, data=None) -> bool:
+        return self._predict(data)
+```
+
+The content of `benchmarkingjob.yaml` is as follows:
+
+```python
+benchmarkingjob:
+  name: "benchmarkingjob"
+  workspace: "/root/autodl-fs/ianvs/workspace"
+  testenv: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml"
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "query-routing"
+        url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/gen/gen_algorithm.yaml"
+  rank:
+    sort_by: [ { "acc": "descend" } ]
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+
+    selected_dataitem:
+      paradigms: [ "llmqueryrouting" ]
+      modules: [ "all" ]
+      hyperparameters: [ "all" ]
+      metrics: [ "acc" , "latency", "throughput", "bandwith"]
+
+    save_mode: "selected_and_all"
+```
+
+The content of `test_queryrouting.yaml` is as follows:
+
+```python
+algorithm:
+  paradigm_type: "llmqueryrouting"
+  modules:
+    - type: "basemodel"
+      name: "query-routing"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/basemodel.py"
+      hyperparameters:
+        - backend:
+            values: 
+              - "huggingface"
+        - quantization:
+            values:
+              - "4-bit"
+        - other_parameters
+    - type: "query-routing"
+      name: "HardSampleMining"
+      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/hard_sample_mining.py"
+      hyperparameters:
+        - other_parameters
+```
 
 ### Benchmark Construction
 
@@ -87,20 +318,6 @@ OpenCompass was released by Shanghai Artificial Intelligence Laboratory and inte
 Among the supported lists in OpenCompass mentioned above，Examination、Knowledge、Reasoning、Code have strong reference significance and can more fully reflect the abilities of LLMs. 
 
 For simplicity, we can choose MMLU / CMMLU in Examination category as our evaluation benchmark.
-
-### Constructure Detail
-
-Edge-cloud collaborative reasoning requires a clear understanding of the performance of edge-side models and cloud-side models. To this end, we need to support evaluations for three types of architectures:
-
-- Edge only
-- Cloud only
-- Cloud-Edge collaboration
-
-In order to achieve unified data distribution between the edge and the cloud, we plan to deploy Benchmark on a small server with a public IP address and distribute dataset data to the edge and cloud in the form of WebSocket. Once these data are distributed to the corresponding devices, inference will be performed by the models on the devices, and the responses obtained will be sent back to Benchmark Server for statistical analysis and metric calculation.
-
-<img src="./images/image_20240718085103296.png" alt="image_20240718085103" style="zoom:33%;" />
-
-We are aware that the bandwidth resources at the edge of the cloud may be limited, which could cause inconvenience for transferring large datasets. However, considering that LLM datasets are often pure text and occupy a small volume, the bandwidth requirement for transmission is relatively low. In contrast, large language model inference is a computationally intensive task, and the time taken for inference upon receiving data will far exceed the time taken for transmission. Therefore, the bottleneck of the system lies mainly in LLM inference rather than benchmark data transmission, so bandwidth will not have a significant impact.
 
 ### LLM Background
 
