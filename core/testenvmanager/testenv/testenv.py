@@ -68,8 +68,7 @@ class TestEnv:
             elif k == 'use_gpu':
                 self.use_gpu = bool(v)
             else:
-                if k in self.__dict__:
-                    self.__dict__[k] = v
+                self.__dict__[k] = v
 
         self._check_fields()
 

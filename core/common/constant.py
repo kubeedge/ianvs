@@ -27,6 +27,7 @@ class DatasetFormat(Enum):
     TXT = "txt"
     JSON = "json"
     JSONL = "jsonl"
+    JSONFORLLM = "jsonforllm"
 
 
 class ParadigmType(Enum):
@@ -40,6 +41,7 @@ class ParadigmType(Enum):
     LIFELONG_LEARNING = "lifelonglearning"
     FEDERATED_LEARNING = "federatedlearning"
     FEDERATED_CLASS_INCREMENTAL_LEARNING = "federatedclassincrementallearning"
+    JOINT_INFERENCE = "jointinference"
 
 
 class ModuleType(Enum):
@@ -48,6 +50,13 @@ class ModuleType(Enum):
     """
 
     BASEMODEL = "basemodel"
+
+    # JOINT INFERENCE
+    EDGEMODEL = "edgemodel"
+    CLOUDMODEL = "cloudmodel"
+
+    # Dataset Preprocessor
+    DATA_PROCESSOR = "dataset_processor"
 
     # HEM
     HARD_EXAMPLE_MINING = "hard_example_mining"

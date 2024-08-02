@@ -52,7 +52,6 @@ def compute(key, matrix):
     """
     Compute BWT and FWT scores for a given matrix.
     """
-    print(f"compute function: key={key}, matrix={matrix}, type(matrix)={type(matrix)}")
 
     length = len(matrix)
     accuracy = 0.0

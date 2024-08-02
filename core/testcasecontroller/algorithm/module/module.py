@@ -72,6 +72,7 @@ class Module:
         if not isinstance(self.url, str):
             raise ValueError(f"module url({self.url}) must be string type.")
 
+    #pylint: disable=too-many-branches
     def get_module_instance(self, module_type):
         """
         get function of algorithm module by using module type
@@ -86,7 +87,6 @@ class Module:
         function
 
         """
-        print(f'hyperparameters_list: {self.hyperparameters_list}')
         class_factory_type = ClassType.GENERAL
         if module_type in [ModuleType.HARD_EXAMPLE_MINING.value]:
             class_factory_type = ClassType.HEM
@@ -110,13 +110,11 @@ class Module:
         elif module_type in [ModuleType.AGGREGATION.value]:
             class_factory_type = ClassType.FL_AGG
             agg = None
-            print(self.url)
             if self.url :
                 try:
                     utils.load_module(self.url)
                     agg = ClassFactory.get_cls(
                         type_name=class_factory_type, t_cls_name=self.name)(**self.hyperparameters)
-                    print(agg)
                 except Exception as err:
                     raise RuntimeError(f"module(type={module_type} loads class(name={self.name}) "
                                     f"failed, error: {err}.") from err
@@ -125,10 +123,17 @@ class Module:
         if self.url:
             try:
                 utils.load_module(self.url)
-                # pylint: disable=E1134
-                func = ClassFactory.get_cls(
-                    type_name=class_factory_type, t_cls_name=self.name)(**self.hyperparameters)
+
+                if class_factory_type == ClassType.HEM:
+                    func = {"method": self.name, "param":self.hyperparameters}
+                else:
+                    func = ClassFactory.get_cls(
+                        type_name=class_factory_type,
+                        t_cls_name=self.name
+                    )(**self.hyperparameters)
+
                 return func
+
             except Exception as err:
                 raise RuntimeError(f"module(type={module_type} loads class(name={self.name}) "
                                 f"failed, error: {err}.") from err
