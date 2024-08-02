@@ -18,6 +18,7 @@ import os
 
 from sedna.core.incremental_learning import IncrementalLearning
 from sedna.core.lifelong_learning import LifelongLearning
+from joint_inference.sedna_joint_inference import JointInference
 
 from core.common.constant import ModuleType, ParadigmType
 
@@ -125,5 +126,15 @@ class ParadigmBase:
         # pylint: disable=E1101
         if paradigm_type == ParadigmType.MULTIEDGE_INFERENCE.value:
             return self.modules_funcs.get(ModuleType.BASEMODEL.value)()
+        
+        if paradigm_type == ParadigmType.JOINT_INFERENCE.value:
+            return JointInference(
+                estimator=self.module_instances.get(
+                    ModuleType.BASEMODEL.value),
+                cloud=self.module_instances.get(
+                    ModuleType.APIMODEL.value),
+                hard_example_mining=self.module_instances.get(
+                    ModuleType.HARD_EXAMPLE_MINING.value)
+            )
 
         return None

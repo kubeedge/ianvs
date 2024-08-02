@@ -35,6 +35,7 @@ class ParadigmType(Enum):
     INCREMENTAL_LEARNING = "incrementallearning"
     MULTIEDGE_INFERENCE = "multiedgeinference"
     LIFELONG_LEARNING = "lifelonglearning"
+    JOINT_INFERENCE = "jointinference"
 
 
 class ModuleType(Enum):
@@ -42,6 +43,7 @@ class ModuleType(Enum):
     Algorithm module type.
     """
     BASEMODEL = "basemodel"
+    APIMODEL = "apimodel"
 
     # HEM
     HARD_EXAMPLE_MINING = "hard_example_mining"

@@ -24,6 +24,7 @@ from core.testcasecontroller.algorithm.paradigm import (
     IncrementalLearning,
     MultiedgeInference,
     LifelongLearning,
+    JointInference
 )
 from core.testcasecontroller.generation_assistant import get_full_combinations
 
@@ -103,6 +104,9 @@ class Algorithm:
 
         if self.paradigm_type == ParadigmType.LIFELONG_LEARNING.value:
             return LifelongLearning(workspace, **config)
+        
+        if self.paradigm_type == ParadigmType.JOINT_INFERENCE.value:
+            return JointInference(workspace, **config)
 
         return None
 
