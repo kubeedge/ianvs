@@ -36,8 +36,12 @@ def is_local_dir(url):
 
 def get_file_format(url):
     """Get file format of the url."""
+    # Check if the url 
+    if os.path.basename(url) == "data_info.json":
+        return "jsonforllm"
+    
+    # Check if the url 
     return os.path.splitext(url)[-1][1:]
-
 
 def parse_kwargs(func, **kwargs):
     """Get valid parameters of the func in kwargs."""

@@ -1,0 +1,5 @@
+vllm
+transformers
+openai
+accelerate
+datamodel_code_generator
