@@ -1,0 +1,52 @@
+algorithm:
+  # paradigm name; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  paradigm_type: "jointinference"
+
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # kind of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel"
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      # This defines the edge model
+      name: "EdgeModel"
+      # the url address of python module; string type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/edgemodel.py"
+
+      hyperparameters:
+        - model_name: "Qwen/Qwen-1.8B-Chat"
+        - backend: "huggingface"
+        - quantization: "4-bit"
+        - config:
+            temperature: 0.7
+            top_p: 5
+            max_token: 2048
+
+    - type: "apimodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      # This defines the edge model
+      name: "CloudModel"
+      # the url address of python module; string type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/cloudmodel.py"
+
+      hyperparameters:
+        # name of the hyperparameter; string type;
+        - model_name: "GPT-4o-mini"
+        - config:
+            temperature: 0.7
+            top_p: 5
+            max_token: 2048
+
+    - type: "hard_example_mining"
+      # name of python module; string type;
+      name: "HardSampleMining"
+      # the url address of python module; string type;
+      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/hard_sample_mining.py"
+      hyperparameters:
+        - example_config: 0
