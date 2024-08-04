@@ -41,7 +41,7 @@ class FedAvg(BaseAggregation, abc.ABC):
                       metrics=["accuracy"])
         return model
 
-    def predict(self, global_model, test_data, round):
+    def inference(self, test_data):
         """
         Predict the test data with global model
 
@@ -57,9 +57,6 @@ class FedAvg(BaseAggregation, abc.ABC):
         predict : Array-like
             Prediction result
         """
-        weights = [np.array(layer) for layer in global_model]
-        print(test_data)
-        self.global_model.set_weights(weights)
         result = {}
         for data in test_data.x:
             x = np.load(data)
@@ -99,5 +96,6 @@ class FedAvg(BaseAggregation, abc.ABC):
                         / self.total_size)
             updates.append(row.tolist())
         self.weights = deepcopy(updates)
+        self.global_model.set_weights(self.weights)
         print("finish aggregation....")
         return updates

@@ -112,7 +112,10 @@ class Module:
             print(self.url)
             if self.url :
                 try:
-                    agg = utils.load_module(self.url)
+                    utils.load_module(self.url)
+                    agg = ClassFactory.get_cls(
+                        type_name=class_factory_type, t_cls_name=self.name)(**self.hyperparameters)
+                    print(agg)
                 except Exception as err:
                     raise RuntimeError(f"module(type={module_type} loads class(name={self.name}) "
                                     f"failed, error: {err}.") from err

@@ -134,5 +134,6 @@ class ParadigmBase:
 
             )
             # return self.module_instances.get(ModuleType.BASEMODEL.value)
-
+        if paradigm_type == ParadigmType.FEDERATED_CLASS_INCREMENTAL_LEARNING.value:
+            return self.module_instances.get(ModuleType.BASEMODEL.value)
         return None
