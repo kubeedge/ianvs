@@ -131,6 +131,14 @@ simple_qa 是我设计的一个简单的QA问答任务，测试集部分内容�
 
 ![](images/data_process_change.png)
 
+![](images/changed_sturcture.png)
+
+具体在core里面修改的部分 `core/testenvmanager/dataset`：
+
+![](images/changed_part.png)
+
+值得注意的是，该设计同时也兼容对旧版的index数据的支持。仅仅只需要将旧版的train_url和test_url字段改成train_index和test_index即可。
+
 在之前的项目中，我们需要在 `testenv.yaml` 文件中配置 `train_url` 和 `test_url` 索引文件的路径，索引文件中会放 (输入x, 期望输出y) 的文件路径，这个设计是存在一些局限性的。
 
 以往的ianvs项目似乎是以cv为主，对于nlp的example似乎没有，所以数据集读取方面，一般采用的方式是写一个index.txt，这个文件里面放（数据，标注）对，然后又有一个放数据的文件夹，一个放标注的文件夹，一个文件就是一个数据。一张图片一个数据，这在cv领域是可以理解的，但是如果换到nlp领域，没法做到一个txt文件只放一个数据，一般的做法是连index文件都不需要，直接一个data.json/jsonl/文件就把数据和标签都写进去了，例如
@@ -409,7 +417,7 @@ BenchMark 的相关信息数据都需要设计成单独存储，以保持稳定�
 }
 ```
 
-如果需要有别的prompt信息，也可以加进去。
+这里的数据是可扩展的，包括keys和prompts，如果需要有别的信息也可以加进去。
 
 至于是使用 ZeroShot/OneShot/FewShot，其实都是用增加 chat message history 的方式，这部分由不同模型自己实现即可。
 

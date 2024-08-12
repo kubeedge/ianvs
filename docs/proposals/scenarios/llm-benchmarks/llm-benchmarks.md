@@ -155,6 +155,14 @@ Additionally, this is different from the usual method of using an `index.txt` in
 
 ![](images/data_process_change.png)
 
+![](images/changed_sturcture.png)
+
+I modified `core/testenvmanager/dataset` in core：
+
+![](images/changed_part.png)
+
+It should be noticed that, this design is compatible to older version data-reading, you only need to change train_url and test_url to train_index and test_index.
+
 In previous projects, we needed to configure the paths of the `train_url` and `test_url` index files in the `testenv.yaml` file. The index files would contain file paths for (input x, expected output y) pairs, and this design has some limitations.
 
 The previous Ianvs projects seem to be focused on computer vision (CV), and there do not appear to be examples for natural language processing (NLP), so in terms of dataset reading, the common approach is to write an `index.txt` file that contains (data, annotation) pairs. There would also be a folder for data, a folder for annotations, and each file represents a single piece of data. An image corresponds to a single data point, which is understandable in the CV field. However, if you switch to the NLP field, you can't have a single text file contain just one piece of data. The common practice is to not even need an index file, but to write both data and labels directly into a data.json or jsonl file. For example:
@@ -438,6 +446,8 @@ Provide a prompt template for model inference. For example:
     "eval_prompt_template": "The model infer answer is {infer_answer}, the reference data is {ref}, Please give a score between 1 to 10."
 }
 ```
+
+The data here is extendable, you can add more prompts or keys if you want to or need to.
 
 If there is a need for additional prompt information, it can also be incorporated.
 
