@@ -24,13 +24,21 @@ import numpy as np
 from sedna.common.config import Context
 from sedna.common.class_factory import ClassType, ClassFactory
 
-from models import HuggingfaceLLM, VllmLLM, APIBasedLLM
+from models import HuggingfaceLLM, APIBasedLLM, VllmLLM
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 device = "cuda" # the device to load the model onto
 
+os.environ['BACKEND_TYPE'] = 'TORCH'
+
+MODEL_URL = "Qwen/Qwen2-1.5B-Instruct"
 
 logging.disable(logging.WARNING)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger("EdgeModel")
 
 __all__ = ["BaseModel"]
 
@@ -54,21 +62,21 @@ class BaseModel:
         # EdgeModel URL, see at https://github.com/kubeedge/sedna/blob/ac623ab32dc37caa04b9e8480dbe1a8c41c4a6c2/lib/sedna/core/base.py#L132
         parameters["MODEL_URL"] = self.model_url
 
-    def load(self, model_url=None):
+    def load(self, **kwargs):
+        # Align with Sedna's TorchBackend interface, see at https://github.com/kubeedge/sedna/blob/ac623ab32dc37caa04b9e8480dbe1a8c41c4a6c2/lib/sedna/backend/torch/__init__.py#L55-L67 
         if self.backend == "huggingface":
-            self.model = HuggingfaceLLM(model_url, self.quantization)
+            self.model = HuggingfaceLLM()
         elif self.backend == "vllm":
-            self.model = VllmLLM(model_url, self.quantization)
+            self.model = VllmLLM()
         else:
             raise Exception(f"Backend {self.backend} is not supported")
         
-        self.model.load(model_url=model_url)
+        logger.info(f"Using Backend: {self.backend}")
+        self.model.load(model_url=self.model_url)
             
         # TODO cloud service must be configured in JointInference
 
     def predict(self, data, input_shape=None, **kwargs):
-        answer_list = []
-        for line in data:
-            response = self.model.inference(line)
-            answer_list.append(response)
+        answer_list = self.model.inference(data)
+
         return answer_list

@@ -49,16 +49,18 @@ class BaseFilter(metaclass=abc.ABCMeta):
 
 @ClassFactory.register(ClassType.HEM, alias="BERT")
 class BERTFilter(BaseFilter, abc.ABC):
-    def __init__(self, model_path, **kwargs):
-        self.classifier = pipeline(
-            "text-classification", 
-            model=model_path, 
-            trust_remote_code=True
-        )
+    def __init__(self, **kwargs):
+        # self.classifier = pipeline(
+        #     "text-classification", 
+        #     model=model_path, 
+        #     trust_remote_code=True
+        # )
+        pass
     
     def _predict(self, data):
-        result = self.classifier(data)
-        return result
+        # result = self.classifier(data)
+        # return result
+        return False
 
     def __call__(self, data=None) -> bool:
-        return self._predict(data)
+        return False#self._predict(data)

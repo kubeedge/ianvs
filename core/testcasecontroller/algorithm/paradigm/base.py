@@ -18,8 +18,7 @@ import os
 
 from sedna.core.incremental_learning import IncrementalLearning
 from sedna.core.lifelong_learning import LifelongLearning
-from joint_inference.sedna_joint_inference import JointInference
-
+from .sedna_joint_inference import JointInference
 from core.common.constant import ModuleType, ParadigmType
 
 

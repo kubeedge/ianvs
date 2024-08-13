@@ -1,13 +1,13 @@
 import os 
 from openai import OpenAI
 
-from base_llm import BaseLLM
+from models.base_llm import BaseLLM
 from sedna.core.joint_inference.joint_inference import BigModelService
 
 class APIBasedLLM(BaseLLM):
     def __init__(self, model_name, **kwargs) -> None:
 
-        api_key=os.environ.get("OPENAI_API_KEY"),
+        api_key=os.environ.get("OPENAI_API_KEY")
         base_url=os.environ.get("OPENAI_BASE_URL")
 
         self.model = model_name
@@ -17,16 +17,8 @@ class APIBasedLLM(BaseLLM):
         )
 
     def _infer(self, prompt, system=None):
-        if system:   
-            messages = [
-                {"role": "system", "content": system},
-                {"role": "user", "content": prompt}
-            ]
-        else:
-            messages = [
-                {"role": "user", "content": prompt}
-            ]
-
+        messages = self.get_message_chain(prompt, system)
+        
         self.chat_completion = self.client.chat.completions.create(
             messages = messages,
             model=self.model,
@@ -36,3 +28,8 @@ class APIBasedLLM(BaseLLM):
 
         return response
     
+if __name__ == '__main__':
+    llm = APIBasedLLM(model_name="gpt-4o-mini")
+    data = ["你好吗？介绍一下自己"]
+    res = llm.inference(data)
+    print(res)

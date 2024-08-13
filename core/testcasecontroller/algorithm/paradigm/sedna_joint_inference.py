@@ -9,8 +9,9 @@ from sedna.service.server import InferenceServer
 from sedna.service.client import ModelClient, LCReporter
 from sedna.common.constant import K8sResourceKind
 from sedna.core.base import JobBase
+import re
 
-__all__ = ("JointInference", "BigModelService")
+HUGGINGFACE_PATH_PATTERN = r'^[a-zA-Z0-9][\w\-]*/[a-zA-Z0-9][\w\-\.]*$'
 
 # Currently rename "JointInference" to "SednaJointInference"
 class JointInference(JobBase):
@@ -50,6 +51,8 @@ class JointInference(JobBase):
 
     def __init__(self, estimator=None, cloud=None, hard_example_mining: dict = None):
         super(JointInference, self).__init__(estimator=estimator)
+
+
         self.job_kind = K8sResourceKind.JOINT_INFERENCE_SERVICE.value
         self.local_ip = get_host_ip()
     
@@ -70,10 +73,13 @@ class JointInference(JobBase):
 
         if callable(self.estimator):
             self.estimator = self.estimator()
-        if not os.path.exists(self.model_path):
+
+        check_huggingface_repo = lambda x: bool(re.match(HUGGINGFACE_PATH_PATTERN, x))
+
+        if not os.path.exists(self.model_path) and not check_huggingface_repo(self.model_path):
             raise FileExistsError(f"{self.model_path} miss")
         else:
-            self.estimator.load(self.model_path)
+            self.estimator.load(model_url=self.model_path)
 
         # If cloud is None, then initialize ModelClint as cloud.
         # Otherwise, we will regard the cloud as a client implemented by the user.
@@ -94,8 +100,10 @@ class JointInference(JobBase):
         if not hard_example_mining:
             hard_example_mining = self.get_hem_algorithm_from_config()
         if hard_example_mining:
-            hem = hard_example_mining.get("method", "IBT")
-            hem_parameters = hard_example_mining.get("param", {})
+            # hem = hard_example_mining.get("method", "IBT")
+            hem = "BERT"
+            hem_parameters = {}
+            # hem_parameters = hard_example_mining.get("param", {})
             self.hard_example_mining_algorithm = ClassFactory.get_cls(
                 ClassType.HEM, hem
             )(**hem_parameters)
@@ -140,14 +148,15 @@ class JointInference(JobBase):
         return res, edge_result
     
     def _get_cloud_result(self, data, post_process, **kwargs):
+        
         try:
             cloud_result = self.cloud.inference(
                 data.tolist(), post_process=post_process, **kwargs)
         except Exception as err:
             self.log.error(f"get cloud result error: {err}")
-        else:
-            res = cloud_result
-        
+
+        res = deepcopy(cloud_result)
+
         self.lc_reporter.update_for_collaboration_inference()
 
         return res, cloud_result
@@ -208,7 +217,7 @@ class JointInference(JobBase):
             if self.hard_example_mining_algorithm is None:
                 raise ValueError("Hard example mining algorithm is not set.")
 
-            is_hard_example = self.hard_example_mining_algorithm(res)
+            is_hard_example = self.hard_example_mining_algorithm(data)
             if is_hard_example:
                 if not sepeculative_decoding:
                     res, cloud_result = self._get_cloud_result(data, post_process=post_process, **kwargs)

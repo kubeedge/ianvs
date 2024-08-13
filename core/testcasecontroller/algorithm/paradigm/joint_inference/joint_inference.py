@@ -20,7 +20,7 @@ from copy import deepcopy
 from core.common.constant import ParadigmType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 from sedna.common.class_factory import ClassFactory, ClassType
-from sedna_joint_inference import JointInference as SednaJointInference
+# from sedna_joint_inference import JointInference as SednaJointInference
 
 class JointInference(ParadigmBase):
     """
@@ -51,8 +51,7 @@ class JointInference(ParadigmBase):
     def __init__(self, workspace, **kwargs):
         ParadigmBase.__init__(self, workspace, **kwargs)
         self.kwargs = kwargs
-        self.initial_model = kwargs.get("initial_model_url")
-        self.hard_example_mining_mode = kwargs.get("hard_example_mining_mode", "mining_edge_or_cloud")
+        self.hard_example_mining_mode = kwargs.get("hard_example_mining_mode", "mining-then-inference")
 
     def run(self):
         """
@@ -68,17 +67,21 @@ class JointInference(ParadigmBase):
 
         job = self.build_paradigm_job(ParadigmType.JOINT_INFERENCE.value)
 
-        inference_result = self._inference(job, self.initial_model)
+        inference_result = self._inference(job)
 
         return inference_result, self.system_metric_info
 
-    def _inference(self, job : SednaJointInference, trained_model):
+    def _inference(self, job):
         # Ianvs API
         inference_dataset = self.dataset.load_data(self.dataset.test_url, "inference")
         inference_output_dir = os.path.join(self.workspace, "output/inference/")
         os.environ["RESULT_SAVED_URL"] = inference_output_dir
 
+        batch_infer_res = []
+
+        for data in inference_dataset.x:
         # inference via sedna JointInference API 
-        infer_res = job.inference(inference_dataset.x, mining_mode=self.hard_example_mining_mode)
+            infer_res = job.inference(data, mining_mode=self.hard_example_mining_mode)
+            batch_infer_res.append(infer_res)
         
-        return infer_res
+        return batch_infer_res # (is_hard_example, res, edge_result, cloud_result)

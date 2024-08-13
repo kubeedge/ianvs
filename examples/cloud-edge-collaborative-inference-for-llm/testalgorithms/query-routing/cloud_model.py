@@ -24,11 +24,12 @@ import numpy as np
 from sedna.common.config import Context
 from sedna.common.class_factory import ClassType, ClassFactory
 
-from models import HuggingfaceLLM, VllmLLM, APIBasedLLM
+from models import HuggingfaceLLM, APIBasedLLM, VllmLLM
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 device = "cuda" # the device to load the model onto
 
+os.environ['BACKEND_TYPE'] = 'TORCH'
 
 logging.disable(logging.WARNING)
 
@@ -44,8 +45,4 @@ class BaseModel:
         )
     
     def inference(self, data, input_shape=None, **kwargs):
-        answer_list = []
-        for line in data:
-            response = self.model.inference(line)
-            answer_list.append(response)
-        return answer_list
+        return self.client.inference(data)

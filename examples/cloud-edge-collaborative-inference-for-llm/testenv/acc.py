@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from sedna.common.class_factory import ClassType, ClassFactory
+from result_parser import JointInferenceResult
 
 __all__ = ["acc"]
 
@@ -29,12 +30,12 @@ def get_last_letter(input_string):
     # 如果没有找到字母，返回None
     return None
 
-
 @ClassFactory.register(ClassType.GENERAL, alias="acc")
 def acc(y_true, y_pred):
-    y_pred = [get_last_letter(pred) for pred in y_pred]
-    print(y_true)
-    print(y_pred)
+    
+    infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
+
+    y_pred = [get_last_letter(pred.result) for pred in infer_res]
         
     # 使用列表推导来比较两个列表中的元素是否相同
     same_elements = [y_pred[i] == y_true[i] for i in range(len(y_pred))]

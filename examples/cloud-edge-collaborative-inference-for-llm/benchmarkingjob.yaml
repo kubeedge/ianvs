@@ -5,6 +5,8 @@ benchmarkingjob:
   # "~/" cannot be identified, so must be relative path or absoulute path
   workspace: "./workspace"
 
+  hard_example_mining_mode: "mining-then-inference"
+
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
   testenv: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml"

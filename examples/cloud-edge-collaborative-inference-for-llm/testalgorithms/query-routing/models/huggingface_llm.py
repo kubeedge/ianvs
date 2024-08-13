@@ -1,5 +1,5 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from base_llm import BaseLLM
+from models.base_llm import BaseLLM
 
 device = "cuda"
 
@@ -9,11 +9,11 @@ class HuggingfaceLLM(BaseLLM):
 
     def load(self, model_url):
         self.model = AutoModelForCausalLM.from_pretrained(
-            model_url,#"/root/autodl-tmp/Qwen/Qwen-1_8B-Chat",
+            model_url,
             torch_dtype="auto",
             device_map="auto",
             trust_remote_code=True,
-            quantization = self.quantization # Need to align with HF API
+            # quantization = self.quantization # Need to align with HF API
         )
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_url,
@@ -21,15 +21,7 @@ class HuggingfaceLLM(BaseLLM):
         )
         
     def _infer(self, prompt, system=None):
-        if system:   
-            messages = [
-                {"role": "system", "content": system},
-                {"role": "user", "content": prompt}
-            ]
-        else:
-            messages = [
-                {"role": "user", "content": prompt}
-            ]
+        messages = self.get_message_chain(prompt, system)
         text = self.tokenizer.apply_chat_template(
             messages,
             tokenize=False,
