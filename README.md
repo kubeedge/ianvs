@@ -1,6 +1,6 @@
 # Ianvs
 
-[![CI](https://github.com/kubeedge/ianvs/workflows/CI/badge.svg?branch=main)](https://github.com/sedna/ianvs/actions)
+[![CI](https://github.com/kubeedge/ianvs/actions/workflows/main-doc.yaml/badge.svg?branch=main)](https://github.com/kubeedge/ianvs/actions/workflows/main-doc.yaml)
 [![LICENSE SCAN](https://app.fossa.com/api/projects/custom%2B32178%2Fgithub.com%2Fkubeedge%2Fianvs.svg?type=shield)](https://app.fossa.com/projects/custom%2B32178%2Fgithub.com%2Fkubeedge%2Fianvs?ref=badge_shield)
 [![LICENSE](https://img.shields.io/github/license/kubeedge-sedna/ianvs.svg)](/LICENSE)
 
