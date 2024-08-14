@@ -18,8 +18,8 @@ Record the time of feedback, feedback content, corresponding code modifications,
 3. **Code version and comment information**：
 Record each version of the code and the differences between each version, including new, modified, and deleted code.
 Include detailed code comments and documentation to understand the function, purpose, and design ideas of the code.
-## Code Large Language Model Evaluation Benchmark
 
+## Code Large Language Model Evaluation Benchmark
 1. The benchmark should include common code agent tasks such as code generation, recommendation and analysis.
 2. The evaluation indicators should cover multiple dimensions such as functionality, reliability, and interpretability, and match the feedback and needs of software engineers.
 3. The benchmark should be able to evaluate the performance of LLMs on collaborative code agent tasks and provide a basis for further algorithm optimization.
@@ -27,6 +27,70 @@ Include detailed code comments and documentation to understand the function, pur
 
 1. The dataset and benchmark are included as part of the Ianvs framework, and provide good scalability and integration.
 2. Ensure that the datasets and benchmarks can run efficiently on edge devices of the Ianvs framework and work seamlessly with other functional modules of Ianvs.
+
+
+`examples/smart_coding` directory structure：
+```
+smart_coding
+└── smart_coding_learning_bench
+    └── smart_co
+        ├── benchmarkingjob.yaml
+        ├── testalgorithms
+        │   └── gen
+        │       ├── basemodel.py
+        │       ├── gen_algorithm.yaml
+        │       ├── op_eval.py
+        └── testenv
+            ├── acc.py
+            └── testenv.yaml
+```
+comment测试集部分内容格式如下：
+```
+{"description": "Add detailed comments to a given code/function.","code_snippet": "def calculate_area(length, width):\n    return length * width",}
+{"description": "Add detailed comments to a given Python function.",
+  "code_snippet": "def calculate_area(length, width):\n    return length * width",
+  "annotations": [
+    {
+      "line_number": 1,
+      "annotation": "Define a function calculate_area that accepts two parameters: length and width."
+    },
+    {
+      "line_number": 2,
+      "annotation": "Returns the product of length and width, which is the area of ​​the rectangle."
+    }
+  ]}
+```
+
+#### In this project, I was mainly responsible for the test suite of the code model. For the code model, it was mainly based on the comments and issues in the task requirements. As for the evaluation criteria of comments, different projects use different fields. The scoring part is based on the logic, accuracy, and format of the overall code.
+
+#### Data set part, interface definition part, for code/function part, whether it is necessary to comment on the entire function/code block before commenting on a single line of code, or if it is given as a whole, then simply comment on the whole
+
+#### If the user needs to comment on a line of code, then ask again and specify the answer.
+
+
+issue测试集部分内容格式如下：
+```
+{
+  "issue_id": "issue number",
+  "repository_name": "GitHub repository name",
+  "label":["bug", "high priority", "memory"],
+  "issue_description": "issue title description",
+  "code_before": {
+    "file_path": "The file path of the code",
+    "code_snippet": "Original code before the problem occurred"
+  },
+  "code_after": {
+    "file_path": "The file path of the code",
+    "code_snippet": "The modified code needs to include the solution to the problem"
+  },
+  "pull_request_id": "Corresponding PR number",
+  "pull_request_description": "A description of the PR, explaining the changes made and why"
+}
+```
+对于issue部分的数据格式，还需要再讨论一下。
+
+## BenchMark Format example
+[Refer to Chen Mengzhuo's PR section](https://github.com/IcyFeather233/ianvs/blob/main/docs/proposals/scenarios/llm-benchmarks/llm-benchmarks.md)
 
 # Design Details
 ## Data collection
