@@ -17,7 +17,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "FPN"
       # the url address of python module; string type;
-      url: "./examples/pcb-aoi/singletask_learning_bench/fault detection/testalgorithms/fpn/basemodel.py"
+      url: "./examples/pcb-aoi/singletask_learning_bench/fault_detection/testalgorithms/fpn/basemodel.py"
 
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
