@@ -13,3 +13,6 @@ testenv:
     - name: "acc"
       # the url address of python file
       url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/acc.py"
+
+    - name: "edge-rate"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/edge_rate.py"

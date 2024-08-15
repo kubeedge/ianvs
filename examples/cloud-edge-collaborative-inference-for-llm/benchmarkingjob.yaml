@@ -60,7 +60,7 @@ benchmarkingjob:
       # currently the options of value are as follows:
       #   1> "all": select all metrics in the leaderboard;
       #   2> metrics in the leaderboard, e.g., "f1_score"
-      metrics: [ "acc" , "latency", "throughput", "bandwith"]
+      metrics: [ "acc" , "edge-rate"]
 
     # model of save selected and all dataitems in workspace; string type;
     # currently the options of value are as follows:

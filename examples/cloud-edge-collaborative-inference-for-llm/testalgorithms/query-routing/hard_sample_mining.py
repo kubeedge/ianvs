@@ -63,4 +63,6 @@ class BERTFilter(BaseFilter, abc.ABC):
         return False
 
     def __call__(self, data=None) -> bool:
-        return False#self._predict(data)
+        import random
+        res = bool(random.randint(0,1))
+        return res#self._predict(data)

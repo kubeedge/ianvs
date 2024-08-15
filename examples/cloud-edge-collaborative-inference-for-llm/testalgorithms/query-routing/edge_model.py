@@ -60,7 +60,7 @@ class BaseModel:
         # Some parameters are passed to Sedna through environment variables 
         parameters = os.environ
         # EdgeModel URL, see at https://github.com/kubeedge/sedna/blob/ac623ab32dc37caa04b9e8480dbe1a8c41c4a6c2/lib/sedna/core/base.py#L132
-        parameters["MODEL_URL"] = self.model_url
+        parameters["model_path"] = self.model_url
 
     def load(self, **kwargs):
         # Align with Sedna's TorchBackend interface, see at https://github.com/kubeedge/sedna/blob/ac623ab32dc37caa04b9e8480dbe1a8c41c4a6c2/lib/sedna/backend/torch/__init__.py#L55-L67 
