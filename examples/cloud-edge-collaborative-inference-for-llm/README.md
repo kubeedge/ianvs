@@ -1,20 +1,65 @@
-# README
+# Quick Start
 
-## Simple QA
+Before using this example, you need to have the device ready:
 
-### Prepare Data
+One machine is all you need, i.e., a laptop or a virtual machine is sufficient and a cluster is not necessary
 
-The data of simple-qa example structure is:
+- 2 CPUs or more
+
+- 1 GPU with at least 4GB of memory, depends on the tested model
+
+- 4GB+ free memory, depends on algorithm and simulation setting
+
+- 10GB+ free disk space
+
+- Internet connection for GitHub and pip, etc
+
+- Python 3.8+ environment
+
+## Step 1. Ianvs Preparation
+```bash
+# Create a new conda environment with Python>=3.8 (venv users can do it in their own way).
+conda create -n ianvs-experiment python=3.8
+
+# Activate our environment
+conda activate ianvs-experiment
+
+# Clone Ianvs Repo
+git clone https://github.com/kubeedge/ianvs.git
+cd ianvs
+
+# Install a modified sedna wheel (a small bug and dependencies was fixed)
+wget https://github.com/FuryMartin/sedna/releases/download/v0.4.1.1/sedna-0.4.1.1-py3-none-any.whl
+pip install sedna-0.4.1.1-py3-none-any.whl
+
+# Install dependencies for this example.
+pip install examples/cloud-edge-collaborative-inference-for-llm/requirements.txt
+
+# Install dependencies for Ianvs Core.
+pip install requirements.txt
+
+# Install ianvs
+python setup.py install
+```
+
+## Step 2. Dataset and Model Preparation
+
+### Dataset Configuration
+
+You need to create a dataset folder in`ianvs/` in the following structure.
 
 ```
 .
-├── test_data
-│   └── data.jsonl
-└── train_data
-    └── data.jsonl
+├── dataset
+    ├── test_data
+    │   └── data.jsonl
+    └── train_data
+        └── data.jsonl
 ```
 
-`train_data/data.jsonl` is empty, and the `test_data/data.jsonl` is as follows:
+Leave `train_data/data.jsonl` as empty.
+
+Fill the `test_data/data.jsonl` as follows:
 
 ```
 {"question": "如果小明有5个苹果，他给了小华3个，那么小明还剩下多少个苹果？\nA. 2个\nB. 3个\nC. 4个\nD. 5个", "answer": "A"}
@@ -29,26 +74,43 @@ The data of simple-qa example structure is:
 {"question": "下列哪个图形的周长最长？\nA. 正方形\nB. 长方形\nC. 圆形\nD. 三角形", "answer": "C"}
 ```
 
-### Prepare Environment
+Then, check the path of `train_data` and `test_dat` in 
+`examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml`.
 
-You need to install the changed-sedna package, which added `JsonlDataParse` in `sedna.datasources`
+- If you created the `dataset` folder inside `ianvs/` as mentioned earlier, then the relative path is correct and does not need to be modified.
 
-Replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `examples/resources/sedna-with-jsonl.zip`
+- If your `dataset` is created in a different location, please use an absolute path, and using `~` to represent the home directory is not supported.
+
+### Model Configuration
+
+The models are configured in `examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml`.
+
+If you just want to run this example quickly, you can skip the configuration.
+
+The default model is `Qwen/Qwen2-1.5B-Instruct`, which is configured by `model_name`. We use transformers to load the model, which is completely consistent with most LLMs you can see. If you don't have this model, HuggingFace will download it automatically.
+
+This example support two LLM serving framework: HuggingFace and vllm. You can choose one and change the value of `backend`.
+
+Besides, this example support different quatization methods. You can pass "full", "4-bit", "8-bit" to the value of `quantization`
 
 
-### Run Ianvs
+## Step 3. Run Ianvs
 
 Run the following command:
 
 `ianvs -f examples/llm/singletask_learning_bench/simple_qa/benchmarkingjob.yaml`
 
-## OpenCompass Evaluation
+After several seconds, you will see the following output:
 
-### Prepare Environment
+```bash
++------+---------------+-----+-----------+----------------+-----------+------------+---------------------+--------------------------+-------------------+------------------------+---------------------+---------------------+--------------------------------------------------------------------------------+
+| rank |   algorithm   | acc | edge-rate |    paradigm    | basemodel |  apimodel  | hard_example_mining |   basemodel-model_name   | basemodel-backend | basemodel-quantization | apimodel-model_name |         time        |                                      url                                       |
++------+---------------+-----+-----------+----------------+-----------+------------+---------------------+--------------------------+-------------------+------------------------+---------------------+---------------------+--------------------------------------------------------------------------------+
+|  1   | query-routing | 1.0 |    0.4    | jointinference | EdgeModel | CloudModel |         BERT        | Qwen/Qwen2-1.5B-Instruct |    huggingface    |          full          |     gpt-4o-mini     | 2024-08-17 01:02:45 | ./workspace/benchmarkingjob/query-routing/493d14ea-5bf1-11ef-bf9b-755996a48c84 |
++------+---------------+-----+-----------+----------------+-----------+------------+---------------------+--------------------------+-------------------+------------------------+---------------------+---------------------+--------------------------------------------------------------------------------+
+```
 
-`pip install examples/resources/opencompass-0.2.5-py3-none-any.whl`
+Ianvs will output a `rank.csv` and `selected_rank.csv` in `ianvs/workspace`, which will record the test results of each test.
 
-### Run Evaluation
-
-`python run_op.py examples/llm/singletask_learning_bench/simple_qa/testalgorithms/gen/op_eval.py`
+You can modify the relevant model parameters in `examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml`, conduct multiple tests, and compare the results of different configurations.
 

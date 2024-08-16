@@ -1,0 +1,4 @@
+vllm
+transformers
+openai
+accelerate
