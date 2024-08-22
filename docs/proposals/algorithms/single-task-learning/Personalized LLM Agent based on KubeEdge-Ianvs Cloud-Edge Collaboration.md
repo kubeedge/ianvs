@@ -1,4 +1,4 @@
-# Personalized LLM Agent based on KubeEdge-Ianvs Cloud-Edge Collaborative Lifelong Learning
+# Personalized LLM Agent based on KubeEdge-Ianvs Cloud-Edge Collaboration
 
 # 1 Motivation
 
@@ -49,7 +49,7 @@ In an LLM-powered autonomous agent system, LLM functions as the agent’s brain,
 - Tool use
   - The agent learns to call external APIs for extra information that is missing from the model weights (often hard to change after pre-training), including current information, code execution capability, access to proprietary information sources, and more.
 
-## 2.2 Cloud-Edge Collaborative Lifelong Learning
+## 2.2 Cloud-Edge Collaboration
 
 <img src="images/continual_llm_agent.png" alt="LLM agent Continual learning" style="zoom:100%;" />
 
@@ -92,6 +92,19 @@ DAHLIA dataset is devoted to human activity recognition, which is a major issue 
 
 This project implements automated task definition and task orchestration through the LLM Agent on Ianvs and evaluates it using the self-built Q2A dataset. Specifically, in the Test Environment Manager, we integrate the Q2A and DAHLIA datasets, as well as three evaluation metrics: task decomposition, tool invocation, and parameter prediction, to establish a benchmark for LLM Agent evaluation. In the Test Case Controller, we perform automated task definition and task orchestration, providing user instructions to the LLM Agent and outputting task plan results. In the Story Manager, we set up the output of test reports.
 
+## 3.4 Metrics
+### 3.4.1 Task Decomposition
+#### Rouge-N
+The ROUGE-N metric is a method used to evaluate the quality of automatic summarization or machine translation, focusing on recall, which is the degree of overlap between the system-generated text and the reference text. The "N" in ROUGE-N represents the length of the longest common subsequence considered. Here is the calculation formula for ROUGE-N:
+$$ROUGE\_N=\frac{\displaystyle\sum^{}_{S\in\{ReferenceSummaries\}}\sum^{}_{grams_n\in S}Count_{match} (gram_n) }{\displaystyle\sum^{}_{S\in\{ReferenceSummaries\}}\sum^{}_{grams_n\in S}Count (gram_n)}$$
+
+####  Bertscore
+[Bert_score](https://github.com/Tiiiger/bert_score?tab=readme-ov-file#readme) leverages the pre-trained contextual embeddings from BERT and matches words in candidate and reference sentences by cosine similarity. It has been shown to correlate with human judgment on sentence-level and system-level evaluation. Moreover, BERTScore computes precision, recall, and F1 measure, which can be useful for evaluating different language generation tasks.
+
+<img src="images/bert_score.png" alt="bert_score" style="zoom:100%;" />
+
+
+$$R_{\mathrm{BERT}}=\frac{1}{|x|} \sum_{x_{i} \in x} \max _{\hat{x}_{j} \in \hat{x}} \mathbf{x}_{i}^{\top} \hat{\mathbf{x}}_{j}, \quad P_{\mathrm{BERT}}=\frac{1}{|\hat{x}|} \sum_{\hat{x}_{j} \in \hat{x}} \max _{x_{i} \in x} \mathbf{x}_{i}^{\top} \hat{\mathbf{x}}_{j}, \quad F_{\mathrm{BERT}}=2 \frac{P_{\mathrm{BERT}} \cdot R_{\mathrm{BERT}}}{P_{\mathrm{BERT}}+R_{\mathrm{BERT}}}$$
 
 
 # 4 Roadmap
