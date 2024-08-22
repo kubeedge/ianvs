@@ -15,7 +15,7 @@ testenv:
       # metric name; string type;
       name: "accuracy"
       # the url address of python file
-      url: "/home/wyd/ianvs/project/ianvs/examples/federated-learning/federated-class-incremental-learning/testenv/acc.py"
+      url: "/home/wyd/ianvs/project/ianvs/examples/federated-learning/federated-class-incremental-learning/glfc/testenv/acc.py"
 
     # condition of triggering inference network to update
     # threshold of the condition; types are float/int
@@ -29,7 +29,7 @@ testenv:
       # metric name; string type;
     - name: "accuracy"
       # the url address of python file
-      url: "/home/wyd/ianvs/project/ianvs/examples/federated-learning/federated-class-incremental-learning/testenv/acc.py"
+      url: "/home/wyd/ianvs/project/ianvs/examples/federated-learning/federated-class-incremental-learning/glfc/testenv/acc.py"
 
   # incremental rounds setting of incremental learning; int type; default value is 2;
   task_size: 10

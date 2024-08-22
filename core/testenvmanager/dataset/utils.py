@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import numpy as np
-
+import random 
 from sedna.datasources import BaseDataSource
 
 
@@ -47,7 +47,7 @@ def read_data_from_file_to_npy( files: BaseDataSource):
     return x_train, y_train
 
 
-def partition_data(datasets, client_number, data_partition ='iid'):
+def partition_data(datasets, client_number, data_partition ='iid', non_iid_ratio = 0.6):
     """
     Partition data into clients.
 
@@ -78,6 +78,16 @@ def partition_data(datasets, client_number, data_partition ='iid'):
             data.append([x_data[indices[start:end]], y_data[indices[start:end]]])
         return data
     elif data_partition == 'non-iid':
-        pass
+        class_num = len(np.unique(datasets[1]))
+        x_data = datasets[0]
+        y_data = datasets[1]
+        data = []   
+        for i in range(client_number):
+            sample_number = int(class_num * non_iid_ratio)
+            current_class = random.sample(range(class_num), sample_number)
+            print(f'for client{i} the class is {current_class}')
+            indices = np.where(y_data == current_class)[0]
+            data.append([x_data[indices], y_data[indices]])
+        return data
     else:
         raise ValueError("paritiion_methods must be 'iid' or 'non-iid'")

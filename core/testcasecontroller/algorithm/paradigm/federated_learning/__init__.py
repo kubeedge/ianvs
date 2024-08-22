@@ -13,4 +13,5 @@
 # limitations under the License.
 
 # pylint: disable=missing-module-docstring
-from .federeated_learning import FederatedLearning, FederatedClassIncrementalLearning
+from .federeated_learning import FederatedLearning
+from .federated_class_incremental_learning import FederatedClassIncrementalLearning

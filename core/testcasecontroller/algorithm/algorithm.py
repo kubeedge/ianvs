@@ -70,6 +70,7 @@ class Algorithm:
             "train_ratio": 1.0,
             "splitting_method": "default",
             "data_partition": "iid",
+            'non_iid_ratio': 0.6,
             "label_data_ratio": 1.0
         }
         self.initial_model_url: str = ""

@@ -121,8 +121,6 @@ class Module:
                                     f"failed, error: {err}.") from err
             return self.name, agg
 
-
-
         if self.url:
             try:
                 utils.load_module(self.url)

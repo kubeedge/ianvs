@@ -29,7 +29,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "fcil"
       # the url address of python module; string type;
-      url: "./examples/federated-learning/federated-class-incremental-learning/algorithm/basemodel.py"
+      url: "./examples/federated-learning/federated-class-incremental-learning/fedavg/algorithm/basemodel.py"
 
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
@@ -45,5 +45,5 @@ algorithm:
               - 1
     - type: "aggregation"
       name: "FedAvg"
-      url: "./examples/federated-learning/federated-class-incremental-learning/algorithm/aggregation.py"
+      url: "./examples/federated-learning/federated-class-incremental-learning/fedavg/algorithm/aggregation.py"
 

@@ -5,12 +5,12 @@ import keras
 import numpy as np
 import tensorflow as tf
 from keras import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
+from keras.src.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
 from sedna.common.class_factory import ClassType, ClassFactory
 from resnet import resnet18
 from network import NetWork, incremental_learning
 __all__ = ["BaseModel"]
-os.environ['BACKEND_TYPE'] = 'TENSORFLOW'
+os.environ['BACKEND_TYPE'] = 'KERAS'
 
 
 @ClassFactory.register(ClassType.GENERAL, alias='fcil')
@@ -110,7 +110,7 @@ class BaseModel:
                     loss = tf.reduce_mean(keras.losses.categorical_crossentropy(y, logits, from_logits=True))
                 grads = tape.gradient(loss, self.model.trainable_variables)
                 self.optimizer.apply(grads, self.model.trainable_variables)
-                self.optimizer.apply_gradients(zip(grads, self.model.trainable_variables))
+                # self.optimizer.apply_gradients(zip(grads, self.model.trainable_variables))
                 total_loss += loss
                 total_num += 1
 

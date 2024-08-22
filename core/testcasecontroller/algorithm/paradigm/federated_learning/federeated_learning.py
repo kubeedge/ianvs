@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Federated Class-Incremental Semi-Supervised  Learning Paradigm"""
+"""Federated  Learning Paradigm"""
+
 import threading
 import multiprocessing as mp
 import asyncio 
 
 from sedna.service.server import AggregationServer
-from sedna.algorithms.aggregation import AggClient 
 from core.common.log import LOGGER
 from core.common.constant import ParadigmType, ModuleType
 from core.common.utils import get_file_format
@@ -26,10 +26,9 @@ from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 from core.testenvmanager.dataset.utils import read_data_from_file_to_npy, partition_data
 
 class FederatedLearning(ParadigmBase):
-    # pylint: disable=too-many-locals
     """
-    FederatedClassIncrementalLearning
-    Federated Class-Incremental Learning Paradigm
+    FederatedLearning
+    Federated Learning Paradigm
     Notes:
           1. Ianvs serves as testing tools for test objects, e.g., algorithms.
           2. Ianvs does NOT include code directly on test object.
@@ -67,7 +66,7 @@ class FederatedLearning(ParadigmBase):
         self.rounds = kwargs.get("round", 1)
         LOGGER.info(self.rounds)
         self.clients = []
-        self.clients_number = kwargs.get("client_number", 1)
+        self.clients_number = kwargs.get("client_number", 10)
         self.aggregation, self.aggregator = self.module_instances.get(ModuleType.AGGREGATION.value)
 
     def run_server(self):
@@ -147,22 +146,21 @@ class FederatedLearning(ParadigmBase):
         train_datasets = read_data_from_file_to_npy(train_datasets)
         # TODO Partition data to iid or non-iid
         train_datasets = partition_data(train_datasets, self.clients_number,
-                                                     self.fl_data_setting.get("data_partition"))
+                                                     self.fl_data_setting.get("data_partition"),
+                                                     self.fl_data_setting.get("non_iid_ratio"))
         return train_datasets
 
     def client_train(self, train_datasets, validation_datasets, post_process, **kwargs):
-        
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         client = self.build_paradigm_job(ParadigmType.FEDERATED_LEARNING.value)
-        
         client.train(train_datasets, validation_datasets, post_process, **kwargs)
         loop.close()
         self.clients.append(client)
         
     def _train(self, train_datasets, **kwargs):
         
-        mp.set_start_method('spawn')
+        # mp.set_start_method('spawn')
         clients_threads = []
         for i in range(self.clients_number):
             LOGGER.info(i , self.clients_number)
@@ -216,67 +214,3 @@ class FederatedLearning(ParadigmBase):
 
 
 
-class FederatedClassIncrementalLearning(FederatedLearning):
-
-    def __init__(self, workspace, **kwargs):
-        super(FederatedClassIncrementalLearning, self).__init__(workspace, **kwargs)
-        self.rounds = kwargs.get("incremental_rounds", 1)
-        self.task_size = kwargs.get("task_size", 10)
-        self.system_metric_info = {}
-        
-    def task_definition(self):
-        """
-        Define the task for the class incremental learning paradigm
-        """
-        pass
-    
-    def init_client(self):
-        self.clients = [self.build_paradigm_job(ParadigmType.FEDERATED_CLASS_INCREMENTAL_LEARNING.value) for i in
-                        range(self.clients_number)]
-        
-    def run(self):
-        self.init_client()
-        dataset_files = self._split_dataset(self.task_size)
-        for r in range(self.rounds):
-            task_id = r // self.task_size
-            LOGGER.info(f"Round {r} task id: {task_id}")
-            train_dataset_files, _ = dataset_files[task_id]
-            train_datasets = self.train_data_partition(train_dataset_files)
-            aggregate_clients, train_infos = self._train(train_datasets, task_id=task_id, round=r, task_size=self.task_size)
-            global_weights = self.aggregator.aggregate(aggregate_clients)
-            if hasattr(self.aggregator, "helper_function"):
-                self.helper_function(train_infos)
-            self.send_weights_to_clients(global_weights)
-            
-        test_res = self.predict(self.dataset.test_url)
-        return test_res, self.system_metric_info
-    
-
-    def train_data_partition(self, train_dataset_file):
-        return super().train_data_partition(train_dataset_file)
-    
-    def _train(self, train_datasets, **kwargs):
-        aggregate_clients = []
-        train_infos = []
-        for idx in range(len(self.clients)):
-            train_info = self.clients[idx].train(train_datasets[idx], None, **kwargs)
-            train_info['client_id'] = idx
-            aggClient = AggClient()
-            aggClient.num_samples = train_info['num_samples']
-            aggClient.weights = self.clients[idx].get_weights()
-            aggregate_clients.append(aggClient)
-            train_infos.append(train_info)
-        return aggregate_clients, train_infos
-    
-    def send_weights_to_clients(self, global_weights):
-        for client in self.clients:
-            client.set_weights(global_weights)
-        LOGGER.info('finish send weights to clients')
-        
-    def helper_function(self,train_infos):
-        for i in range(len(self.clients)):
-            helper_info = self.aggregator.helper_function(train_infos)
-            self.clients[i].helper_function(helper_info)
-        LOGGER.info('finish helper function')
-        
-  

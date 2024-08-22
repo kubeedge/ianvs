@@ -1,0 +1,85 @@
+import abc
+from copy import deepcopy
+from typing import List
+
+import numpy as np
+import tensorflow as tf
+from keras import Sequential
+from keras.src.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
+from sedna.algorithms.aggregation.aggregation import BaseAggregation
+from sedna.common.class_factory import ClassType, ClassFactory
+from proxy_server import ProxyServer
+from model import resnet10, lenet5
+from network import NetWork, incremental_learning
+
+
+@ClassFactory.register(ClassType.FL_AGG, "FedAvg")
+class FedAvg(BaseAggregation, abc.ABC):
+    def __init__(self):
+        super(FedAvg, self).__init__()
+        self.fe = resnet10(10)
+        self.encode_model = lenet5(32, 100)
+        self.proxy_server = ProxyServer(
+            learning_rate=0.01,
+            num_class=10,
+            feature_extractor=self.fe,
+            encode_model=self.encode_model,
+            test_data=None
+        )
+        self.task_id = -1 
+        self.num_classes =10
+
+    def aggregate(self, clients):
+        """
+        Calculate the average weight according to the number of samples
+
+        Parameters
+        ----------
+        clients: List
+            All clients in federated learning job
+
+        Returns
+        -------
+        update_weights : Array-like
+            final weights use to update model layer
+        """
+
+
+        print("aggregation....")
+        if not len(clients):
+            return self.weights
+        self.total_size = sum([c.num_samples for c in clients])
+        # print(next(iter(clients)).weights)
+        old_weight = [np.zeros(np.array(c).shape) for c in
+                      next(iter(clients)).weights]
+        updates = []
+        for inx, row in enumerate(old_weight):
+            for c in clients:
+                row += (np.array(c.weights[inx]) * c.num_samples
+                        / self.total_size)
+            updates.append(row.tolist())
+        
+        self.weights  = [np.array(layer) for layer in updates]
+        
+        print("finish aggregation....")
+        return updates
+
+    def helper_function(self,train_infos, **kwargs):
+        proto_grad = []
+        task_id = -1
+        # print(train_infos)
+        for key, value  in train_infos.items():
+            if 'proto_grad' == key :
+                # print(info)
+                for grad_i in value:
+                    proto_grad.append(grad_i)
+                # proto_grad.append(info['proto_grad'])
+            if 'task_id' == key:
+                task_id = max(value, task_id)
+        self.proxy_server.dataload(proto_grad)
+        if task_id > self.task_id:
+            self.task_id = task_id
+            self.proxy_server.model = incremental_learning(self.proxy_server.model, self.num_classes * (task_id + 1))
+        self.proxy_server.model.set_weights(self.weights)
+        print(f'finish set weight for proxy server')
+        return {'best_old_model': self.proxy_server.model_back()}
