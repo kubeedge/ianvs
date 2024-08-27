@@ -21,10 +21,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: run FOSSA analysis
-        env:
+        uses: fossas/fossa-action@main
+        with:
           # FOSSA Push-Only API Token
-          FOSSA_API_KEY: '0b0868c9567ab9de697318e515248cad'
-        run: |
-          sudo curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | sudo bash
-          cd '${{github.workspace}}'
-          sudo -E fossa analyze
+          api-key: '0b0868c9567ab9de697318e515248cad'
