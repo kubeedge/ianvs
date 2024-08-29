@@ -143,9 +143,7 @@ The overall architecture is shown as follow:
 
 We design a novel algorithm paradigm namely Federated-Class-Incremental-Learning Paradigm,  We specify the process of the algorithm paradigm as follows:
 
-
-
-![image-20240821171340432](FCI_SSL_image/paradigm_process)
+![image-20240729151355604](FCI_SSL_image/paradigm_process)
 
 
 
@@ -195,7 +193,6 @@ The benchmarking setting items  are  as shown follow:
 
   
 
-  
 
   where $N$ is the total number of the  test set, and $C \in {C_1,..,C_t}$ is the class number of the test set, $N_j$ is the number of class $j$
 
@@ -207,10 +204,9 @@ The benchmarking setting items  are  as shown follow:
   
   ![image-20240821171531382](FCI_SSL_image/forget_rate)
   
-  
-  
+
   where $C_{old}$ is the number of old classes, $acc_{i,j}$ is the accuracy of class i at incremental round j.
-  
+
   
 
 ### 3.4 Algorithm Design
@@ -305,7 +301,235 @@ $$
 L = \lambda_1 Lu + \lambda_2L_C + \lambda3 L_F
 $$
 
+### 3.5 User Example
 
+#### 3.5.1 Federated Learning Example
+
+Base on the architecture above, If user want to implement a federated learning algorithm， they can following the below instruction:
+
+example path: `example/cifar100/federeated_learning/fedavg`
+
+1. Define an `Estimator`
+
+```python
+from sedna.common.class_factory import ClassType, ClassFactory
+
+@ClassFactory.register(ClassType.GENERAL, alias='fedavg')
+class Estimator:
+
+    def __init__(self, **kwargs):
+        pass
+        
+    def predict(self, data, **kwargs):
+        pass
+
+    def evaluate(self, valid_data, **kwargs):
+        pass
+
+    def train(self, train_data, valid_data=None, **kwargs):
+        pass
+```
+
+2. Define an `Aggregation`
+
+```python
+from sedna.common.class_factory import ClassType, ClassFactory
+
+@ClassFactory.register(ClassType.FL_AGG, "FedAvg")
+class FedAvg(BaseAggregation, abc.ABC):
+    def __init__(self):
+        super(FedAvg, self).__init__()
+        pass
+        
+    def aggregate(self, clients):
+        pass
+
+```
+
+3. Prepare the `algorithm.yaml`
+
+```yaml
+algorithm:
+  paradigm_type: "federatedlearning"
+  # new config for federated learning
+  fl_data_setting:
+    train_ratio: 1.0
+    splitting_method: "default"
+    label_data_ratio: 1.0
+    data_partition: "iid"
+  initial_model_url: "/home/wyd/ianvs/project/init_model/restnet.pb"
+
+  modules:
+    #   1> "basemodel"
+    - type: "basemodel"
+      name: "fedavg"
+      url: "./examples/federated-learning/fedavg/algorithm/basemodel.py"
+      hyperparameters:
+        - batch_size:
+            values:
+              - 32
+        - learning_rate:
+            values:
+              - 0.001
+        - epochs:
+            values:
+              - 3
+    - type: "aggregation"
+      name: "FedAvg"
+      url: "./examples/federated-learning/fedavg/algorithm/aggregation.py"
+
+
+```
+
+4. Prepare the `test_env.yaml` like any other  other paradigm  according to your benchmarking environment.
+
+5. Prepare the `benchmarkinjJob.yaml` like any other paradigm benchmarking job
+
+6. Launch the benchmarking job:
+
+```cmd
+ianvs -f ./example/cifar100/federated_learning/fedavg/benchmarkingjob.yaml
+```
+
+#### 3.5.2 Federated Class Incremental Learning
+
+Base on the architecture above, If user want to implement a federated class incremental learning algorithm， they can following the below instruction:
+
+example path: `example/cifar100/federeated_class_incremental_learning/glfc`
+
+1. Define an `Estimator` but you can choose to implement a helper function
+
+```python
+from sedna.common.class_factory import ClassType, ClassFactory
+
+@ClassFactory.register(ClassType.GENERAL, alias='fedavg')
+class Estimator:
+
+    def __init__(self, **kwargs):
+        pass
+        
+    def predict(self, data, **kwargs):
+        pass
+
+    def evaluate(self, valid_data, **kwargs):
+        pass
+
+    def train(self, train_data, valid_data=None, **kwargs):
+        pass
+    
+    def helper_function(self, helper_info, **kwargs):
+        pass
+```
+
+2. Define an `Aggregation` but you can choose to implement a helper function
+
+```python
+import abc
+from copy import deepcopy
+from typing import List
+
+import numpy as np
+import tensorflow as tf
+from keras import Sequential
+from keras.src.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
+from sedna.algorithms.aggregation.aggregation import BaseAggregation
+from sedna.common.class_factory import ClassType, ClassFactory
+from proxy_server import ProxyServer
+from model import resnet10, lenet5
+from network import NetWork, incremental_learning
+
+
+@ClassFactory.register(ClassType.FL_AGG, "FedAvg")
+class FedAvg(BaseAggregation, abc.ABC):
+    def __init__(self):
+		super(FedAvg, self).__init__()
+        pass
+    
+    def aggregate(self, clients):
+        pass
+
+    def helper_function(self,train_infos, **kwargs):
+        pass
+```
+
+3. Prepare the `algorithm.yaml` like above example, but to change the paradigm_type from `federatedlearning` into `federatedclassincrementallearning`
+
+```yaml
+algorithm:
+  paradigm_type: "federatedclassincrementallearning"
+  fl_data_setting:
+    ...
+
+  modules:
+    ...
+```
+
+4. Prepare the `test_env.yaml` like above example, but some new config new to be specific:
+
+```yaml
+testenv:
+  backend: "keras"
+  dataset:
+ 	...
+
+  model_eval:
+    model_metric:
+      # metric name; string type;
+      ...
+  metrics:
+     ...
+  # incremental rounds setting of incremental learning; int type; default value is 2;
+  incremental_rounds: 100
+  round: 10
+```
+
+5. Prepare the `benchmarkinjJob.yaml` like any other paradigm benchmarking job
+
+6. Launch the benchmarking job:
+
+```cmd
+ianvs -f ./example/cifar100/federeated_class_incremental_learning/glfc/benchmarkingjob.yaml
+```
+
+#### 3.5.3 Federated Learning With Sedna Example
+
+[Sedna federated learning example]([sedna/examples/federated_learning/surface_defect_detection at main · kubeedge/sedna (github.com)](https://github.com/kubeedge/sedna/tree/main/examples/federated_learning/surface_defect_detection))
+
+To match the implementation of federated learning in Sedna, if user want to implement a federated learning algorithm, they can following the below instruction:
+
+example path: `example/cifar100/sedna_federeated_learning/fedavg`
+
+1. Define an  `Estimator` like `3.5.1 Federated Learning Example ` 
+2. Define an `Aggregation` like `3.5.1 Federated Learning Example ` 
+3. Define a `server.py` and launch Server
+
+```python
+from sedna.service.server import AggregationServer
+aggregation_algorithm = 'FedAvg'
+exit_round = 100
+participants_count = 1
+LOGGER.info("running server!!!!")
+server = AggregationServer(
+      aggregation=aggregation_algorithm,
+      exit_round=exit_round,
+      ws_size=1000 * 1024 * 1024,
+      participants_count=participants_count,
+      host='127.0.0.1'
+)
+server.start()
+```
+
+4. Create FederatedLearning Job and launch client to perform federated learning train:
+
+```python
+from sedna.core.federated_learning import FederatedLearning
+from basemodel import Estimator
+cli = FederatedLearning(
+      estimator= Estimator(),
+      aggregation= 'FedAvg'
+)
+cli.train(train_data, val_data,None)
+```
 
 ## 4 Road Map
 
