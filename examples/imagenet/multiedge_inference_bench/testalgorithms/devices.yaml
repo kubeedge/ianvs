@@ -1,0 +1,26 @@
+devices:
+  - name: "dev1"
+    type: "cpu"
+    memory: "1024"
+    freq: "2.6"
+    bandwith: "100"
+  - name: "dev2"
+    type: "gpu"
+    memory: "1024"
+    freq: "2.6"
+    bandwith: "80"
+  - name: "dev3"
+    type: "gpu"
+    memory: "2048"
+    freq: "2.6"
+    bandwith: "90"
+partition_points:
+  - input_names: ["pixel_values"]
+    output_names: ["input.60"]
+    device_name: "dev1"
+  - input_names: ["input.60"]
+    output_names: ["input.160"]
+    device_name: "dev2"
+  - input_names: ["input.160"]
+    output_names: ["logits"]
+    device_name: "dev3"

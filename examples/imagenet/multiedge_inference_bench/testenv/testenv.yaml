@@ -1,0 +1,16 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_url: "/Users/wuyang/Downloads/MOT17/reid/test.txt"
+    # the url address of test dataset index; string type;
+    test_url: "/Users/wuyang/Downloads/MOT17/reid/test.txt"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "map"
+      # the url address of python file
+      url: "./examples/imagenet/multiedge_inference_bench/testenv/map.py"
+  devices:
+    - url : "./devices.yaml"
