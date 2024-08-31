@@ -86,6 +86,7 @@ class Module:
         function
 
         """
+        print(f'hyperparameters_list: {self.hyperparameters_list}')
         class_factory_type = ClassType.GENERAL
         if module_type in [ModuleType.HARD_EXAMPLE_MINING.value]:
             class_factory_type = ClassType.HEM

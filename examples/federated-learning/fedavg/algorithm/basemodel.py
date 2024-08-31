@@ -5,11 +5,11 @@ import keras
 import numpy as np
 import tensorflow as tf
 from keras import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
+from keras.src.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
 from sedna.common.class_factory import ClassType, ClassFactory
 
 __all__ = ["BaseModel"]
-os.environ['BACKEND_TYPE'] = 'TENSORFLOW'
+os.environ['BACKEND_TYPE'] = 'KEARS'
 
 
 @ClassFactory.register(ClassType.GENERAL, alias='fedavg')

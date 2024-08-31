@@ -14,16 +14,13 @@
 
 """Federated  Learning Paradigm"""
 
-import threading
-import multiprocessing as mp
-import asyncio 
-
-from sedna.service.server import AggregationServer
+from sedna.algorithms.aggregation import AggClient 
 from core.common.log import LOGGER
 from core.common.constant import ParadigmType, ModuleType
 from core.common.utils import get_file_format
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 from core.testenvmanager.dataset.utils import read_data_from_file_to_npy, partition_data
+from threading import Thread, RLock
 
 class FederatedLearning(ParadigmBase):
     """
@@ -51,8 +48,6 @@ class FederatedLearning(ParadigmBase):
               network eval config, etc.
     """
 
-    LOCAL_HOST = '127.0.0.1'
-
     def __init__(self, workspace, **kwargs):
         ParadigmBase.__init__(self, workspace, **kwargs)
 
@@ -61,28 +56,16 @@ class FederatedLearning(ParadigmBase):
         self.kwargs = kwargs
 
         self.fl_data_setting = kwargs.get("fl_data_setting")
+        # print(self.fl_data_setting)
         self.backend = kwargs.get("backend")
         self.global_model = None  # global model to perform global evaluation
         self.rounds = kwargs.get("round", 1)
-        LOGGER.info(self.rounds)
         self.clients = []
-        self.clients_number = kwargs.get("client_number", 10)
+        self.lock = RLock()
+
+        self.aggregate_clients=[]
+        self.clients_number = kwargs.get("client_number", 1)
         self.aggregation, self.aggregator = self.module_instances.get(ModuleType.AGGREGATION.value)
-
-    def run_server(self):
-        aggregation_algorithm = self.aggregation
-        exit_round = self.rounds
-        participants_count = self.clients_number
-        LOGGER.info("running server!!!!")
-        server = AggregationServer(
-            aggregation=aggregation_algorithm,
-            exit_round=exit_round,
-            ws_size=1000 * 1024 * 1024,
-            participants_count=participants_count,
-            host=self.LOCAL_HOST
-
-        )
-        server.start()
 
     def init_client(self):
         self.clients = [self.build_paradigm_job(ParadigmType.FEDERATED_LEARNING.value) for i in
@@ -99,18 +82,18 @@ class FederatedLearning(ParadigmBase):
             information needed to compute system metrics.
         """
         # init client wait for connection
-
-        server_thead = threading.Thread(target=self.run_server)
-        server_thead.start()
-        LOGGER.info(f"server is start and server is alive:  {server_thead.is_alive()}")
         # self.init_client()
-        rounds = self.rounds
+        self.init_client()
         dataset_files = self._split_dataset(1) # only one split ——all the data
-        train_dataset_file, eval_dataset_file = dataset_files[0]
+        train_dataset_file, _ = dataset_files[0]
         train_datasets = self.train_data_partition(train_dataset_file)
-        self._train(train_datasets, rounds=rounds)
-        LOGGER.info(f'finish trianing for fedavg')
-        server_thead.join()
+        # split_time = self.rounds // self.task_size  # split the dataset into several tasks
+        # print(f'split_time: {split_time}') 
+        for r in range(self.rounds):
+            self.train(train_datasets, round=r)
+            global_weights = self.aggregator.aggregate(self.aggregate_clients)
+            self.send_weights_to_clients(global_weights)
+            self.aggregate_clients.clear()
         test_res = self.predict(self.dataset.test_url)
         return test_res, self.system_metric_info
 
@@ -144,54 +127,39 @@ class FederatedLearning(ParadigmBase):
         # - provide a default method to read data from file to npy
         # - can support customized method to read data from file to npy
         train_datasets = read_data_from_file_to_npy(train_datasets)
-        # TODO Partition data to iid or non-iid
+        # Partition data to iid or non-iid
         train_datasets = partition_data(train_datasets, self.clients_number,
                                                      self.fl_data_setting.get("data_partition"),
                                                      self.fl_data_setting.get("non_iid_ratio"))
         return train_datasets
 
-    def client_train(self, train_datasets, validation_datasets, post_process, **kwargs):
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        client = self.build_paradigm_job(ParadigmType.FEDERATED_LEARNING.value)
-        client.train(train_datasets, validation_datasets, post_process, **kwargs)
-        loop.close()
-        self.clients.append(client)
+    
+    def client_train(self, client_idx, train_datasets, validation_datasets, **kwargs):
+        train_info = self.clients[client_idx].train(train_datasets[client_idx], None, **kwargs)
+        train_info['client_id'] = client_idx
+        aggClient = AggClient()
+        aggClient.num_samples = train_info['num_samples']
+        aggClient.weights = self.clients[client_idx].get_weights()
+        self.lock.acquire()
+        self.aggregate_clients.append(aggClient)
+        self.lock.release()
         
-    def _train(self, train_datasets, **kwargs):
-        
-        # mp.set_start_method('spawn')
-        clients_threads = []
-        for i in range(self.clients_number):
-            LOGGER.info(i , self.clients_number)
-            # self.clients[i].train(train_datasets[i], None, None, **kwargs)
-            t = threading.Thread(target=self.client_train, args=(train_datasets[i], None, None), kwargs=kwargs)
-            # t = Process(target=self.clients[i].train, args=(train_datasets[i], None, None), kwargs=kwargs)
-
-            clients_threads.append(t)
-            t.start()
-        for t in clients_threads:
-            LOGGER.info(f"client process is alive: {t.is_alive()}")
+    def train(self, train_datasets, **kwargs):
+        client_threads = []
+        print(f'len(self.clients): {len(self.clients)}')
+        for idx in range(len(self.clients)):
+            client_thread = Thread(target=self.client_train, args=(idx, train_datasets, None), kwargs=kwargs)
+            client_thread.start()
+            client_threads.append(client_thread)
+        for t in client_threads:
             t.join()
-            LOGGER.info(f"finish training {t}")
-        return
-
-    def local_eval(self, train_dataset_file, round):
-        """
-        Evaluate the model on the local dataset
-        """
-        train_dataset = None
-        if isinstance(train_dataset_file, str):
-            train_dataset = self.dataset.load_data(train_dataset_file, "train")
-        if isinstance(train_dataset_file, list):
-            train_dataset = []
-            for file in train_dataset_file:
-                train_dataset.append(self.dataset.load_data(file, "train"))
-        assert train_dataset is not None, "train_dataset is None"
-        train_dataset = read_data_from_file_to_npy(train_dataset)
+        LOGGER.info('finish training')
+        
+    def send_weights_to_clients(self, global_weights):
         for client in self.clients:
-            client.evaluate(train_dataset, round=round)
-        LOGGER.info('finish local eval')
+            client.set_weights(global_weights)
+        LOGGER.info('finish send weights to clients')
+        
 
     def get_global_model(self):
         self.global_model = self.clients[0]

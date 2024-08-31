@@ -4,6 +4,7 @@ import tensorflow as tf
 import keras
 import logging 
 from network import NetWork, incremental_learning, copy_model
+from model import resnet10
 
 def get_one_hot(target, num_classes):
     # print(f'in get  one hot, target shape is {target.shape}')
@@ -15,13 +16,15 @@ def get_one_hot(target, num_classes):
     return y
 
 class GLFC_Client:
-    def __init__(self, feature_extractor, num_classes, batch_size, task_size, memory_size, epochs, learning_rate, encode_model):
+    def __init__(self, num_classes, batch_size, task_size, memory_size, epochs, learning_rate, encode_model):
         self.epochs = epochs
         self.learning_rate = learning_rate
-        self.model = NetWork(num_classes, feature_extractor)
+        
+        # self.model = NetWork(num_classes, feature_extractor)
         self.encode_model = encode_model
         
         self.num_classes = num_classes
+        logging.info(f'num_classes is {num_classes}')
         self.batch_size = batch_size
         self.task_size = task_size
         
@@ -38,6 +41,41 @@ class GLFC_Client:
         self.current_class = None
         self.last_class = None 
         self.train_loader = None 
+        self.build_feature_extractor()
+        self.classifier = None 
+        # self._initialize_classifier()
+        # assert self.classifier is not None
+    
+    def build_feature_extractor(self):
+        self.feature_extractor = resnet10()
+        self.feature_extractor.build(input_shape=(None, 32, 32, 3))   
+        self.feature_extractor.call(keras.Input(shape=(32, 32, 3)))
+    
+    def _initialize_classifier(self):
+        if self.classifier != None:
+            new_classifier = tf.keras.Sequential([
+                # tf.keras.Input(shape=(None, self.feature_extractor.layers[-2].output_shape[-1])),
+                tf.keras.layers.Dense(self.num_classes, kernel_initializer='lecun_normal')
+            ])
+            new_classifier.build(input_shape=(None, self.feature_extractor.layers[-2].output_shape[-1]))
+            new_weights = new_classifier.get_weights()
+            old_weights = self.classifier.get_weights()
+            # 复制旧参数
+            # weight
+            new_weights[0][0:old_weights[0].shape[0], 0:old_weights[0].shape[1]] = old_weights[0]
+            # bias
+            new_weights[1][0:old_weights[1].shape[0]] = old_weights[1]
+            new_classifier.set_weights(new_weights)
+            self.classifier = new_classifier
+        else:
+            logging.info(f'input shape is {self.feature_extractor.layers[-2].output_shape[-1]}')
+            self.classifier = tf.keras.Sequential([
+                # tf.keras.Input(shape=(None, self.feature_extractor.layers[-2].output_shape[-1])),
+                tf.keras.layers.Dense(self.num_classes, kernel_initializer='lecun_normal')
+            ])
+            self.classifier.build(input_shape=(None, self.feature_extractor.layers[-2].output_shape[-1]))
+            
+        logging.info(f"finish ! initialize classifier {self.classifier.summary()}")
         
     def before_train(self, task_id, train_data, class_learned, old_model):
         logging.info(f"------before train task_id: {task_id}------")
@@ -49,12 +87,11 @@ class GLFC_Client:
             if self.current_class is not None: 
                 self.last_class = self.current_class
             logging.info(f'self.last_class is , {self.last_class}, {self.num_classes}')
-            self.model = incremental_learning(self.model, self.num_classes)
+            self._initialize_classifier()
             self.current_class = np.unique(train_data[1]).tolist()
             self.update_new_set(need_update)
             if len(old_model) != 0:
                 self.old_model = old_model[1]
-            # incremental_learning(self.model, self.num_classes * (task_id+ 1))
         else:
             if len(old_model) != 0:
                 self.old_model = old_model[0]
@@ -90,28 +127,38 @@ class GLFC_Client:
         return tf.data.Dataset.from_tensor_slices((self.train_set[0], self.train_set[1])).shuffle(buffer_size=10000000).batch(self.batch_size)
     
     def train(self, round):
+        # self._initialize_classifier()
         opt = keras.optimizers.SGD(learning_rate=self.learning_rate, weight_decay=0.00001)
         # print(self.train_loader is None)
-        # self.model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
+        feature_extractor_params = self.feature_extractor.trainable_variables
+        classifier_params = self.classifier.trainable_variables
+        all_params = []
+        all_params.extend(feature_extractor_params)
+        all_params.extend(classifier_params)
+        
         for epoch in range(self.epochs):
             for step, (x, y) in enumerate(self.train_loader):
                 # opt = keras.optimizers.SGD(learning_rate=self.learning_rate, weight_decay=0.00001)
-                # self.model.fit(x, y, epochs=3)
                 with tf.GradientTape() as tape:
-                    # logits = self.model(x, training=True)
-                    # y = get_one_hot(y, self.num_classes)
-                    # loss = tf.reduce_mean(keras.losses.categorical_crossentropy(y, logits, from_logits=True))
-                    loss = self._compute_loss(x, y)
-                logging.info(f'------round{round} epoch{epoch} step{step} loss: {loss} and loss dim is {loss.shape}------')
-                grads = tape.gradient(loss, self.model.trainable_variables)
-                # print(f'grads shape is {len(grads)} and type is {type(grads)}')
-                opt.apply_gradients(zip(grads, self.model.trainable_variables))
+                    logits = self.model_call(x, training=True)
+                #     # y = get_one_hot(y, self.num_classes)
+                    loss = tf.reduce_mean(keras.losses.sparse_categorical_crossentropy(y, logits, from_logits=True))
+                #     loss = self._compute_loss(x, y)
+                # logging.info(f'------round{round} epoch{epoch} step{step} loss: {loss} and loss dim is {loss.shape}------')
+                grads = tape.gradient(loss, all_params)
+                # # print(f'grads shape is {len(grads)} and type is {type(grads)}')
+                opt.apply_gradients(zip(grads, all_params))
         
         logging.info(f'------finish round{round} traning------')
+        
+    def model_call(self, x, training=False):
+        input = self.feature_extractor(inputs=x,training=training)
+        # logging.info(input.shape)
+        return self.classifier(inputs=input, training=training)
     
     def _compute_loss(self, imgs, labels):
         logging.info(f'self.old_model is available: {self.old_model is not None}')
-        y_pred = self.model(imgs, training=True)
+        y_pred = self.model_call(imgs, training=True)
         target = get_one_hot(labels, self.num_classes)
         logits = y_pred
             # prob = tf.nn.softmax(logits, axis=1)
@@ -137,7 +184,7 @@ class GLFC_Client:
             # print(f'in _compute_loss, loss is {loss} and shape is {loss.shape}')
             distill_target = tf.Variable(get_one_hot(labels, self.num_classes))
             # print(f"distill_target shape: {distill_target.shape} type: {type(distill_target)}")
-            old_target = tf.sigmoid(self.old_model(imgs))
+            old_target = tf.sigmoid(self.old_model[1](self.old_model[0]((imgs))))
             old_task_size = old_target.shape[1]
             # print(f'old_target shape: {old_target.shape} and old_task_size: {old_task_size}')
             distill_target[:, :old_task_size].assign(old_target)
@@ -236,7 +283,7 @@ class GLFC_Client:
         
     def compute_class_mean(self, images):
         images_data = tf.data.Dataset.from_tensor_slices(images).batch(self.batch_size)
-        fe_output = self.model.feature_extractor(inputs=images_data)
+        fe_output = self.feature_extractor.predict(images_data)
         fe_output = tf.nn.l2_normalize( fe_output).numpy()
         # print(f"fe_output shape is {fe_output.shape}")
         class_mean = tf.reduce_mean(fe_output, axis=0)
@@ -264,14 +311,21 @@ class GLFC_Client:
             # print("in proto_grad, label shape is ", label.shape)
             label = tf.constant([label])
             target = get_one_hot(label, self.num_classes)
-            proto_model = copy_model(self.model)
+            logging.info(f'proto_grad target shape is {target.shape} and num_classes is {self.num_classes}')
+            proto_fe = resnet10()
+            proto_fe.build(input_shape=(None, 32, 32, 3))
+            proto_fe.call(keras.Input(shape=(32, 32, 3)))
+            proto_fe.set_weights(self.feature_extractor.get_weights())
+            proto_clf = copy.deepcopy(self.classifier)
+            proto_param = proto_fe.trainable_variables
+            proto_param.extend(proto_clf.trainable_variables)
             opt = keras.optimizers.SGD(learning_rate=self.learning_rate, weight_decay=0.00001)
             for _ in range(iters):
                 with tf.GradientTape() as tape:
-                    output = proto_model(data)
+                    output = proto_clf(proto_fe(data))
                     loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(target, output))
-                grads = tape.gradient(loss, proto_model.trainable_variables)
-                opt.apply_gradients(zip(grads, proto_model.trainable_variables))
+                grads = tape.gradient(loss, proto_param)
+                opt.apply_gradients(zip(grads,proto_param))
             with tf.GradientTape() as tape:
                 outputs = self.encode_model(data)
                 loss_cls = cri_loss(label, outputs)
@@ -287,7 +341,7 @@ class GLFC_Client:
         total_num = 0
         total_correct = 0
         for x, y in self.train_loader:
-            logits = self.model(x, training=False)
+            logits = self.model_call(x, training=False)
             # prob = tf.nn.softmax(logits, axis=1)
             pred = tf.argmax(logits, axis=1)
             pred = tf.cast(pred, dtype=tf.int32)

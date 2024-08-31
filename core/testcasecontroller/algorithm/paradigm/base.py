@@ -18,9 +18,8 @@ import os
 
 from sedna.core.incremental_learning import IncrementalLearning
 from sedna.core.lifelong_learning import LifelongLearning
-from sedna.core.federated_learning import FederatedLearning
 from core.common.constant import ModuleType, ParadigmType
-
+from .sedna_federated_learning import FederatedLearning
 
 class ParadigmBase:
     """
@@ -126,14 +125,9 @@ class ParadigmBase:
         if paradigm_type == ParadigmType.MULTIEDGE_INFERENCE.value:
             return self.modules_funcs.get(ModuleType.BASEMODEL.value)()
 
-        if paradigm_type == ParadigmType.FEDERATED_LEARNING.value:
-            agg_name, agg = self.module_instances.get(ModuleType.AGGREGATION.value)
+        if paradigm_type == ParadigmType.FEDERATED_LEARNING.value or paradigm_type == ParadigmType.FEDERATED_CLASS_INCREMENTAL_LEARNING.value:
             return FederatedLearning(
-                estimator=self.module_instances.get(ModuleType.BASEMODEL.value),
-                aggregation= agg_name
-
+                estimator=self.module_instances.get(ModuleType.BASEMODEL.value)
             )
-            # return self.module_instances.get(ModuleType.BASEMODEL.value)
-        if paradigm_type == ParadigmType.FEDERATED_CLASS_INCREMENTAL_LEARNING.value:
-            return self.module_instances.get(ModuleType.BASEMODEL.value)
+
         return None

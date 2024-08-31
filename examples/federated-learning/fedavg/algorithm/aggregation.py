@@ -14,57 +14,7 @@ from sedna.common.class_factory import ClassType, ClassFactory
 class FedAvg(BaseAggregation, abc.ABC):
     def __init__(self):
         super(FedAvg, self).__init__()
-        self.global_model = self.build(num_classes=100)
 
-    """
-    Federated averaging algorithm
-    """
-
-    @staticmethod
-    def build(num_classes: int):
-        model = Sequential()
-        model.add(Conv2D(64, kernel_size=(3, 3),
-                         activation="relu", strides=(2, 2),
-                         input_shape=(32, 32, 3)))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Conv2D(32, kernel_size=(3, 3), activation="relu"))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Flatten())
-        model.add(Dropout(0.25))
-        model.add(Dense(64, activation="relu"))
-        model.add(Dense(32, activation="relu"))
-        model.add(Dropout(0.5))
-        model.add(Dense(num_classes, activation="softmax"))
-
-        model.compile(loss="categorical_crossentropy",
-                      optimizer="sgd",
-                      metrics=["accuracy"])
-        return model
-
-    def inference(self, test_data):
-        """
-        Predict the test data with global model
-
-        Parameters
-        ----------
-        global_model : Model
-            Global model
-        test_data : Array-like
-            Test data
-
-        Returns
-        -------
-        predict : Array-like
-            Prediction result
-        """
-        result = {}
-        for data in test_data.x:
-            x = np.load(data)
-            logits = self.global_model(x, training=False)
-            pred = tf.cast(tf.argmax(logits, axis=1), tf.int32)
-            result[data] = pred.numpy()
-        print("finish predict")
-        return result
 
     def aggregate(self, clients):
         """
@@ -96,6 +46,5 @@ class FedAvg(BaseAggregation, abc.ABC):
                         / self.total_size)
             updates.append(row.tolist())
         self.weights = deepcopy(updates)
-        self.global_model.set_weights(self.weights)
         print("finish aggregation....")
         return updates

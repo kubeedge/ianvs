@@ -17,13 +17,9 @@ from network import NetWork, incremental_learning
 class FedAvg(BaseAggregation, abc.ABC):
     def __init__(self):
         super(FedAvg, self).__init__()
-        self.fe = resnet10(10)
-        self.encode_model = lenet5(32, 100)
         self.proxy_server = ProxyServer(
             learning_rate=0.01,
-            num_class=10,
-            feature_extractor=self.fe,
-            encode_model=self.encode_model,
+            num_classes=10,
             test_data=None
         )
         self.task_id = -1 
@@ -62,7 +58,7 @@ class FedAvg(BaseAggregation, abc.ABC):
         self.weights  = [np.array(layer) for layer in updates]
         
         print("finish aggregation....")
-        return updates
+        return self.weights
 
     def helper_function(self,train_infos, **kwargs):
         proto_grad = []
@@ -79,7 +75,8 @@ class FedAvg(BaseAggregation, abc.ABC):
         self.proxy_server.dataload(proto_grad)
         if task_id > self.task_id:
             self.task_id = task_id
-            self.proxy_server.model = incremental_learning(self.proxy_server.model, self.num_classes * (task_id + 1))
-        self.proxy_server.model.set_weights(self.weights)
+            print(f'incremental num classes is {self.num_classes * (task_id + 1)}')
+            self.proxy_server.increment_class( self.num_classes * (task_id + 1) )
+        self.proxy_server.set_weights(self.weights)
         print(f'finish set weight for proxy server')
         return {'best_old_model': self.proxy_server.model_back()}

@@ -1,0 +1,2 @@
+[console_scripts]
+ianvs = core.cmd.benchmarking:main

@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 import logging 
 from network import * 
+from model import resnet10, resnet18, resnet34, lenet5
 logging.getLogger().setLevel(logging.INFO)
 
 class ProxyData:
@@ -12,32 +13,76 @@ class ProxyData:
         self.test_label = []
 
 class ProxyServer:
-    def __init__(self, learning_rate, num_class, feature_extractor, encode_model,  **kwargs):
+    def __init__(self, learning_rate, num_classes, **kwargs):
         self.learning_rate = learning_rate
-        self.feature_extractor = feature_extractor
-        self.encode_model = encode_model
 
-        self.model = NetWork(num_class, feature_extractor)
-        self.model.compile(optimizer='sgd', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-        self.model.fit(np.random.rand(1, 32, 32, 3), np.random.randint(0, num_class, 1), epochs=1)
+        self.encode_model = lenet5(32, 100)
         
         self.monitor_dataset = ProxyData() 
         self.new_set =[]
         self.new_set_label = []
-        self.num_classes= 0
+        self.num_classes= num_classes
         self.proto_grad = None
-        self.best_model_1 = None
+        
+        self.best_model_1 =None 
         self.best_model_2 = None
         self.best_perf = 0
         
         self.num_image = 20
         self.Iteration = 250
         
+        self.build_model()
+        self.fe_weights_length = len(self.feature_extractor.get_weights())
+        self.classifier = None
+        
+    def build_model(self):
+        self.feature_extractor = resnet10()
+        self.feature_extractor.build(input_shape=(None, 32, 32, 3))
+        self.feature_extractor.call(keras.Input(shape=(32, 32, 3)))
+        
+    def set_weights(self, weights):
+        print(f'set weights {self.num_classes}')
+        fe_weights = weights[:self.fe_weights_length]
+        clf_weights = weights[self.fe_weights_length:]
+        self.feature_extractor.set_weights(fe_weights)
+        self.classifier.set_weights(clf_weights)
+    
+    def increment_class(self, num_classes):
+        print(f'increment class {num_classes}')
+        self.num_classes = num_classes
+        self._initialize_classifier()
+        
+    def _initialize_classifier(self):
+        if self.classifier != None:
+            new_classifier = tf.keras.Sequential([
+                # tf.keras.Input(shape=(None, self.feature_extractor.layers[-2].output_shape[-1])),
+                tf.keras.layers.Dense(self.num_classes, kernel_initializer='lecun_normal')
+            ])
+            new_classifier.build(input_shape=(None, self.feature_extractor.layers[-2].output_shape[-1]))
+            new_weights = new_classifier.get_weights()
+            old_weights = self.classifier.get_weights()
+            # 复制旧参数
+            # weight
+            new_weights[0][0:old_weights[0].shape[0], 0:old_weights[0].shape[1]] = old_weights[0]
+            # bias
+            new_weights[1][0:old_weights[1].shape[0]] = old_weights[1]
+            new_classifier.set_weights(new_weights)
+            self.classifier = new_classifier
+        else:
+            logging.info(f'input shape is {self.feature_extractor.layers[-2].output_shape[-1]}')
+            self.classifier = tf.keras.Sequential([
+                # tf.keras.Input(shape=(None, self.feature_extractor.layers[-2].output_shape[-1])),
+                tf.keras.layers.Dense(self.num_classes, kernel_initializer='lecun_normal')
+            ])
+            self.classifier.build(input_shape=(None, self.feature_extractor.layers[-2].output_shape[-1]))
+            
+        logging.info(f"finish ! initialize classifier {self.classifier}")
     
     def model_back(self):
         return [self.best_model_1, self.best_model_2]
     
     def dataload(self, proto_grad):
+        self._initialize_classifier()
         self.proto_grad = proto_grad
         if len(proto_grad )  != 0 :
             self.reconstruction()
@@ -49,13 +94,13 @@ class ProxyServer:
         logging.info(f'in proxy server, current performance is {cur_perf}')
         if cur_perf > self.best_perf:
             self.best_perf = cur_perf
-            self.best_model_2 = copy_model(self.model)
+            self.best_model_2 = (self.feature_extractor, self.classifier)
             
     
     def monitor(self):
         correct, total = 0, 0
         for (x, y) in zip(self.monitor_dataset.test_data, self.monitor_dataset.test_label):
-            y_pred = self.model(x)
+            y_pred = self.classifier(self.feature_extractor((x)))
             
             predicts = tf.argmax(y_pred, axis=-1)
             predicts = tf.cast(predicts, tf.int32)

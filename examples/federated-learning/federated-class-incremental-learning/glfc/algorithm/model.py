@@ -43,10 +43,9 @@ class BasicBlock(keras.layers.Layer):
 
 # 残差神经网络
 class ResNet(keras.Model):
-    def __init__(self, layer_dims, num_classes=10): # [2, 2, 2, 2]
+    def __init__(self, layer_dims): # [2, 2, 2, 2]
         super(ResNet, self).__init__()
         self.layer_dims = layer_dims
-        self.num_classes = num_classes
 
         self.stem = keras.models.Sequential([keras.layers.Conv2D(64, (3, 3), strides=(1, 1)),
                                 keras.layers.BatchNormalization(),
@@ -61,7 +60,6 @@ class ResNet(keras.Model):
 
         # output: [b, 512, h, w],
         self.avgpool = keras.layers.GlobalAveragePooling2D()
-        # self.fc = keras.layers.Dense(num_classes)
     def call(self, inputs, training=None):
         x = self.stem(inputs,training=training)
 
@@ -69,11 +67,7 @@ class ResNet(keras.Model):
         x = self.layer2(x,training=training)
         x = self.layer3(x,training=training)
         x = self.layer4(x,training=training)
-
-        # [b, c]
         x = self.avgpool(x)
-        # [b, 100]
-        # x = self.fc(x)
         return x
 
     def build_resblock(self, filter_num, blocks, stride=1):
@@ -87,7 +81,6 @@ class ResNet(keras.Model):
     def get_config(self):
         return {
             'layer_dims': self.layer_dims,
-            'num_classes': self.num_classes
         }
     
     @classmethod
@@ -140,11 +133,11 @@ def lenet5(input_shape, num_classes:int):
     return LeNet(input_shape, 3, num_classes)
 
 
-def resnet10(num_classes:int):
-    return ResNet([1, 1, 1, 1], num_classes)
+def resnet10():
+    return ResNet([1, 1, 1, 1])
 
 def resnet18(num_classes:int):
-    return ResNet([2, 2, 2, 2], num_classes)
+    return ResNet([2, 2, 2, 2])
 
 def resnet34(num_classes:int):
-    return ResNet([3, 4, 6, 3], num_classes)
+    return ResNet([3, 4, 6, 3])

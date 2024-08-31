@@ -32,6 +32,5 @@ testenv:
       url: "/home/wyd/ianvs/project/ianvs/examples/federated-learning/federated-class-incremental-learning/fedavg/testenv/acc.py"
 
   # incremental rounds setting of incremental learning; int type; default value is 2;
-  task_size: 10
-  incremental_rounds: 100
-  round: 10
+  incremental_rounds: 2
+  round: 2

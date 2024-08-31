@@ -1,52 +1,36 @@
 import os
 import zipfile
-
+import logging
 import keras
 import numpy as np
 import tensorflow as tf
 from keras import Sequential
 from keras.src.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
 from sedna.common.class_factory import ClassType, ClassFactory
-from resnet import resnet18
+from resnet import resnet10
 from network import NetWork, incremental_learning
 __all__ = ["BaseModel"]
 os.environ['BACKEND_TYPE'] = 'KERAS'
+logging.getLogger().setLevel(logging.INFO)
 
 
 @ClassFactory.register(ClassType.GENERAL, alias='fcil')
 class BaseModel:
     def __init__(self, **kwargs):
+        self.kwargs = kwargs
+        print(f"kwargs: {kwargs}")
         self.batch_size = kwargs.get('batch_size', 1)
         print(f"batch_size: {self.batch_size}")
         self.epochs = kwargs.get('epochs', 1)
         self.lr = kwargs.get('lr', 0.001)
-        self.optimizer = tf.keras.optimizers.SGD(learning_rate=self.lr)
+        self.optimizer = keras.optimizers.SGD(learning_rate=self.lr)
         self.old_task_id = -1
-        self.fe = resnet18(10)
-        # self.model.build(input_shape=(None, 32, 32, 3))
-        self.model = NetWork(10, self.fe)
+        self.fe = resnet10(10)
+        logging.info(type(self.fe))
+        self.model = NetWork(100, self.fe)
         self._init_model()
 
-    @staticmethod
-    def build(num_classes: int):
-        model = Sequential()
-        model.add(Conv2D(64, kernel_size=(3, 3),
-                         activation="relu", strides=(2, 2),
-                         input_shape=(32, 32, 3)))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Conv2D(32, kernel_size=(3, 3), activation="relu"))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Flatten())
-        model.add(Dropout(0.25))
-        model.add(Dense(64, activation="relu"))
-        model.add(Dense(32, activation="relu"))
-        model.add(Dropout(0.5))
-        model.add(Dense(num_classes, activation="softmax"))
 
-        model.compile(loss="categorical_crossentropy",
-                      optimizer="sgd",
-                      metrics=["accuracy"])
-        return model
 
     def _init_model(self):
         self.model.compile(optimizer='sgd', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
@@ -56,31 +40,31 @@ class BaseModel:
         self.model.fit(x, y, epochs=1)
 
     def load(self, model_url=None):
-        print(f"load model from {model_url}")
+        logging.info(f"load model from {model_url}")
         extra_model_path = os.path.basename(model_url) + "/model"
         with zipfile.ZipFile(model_url, 'r') as zip_ref:
             zip_ref.extractall(extra_model_path)
         self.model = tf.saved_model.load(extra_model_path)
 
     def _initialize(self):
-        print(f"initialize finished")
+        logging.info(f"initialize finished")
 
     def get_weights(self):
-        print(f"get_weights")
+        logging.info(f"get_weights")
         weights = [layer.tolist() for layer in self.model.get_weights()]
-        print(len(weights))
+        logging.info(len(weights))
         return weights
 
     def set_weights(self, weights):
         weights = [np.array(layer) for layer in weights]
         self.model.set_weights(weights)
-        print("----------finish set weights-------------")
+        logging.info("----------finish set weights-------------")
 
     def save(self, model_path=""):
-        print("save model")
+        logging.info("save model")
 
     def model_info(self, model_path, result, relpath):
-        print("model info")
+        logging.info("model info")
         return {}
 
 
@@ -89,51 +73,46 @@ class BaseModel:
         round = kwargs.get("round", -1)
         task_id = kwargs.get("task_id", -1)
         task_size = kwargs.get("task_size", 10)
-        print(task_id, task_size)
-        if task_id > self.old_task_id and task_id > 0:
-            self.model  = incremental_learning(self.model, task_size*(task_id+1))
-            self.optimizer = tf.keras.optimizers.SGD(learning_rate=self.lr)
-            self.old_task_id = task_id
-        print(f"train data: {train_data[0].shape} {train_data[1].shape}")
+        self.model.compile(optimizer=self.optimizer, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+        logging.info(f"train data: {train_data[0].shape} {train_data[1].shape}")
         train_db = self.data_process(train_data)
-        print(train_db)
+        logging.info(train_db)
         for epoch in range(self.epochs):
             total_loss = 0
             total_num = 0
-            print(f"Epoch {epoch + 1} / {self.epochs}")
-            print("-" * 50)
+            logging.info(f"Epoch {epoch + 1} / {self.epochs}")
+            logging.info("-" * 50)
             for x, y  in train_db:
+                # self.model.fit(x, y, batch_size=self.batch_size)
                 with tf.GradientTape() as tape:
                     logits = self.model(x, training=True)
-                    y = tf.one_hot(y, depth=(task_id + 1) * task_size)
-                    y = tf.squeeze(y, axis=1)
-                    loss = tf.reduce_mean(keras.losses.categorical_crossentropy(y, logits, from_logits=True))
+                    loss = tf.reduce_mean(keras.losses.sparse_categorical_crossentropy(y, logits, from_logits=True))
                 grads = tape.gradient(loss, self.model.trainable_variables)
                 self.optimizer.apply(grads, self.model.trainable_variables)
                 # self.optimizer.apply_gradients(zip(grads, self.model.trainable_variables))
                 total_loss += loss
                 total_num += 1
 
-            print(f"train round {round}: Epoch {epoch + 1} avg loss: {total_loss / total_num}")
-        print(f"finish round {round} train")
-      
+            logging.info(f"train round {round}: Epoch {epoch + 1} avg loss: {total_loss / total_num}")
+        logging.info(f"finish round {round} train")
+        self.eval(train_data, round)
         return {"num_samples": train_data[0].shape[0]}
 
-    def inference(self, data, **kwargs):
+    def predict(self, data, **kwargs):
         result = {}
         for data in data.x:
             x = np.load(data)
             logits = self.model(x, training=False)
             pred = tf.cast(tf.argmax(logits, axis=1), tf.int32)
             result[data] = pred.numpy()
-        print("finish predict")
+        logging.info("finish predict")
         return result
 
     def eval(self, data, round, **kwargs):
         total_num = 0
         total_correct = 0
         data = self.data_process(data)
-        print(f"in evalute data: {data}")
+        # print(f"in evalute data: {data}")
         for i, (x, y) in enumerate(data):
             logits = self.model(x, training=False)
             # prob = tf.nn.softmax(logits, axis=1)
@@ -145,10 +124,10 @@ class BaseModel:
             correct = tf.reduce_sum(correct)
             total_num += x.shape[0]
             total_correct += int(correct)
-            print(f"total_correct: {total_correct}, total_num: {total_num}")
+        logging.info(f"total_correct: {total_correct}, total_num: {total_num}")
         acc = total_correct / total_num
         del total_correct
-        print(f"finsih round {round}evaluate, acc: {acc}")
+        logging.info(f"finsih round {round}evaluate, acc: {acc}")
         return acc
 
     def data_process(self, data, **kwargs):
