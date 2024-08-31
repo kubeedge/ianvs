@@ -86,6 +86,7 @@ class Module:
         function
 
         """
+        print(f'hyperparameters_list: {self.hyperparameters_list}')
         class_factory_type = ClassType.GENERAL
         if module_type in [ModuleType.HARD_EXAMPLE_MINING.value]:
             class_factory_type = ClassType.HEM
@@ -127,7 +128,6 @@ class Module:
                 # pylint: disable=E1134
                 func = ClassFactory.get_cls(
                     type_name=class_factory_type, t_cls_name=self.name)(**self.hyperparameters)
-
                 return func
             except Exception as err:
                 raise RuntimeError(f"module(type={module_type} loads class(name={self.name}) "
