@@ -29,7 +29,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "fedavg"
       # the url address of python module; string type;
-      url: "./examples/federated-learning/fedavg/algorithm/basemodel.py"
+      url: "./examples/cifar100/federated_learning/fedavg/algorithm/basemodel.py"
 
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
@@ -45,5 +45,5 @@ algorithm:
               - 3
     - type: "aggregation"
       name: "FedAvg"
-      url: "./examples/federated-learning/fedavg/algorithm/aggregation.py"
+      url: "./examples/cifar100/federated_learning/fedavg/algorithm/aggregation.py"
 
