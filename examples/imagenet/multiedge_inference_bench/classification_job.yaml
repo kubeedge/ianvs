@@ -2,7 +2,7 @@ benchmarkingjob:
   # job name of benchmarking; string type;
   name: "classification_job"
   # the url address of job workspace that will reserve the output of tests; string type;
-  workspace: "/ianvs/multiedge_inference_bench/workspace"
+  workspace: "./multiedge_inference_bench/workspace"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;

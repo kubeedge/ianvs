@@ -18,6 +18,7 @@ import os
 
 import onnx
 
+from core.common.log import LOGGER
 from core.common.constant import ParadigmType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 
@@ -71,7 +72,7 @@ class MultiedgeInference(ParadigmBase):
             if 'partition' in dir(job):
                 models_dir, map_info = job.partition(self.initial_model)
             else:
-                models_dir, map_info = self._partiton(job.__dict__.get('partition_point_list'), self.initial_model, os.path.dirname(self.initial_model))
+                models_dir, map_info = self._partition(job.__dict__.get('partition_point_list'), self.initial_model, os.path.dirname(self.initial_model))
             inference_result = self._inference_mp(job, models_dir, map_info)
 
         return inference_result, self.system_metric_info
@@ -102,6 +103,9 @@ class MultiedgeInference(ParadigmBase):
             input_names = point['input_names']
             output_names = point['output_names']
             sub_model_path = sub_model_dir + '/' + 'sub_model_' + str(cnt) + '.onnx'
-            onnx.utils.extract_model(initial_model_path, sub_model_path, input_names, output_names)
-            map_info[point['device_name']] = sub_model_path
-        return sub_model_dir
+            try:
+                onnx.utils.extract_model(initial_model_path, sub_model_path, input_names, output_names)
+            except Exception as e:
+                LOGGER.info(str(e))
+            map_info[sub_model_path.split('/')[-1]] = point['device_name']
+        return sub_model_dir, map_info
