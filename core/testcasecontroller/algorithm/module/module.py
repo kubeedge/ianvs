@@ -110,9 +110,14 @@ class Module:
         if self.url:
             try:
                 utils.load_module(self.url)
-                # pylint: disable=E1134
-                func = ClassFactory.get_cls(
-                    type_name=class_factory_type, t_cls_name=self.name)(**self.hyperparameters)
+
+                if class_factory_type == ClassType.HEM:
+                    func = {"method": self.name, "param":self.hyperparameters}
+                else:
+                    func = ClassFactory.get_cls(
+                        type_name=class_factory_type,
+                        t_cls_name=self.name
+                    )(**self.hyperparameters)
 
                 return func
             except Exception as err:
