@@ -1,3 +1,17 @@
+# Copyright 2021 The KubeEdge Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os 
 import numpy as np
 import keras
@@ -57,7 +71,7 @@ class BaseModel:
         proto_grad = self.GLFC_Client.proto_grad()
         print(type(proto_grad))
         # self.GLFC_Client.evaluate()
-        return {'num_samples': len(train_data[0]) , 'proto_grad' : proto_grad, 'task_id': task_id}
+        return {'num_samples': self.GLFC_Client.get_data_size() , 'proto_grad' : proto_grad, 'task_id': task_id}
     
     def helper_function(self, helper_info, **kwargs):
         self.best_old_model = helper_info['best_old_model']

@@ -77,6 +77,8 @@ class SystemMetricType(Enum):
     BWT = "BWT"
     TASK_AVG_ACC = "task_avg_acc"
     MATRIX = "MATRIX"
+    FORGET_RATE = "FORGET_RATE"
+    
 
 
 class TestObjectType(Enum):

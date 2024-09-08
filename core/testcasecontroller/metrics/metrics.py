@@ -143,6 +143,13 @@ def task_avg_acc_func(system_metric_info: dict):
     info = system_metric_info.get(SystemMetricType.TASK_AVG_ACC.value)
     return info["accuracy"]
 
+def task_forget_rate(system_metric_info: dict):
+    """
+    compute task forget rate
+    """
+    info = system_metric_info.get(SystemMetricType.TASK_FORGET_RATE.value)
+    return info["forget_rate"][-1]
+
 
 def get_metric_func(metric_dict: dict):
     """

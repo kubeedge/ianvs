@@ -42,7 +42,7 @@ algorithm:
               - 0.001
         - epochs:
             values:
-              - 3
+              - 10
     - type: "aggregation"
       name: "FedAvg"
       url: "./examples/cifar100/federated_learning/fedavg/algorithm/aggregation.py"

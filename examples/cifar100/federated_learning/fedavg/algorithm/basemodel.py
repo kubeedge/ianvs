@@ -1,3 +1,17 @@
+# Copyright 2021 The KubeEdge Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 import zipfile
 
@@ -17,7 +31,7 @@ class BaseModel:
     def __init__(self, **kwargs):
         self.batch_size = kwargs.get('batch_size', 1)
         print(f"batch_size: {self.batch_size}")
-        self.epochs = kwargs.get('epoch', 1)
+        self.epochs = kwargs.get('epochs', 1)
         self.lr = kwargs.get('lr', 0.001)
         self.optimizer = tf.keras.optimizers.SGD(learning_rate=self.lr)
         self.model = self.build(num_classes=100)
@@ -108,8 +122,11 @@ class BaseModel:
 
     def predict(self, data, **kwargs):
         result = {}
+        mean = np.array((0.5071, 0.4867, 0.4408), np.float32).reshape(1, 1, -1)
+        std = np.array((0.2675, 0.2565, 0.2761), np.float32).reshape(1, 1, -1)
         for data in data.x:
             x = np.load(data)
+            x = (tf.cast(x, dtype=tf.float32) / 255. - mean) /std
             logits = self.model(x, training=False)
             pred = tf.cast(tf.argmax(logits, axis=1), tf.int32)
             result[data] = pred.numpy()
@@ -139,7 +156,13 @@ class BaseModel:
         return acc
 
     def data_process(self, data, **kwargs):
-
+        mean = np.array((0.5071, 0.4867, 0.4408), np.float32).reshape(1, 1, -1)
+        std = np.array((0.2675, 0.2565, 0.2761), np.float32).reshape(1, 1, -1)
         assert data is not None,  "data is None"
         # data[0]'shape = (50000, 32,32,3) data[1]'shape = (50000,1)
-        return tf.data.Dataset.from_tensor_slices((data[0][:5000], data[1][:5000])).shuffle(100000).batch(self.batch_size)
+        return tf.data.Dataset.from_tensor_slices((data[0][:5000], data[1][:5000])).shuffle(100000).map(
+                lambda x,y:(
+                (tf.cast(x, dtype=tf.float32) / 255. - mean) / std,
+                tf.cast(y, dtype=tf.int32)
+            )
+        ).batch(self.batch_size)

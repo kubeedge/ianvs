@@ -6,7 +6,7 @@ benchmarkingjob:
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/federated-learning/federated-class-incremental-learning/glfc/testenv/testenv.yaml"
+  testenv: "./examples/cifar100/fci_ssl/glfc/testenv/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -19,7 +19,7 @@ benchmarkingjob:
       - name: "fcil_test"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
-        url: "./examples/federated-learning/federated-class-incremental-learning/glfc/algorithm/algorithm.yaml"
+        url: "./examples/cifar100/fci_ssl/glfc/algorithm/algorithm.yaml"
 
   # the configuration of ranking leaderboard
   rank:

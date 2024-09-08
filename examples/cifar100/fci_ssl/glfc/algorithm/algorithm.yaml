@@ -29,7 +29,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "glfc"
       # the url address of python module; string type;
-      url: "./examples/federated-learning/federated-class-incremental-learning/glfc/algorithm/basemodel.py"
+      url: "./examples/cifar100/fci_ssl/glfc/algorithm/basemodel.py"
 
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
@@ -42,8 +42,8 @@ algorithm:
               - 0.001
         - epochs:
             values:
-              - 3
+              - 10
     - type: "aggregation"
       name: "FedAvg"
-      url: "./examples/federated-learning/federated-class-incremental-learning/glfc/algorithm/aggregation.py"
+      url: "./examples/cifar100/fci_ssl/glfc/algorithm/aggregation.py"
 

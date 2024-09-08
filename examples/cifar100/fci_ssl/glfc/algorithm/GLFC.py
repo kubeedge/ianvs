@@ -1,3 +1,17 @@
+# Copyright 2021 The KubeEdge Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import copy
 import numpy as np
 import tensorflow as tf
@@ -38,13 +52,15 @@ class GLFC_Client:
         self.memory_size = memory_size
         
         self.old_task_id = -1
-        self.current_class = None
+        self.current_classes = None
         self.last_class = None 
         self.train_loader = None 
         self.build_feature_extractor()
         self.classifier = None 
         # self._initialize_classifier()
         # assert self.classifier is not None
+        self.labeled_train_set = None
+        self.unlabeled_train_set= None
     
     def build_feature_extractor(self):
         self.feature_extractor = resnet10()
@@ -84,20 +100,20 @@ class GLFC_Client:
         if need_update:
             self.old_task_id = task_id
             self.num_classes = self.task_size * (task_id + 1)
-            if self.current_class is not None: 
-                self.last_class = self.current_class
+            if self.current_classes is not None: 
+                self.last_class = self.current_classes
             logging.info(f'self.last_class is , {self.last_class}, {self.num_classes}')
             self._initialize_classifier()
-            self.current_class = np.unique(train_data[1]).tolist()
+            self.current_classes = np.unique(train_data['label_y']).tolist()
             self.update_new_set(need_update)
-            if len(old_model) != 0:
-                self.old_model = old_model[1]
-        else:
-            if len(old_model) != 0:
-                self.old_model = old_model[0]
-        self.train_set = train_data
+            self.labeled_train_set = (train_data['label_x'], train_data['label_y'])
+            self.unlabeled_train_set= (train_data['unlabel_x'], train_data['unlabel_y'])
+        if len(old_model) != 0:
+            self.old_model = old_model[0]
+        self.labeled_train_set = (train_data['label_x'], train_data['label_y'])
+        self.unlabeled_train_set= (train_data['unlabel_x'], train_data['unlabel_y'])
         self.train_loader = self._get_train_loader(True)
-        logging.info(f'------finish before train task_id: {task_id}------')
+        logging.info(f'------finish before train task_id: {task_id} {self.current_classes}------')
     
     def update_new_set(self, need_update):
         if need_update and self.last_class is not None:
@@ -115,16 +131,26 @@ class GLFC_Client:
             
             
     def _get_train_loader(self, mix):
+        self.mean = np.array((0.5071, 0.4867, 0.4408), np.float32).reshape(1, 1, -1)
+        self.std = np.array((0.2675, 0.2565, 0.2761), np.float32).reshape(1, 1, -1)
         # print(self.train_set[0].shape, self.train_set[1].shape)
+        train_x = self.labeled_train_set[0]
+        train_y = self.labeled_train_set[1]
         if mix :
             for exm_set in self.exemplar_set:
                 logging.info(f'mix the exemplar{len(exm_set[0])}, {len(exm_set[1])}')
                 label = np.array(exm_set[1])
                 label = label.reshape(-1, 1)
-                self.train_set[0] = np.concatenate((self.train_set[0],exm_set[0]), axis=0)
-                self.train_set[1] = np.concatenate((self.train_set[1],label), axis=0)
-        logging.info(f'{self.train_set[0].shape}, {self.train_set[1].shape}')
-        return tf.data.Dataset.from_tensor_slices((self.train_set[0], self.train_set[1])).shuffle(buffer_size=10000000).batch(self.batch_size)
+                train_x = np.concatenate((train_x,exm_set[0]), axis=0)
+                train_y = np.concatenate((train_y,label), axis=0)
+        # logging.info(f'{ train_set[0].shape}, {self.train_set[1].shape}')
+        
+        return tf.data.Dataset.from_tensor_slices((train_x, train_y)).shuffle(buffer_size=10000000).batch(self.batch_size).map(
+            lambda x,y:(
+                (tf.cast(x, dtype=tf.float32) / 255. - self.mean) / self.std,
+                tf.cast(y, dtype=tf.int32)
+            )
+        )
     
     def train(self, round):
         # self._initialize_classifier()
@@ -140,11 +166,13 @@ class GLFC_Client:
             for step, (x, y) in enumerate(self.train_loader):
                 # opt = keras.optimizers.SGD(learning_rate=self.learning_rate, weight_decay=0.00001)
                 with tf.GradientTape() as tape:
-                    logits = self.model_call(x, training=True)
-                #     # y = get_one_hot(y, self.num_classes)
-                    loss = tf.reduce_mean(keras.losses.sparse_categorical_crossentropy(y, logits, from_logits=True))
-                #     loss = self._compute_loss(x, y)
-                # logging.info(f'------round{round} epoch{epoch} step{step} loss: {loss} and loss dim is {loss.shape}------')
+                    input = self.feature_extractor(inputs=x,training=True)
+                    y_pred = self.classifier(inputs=input, training=True)
+                    target = get_one_hot(y, self.num_classes)
+                    
+                    loss = tf.reduce_mean(keras.losses.sparse_categorical_crossentropy(y, y_pred, from_logits=True))
+                    # loss = self._compute_loss(x, y)
+                logging.info(f'------round{round} epoch{epoch} step{step} loss: {loss} and loss dim is {loss.shape}------')
                 grads = tape.gradient(loss, all_params)
                 # # print(f'grads shape is {len(grads)} and type is {type(grads)}')
                 opt.apply_gradients(zip(grads, all_params))
@@ -169,7 +197,7 @@ class GLFC_Client:
         y = tf.cast(labels, dtype=tf.int32)
         correct = tf.cast(tf.equal(pred, y), dtype=tf.int32)
         correct = tf.reduce_sum(correct)
-        logging.info(f'correct is {correct} and acc is {correct/imgs.shape[0]}')
+        logging.info(f'current class numbers is {self.num_classes} correct is {correct} and acc is {correct/imgs.shape[0]}')
             # print(f"total_correct: {total_correct}, total_num: {total_num}")
         if self.old_model == None:
             w = self.efficient_old_class_weight(target, labels )
@@ -247,14 +275,22 @@ class GLFC_Client:
             return tf.ones(g.shape, dtype=tf.float32)
         
     def get_train_set_data(self, class_id):
+       
         images = []
-        # print(len(self.train_set[0]))
-        for i in range(len(self.train_set[0])):
-            # print(self.train_set[1][i])
-            if self.train_set[1][i] == class_id:
-                # print(self.train_set[0][i].shape)
-                images.append(self.train_set[0][i])
+        train_x = self.labeled_train_set[0]
+        train_y = self.labeled_train_set[1]
+        for i in range(len(train_x)):
+            if train_y[i] == class_id:
+                print(train_x[i].shape)
+                images.append(train_x[i])
         return images
+    
+    def get_data_size(self):
+        logging.info(f'self.labeled_train_set is None :{self.labeled_train_set is None}')
+        logging.info(f'self.unlabeled_train_set is None :{self.unlabeled_train_set is None}')
+        data_size = len(self.labeled_train_set[0]) 
+        logging.info(f"data size: {data_size}")
+        return data_size  
     
     def _reduce_exemplar_set(self, m):
         for i in range(len(self.exemplar_set)):
@@ -272,11 +308,6 @@ class GLFC_Client:
             x = np.linalg.norm(x)
             index = np.argmin(x)
             now_class_mean += fe_outpu[index]
-            # print(
-            #     'construct exemplar: ',len(images[index]),
-            #     'type: ',type(images[index]),
-            #     'shape: ',images[index].shape
-            #     )
             exemplar.append(images[index])
             labels.append(label)
         self.exemplar_set.append((exemplar, labels))
@@ -295,7 +326,8 @@ class GLFC_Client:
         cri_loss = keras.losses.SparseCategoricalCrossentropy()
         proto = []
         proto_grad = []
-        for i in self.current_class:
+        logging.info(f'self. current class is {self.current_classes}')
+        for i in self.current_classes:
             images = self.get_train_set_data(i)
             # print(f'image shape is {len(images)}')
             class_mean, fe_output = self.compute_class_mean(images)
@@ -307,7 +339,7 @@ class GLFC_Client:
             data = proto[i]
             data = tf.cast(tf.expand_dims(data, axis=0), tf.float32)
             # print(f"in proto_grad, data shape is {data.shape}")
-            label = self.current_class[i]
+            label = self.current_classes[i]
             # print("in proto_grad, label shape is ", label.shape)
             label = tf.constant([label])
             target = get_one_hot(label, self.num_classes)

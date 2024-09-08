@@ -128,7 +128,6 @@ class Module:
                 # pylint: disable=E1134
                 func = ClassFactory.get_cls(
                     type_name=class_factory_type, t_cls_name=self.name)(**self.hyperparameters)
-
                 return func
             except Exception as err:
                 raise RuntimeError(f"module(type={module_type} loads class(name={self.name}) "

@@ -33,10 +33,10 @@ def read_data_from_file_to_npy( files: BaseDataSource):
     """
     x_train = []
     y_train = []
-    # print(files.x, files.y)
+    print(files.x, files.y)
     for i, file in enumerate(files.x):
         x = np.load(file)
-        # print(x.shape)
+        print(x.shape)
         # print(type(files.y[i]))
         y = np.full((x.shape[0], 1), (files.y[i]).astype(np.int32))
         x_train.append(x)
@@ -69,6 +69,7 @@ def partition_data(datasets, client_number, data_partition ='iid', non_iid_ratio
     if data_partition == 'iid':
         x_data = datasets[0]
         y_data = datasets[1]
+        print(f'x_data shape: {x_data.shape}, y_data shape: {y_data.shape}')
         indices = np.arange(len(x_data))
         np.random.shuffle(indices)
         data = []

@@ -176,7 +176,7 @@ class FederatedLearning(ParadigmBase):
                 test_dataset.append(self.dataset.load_data(file, "eval"))
         assert test_dataset is not None, "test_dataset is None"
         job = self.get_global_model()
-        test_res = job.inference(test_dataset)
+        test_res = job.inference(test_dataset.x)
         LOGGER.info(f" after predict {len(test_res)}")
         return test_res
 
