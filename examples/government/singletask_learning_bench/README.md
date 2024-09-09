@@ -15,6 +15,8 @@ This Benchmark consists of two parts: subjective evaluation data and objective e
 
 ## Prepare Datasets
 
+You can download dataset in [kaggle](https://www.kaggle.com/datasets/hsj576/government-bench-master)
+
 ```
 dataset/government
 ├── objective

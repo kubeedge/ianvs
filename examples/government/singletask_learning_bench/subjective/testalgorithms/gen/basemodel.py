@@ -63,7 +63,7 @@ class BaseModel:
             infer_system_prompt = data.prompts['infer_system_prompt']
         
         answer_list = []
-        for line in tqdm(data.question, desc="Processing", unit="question"):
+        for line in tqdm(data.x, desc="Processing", unit="question"):
             history = []
             query = line.split('||')[0]
             if infer_system_prompt:
@@ -78,7 +78,7 @@ class BaseModel:
 
         # evaluate by llm
         for index in tqdm(range(len(answer_list)), desc="Evaluating", ascii=False, ncols=75):
-            prompt = data.prompts['eval_user_template'].replace('{question}', data.question[index].split('||')[0]).replace('{reference}', data.question[index].split('||')[1]).replace('{answer}', answer_list[index])
+            prompt = data.prompts['eval_user_template'].replace('{question}', data.x[index].split('||')[0]).replace('{reference}', data.x[index].split('||')[1]).replace('{answer}', answer_list[index])
             print(prompt)
             judgement = self._openai_generate(prompt)
             print(judgement)
@@ -117,7 +117,8 @@ class BaseModel:
 
 
     def _openai_generate(self, user_question, system=None):
-        client = OpenAI(api_key="", base_url="https://api.deepseek.com")
+        key = os.getenv("DEEPSEEK_API_KEY")
+        client = OpenAI(api_key=key, base_url="https://api.deepseek.com")
 
         messages = []
         if system:

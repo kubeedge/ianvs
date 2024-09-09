@@ -63,14 +63,14 @@ class BaseModel:
             infer_system_prompt = data.prompts['infer_system_prompt']
         
         answer_list = []
-        for line in tqdm(data.question, desc="Processing", unit="question"):
+        for line in tqdm(data.x, desc="Processing", unit="question"):
             # 3-shot
-            indices = random.sample([i for i, l in enumerate(data.question) if l != line], 3)
+            indices = random.sample([i for i, l in enumerate(data.x) if l != line], 3)
             history = []
             if infer_system_prompt:
                 history.append({"role": "system", "content": infer_system_prompt})
             for idx in indices:
-                history.append({"role": "user", "content": data.question[idx]})
+                history.append({"role": "user", "content": data.x[idx]})
                 history.append({"role": "assistant", "content": data.y[idx]})
             history.append({"role": "user", "content": line})
             response = self._infer(history)
