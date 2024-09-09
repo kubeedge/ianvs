@@ -1,0 +1,4 @@
+{
+    "keys": ["question", "reference"],
+    "answer_key": "reference"
+}

@@ -1,0 +1,5 @@
+{
+    "infer_system_prompt": "你是一个中国的政务大模型助手，需要结合中国政务的一些知识来回答下面的问题。",
+    "infer_user_template": "Question:{question}\n请从下面四个选项中选出正确的选项:\nA:{A}\nB:{B}\nC:{C}\nD:{D}\n",
+    "infer_answer_template": "Answer:{answer}\n"
+}

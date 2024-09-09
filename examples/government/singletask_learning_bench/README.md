@@ -1,0 +1,49 @@
+# Government BenchMark
+
+## Introduction
+
+This is the work for Domain-specific Large Model Benchmark:
+
+Constructs a suite for the government sector, including test datasets, evaluation metrics, testing environments, and usage guidelines.
+
+This Benchmark consists of two parts: subjective evaluation data and objective evaluation data.
+
+
+## Change to Core Code
+
+![](./imgs/structure.png)
+
+## Prepare Datasets
+
+```
+dataset/government
+├── objective
+│   ├── test_data
+│   │   ├── data_info.json
+│   │   ├── data.jsonl
+│   │   └── prompts.json
+│   └── train_data
+└── subjective
+    ├── test_data
+    │   ├── data_full.jsonl
+    │   ├── data_info.json
+    │   ├── data.jsonl
+    │   └── prompts.json
+    └── train_data
+```
+
+## Prepare Environment
+
+You need to install the changed-sedna package, which added `JSONDataInfoParse` in `sedna.datasources`
+
+Replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `examples/resources/sedna-jsondatainfo.zip`
+
+## Run Ianvs
+
+### Objective
+
+`ianvs -f examples/government/singletask_learning_bench/objective/benchmarkingjob.yaml`
+
+### Subjective
+
+`ianvs -f examples/government/singletask_learning_bench/subjective/benchmarkingjob.yaml`

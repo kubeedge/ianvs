@@ -16,9 +16,10 @@
 
 import os
 import tempfile
+import json
 
 import pandas as pd
-from sedna.datasources import CSVDataParse, TxtDataParse, JSONDataParse, JsonlDataParse
+from sedna.datasources import CSVDataParse, TxtDataParse, JSONDataParse, JsonlDataParse, JSONDataInfoParse
 
 from core.common import utils
 from core.common.constant import DatasetFormat
@@ -42,6 +43,8 @@ class Dataset:
         self.test_index: str = ""
         self.train_data: str = ""
         self.test_data: str = ""
+        self.train_data_info: str = ""
+        self.test_data_info: str = ""
         self.label: str = ""
         self._parse_config(config)
 
@@ -54,6 +57,10 @@ class Dataset:
             self._check_dataset_url(self.train_data)
         if self.test_data:
             self._check_dataset_url(self.test_data)
+        if self.train_data_info:
+            self._check_dataset_url(self.train_data_info)
+        if self.test_data_info:
+            self._check_dataset_url(self.test_data_info)
 
     def _parse_config(self, config):
         for attr, value in config.items():
@@ -120,6 +127,13 @@ class Dataset:
 
         return None
 
+    def _process_data_info_file(self, file_url):
+        file_format = utils.get_file_format(file_url)
+        if file_format == DatasetFormat.JSON.value:
+            return file_url
+
+        return None
+
     def process_dataset(self):
         """
         process dataset:
@@ -130,13 +144,24 @@ class Dataset:
         """
         if self.train_index:
             self.train_url = self._process_index_file(self.train_index)
-        else:
+        elif self.train_data:
             self.train_url = self._process_data_file(self.train_data)
+        elif self.train_data_info:
+            self.train_url = self._process_data_info_file(self.train_data_info)
+            # raise NotImplementedError('to be done')
+        else:
+            raise NotImplementedError('not one of train_index/train_data/train_data_info')
 
         if self.test_index:
             self.test_url = self._process_index_file(self.test_index)
-        else:
+        elif self.test_data:
             self.test_url = self._process_data_file(self.test_data)
+        elif self.test_data_info:
+            self.test_url = self._process_data_info_file(self.test_data_info)
+            # raise NotImplementedError('to be done')
+        else:
+            raise NotImplementedError('not one of test_index/test_data/test_data_info')
+
 
     # pylint: disable=too-many-arguments
     def split_dataset(self, dataset_url, dataset_format, ratio, method="default",
@@ -411,6 +436,14 @@ class Dataset:
             e.g.: TxtDataParse, CSVDataParse.
 
         """
+        print("file:")
+        print(file)
+        if file.split('/')[-1] == "data_info.json":
+            print('This is data_info.json')
+            data = JSONDataInfoParse(data_type=data_type, func=feature_process)
+            data.parse(file)
+            return data
+
         data_format = utils.get_file_format(file)
 
         data = None
