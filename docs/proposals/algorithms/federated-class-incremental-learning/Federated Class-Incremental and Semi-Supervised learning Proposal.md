@@ -97,17 +97,105 @@ First, Let's introduce the training process for FCI-SSL :
 5. The server receives client parameters, aggregates them, and maybe will performs some helper functions to help alleviate catastrophic forgetting both locally and globally.
 6. Then repeat steps 1-5 until all tasks are completed.
 
+#### 3.2.1 Federated Learning Paradigm Design
+
 Federated incremental learning is a special kind of federated learning. However Ianvs did not support federated learning algorithm paradigm. So before we begin to design the federated class incremental learning algorithm, we have to design a simple and single node version of federated learning. 
 
 Sedna is a edge-cloud collaborative training AI framework. It support federated learning ability. Base on Sedna, we can have a simple federated learning architecture: 
 
 ![image-20240909194418085](FCI_SSL_image/federated_learning_architecture)
 
+##### Implementation Detail
+
+For implementation detail of federated learning, we plan to add  a module name `federated learning` under `core/testcasecontroller/algorithm/paradigm`:
+
+- `federated_learning.py `: serves as the entry point for the whole learning process
+- `sedna_federated_learning.py`: is a simple `FederatedLearning` client, which describe the main behavior of the client.
+
+We will add enumerations for `federated learning` in `ParadigmType` within `core/common/constant` and add enumerations  for `Aggregation` in `ModuleType` to inject the user self implemented aggregation module:
+
+```python
+# core/common/constatn
+class ParadigmType(Enum):
+    """
+    Algorithm paradigm type.
+    """
+    ... # other paradigm type
+    FEDERATED_LEARNING = "federatedlearning"
+    FEDERATED_CLASS_INCREMENTAL_LEARNING = "federatedclassincrementallearning"
+
+class ModuleType(Enum):
+    """
+    Algorithm module type.
+    """
+    BASEMODEL = "basemodel"
+    ... # other module type
+    # FL_AGG
+    AGGREGATION = "aggregation"
+```
+
 It is quite clear and specific that the paradigm need to start the server and client in single node and then perform federated learning, the whole process can be shown as follow:
 
 ![image-20240909194832334](FCI_SSL_image/paradigm_process_2)
 
 Federated Learning Paradigm involved above process, `the yellow block` means the process that the paradigm will execute, `the green block` is the process that paradigm will invoke the estimator to execute and `the pink block` is the process that paradigm will invoke the aggregation to execute.
+
+The `Federated Learning Paradigm` will be organize as follow:
+
+```python
+class FederatedLearning(ParadigmBase):
+
+    def __init__(self, workspace, **kwargs):
+        super(FederatedLearning, self).__init__(workspace, **kwargs)
+        ... # orther parameter init
+        self.aggregation, self.aggregator = self.module_instances.get(ModuleType.AGGREGATION.value)
+
+    def init_client(self):
+        """
+        init the client base on the client number
+        """
+        self.clients = [self.build_paradigm_job(ParadigmType.FEDERATED_LEARNING.value) for i in
+                        range(self.clients_number)]
+
+    def run(self):
+        """
+        run the test flow of federaeted learning paradigm.
+        Returns
+        ------
+        test result: numpy.ndarray
+        system metric info: dict
+            information needed to compute system metrics.
+        """
+        # init client
+        # partition data
+        # train loop:
+        	# local train
+            # aggregation
+            # send weights to client
+        # global predict
+
+    def train_data_partition(self, train_dataset_file):
+        """
+         Partition the dataset for the class incremental learning paradigm
+         - i.i.d
+         - non-i.i.d
+         """
+   
+    def train(self, train_datasets, **kwargs):
+        """
+         perform local train by invoke client implemented estimator.train function
+        """
+        
+    def send_weights_to_clients(self, global_weights):
+        """
+        send the aggregated weights to client
+        """
+        
+    def predict(self, test_dataset_file):
+        # global test
+```
+
+#### 3.2.2 Federated Class Incremental Learning Paradigm Design
 
 Base on the above paradigm, we can conduct our federated-class-incremental learning paradigm and the timing diagram of the entire Benchmarking system is presented below: 
 
@@ -133,11 +221,71 @@ The overall architecture is shown as follow:
 
 ![image-20240909194437318](FCI_SSL_image/architecture_design)
 
+##### Implementation Detail
+
+For implementation detail of federated class incremental learning, we plan to add  a module name `federated class incremental learning` base on `federeated learning` under `core/testcasecontroller/algorithm/paradigm`:
+
+- `federated_class_incremental_learning.py `: serves as the entry point for the whole learning process
+
 We design a novel algorithm paradigm namely Federated-Class-Incremental-Learning Paradigm,  We specify the process of the algorithm paradigm as follows:
 
 ![image-20240909194458903](FCI_SSL_image/paradigm_process)
 
 Federated Class Incremental Learning Paradigm involved above process, `the orange block` means the process that the paradigm will execute, `the green block` is the process that paradigm will invoke the estimator to execute and `the pink block` is the process that paradigm will invoke the aggregation to execute.
+
+The `Federated Class Incremental Learning Paradigm ` will be organize as follow:
+
+```python
+class FederatedClassIncrementalLearning(FederatedLearning):
+    
+    def __init__(self, workspace, **kwargs):
+        super(FederatedClassIncrementalLearning, self).__init__(workspace, **kwargs)
+		... # parameter init
+        self.incremental_rounds = kwargs.get("incremental_rounds", 1)
+        
+    def task_definition(self, dataset_files, task_id):
+        """
+        Define the task for the class incremental learning paradigm
+        """
+        
+    def run(self):
+    	"""
+        run the test flow of federated class incremental learning paradigm.
+        Returns
+        ------
+        test result: numpy.ndarray
+        system metric info: dict
+            information needed to compute system metrics.
+        """
+        # init client
+        # task definition data
+        # train loop:
+        	# local train
+            # aggregation
+            # send weights to client
+            # perform helper function if needed
+        # global evaluation
+    	
+    def _train(self, train_datasets, **kwargs):
+		"""
+         perform local train by invoke client implemented estimator.train function
+        """
+        
+    def send_weights_to_clients(self, global_weights):
+        """
+        send the aggregated weights to client
+        """
+        
+    def helper_function(self,train_infos):
+       """
+       perform helper function if user have implmented helper function in aggregation module
+       """
+    
+    def evaluation(self, testdataset_files, incremental_round):
+       """
+       perfrom some special metrics evaluation like forget rate
+       """
+```
 
 In order to provide functionality extensibility and convenience to users, we have specified a process where most of the functionality can be replaced by user-implemented functionality(block in yellow). In addition, we require users to implement the server and client modules （block in green and orange） to complete the whole algorithm process. 
 
@@ -299,6 +447,27 @@ Base on the architecture above, If user want to implement a federated learning a
 
 example path: `example/cifar100/federeated_learning/fedavg`
 
+The folder structure will be as follows:
+
+```cmd
+├── federated_learning
+│   └── fedavg
+│       ├── algorithm
+│       │   ├── aggregation.py
+│       │   ├── algorithm.yaml
+│       │   ├── basemodel.py
+│       │   └── __pycache__
+│       │       ├── aggregation.cpython-310.pyc
+│       │       └── basemodel.cpython-310.pyc
+│       ├── benchmarkingjob.yaml
+│       └── testenv
+│           ├── acc.py
+│           ├── __init__.py
+│           ├── __pycache__
+│           │   └── acc.cpython-310.pyc
+│           └── testenv.yaml
+```
+
 1. Define an `Estimator`
 
 ```python
@@ -386,6 +555,26 @@ ianvs -f ./example/cifar100/federated_learning/fedavg/benchmarkingjob.yaml
 Base on the architecture above, If user want to implement a federated class incremental learning algorithm，they can following the below instruction:
 
 example path: `example/cifar100/federeated_class_incremental_learning/fedavg`
+
+The folder structure will be as follows:
+
+```cmd
+├── federated_class_incremental_learning
+│   └── fedavg
+│       ├── algorithm
+│       │   ├── aggregation.py
+│       │   ├── algorithm.yaml
+│       │   ├── basemodel.py
+│       │   ├── __init__.py
+│       │   ├── network.py
+│       │   └── resnet.py
+│       ├── benchmarkingjob.yaml
+│       ├── __init__.py
+│       └── testenv
+│           ├── acc.py
+│           ├── __init__.py
+│           └── testenv.yaml
+```
 
 1. Define an `Estimator` but you can choose to implement a helper function
 
@@ -490,6 +679,19 @@ ianvs -f ./example/cifar100/federeated_class_incremental_learning/glfc/benchmark
 To match the implementation of federated learning in Sedna, if user want to implement a federated learning algorithm, they can following the below instruction:
 
 The different between this example and example 3.5.1 is that in this version, client and server communicate through websocket while example 3.5.1 communicate with in memory.
+
+The folder structure will be as follows:
+
+```cmd
+├── sedna_federated_learning
+│   ├── aggregation_worker
+│   │   └── aggregate.py
+│   └── train_worker
+│       ├── basemodel.py
+│       ├── __pycache__
+│       │   └── basemodel.cpython-310.pyc
+│       └── train.py
+```
 
 example path: `example/cifar100/sedna_federeated_learning/fedavg`
 
