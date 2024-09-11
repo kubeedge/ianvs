@@ -92,9 +92,9 @@ The format of the issue test set refers to a simple QA question-answering task. 
 
 The following is the operation flow of the benchmark system based on user input configuration. Because the interface part is written by Meng Zhuo, the general structure is basically consistent with Meng Zhuo. The flowchart shows the data verification, parsing, initialization and other operations. The difference lies in the reading of the issue data set. In the issue data set, there is only one Question, but there may be multiple Comments, so in the training part, the data reading needs to be adjusted.
 
-<img src="E:\2024\第一次开源之夏\ianvs\docs\proposals\scenarios\Smart Coding\image\data_process_change.png"/>
+![](https://github.com/safe-b/ianvs/blob/main/docs/proposals/scenarios/Smart_Coding/image/data_process_change.png?raw=true)
 
-<img src="E:\2024\第一次开源之夏\ianvs\docs\proposals\scenarios\Smart Coding\image\change_part.png"/>
+![](https://github.com/safe-b/ianvs/blob/main/docs/proposals/scenarios/Smart_Coding/image/change_part.png?raw=true)
 
 It is worth noting that this design is also compatible with the old version of index data. You only need to change the old version's `train_url` and `test_url` fields to train_index and test_index.
 

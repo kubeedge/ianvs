@@ -101,9 +101,9 @@ issue部分测试集格式，参照简单的QA问答任务，通过LLM来回答�
 如下是基于用户输入配置的基准测试系统的操作流程，这部分因为接口部分是由孟卓同学来写的，所以大体结构基本是与孟卓一致的。流程图展示了数据的验证、解析、初始化等操作。
 其中不同的点在于对issue数据集的读取，issue数据集中，Question只有一个，但Comment可能会有多个，所以在训练部分，数据的读取还有调整。
 
-<img src="E:\2024\第一次开源之夏\ianvs\docs\proposals\scenarios\Smart Coding\image\data_process_change.png"/>
+![](https://github.com/safe-b/ianvs/blob/main/docs/proposals/scenarios/Smart_Coding/image/data_process_change.png?raw=true)
 
-<img src="E:\2024\第一次开源之夏\ianvs\docs\proposals\scenarios\Smart Coding\image\change_part.png"/>
+![](https://github.com/safe-b/ianvs/blob/main/docs/proposals/scenarios/Smart_Coding/image/change_part.png?raw=true)
 
 值得注意的是，该设计同时也兼容对旧版的index数据的支持。仅仅只需要将旧版的train_url和test_url字段改成train_index和test_index即可。
 
