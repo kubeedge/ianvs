@@ -436,10 +436,7 @@ class Dataset:
             e.g.: TxtDataParse, CSVDataParse.
 
         """
-        print("file:")
-        print(file)
         if file.split('/')[-1] == "data_info.json":
-            print('This is data_info.json')
             data = JSONDataInfoParse(data_type=data_type, func=feature_process)
             data.parse(file)
             return data
@@ -453,7 +450,6 @@ class Dataset:
 
         if data_format == DatasetFormat.TXT.value:
             data = TxtDataParse(data_type=data_type, func=feature_process)
-            #print(file)
             data.parse(file, use_raw=use_raw)
 
         if data_format == DatasetFormat.JSON.value:

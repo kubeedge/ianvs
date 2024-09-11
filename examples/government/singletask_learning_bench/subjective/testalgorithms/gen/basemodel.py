@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import, division, LOGGER.info_function
 
 import os
 import tempfile
@@ -25,6 +25,7 @@ import random
 from tqdm import tqdm
 from sedna.common.config import Context
 from sedna.common.class_factory import ClassType, ClassFactory
+from core.common.log import LOGGER
 from openai import OpenAI
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -50,14 +51,14 @@ class BaseModel:
         self.tokenizer = AutoTokenizer.from_pretrained("/home/icyfeather/models/Qwen2-0.5B-Instruct")
 
     def train(self, train_data, valid_data=None, **kwargs):
-        print("BaseModel train")
+        LOGGER.info("BaseModel train")
         
 
     def save(self, model_path):
-        print("BaseModel save")
+        LOGGER.info("BaseModel save")
 
     def predict(self, data, input_shape=None, **kwargs):
-        print("BaseModel predict")
+        LOGGER.info("BaseModel predict")
         
         if 'infer_system_prompt' in data.prompts:
             infer_system_prompt = data.prompts['infer_system_prompt']
@@ -69,9 +70,7 @@ class BaseModel:
             if infer_system_prompt:
                 history.append({"role": "system", "content": infer_system_prompt})
             history.append({"role": "user", "content": query})
-            print(query)
             response = self._infer(history)
-            print(response)
             answer_list.append(response)
 
         judgement_list = []
@@ -79,18 +78,16 @@ class BaseModel:
         # evaluate by llm
         for index in tqdm(range(len(answer_list)), desc="Evaluating", ascii=False, ncols=75):
             prompt = data.prompts['eval_user_template'].replace('{question}', data.x[index].split('||')[0]).replace('{reference}', data.x[index].split('||')[1]).replace('{answer}', answer_list[index])
-            print(prompt)
             judgement = self._openai_generate(prompt)
-            print(judgement)
             judgement_list.append(judgement)
 
         return judgement_list
 
     def load(self, model_url=None):
-        print("BaseModel load")
+        LOGGER.info("BaseModel load")
 
     def evaluate(self, data, model_path, **kwargs):
-        print("BaseModel evaluate")
+        LOGGER.info("BaseModel evaluate")
         
     def _infer(self, messages):
         text = self.tokenizer.apply_chat_template(
@@ -111,8 +108,6 @@ class BaseModel:
         ]
         
         response = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
-        # print(response)
-        # raise ValueError('stop')
         return response
 
 

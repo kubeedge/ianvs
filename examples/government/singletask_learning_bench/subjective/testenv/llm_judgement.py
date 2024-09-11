@@ -14,6 +14,7 @@
 
 import re
 from sedna.common.class_factory import ClassType, ClassFactory
+from core.common.log import LOGGER
 
 __all__ = ["llm_judgement"]
 
@@ -35,9 +36,7 @@ def llm_judgement(y_true, y_pred):
     # 过滤掉None值（如果有）
     valid_scores = [score for score in y_pred if score is not None]
 
-    print(valid_scores)
-
-    print(f"Extracted {len(valid_scores)} datas from {len(y_pred)} datas")
+    LOGGER.info(f"Extracted {len(valid_scores)} datas from {len(y_pred)} datas")
     
     # 计算平均值
     if valid_scores:
