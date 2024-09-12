@@ -103,7 +103,7 @@ Federated incremental learning is a special kind of federated learning. However 
 
 Sedna is a edge-cloud collaborative training AI framework. It support federated learning ability. Base on Sedna, we can have a simple federated learning architecture: 
 
-![image-20240909194418085](FCI_SSL_image/federated_learning_architecture)
+![image-20240912171642528](FCI_SSL_image/federated_learning_architecture)
 
 ##### Implementation Detail
 
@@ -219,7 +219,7 @@ We will leverage the existed *TestEnvManager*, *TestCaseController* and *StoryMa
 
 The overall architecture is shown as follow: 
 
-![image-20240909194437318](FCI_SSL_image/architecture_design)
+![image-20240912172517676](FCI_SSL_image/architecture_design)
 
 ##### Implementation Detail
 
@@ -443,7 +443,7 @@ $$
 
 #### 3.5.1 Federated Learning Example
 
-Base on the architecture above, If user want to implement a federated learning algorithm， they can following the below instruction:
+Base on the architecture above, If user want to implement a federated learning algorithm， ![image-20240912171635194](Federated Class-Incremental and Semi-Supervised learning Proposal.assets/image-20240912171635194.png)they can following the below instruction:
 
 example path: `example/cifar100/federeated_learning/fedavg`
 
