@@ -63,9 +63,14 @@ Therefore, this project proposes a **Personalized LLM Agent based on KubeEdge-Ia
 
 ## 3.1 Demo
 
-<img src="images/Personal_Instruction.png" alt="Personal_Instruction" style="zoom:100%;" />
+<img src="images/personalized_agent.png" alt="Personal_Instruction" style="zoom:100%;" />
 
 This project presents three scenarios, which are audio task, human posture classification task and face and object recognition task.
+
+What happens if you put a trained Agent model in a mismatched scenario? Here are two examples:
+1. Set ***Agent #1*** to ***Scene #3***: Data source does not match;
+2. Place ***Agent #3*** in ***Scene #2***: A task planning error occurred.
+
 ## 3.2 DataSet
 
 ### 3.2.1 Q2A Task-plan Dataset
