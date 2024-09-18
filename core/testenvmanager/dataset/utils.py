@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# pylint: disable=W1203
 import random
 import numpy as np
 from sedna.datasources import BaseDataSource
@@ -36,12 +38,12 @@ def read_data_from_file_to_npy(files: BaseDataSource):
     y_train = []
     LOGGER.info(f"{files.x}, {files.y}")
     for i, file in enumerate(files.x):
-        x = np.load(file)
-        print(x.shape)
+        x_data = np.load(file)
+        # print(x_data.shape)
         # print(type(files.y[i]))
-        y = np.full((x.shape[0],), (files.y[i]).astype(np.int32))
-        x_train.append(x)
-        y_train.append(y)
+        y_data = np.full((x_data.shape[0],), (files.y[i]).astype(np.int32))
+        x_train.append(x_data)
+        y_train.append(y_data)
     x_train = np.concatenate(x_train, axis=0)
     y_train = np.concatenate(y_train, axis=0)
     print(x_train.shape, y_train.shape)

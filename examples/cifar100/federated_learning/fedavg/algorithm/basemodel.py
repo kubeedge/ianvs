@@ -108,7 +108,7 @@ class BaseModel:
                 with tf.GradientTape() as tape:
                     logits = self.model(x, training=True)
                     y = tf.one_hot(y, depth=100)
-                    y = tf.squeeze(y, axis=1)
+                    # y = tf.squeeze(y, axis=1)
                     loss = tf.reduce_mean(keras.losses.categorical_crossentropy(y, logits, from_logits=True))
                 grads = tape.gradient(loss, self.model.trainable_variables)
                 self.optimizer.apply(grads, self.model.trainable_variables)

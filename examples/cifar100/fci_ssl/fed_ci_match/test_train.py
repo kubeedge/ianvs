@@ -133,10 +133,20 @@ def main():
     train(feature_extractor, classifier, train_data)
     evaluate(feature_extractor, classifier, test_data_x, test_data_y)
     
-    
-     
+import time
+import threading 
+def local_thread(t):
+    time.sleep(3)
+    return t
 
-
+def local_thread_v2(t):
+    val = local_thread(t)
+    print(val, t)
 if __name__ == '__main__':
-    a=[1,2,3]
-    print(a[:0])
+    a = []
+    for i in range(3):
+        t = threading.Thread(target=local_thread_v2, args=(i,))
+        t.start()
+        a.append(t)
+    for t in a:
+        t.join()

@@ -23,20 +23,21 @@ from keras.src.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
 from sedna.common.class_factory import ClassType, ClassFactory
 from resnet import resnet10
 from network import NetWork, incremental_learning
+
 __all__ = ["BaseModel"]
-os.environ['BACKEND_TYPE'] = 'KERAS'
+os.environ["BACKEND_TYPE"] = "KERAS"
 logging.getLogger().setLevel(logging.INFO)
 
 
-@ClassFactory.register(ClassType.GENERAL, alias='fcil')
+@ClassFactory.register(ClassType.GENERAL, alias="fcil")
 class BaseModel:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
         print(f"kwargs: {kwargs}")
-        self.batch_size = kwargs.get('batch_size', 1)
+        self.batch_size = kwargs.get("batch_size", 1)
         print(f"batch_size: {self.batch_size}")
-        self.epochs = kwargs.get('epochs', 1)
-        self.lr = kwargs.get('lr', 0.001)
+        self.epochs = kwargs.get("epochs", 1)
+        self.lr = kwargs.get("lr", 0.001)
         self.optimizer = keras.optimizers.SGD(learning_rate=self.lr)
         self.old_task_id = -1
         self.fe = resnet10(10)
@@ -44,10 +45,12 @@ class BaseModel:
         self.model = NetWork(100, self.fe)
         self._init_model()
 
-
-
     def _init_model(self):
-        self.model.compile(optimizer='sgd', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+        self.model.compile(
+            optimizer="sgd",
+            loss="sparse_categorical_crossentropy",
+            metrics=["accuracy"],
+        )
         x = np.random.rand(1, 32, 32, 3)
         y = np.random.randint(0, 10, 1)
 
@@ -56,7 +59,7 @@ class BaseModel:
     def load(self, model_url=None):
         logging.info(f"load model from {model_url}")
         extra_model_path = os.path.basename(model_url) + "/model"
-        with zipfile.ZipFile(model_url, 'r') as zip_ref:
+        with zipfile.ZipFile(model_url, "r") as zip_ref:
             zip_ref.extractall(extra_model_path)
         self.model = tf.saved_model.load(extra_model_path)
 
@@ -81,14 +84,18 @@ class BaseModel:
         logging.info("model info")
         return {}
 
-
-    
-    def train(self, train_data, valid_data,  **kwargs):
+    def train(self, train_data, valid_data, **kwargs):
         round = kwargs.get("round", -1)
         task_id = kwargs.get("task_id", -1)
         task_size = kwargs.get("task_size", 10)
-        self.model.compile(optimizer=self.optimizer, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-        logging.info(f"train data: {train_data[0].shape} {train_data[1].shape}")
+        self.model.compile(
+            optimizer=self.optimizer,
+            loss="sparse_categorical_crossentropy",
+            metrics=["accuracy"],
+        )
+        logging.info(
+            f"train data: {train_data['label_x'].shape} {train_data['label_y'].shape}"
+        )
         train_db = self.data_process(train_data)
         logging.info(train_db)
         for epoch in range(self.epochs):
@@ -96,21 +103,27 @@ class BaseModel:
             total_num = 0
             logging.info(f"Epoch {epoch + 1} / {self.epochs}")
             logging.info("-" * 50)
-            for x, y  in train_db:
+            for x, y in train_db:
                 # self.model.fit(x, y, batch_size=self.batch_size)
                 with tf.GradientTape() as tape:
                     logits = self.model(x, training=True)
-                    loss = tf.reduce_mean(keras.losses.sparse_categorical_crossentropy(y, logits, from_logits=True))
+                    loss = tf.reduce_mean(
+                        keras.losses.sparse_categorical_crossentropy(
+                            y, logits, from_logits=True
+                        )
+                    )
                 grads = tape.gradient(loss, self.model.trainable_variables)
                 self.optimizer.apply(grads, self.model.trainable_variables)
                 # self.optimizer.apply_gradients(zip(grads, self.model.trainable_variables))
                 total_loss += loss
                 total_num += 1
 
-            logging.info(f"train round {round}: Epoch {epoch + 1} avg loss: {total_loss / total_num}")
+                logging.info(
+                    f"train round {round}: Epoch {epoch + 1} avg loss: {total_loss / total_num}"
+                )
         logging.info(f"finish round {round} train")
         self.eval(train_data, round)
-        return {"num_samples": train_data[0].shape[0]}
+        return {"num_samples": train_data["label_x"].shape[0]}
 
     def predict(self, data, **kwargs):
         result = {}
@@ -146,6 +159,12 @@ class BaseModel:
 
     def data_process(self, data, **kwargs):
 
-        assert data is not None,  "data is None"
+        assert data is not None, "data is None"
+        x_trian = data["label_x"]
+        y_train = data["label_y"]
         # data[0]'shape = (50000, 32,32,3) data[1]'shape = (50000,1)
-        return tf.data.Dataset.from_tensor_slices((data[0], data[1])).shuffle(100000).batch(self.batch_size)
+        return (
+            tf.data.Dataset.from_tensor_slices((x_trian, y_train))
+            .shuffle(100000)
+            .batch(self.batch_size)
+        )

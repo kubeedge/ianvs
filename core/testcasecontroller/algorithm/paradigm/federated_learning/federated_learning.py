@@ -26,6 +26,7 @@ from core.testenvmanager.dataset.utils import read_data_from_file_to_npy, partit
 
 
 class FederatedLearning(ParadigmBase):
+    # pylint: disable=too-many-instance-attributes
     """
     FederatedLearning
     Federated Learning Paradigm
@@ -89,8 +90,8 @@ class FederatedLearning(ParadigmBase):
         dataset_files = self._split_dataset(1)  # only one split ——all the data
         train_dataset_file, _ = dataset_files[0]
         train_datasets = self.train_data_partition(train_dataset_file)
-        for r in range(self.rounds):
-            self.train(train_datasets, round=r)
+        for round in range(self.rounds):
+            self.train(train_datasets, round=round)
             global_weights = self.aggregator.aggregate(self.aggregate_clients)
             self.send_weights_to_clients(global_weights)
             self.aggregate_clients.clear()
@@ -155,7 +156,7 @@ class FederatedLearning(ParadigmBase):
             validation_datasets (list): validation data for each client
         """
         train_info = self.clients[client_idx].train(
-            train_datasets[client_idx], None, **kwargs
+            train_datasets[client_idx], validation_datasets, **kwargs
         )
         train_info["client_id"] = client_idx
         agg_client = AggClient()
@@ -163,6 +164,7 @@ class FederatedLearning(ParadigmBase):
         agg_client.weights = self.clients[client_idx].get_weights()
         with self.lock:
             self.aggregate_clients.append(agg_client)
+        return train_info
 
     def train(self, train_datasets, **kwargs):
         """train——multi-threading to perform client local training
@@ -180,8 +182,8 @@ class FederatedLearning(ParadigmBase):
             )
             client_thread.start()
             client_threads.append(client_thread)
-        for t in client_threads:
-            t.join()
+        for thread in client_threads:
+            thread.join()
         LOGGER.info("finish training")
 
     def send_weights_to_clients(self, global_weights):

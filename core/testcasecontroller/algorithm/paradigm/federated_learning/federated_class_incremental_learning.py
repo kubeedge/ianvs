@@ -14,18 +14,17 @@
 
 """Federated Class-Incremental Learning Paradigm"""
 # pylint: disable=C0412
-# pylint: disable=C0200
+# pylint: disable=W1203
 import numpy as np
-from threading import Thread, RLock
 from sedna.algorithms.aggregation import AggClient
 from core.common.log import LOGGER
 from core.common.constant import ParadigmType, SystemMetricType
-from core.common.utils import get_file_format
 from core.testcasecontroller.metrics.metrics import get_metric_func
 from .federated_learning import FederatedLearning
 
 
 class FederatedClassIncrementalLearning(FederatedLearning):
+    # pylint: disable=too-many-instance-attributes
     """
     FederatedClassIncrementalLearning
     Federated Class-Incremental Learning Paradigm
@@ -52,7 +51,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
     """
 
     def __init__(self, workspace, **kwargs):
-        super().__init__()
+        super().__init__(workspace, **kwargs)
         self.incremental_rounds = kwargs.get("incremental_rounds", 1)
         self.system_metric_info = {SystemMetricType.FORGET_RATE.value: []}
 
@@ -62,7 +61,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         self.forget_rate_metrics = []
         self.accuracy_per_round = []
         metrics_dict = kwargs.get("model_eval", {})["model_metric"]
-        _, accuracy_func = get_metric_func(self.metrics_dict)
+        _, accuracy_func = get_metric_func(metrics_dict)
         self.accuracy_func = accuracy_func
 
     def task_definition(self, dataset_files, task_id):
@@ -159,10 +158,10 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         for task_id in range(self.incremental_rounds):
             train_datasets, task_size = self.task_definition(dataset_files, task_id)
             testdatasets = test_dataset_files[: task_id + 1]
-            for r in range(self.rounds):
-                LOGGER.info(f"Round {r} task id: {task_id}")
-                self._train(
-                    train_datasets, task_id=task_id, round=r, task_size=task_size
+            for round in range(self.rounds):
+                LOGGER.info(f"Round {round} task id: {task_id}")
+                self.train(
+                    train_datasets, task_id=task_id, round=round, task_size=task_size
                 )
                 global_weights = self.aggregator.aggregate(self.aggregate_clients)
                 if hasattr(self.aggregator, "helper_function"):
@@ -212,38 +211,21 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             train_datasets (list): train dataset for each client
             validation_datasets (list): validation dataset for each client
         """
-        train_info = self.clients[client_idx].train(
-            train_datasets[client_idx], validation_datasets, **kwargs
+        train_info = super().client_train(
+            client_idx, train_datasets, validation_datasets, **kwargs
         )
-        train_info["client_id"] = client_idx
-        agg_client = AggClient()
-        agg_client.num_samples = train_info["num_samples"]
-        agg_client.weights = self.clients[client_idx].get_weights()
         with self.lock:
-            self.aggregate_clients.append(agg_client)
             self.train_infos.append(train_info)
-
-    def _train(self, train_datasets, **kwargs):
-        """train the model on the clients
-
-        Args:
-            train_datasets (list): train dataset for each client
-        """
-        client_threads = []
-        LOGGER.info(
-            f"len(self.clients): {len(self.clients)} len train_datasets: {len(train_datasets)}"
-        )
-        for idx in range(len(self.clients)):
-            client_thread = Thread(
-                target=self.client_train,
-                args=(idx, train_datasets, None),
-                kwargs=kwargs,
-            )
-            client_thread.start()
-            client_threads.append(client_thread)
-        for t in client_threads:
-            t.join()
-        LOGGER.info("finish training")
+        # train_info = self.clients[client_idx].train(
+        #     train_datasets[client_idx], validation_datasets, **kwargs
+        # )
+        # train_info["client_id"] = client_idx
+        # agg_client = AggClient()
+        # agg_client.num_samples = train_info["num_samples"]
+        # agg_client.weights = self.clients[client_idx].get_weights()
+        # with self.lock:
+        #     self.aggregate_clients.append(agg_client)
+        #     self.train_infos.append(train_info)
 
     def helper_function(self, train_infos):
         """helper function for FCI Method
@@ -258,7 +240,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             self.clients[i].helper_function(helper_info)
         LOGGER.info("finish helper function")
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-locals
     def evaluation(self, testdataset_files, incremental_round):
         """evaluate the model performance on old classes
 
