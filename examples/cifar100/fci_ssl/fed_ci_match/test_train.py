@@ -138,4 +138,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    a=[1,2,3]
+    print(a[:0])

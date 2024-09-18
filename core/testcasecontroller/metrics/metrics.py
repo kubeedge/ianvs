@@ -143,12 +143,14 @@ def task_avg_acc_func(system_metric_info: dict):
     info = system_metric_info.get(SystemMetricType.TASK_AVG_ACC.value)
     return info["accuracy"]
 
-def task_forget_rate(system_metric_info: dict):
+def forget_rate_func(system_metric_info: dict):
     """
     compute task forget rate
     """
-    info = system_metric_info.get(SystemMetricType.TASK_FORGET_RATE.value)
-    return info["forget_rate"][-1]
+    info = system_metric_info.get(SystemMetricType.FORGET_RATE.value)
+    forget_rate = np.mean(info['forget_rate'])
+    print(f"forget_rate: {forget_rate}")
+    return forget_rate
 
 
 def get_metric_func(metric_dict: dict):
@@ -169,6 +171,7 @@ def get_metric_func(metric_dict: dict):
 
     name = metric_dict.get("name")
     url = metric_dict.get("url")
+    print(f"get metric func: name={name}, url={url}")
     if url:
         try:
             load_module(url)

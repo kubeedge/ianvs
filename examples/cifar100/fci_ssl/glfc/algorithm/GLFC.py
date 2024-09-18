@@ -96,8 +96,8 @@ class GLFC_Client:
     def before_train(self, task_id, train_data, class_learned, old_model):
         logging.info(f"------before train task_id: {task_id}------")
         # print(f'train data len is :{len(train_data[1])}')
-        need_update = (task_id != self.old_task_id)
-        if need_update:
+        self.need_update = (task_id != self.old_task_id)
+        if self.need_update:
             self.old_task_id = task_id
             self.num_classes = self.task_size * (task_id + 1)
             if self.current_classes is not None: 
@@ -105,7 +105,7 @@ class GLFC_Client:
             logging.info(f'self.last_class is , {self.last_class}, {self.num_classes}')
             self._initialize_classifier()
             self.current_classes = np.unique(train_data['label_y']).tolist()
-            self.update_new_set(need_update)
+            self.update_new_set(self.need_update)
             self.labeled_train_set = (train_data['label_x'], train_data['label_y'])
             self.unlabeled_train_set= (train_data['unlabel_x'], train_data['unlabel_y'])
         if len(old_model) != 0:
@@ -127,8 +127,6 @@ class GLFC_Client:
                 # print(f'process class {i} with {len(images)} images')
                 self._construct_exemplar_set(images, i, m)
         # print(f'-------------Learned classes: {self.learned_classes} current classes :{self.current_class} last classes : {self.last_class}--------------')
-        
-            
             
     def _get_train_loader(self, mix):
         self.mean = np.array((0.5071, 0.4867, 0.4408), np.float32).reshape(1, 1, -1)
@@ -144,7 +142,6 @@ class GLFC_Client:
                 train_x = np.concatenate((train_x,exm_set[0]), axis=0)
                 train_y = np.concatenate((train_y,label), axis=0)
         # logging.info(f'{ train_set[0].shape}, {self.train_set[1].shape}')
-        
         return tf.data.Dataset.from_tensor_slices((train_x, train_y)).shuffle(buffer_size=10000000).batch(self.batch_size).map(
             lambda x,y:(
                 (tf.cast(x, dtype=tf.float32) / 255. - self.mean) / self.std,
@@ -154,7 +151,7 @@ class GLFC_Client:
     
     def train(self, round):
         # self._initialize_classifier()
-        opt = keras.optimizers.SGD(learning_rate=self.learning_rate, weight_decay=0.00001)
+        opt = keras.optimizers.Adam(learning_rate=self.learning_rate, weight_decay=0.00001)
         # print(self.train_loader is None)
         feature_extractor_params = self.feature_extractor.trainable_variables
         classifier_params = self.classifier.trainable_variables
@@ -166,12 +163,11 @@ class GLFC_Client:
             for step, (x, y) in enumerate(self.train_loader):
                 # opt = keras.optimizers.SGD(learning_rate=self.learning_rate, weight_decay=0.00001)
                 with tf.GradientTape() as tape:
-                    input = self.feature_extractor(inputs=x,training=True)
-                    y_pred = self.classifier(inputs=input, training=True)
-                    target = get_one_hot(y, self.num_classes)
-                    
-                    loss = tf.reduce_mean(keras.losses.sparse_categorical_crossentropy(y, y_pred, from_logits=True))
-                    # loss = self._compute_loss(x, y)
+                    # input = self.feature_extractor(inputs=x,training=True)
+                    # y_pred = self.classifier(inputs=input, training=True)
+                    # target = get_one_hot(y, self.num_classes)
+                    # loss = tf.reduce_mean(keras.losses.sparse_categorical_crossentropy(y, y_pred, from_logits=True))
+                    loss = self._compute_loss(x, y)
                 logging.info(f'------round{round} epoch{epoch} step{step} loss: {loss} and loss dim is {loss.shape}------')
                 grads = tape.gradient(loss, all_params)
                 # # print(f'grads shape is {len(grads)} and type is {type(grads)}')
@@ -202,22 +198,24 @@ class GLFC_Client:
         if self.old_model == None:
             w = self.efficient_old_class_weight(target, labels )
             # print(f"old class weight shape: {w.shape}")
-            loss = tf.reduce_mean(keras.losses.binary_crossentropy(target, y_pred, from_logits=True) * w)
+            loss = tf.reduce_mean(keras.losses.categorical_crossentropy(target, y_pred, from_logits=True) * w)
             # print(f'in _compute_loss, without old model loss is {loss} and shape is {loss.shape}')
             return loss
-        else :
+        else :  
             w = self.efficient_old_class_weight(target, labels)
             # print(f"old class weight shape: {w.shape}")
             loss = tf.reduce_mean(keras.losses.binary_crossentropy(target, y_pred, from_logits=True) * w)
+            # logging.info(f'loss new is {keras.losses.binary_crossentropy(target, y_pred, from_logits=True) * w}')
             # print(f'in _compute_loss, loss is {loss} and shape is {loss.shape}')
             distill_target = tf.Variable(get_one_hot(labels, self.num_classes))
             # print(f"distill_target shape: {distill_target.shape} type: {type(distill_target)}")
+            # print(self.old_model)
             old_target = tf.sigmoid(self.old_model[1](self.old_model[0]((imgs))))
             old_task_size = old_target.shape[1]
             # print(f'old_target shape: {old_target.shape} and old_task_size: {old_task_size}')
             distill_target[:, :old_task_size].assign(old_target)
             loss_old = tf.reduce_mean(keras.losses.binary_crossentropy(distill_target, y_pred, from_logits=True))
-            logging.info(f'loss old shape is {loss_old.shape}')
+            logging.info(f'loss old  is {loss_old}')
             return 0.5 * loss + 0.5 * loss_old
         
     def efficient_old_class_weight(self, output, labels):
@@ -245,16 +243,14 @@ class GLFC_Client:
         # print(f"g shape: {g.shape}")
         idx = tf.cast(tf.reshape( labels ,(-1,1)), tf.int32)
         if len(self.learned_classes) != 0:
-            learned_classes_tensor = tf.constant(self.learned_classes, dtype=tf.int32)
+            # learned_classes_tensor = tf.constant(self.learned_classes, dtype=tf.int32)
             for i in self.learned_classes:
                 mask = tf.math.not_equal(idx, i)
                 negative_value = tf.cast(tf.fill(tf.shape(idx), -1), tf.int32)
                 idx = tf.where(mask, idx, negative_value)
-
              # 计算 index1 和 index2
             index1 = tf.cast(tf.equal(idx, -1), tf.float32)
             index2 = tf.cast(tf.not_equal(idx, -1), tf.float32)
-
             # 计算 w1 和 w2
             w1 = tf.where(
                 tf.not_equal(tf.reduce_sum(index1), 0),
@@ -281,7 +277,7 @@ class GLFC_Client:
         train_y = self.labeled_train_set[1]
         for i in range(len(train_x)):
             if train_y[i] == class_id:
-                print(train_x[i].shape)
+                # print(train_x[i].shape)
                 images.append(train_x[i])
         return images
     
@@ -322,6 +318,9 @@ class GLFC_Client:
         return class_mean, fe_output
     
     def proto_grad(self):
+        if self.need_update == False:
+            return None
+        self.need_update = False
         iters = 50
         cri_loss = keras.losses.SparseCategoricalCrossentropy()
         proto = []
@@ -351,13 +350,17 @@ class GLFC_Client:
             proto_clf = copy.deepcopy(self.classifier)
             proto_param = proto_fe.trainable_variables
             proto_param.extend(proto_clf.trainable_variables)
-            opt = keras.optimizers.SGD(learning_rate=self.learning_rate, weight_decay=0.00001)
-            for _ in range(iters):
-                with tf.GradientTape() as tape:
-                    output = proto_clf(proto_fe(data))
-                    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(target, output))
-                grads = tape.gradient(loss, proto_param)
-                opt.apply_gradients(zip(grads,proto_param))
+            # opt = keras.optimizers.SGD(learning_rate=self.learning_rate, weight_decay=0.00001)
+            
+            # for _ in range(iters):
+            #     with tf.GradientTape() as tape:
+            #         output = proto_clf(proto_fe(data))
+            #         loss = keras.losses.binary_crossentropy(target, output, from_logits=True)
+            #         logging.info(f'proto_grad loss is {loss} and data {data.shape}')
+            #     grads = tape.gradient(loss, data)
+            #     logging.info(f'proto_grad grads shape is {grads.shape} ')
+            #     opt.apply_gradients(zip(grads,data))
+            #     # opt.apply_gradients(zip(grads,proto_param))
             with tf.GradientTape() as tape:
                 outputs = self.encode_model(data)
                 loss_cls = cri_loss(label, outputs)

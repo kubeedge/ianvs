@@ -36,6 +36,10 @@ class BaseModel:
         self.task_size = kwargs.get('task_size', 10)
         self.memory_size = kwargs.get('memory_size', 2000)
         self.encode_model = lenet5(32, 100)
+        self.encode_model.call(keras.Input(shape=(32, 32, 3)))
+        # print(self.encode_model.get_weights())
+        print(self.encode_model.summary())
+        # keras.initializers.glorot_uniform()
         # self.fe = self.build_feature_extractor()
         self.num_classes = 10 # the number of class for the first task
         self.GLFC_Client = GLFC_Client( self.num_classes, self.batch_size, self.task_size, self.memory_size, self.epochs, self.learning_rate, self.encode_model)
@@ -75,12 +79,19 @@ class BaseModel:
     
     def helper_function(self, helper_info, **kwargs):
         self.best_old_model = helper_info['best_old_model']
-        
+        print(self.best_old_model)
+        if self.best_old_model[1] != None:
+            self.GLFC_Client.old_model = self.best_old_model[1]
+        else:
+            self.GLFC_Client.old_model = self.best_old_model[0]
     
-    def predict(self, data, **kwargs):
+    def predict(self, datas, **kwargs):
         result = {}
-        for data in data.x:
+        mean = np.array((0.5071, 0.4867, 0.4408), np.float32).reshape(1, 1, -1)
+        std = np.array((0.2675, 0.2565, 0.2761), np.float32).reshape(1, 1, -1)
+        for data in datas:
             x = np.load(data)
+            x = (tf.cast(x, dtype=tf.float32) / 255. - mean) /std
             logits = self.GLFC_Client.model_call(x,training=False)
             pred = tf.cast(tf.argmax(logits, axis=1), tf.int32)
             result[data] = pred.numpy()

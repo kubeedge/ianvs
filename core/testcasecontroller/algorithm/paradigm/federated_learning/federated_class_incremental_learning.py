@@ -14,13 +14,14 @@
 
 """Federated Class-Incremental Learning Paradigm"""
 import numpy as np
-from core.common.constant import ParadigmType
+from core.common.constant import ParadigmType, SystemMetricType
 from core.common.utils import get_file_format
 from .federated_learning import FederatedLearning
-from sedna.algorithms.aggregation import AggClient 
+from sedna.algorithms.aggregation import AggClient
 from core.common.log import LOGGER
 from threading import Thread, RLock
 from core.testcasecontroller.metrics.metrics import get_metric_func
+
 
 class FederatedClassIncrementalLearning(FederatedLearning):
     """
@@ -47,164 +48,250 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         e.g.: algorithm modules, dataset, initial network, incremental rounds,
               network eval config, etc.
     """
-    
+
     def __init__(self, workspace, **kwargs):
         super(FederatedClassIncrementalLearning, self).__init__(workspace, **kwargs)
         self.incremental_rounds = kwargs.get("incremental_rounds", 1)
         # self.task_size = kwargs.get("task_size", 10)
-        self.system_metric_info = {}
+        self.system_metric_info = {SystemMetricType.FORGET_RATE.value: []}
         self.lock = RLock()
-        self.aggregate_clients=[]
-        self.train_infos=[]
+        self.aggregate_clients = []
+        self.train_infos = []
         self.forget_rate_metrics = []
         self.accuracy_per_round = []
-        self.metrics_dict = kwargs.get('model_eval', {})['model_metric']
-    
-    def get_task_size(self, train_datasets):
-        return np.unique([train_datasets[i][1] for i in range(len(train_datasets))]).shape[0]
-    
+        self.metrics_dict = kwargs.get("model_eval", {})["model_metric"]
+        _, accuracy_func = get_metric_func(self.metrics_dict)
+        self.accuracy_func = accuracy_func
+
     def task_definition(self, dataset_files, task_id):
+        """Define the task for the class incremental learning paradigm
+
+        Args:
+            dataset_files (list): dataset_files for train data
+            task_id (int): task id for the current task
+
+        Returns:
+            list: train dataset in numpy format for each task
         """
-        Define the task for the class incremental learning paradigm
-        """
-        LOGGER.info(f'len(dataset_files): {len(dataset_files)}')
-        # 1. Partition Dataset 
+        LOGGER.info(f"len(dataset_files): {len(dataset_files)}")
+        # 1. Partition Dataset
         train_dataset_files, _ = dataset_files[task_id]
-        LOGGER.info(f'train_dataset_files: {train_dataset_files}')
+        LOGGER.info(f"train_dataset_files: {train_dataset_files}")
         train_datasets = self.train_data_partition(train_dataset_files)
         LOGGER.info(f"train_datasets: {len(train_datasets)}")
         task_size = self.get_task_size(train_datasets)
         LOGGER.info(f"task_size: {task_size}")
         # 2. According to setting, to split the label and unlabel data for each task
-        # need_split_label_unlabel_data = 1.0 - self.fl_data_setting.get("label_data_ratio")   > 1e-6
-        # if need_split_label_unlabel_data:
         train_datasets = self.split_label_unlabel_data(train_datasets)
         # 3. Return the dataset for each task [{label_data, unlabel_data}, ...]
         return train_datasets, task_size
-    
+
+    def get_task_size(self, train_datasets):
+        """get the task size for each task
+
+        Args:
+            train_datasets (list): train dataset for each client
+
+        Returns:
+            int: task size for each task
+        """
+        return np.unique(
+            [train_datasets[i][1] for i in range(len(train_datasets))]
+        ).shape[0]
+
     def split_label_unlabel_data(self, train_datasets):
+        """split train dataset into label and unlabel data for semi-supervised learning
+
+        Args:
+            train_datasets (list): train dataset for each client
+
+        Returns:
+            list: the new train dataset for each client that in label and unlabel format
+            [{label_x: [], label_y: [], unlabel_x: [], unlabel_y: []}, ...]
+        """
         label_ratio = self.fl_data_setting.get("label_data_ratio")
         new_train_datasets = []
         for i in range(len(train_datasets)):
             train_dataset_dict = {}
-            LOGGER.info(f"train_datasets[i][0]: {train_datasets[i][0].shape}, {len(train_datasets[i])}")
+            LOGGER.info(
+                f"train_datasets[i][0]: {train_datasets[i][0].shape}, {len(train_datasets[i])}"
+            )
             label_data_number = int(label_ratio * len(train_datasets[i][0]))
             LOGGER.info(f"label_data_number: {label_data_number}")
             # split dataset into label and unlabel data
-            train_dataset_dict['label_x'] = train_datasets[i][0][:label_data_number]
-            train_dataset_dict['label_y'] = train_datasets[i][1][:label_data_number]
-            train_dataset_dict['unlabel_x'] = train_datasets[i][0][label_data_number:]
-            train_dataset_dict['unlabel_y'] = train_datasets[i][1][label_data_number:]
+            train_dataset_dict["label_x"] = train_datasets[i][0][:label_data_number]
+            train_dataset_dict["label_y"] = train_datasets[i][1][:label_data_number]
+            train_dataset_dict["unlabel_x"] = train_datasets[i][0][label_data_number:]
+            train_dataset_dict["unlabel_y"] = train_datasets[i][1][label_data_number:]
             new_train_datasets.append(train_dataset_dict)
         return new_train_datasets
 
     def init_client(self):
-        self.clients = [self.build_paradigm_job(ParadigmType.FEDERATED_CLASS_INCREMENTAL_LEARNING.value)for _ in range(self.clients_number)]
+        self.clients = [
+            self.build_paradigm_job(
+                ParadigmType.FEDERATED_CLASS_INCREMENTAL_LEARNING.value
+            )
+            for _ in range(self.clients_number)
+        ]
 
-        
     def run(self):
+        """run the Federated Class-Incremental Learning paradigm
+            This function will run the Federated Class-Incremental Learning paradigm.
+            1. initialize the clients
+            2. split the dataset into several tasks
+            3. train the model on the clients
+            4. aggregate the model weights and maybe need to perform some helper function
+            5. send the weights to the clients
+            6. evaluate the model performance on old classes
+            7. finally, return the prediction result and system metric information
+        Returns:
+            list: prediction result
+            dict: system metric information
+        """
         self.init_client()
         # split_time = self.rounds // self.task_size  # split the dataset into several tasks
-        # print(f'split_time: {split_time}') 
+        # print(f'split_time: {split_time}')
         dataset_files = self._split_dataset(self.incremental_rounds)
-        test_dataset_files  = self._split_test_dataset(self.incremental_rounds)
-        LOGGER.info(f'get the dataset_files: {dataset_files}') 
-        
+        test_dataset_files = self._split_test_dataset(self.incremental_rounds)
+        LOGGER.info(f"get the dataset_files: {dataset_files}")
+        forget_rate = self.system_metric_info.get(SystemMetricType.FORGET_RATE.value)
         for task_id in range(self.incremental_rounds):
             train_datasets, task_size = self.task_definition(dataset_files, task_id)
-            testdatasets = test_dataset_files[:task_id+1]
+            testdatasets = test_dataset_files[: task_id + 1]
             for r in range(self.rounds):
                 LOGGER.info(f"Round {r} task id: {task_id}")
-                self._train(train_datasets, task_id=task_id, round=r, task_size=task_size)
+                self._train(
+                    train_datasets, task_id=task_id, round=r, task_size=task_size
+                )
                 global_weights = self.aggregator.aggregate(self.aggregate_clients)
                 if hasattr(self.aggregator, "helper_function"):
                     self.helper_function(self.train_infos)
                 self.send_weights_to_clients(global_weights)
                 self.aggregate_clients.clear()
                 self.train_infos.clear()
-                # test_res = self.predict(self.dataset.test_url)
-            # self.system_metric_info = self.evaluation(testdatasets, task_id)
+            forget_rate.append(self.evaluation(testdatasets, task_id))
         test_res = self.predict(self.dataset.test_url)
         return test_res, self.system_metric_info
-    
 
-    
     def _split_test_dataset(self, split_time):
-        
+        """split test dataset
+            This function will split a test dataset from test_url into several parts.
+            Each part will be used for the evaluation of the model after each round.
+        Args:
+            split_time (int): the number of split time
+
+        Returns:
+            list : the test dataset for each round [{x: [], y: []}, ...]
+        """
         test_dataset = self.dataset.load_data(self.dataset.test_url, "eval")
         all_data = len(test_dataset.x)
         step = all_data // split_time
         test_datasets_files = []
-        index = 1 
+        index = 1
         while index <= split_time:
             new_dataset = {}
             if index == split_time:
-                new_dataset['x'] = test_dataset.x[step * (index - 1):]
-                new_dataset['y'] = test_dataset.y[step * (index - 1):]
+                new_dataset["x"] = test_dataset.x[step * (index - 1) :]
+                new_dataset["y"] = test_dataset.y[step * (index - 1) :]
                 # new_dataset = (test_dataset.x[step * (index - 1):], test_dataset.y[step * (index - 1):])
             else:
-                new_dataset['x'] = test_dataset.x[step * (index - 1):step * index]
-                new_dataset['y'] = test_dataset.y[step * (index - 1):step * index]
+                new_dataset["x"] = test_dataset.x[step * (index - 1) : step * index]
+                new_dataset["y"] = test_dataset.y[step * (index - 1) : step * index]
                 # new_dataset = (test_dataset.x[step * (index - 1):step * index], test_dataset.y[step * (index - 1):step * index])
             test_datasets_files.append(new_dataset)
             index += 1
         return test_datasets_files
 
-    
     def train_data_partition(self, train_dataset_file):
         return super().train_data_partition(train_dataset_file)
-    
+
     def client_train(self, client_idx, train_datasets, validation_datasets, **kwargs):
-        train_info = self.clients[client_idx].train(train_datasets[client_idx], None, **kwargs)
-        train_info['client_id'] = client_idx
+        """client train function that will be called by the thread
+
+        Args:
+            client_idx (int): client index
+            train_datasets (list): train dataset for each client
+            validation_datasets (list): validation dataset for each client
+        """
+        train_info = self.clients[client_idx].train(
+            train_datasets[client_idx], validation_datasets, **kwargs
+        )
+        train_info["client_id"] = client_idx
         aggClient = AggClient()
-        aggClient.num_samples = train_info['num_samples']
+        aggClient.num_samples = train_info["num_samples"]
         aggClient.weights = self.clients[client_idx].get_weights()
         self.lock.acquire()
         self.aggregate_clients.append(aggClient)
         self.train_infos.append(train_info)
         self.lock.release()
 
-    
     def _train(self, train_datasets, **kwargs):
+        """train the model on the clients
+
+        Args:
+            train_datasets (list): train dataset for each client
+        """
         client_threads = []
-        print(f'len(self.clients): {len(self.clients)} len train_datasets: {len(train_datasets)}')
+        LOGGER.info(
+            f"len(self.clients): {len(self.clients)} len train_datasets: {len(train_datasets)}"
+        )
         for idx in range(len(self.clients)):
-            client_thread = Thread(target=self.client_train, args=(idx, train_datasets, None), kwargs=kwargs)
+            client_thread = Thread(
+                target=self.client_train,
+                args=(idx, train_datasets, None),
+                kwargs=kwargs,
+            )
             client_thread.start()
             client_threads.append(client_thread)
         for t in client_threads:
             t.join()
-        LOGGER.info('finish training')
-        
-    
+        LOGGER.info("finish training")
+
     def send_weights_to_clients(self, global_weights):
         super().send_weights_to_clients(global_weights)
-        
-    def helper_function(self,train_infos):
+
+    def helper_function(self, train_infos):
+        """helper function for FCI Method
+           Many of the FCI algorithms need server to perform some operations after the training of each round e.g data generation, model update etc.
+        Args:
+            train_infos (list of dict): the train info that the clients want to send to the server
+        """
         for i in range(len(self.clients)):
             helper_info = self.aggregator.helper_function(train_infos[i])
             self.clients[i].helper_function(helper_info)
-        LOGGER.info('finish helper function')
-    
+        LOGGER.info("finish helper function")
+
     def evaluation(self, testdataset_files, incremental_round):
-        _, accuracy_func = get_metric_func(self.metrics_dict)
-        LOGGER.info('*'*20 +'start evaluation' + '*'*20)
+        """evaluate the model performance on old classes
+
+        Args:
+            testdataset_files (list): the test dataset for each round
+            incremental_round (int): the total incremental training round
+
+        Returns:
+            float: forget rate for the current round  reference: https://ieeexplore.ieee.org/document/10574196/
+        """
+        LOGGER.info("*" * 20 + "start evaluation" + "*" * 20)
         if isinstance(testdataset_files, str):
             testdataset_files = [testdataset_files]
         job = self.get_global_model()
-        # caculate the old class accuracy
-        old_class_acc_list = [] # for current round [class_0: acc_0, class_1: acc1, ....]
+        # caculate the seen class accuracy
+        old_class_acc_list = (
+            []
+        )  # for current round [class_0: acc_0, class_1: acc1, ....]
         for index in range(len(testdataset_files)):
             acc_list = []
-            for data_index in range(len(testdataset_files[index]['x'])):
-                data = testdataset_files[index]['x'][data_index]
+            for data_index in range(len(testdataset_files[index]["x"])):
+                data = testdataset_files[index]["x"][data_index]
                 res = job.inference([data])
-                LOGGER.info(f"label is {testdataset_files[index]['y'][data_index]}, res is {res}")
-                acc = accuracy_func([testdataset_files[index]['y'][data_index]], res )
+                LOGGER.info(
+                    f"label is {testdataset_files[index]['y'][data_index]}, res is {res}"
+                )
+                acc = self.accuracy_func(
+                    [testdataset_files[index]["y"][data_index]], res
+                )
                 acc_list.append(acc)
             old_class_acc_list.extend(acc_list)
-            # old_classes.extend(current_classes)
         current_forget_rate = 0.0
         max_acc_sum = 0
         self.accuracy_per_round.append(old_class_acc_list)
@@ -213,24 +300,19 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             max_acc_diff = 0
             for j in range(incremental_round):
                 acc_per_round = self.accuracy_per_round[j]
-                LOGGER.info(f'acc_per_round: {acc_per_round} and len is {len(acc_per_round)}')
                 if i < len(acc_per_round):
-                    LOGGER.info(f'acc_per_round: {acc_per_round[i]} and diff is {acc_per_round[i] - old_class_acc_list[i]}')
-                    max_acc_diff = max(max_acc_diff, acc_per_round[i] - old_class_acc_list[i])
+                    LOGGER.info(
+                        f"acc_per_round: {acc_per_round[i]} and diff is {acc_per_round[i] - old_class_acc_list[i]}"
+                    )
+                    max_acc_diff = max(
+                        max_acc_diff, acc_per_round[i] - old_class_acc_list[i]
+                    )
             max_acc_sum += max_acc_diff
-            LOGGER.info(f'max_acc_diff: {max_acc_diff}')
-        current_forget_rate = max_acc_sum / len(old_class_acc_list) if incremental_round > 0 else 0.0
-        
-        LOGGER.info(f'for current round: {incremental_round} forget rate: {current_forget_rate}')
-        self.forget_rate_metrics.append(current_forget_rate)
-        # caculate the new class accuracy
-        new_classes_acc = 0 
-        for index  in range(len(testdataset_files[-1]['x'])):
-            data = testdataset_files[-1]['x'][index]
-            LOGGER.info(data)
-            res = job.inference([data])
-            acc = accuracy_func([testdataset_files[-1]['y'][index]], res)
-            new_classes_acc += acc
-        new_classes_acc  = new_classes_acc / float(len(testdataset_files[-1]['x'])) 
-        LOGGER.info(f'for current round : {incremental_round} new_classes_acc: {new_classes_acc} {self.accuracy_per_round}')
-        LOGGER.info('*'*20 +'finish evaluation' + '*'*20)
+            LOGGER.info(f"max_acc_diff: {max_acc_diff}")
+        current_forget_rate = (
+            max_acc_sum / len(old_class_acc_list) if incremental_round > 0 else 0.0
+        )
+        LOGGER.info(
+            f"for current round: {incremental_round} forget rate: {current_forget_rate}"
+        )
+        return current_forget_rate

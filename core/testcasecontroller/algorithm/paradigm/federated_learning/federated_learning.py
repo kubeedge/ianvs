@@ -87,8 +87,6 @@ class FederatedLearning(ParadigmBase):
         dataset_files = self._split_dataset(1) # only one split ——all the data
         train_dataset_file, _ = dataset_files[0]
         train_datasets = self.train_data_partition(train_dataset_file)
-        # split_time = self.rounds // self.task_size  # split the dataset into several tasks
-        # print(f'split_time: {split_time}') 
         for r in range(self.rounds):
             self.train(train_datasets, round=r)
             global_weights = self.aggregator.aggregate(self.aggregate_clients)
@@ -175,6 +173,7 @@ class FederatedLearning(ParadigmBase):
             for file in test_dataset_file:
                 test_dataset.append(self.dataset.load_data(file, "eval"))
         assert test_dataset is not None, "test_dataset is None"
+        LOGGER.info(f" before predict {len(test_dataset.x)}")
         job = self.get_global_model()
         test_res = job.inference(test_dataset.x)
         LOGGER.info(f" after predict {len(test_res)}")

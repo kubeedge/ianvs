@@ -38,7 +38,7 @@ def read_data_from_file_to_npy( files: BaseDataSource):
         x = np.load(file)
         print(x.shape)
         # print(type(files.y[i]))
-        y = np.full((x.shape[0], 1), (files.y[i]).astype(np.int32))
+        y = np.full((x.shape[0], ), (files.y[i]).astype(np.int32))
         x_train.append(x)
         y_train.append(y)
     x_train = np.concatenate(x_train, axis=0)

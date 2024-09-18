@@ -38,8 +38,7 @@ class ProxyServer:
         self.num_classes= num_classes
         self.proto_grad = None
         
-        self.best_model_1 =None 
-        self.best_model_2 = None
+
         self.best_perf = 0
         
         self.num_image = 20
@@ -48,6 +47,8 @@ class ProxyServer:
         self.build_model()
         self.fe_weights_length = len(self.feature_extractor.get_weights())
         self.classifier = None
+        self.best_model_1 =None 
+        self.best_model_2 = None
         
     def build_model(self):
         self.feature_extractor = resnet10()
@@ -83,13 +84,13 @@ class ProxyServer:
             new_classifier.set_weights(new_weights)
             self.classifier = new_classifier
         else:
-            logging.info(f'input shape is {self.feature_extractor.layers[-2].output_shape[-1]}')
+            
             self.classifier = tf.keras.Sequential([
                 # tf.keras.Input(shape=(None, self.feature_extractor.layers[-2].output_shape[-1])),
                 tf.keras.layers.Dense(self.num_classes, kernel_initializer='lecun_normal')
             ])
             self.classifier.build(input_shape=(None, self.feature_extractor.layers[-2].output_shape[-1]))
-            
+        self.best_model_1 = (self.feature_extractor, self.classifier)
         logging.info(f"finish ! initialize classifier {self.classifier}")
     
     def model_back(self):
@@ -118,7 +119,7 @@ class ProxyServer:
             
             predicts = tf.argmax(y_pred, axis=-1)
             predicts = tf.cast(predicts, tf.int32)
-            logging.info(f'y_pred shape {predicts} and y {y}')
+            logging.info(f'y_pred  {predicts} and y {y}')
             correct += tf.reduce_sum( tf.cast(tf.equal(predicts, y), dtype=tf.int32))
             total += x.shape[0]
         acc = 100 * correct / total
@@ -129,11 +130,6 @@ class ProxyServer:
         proto_grad_label = []
         for w_single in self.proto_grad:
             # 计算 w_single[-2] 的 sum 并找到其最小值的索引
-            # print(w_single.shape)
-            # print(w_single[-2].shape)
-            # print(w_single[-2])
-            # print(tf.reduce_sum(w_single[-2], axis=-1).shape)
-            # print(tf.reduce_sum(w_single[-2], axis=-1))
             pred = tf.argmin(tf.reduce_sum(w_single[-2], axis=-1), axis=-1)
             proto_grad_label.append(pred)
         return proto_grad_label
@@ -192,7 +188,7 @@ class ProxyServer:
                         
                         # if iter == self.Iteration - 1:
                         #     print(f'iter {iter} loss {loss}')
-                        
+            
                         if iter >= self.Iteration - self.num_image:
                             # print(type(dummy_data))
                             dummy_data_temp = np.asarray(dummy_data)

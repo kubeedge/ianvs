@@ -46,17 +46,15 @@ class BaseModel:
     def set_weights(self, weights):
         print("set weights")
         self.FedCiMatch.set_weights(weights)
-        
+            
     def train(self, train_data,val_data, **kwargs):
         task_id = kwargs.get('task_id', 0)
         round = kwargs.get('round', 1)
+        round = task_id * 1 + round
         task_size = kwargs.get('task_size', self.task_size)
         logging.info(f"in train: {round} task_id:  {task_id}")
-        self.class_learned += self.task_size
         self.FedCiMatch.before_train(task_id, round, train_data, task_size)
-        self.FedCiMatch.train(round)
-        logging.info(f'update example memory')
-        self.FedCiMatch.build_exemplar()
+        self.FedCiMatch.train(task_id, round)
         return {'num_samples': self.FedCiMatch.get_data_size() , 'task_id': task_id}
 
     def predict(self, data_files, **kwargs):
