@@ -13,14 +13,17 @@
 # limitations under the License.
 
 """Federated  Learning Paradigm"""
+# pylint: disable=C0412
+# pylint: disable=W1203
+from threading import Thread, RLock
 
-from sedna.algorithms.aggregation import AggClient 
+from sedna.algorithms.aggregation import AggClient
 from core.common.log import LOGGER
 from core.common.constant import ParadigmType, ModuleType
 from core.common.utils import get_file_format
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 from core.testenvmanager.dataset.utils import read_data_from_file_to_npy, partition_data
-from threading import Thread, RLock
+
 
 class FederatedLearning(ParadigmBase):
     """
@@ -51,25 +54,24 @@ class FederatedLearning(ParadigmBase):
     def __init__(self, workspace, **kwargs):
         ParadigmBase.__init__(self, workspace, **kwargs)
 
-        super(FederatedLearning, self).__init__(workspace, **kwargs)
         self.workspace = workspace
         self.kwargs = kwargs
 
         self.fl_data_setting = kwargs.get("fl_data_setting")
-        # print(self.fl_data_setting)
-        self.backend = kwargs.get("backend")
-        self.global_model = None  # global model to perform global evaluation
         self.rounds = kwargs.get("round", 1)
         self.clients = []
         self.lock = RLock()
 
-        self.aggregate_clients=[]
+        self.aggregate_clients = []
         self.clients_number = kwargs.get("client_number", 1)
-        self.aggregation, self.aggregator = self.module_instances.get(ModuleType.AGGREGATION.value)
+        _, self.aggregator = self.module_instances.get(ModuleType.AGGREGATION.value)
 
     def init_client(self):
-        self.clients = [self.build_paradigm_job(ParadigmType.FEDERATED_LEARNING.value) for i in
-                        range(self.clients_number)]
+        """init clients for the paradigm of federated learning."""
+        self.clients = [
+            self.build_paradigm_job(ParadigmType.FEDERATED_LEARNING.value)
+            for i in range(self.clients_number)
+        ]
 
     def run(self):
         """
@@ -84,7 +86,7 @@ class FederatedLearning(ParadigmBase):
         # init client wait for connection
         # self.init_client()
         self.init_client()
-        dataset_files = self._split_dataset(1) # only one split ——all the data
+        dataset_files = self._split_dataset(1)  # only one split ——all the data
         train_dataset_file, _ = dataset_files[0]
         train_datasets = self.train_data_partition(train_dataset_file)
         for r in range(self.rounds):
@@ -96,22 +98,32 @@ class FederatedLearning(ParadigmBase):
         return test_res, self.system_metric_info
 
     def _split_dataset(self, splitting_dataset_times=1):
+        """spit the dataset using ianvs dataset.split dataset method
+
+        Args:
+            splitting_dataset_times (int, optional): . Defaults to 1.
+
+        Returns:
+            list: dataset files
+        """
         train_dataset_ratio = self.fl_data_setting.get("train_ratio")
         splitting_dataset_method = self.fl_data_setting.get("splitting_method")
-        return self.dataset.split_dataset(self.dataset.train_url,
-                                          get_file_format(self.dataset.train_url),
-                                          train_dataset_ratio,
-                                          method=splitting_dataset_method,
-                                          dataset_types=("model_train", "model_eval"),
-                                          output_dir=self.dataset_output_dir(),
-                                          times=splitting_dataset_times)
+        return self.dataset.split_dataset(
+            self.dataset.train_url,
+            get_file_format(self.dataset.train_url),
+            train_dataset_ratio,
+            method=splitting_dataset_method,
+            dataset_types=("model_train", "model_eval"),
+            output_dir=self.dataset_output_dir(),
+            times=splitting_dataset_times,
+        )
 
     def train_data_partition(self, train_dataset_file):
         """
-         Partition the dataset for the class incremental learning paradigm
-         - i.i.d
-         - non-i.i.d
-         """
+        Partition the dataset for the class incremental learning paradigm
+        - i.i.d
+        - non-i.i.d
+        """
         LOGGER.info(train_dataset_file)
         train_datasets = None
         if isinstance(train_dataset_file, str):
@@ -126,45 +138,76 @@ class FederatedLearning(ParadigmBase):
         # - can support customized method to read data from file to npy
         train_datasets = read_data_from_file_to_npy(train_datasets)
         # Partition data to iid or non-iid
-        train_datasets = partition_data(train_datasets, self.clients_number,
-                                                     self.fl_data_setting.get("data_partition"),
-                                                     self.fl_data_setting.get("non_iid_ratio"))
+        train_datasets = partition_data(
+            train_datasets,
+            self.clients_number,
+            self.fl_data_setting.get("data_partition"),
+            self.fl_data_setting.get("non_iid_ratio"),
+        )
         return train_datasets
 
-    
     def client_train(self, client_idx, train_datasets, validation_datasets, **kwargs):
-        train_info = self.clients[client_idx].train(train_datasets[client_idx], None, **kwargs)
-        train_info['client_id'] = client_idx
-        aggClient = AggClient()
-        aggClient.num_samples = train_info['num_samples']
-        aggClient.weights = self.clients[client_idx].get_weights()
-        self.lock.acquire()
-        self.aggregate_clients.append(aggClient)
-        self.lock.release()
-        
+        """client train
+
+        Args:
+            client_idx (int): client index
+            train_datasets (list): train data for each client
+            validation_datasets (list): validation data for each client
+        """
+        train_info = self.clients[client_idx].train(
+            train_datasets[client_idx], None, **kwargs
+        )
+        train_info["client_id"] = client_idx
+        agg_client = AggClient()
+        agg_client.num_samples = train_info["num_samples"]
+        agg_client.weights = self.clients[client_idx].get_weights()
+        with self.lock:
+            self.aggregate_clients.append(agg_client)
+
     def train(self, train_datasets, **kwargs):
+        """train——multi-threading to perform client local training
+
+        Args:
+            train_datasets (list): train data for each client
+        """
         client_threads = []
-        print(f'len(self.clients): {len(self.clients)}')
-        for idx in range(len(self.clients)):
-            client_thread = Thread(target=self.client_train, args=(idx, train_datasets, None), kwargs=kwargs)
+        LOGGER.info(f"len(self.clients): {len(self.clients)}")
+        for idx in range(self.clients_number):
+            client_thread = Thread(
+                target=self.client_train,
+                args=(idx, train_datasets, None),
+                kwargs=kwargs,
+            )
             client_thread.start()
             client_threads.append(client_thread)
         for t in client_threads:
             t.join()
-        LOGGER.info('finish training')
-        
+        LOGGER.info("finish training")
+
     def send_weights_to_clients(self, global_weights):
         for client in self.clients:
             client.set_weights(global_weights)
-        LOGGER.info('finish send weights to clients')
-        
+        LOGGER.info("finish send weights to clients")
 
     def get_global_model(self):
-        self.global_model = self.clients[0]
-        return self.global_model
+        """get the global model for evaluation
+        After final round training, and aggregation
+        the global model can be the first client model
+
+        Returns:
+            JobBase: sedna_federated_learning.FederatedLearning
+        """
+        return self.clients[0]
 
     def predict(self, test_dataset_file):
-        # global test
+        """global test to predict the test dataset
+
+        Args:
+            test_dataset_file (list): test data
+
+        Returns:
+            list: test result
+        """
         test_dataset = None
         if isinstance(test_dataset_file, str):
             test_dataset = self.dataset.load_data(test_dataset_file, "eval")
@@ -178,6 +221,3 @@ class FederatedLearning(ParadigmBase):
         test_res = job.inference(test_dataset.x)
         LOGGER.info(f" after predict {len(test_res)}")
         return test_res
-
-
-

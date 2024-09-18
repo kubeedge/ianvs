@@ -13,14 +13,16 @@
 # limitations under the License.
 
 """Federated Class-Incremental Learning Paradigm"""
+# pylint: disable=C0412
+# pylint: disable=C0200
 import numpy as np
-from core.common.constant import ParadigmType, SystemMetricType
-from core.common.utils import get_file_format
-from .federated_learning import FederatedLearning
+from threading import Thread, RLock
 from sedna.algorithms.aggregation import AggClient
 from core.common.log import LOGGER
-from threading import Thread, RLock
+from core.common.constant import ParadigmType, SystemMetricType
+from core.common.utils import get_file_format
 from core.testcasecontroller.metrics.metrics import get_metric_func
+from .federated_learning import FederatedLearning
 
 
 class FederatedClassIncrementalLearning(FederatedLearning):
@@ -50,16 +52,16 @@ class FederatedClassIncrementalLearning(FederatedLearning):
     """
 
     def __init__(self, workspace, **kwargs):
-        super(FederatedClassIncrementalLearning, self).__init__(workspace, **kwargs)
+        super().__init__()
         self.incremental_rounds = kwargs.get("incremental_rounds", 1)
-        # self.task_size = kwargs.get("task_size", 10)
         self.system_metric_info = {SystemMetricType.FORGET_RATE.value: []}
-        self.lock = RLock()
+
         self.aggregate_clients = []
         self.train_infos = []
+
         self.forget_rate_metrics = []
         self.accuracy_per_round = []
-        self.metrics_dict = kwargs.get("model_eval", {})["model_metric"]
+        metrics_dict = kwargs.get("model_eval", {})["model_metric"]
         _, accuracy_func = get_metric_func(self.metrics_dict)
         self.accuracy_func = accuracy_func
 
@@ -111,7 +113,8 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         """
         label_ratio = self.fl_data_setting.get("label_data_ratio")
         new_train_datasets = []
-        for i in range(len(train_datasets)):
+        train_dataset_len = len(train_datasets)
+        for i in range(train_dataset_len):
             train_dataset_dict = {}
             LOGGER.info(
                 f"train_datasets[i][0]: {train_datasets[i][0].shape}, {len(train_datasets[i])}"
@@ -149,8 +152,6 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             dict: system metric information
         """
         self.init_client()
-        # split_time = self.rounds // self.task_size  # split the dataset into several tasks
-        # print(f'split_time: {split_time}')
         dataset_files = self._split_dataset(self.incremental_rounds)
         test_dataset_files = self._split_test_dataset(self.incremental_rounds)
         LOGGER.info(f"get the dataset_files: {dataset_files}")
@@ -193,11 +194,9 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             if index == split_time:
                 new_dataset["x"] = test_dataset.x[step * (index - 1) :]
                 new_dataset["y"] = test_dataset.y[step * (index - 1) :]
-                # new_dataset = (test_dataset.x[step * (index - 1):], test_dataset.y[step * (index - 1):])
             else:
                 new_dataset["x"] = test_dataset.x[step * (index - 1) : step * index]
                 new_dataset["y"] = test_dataset.y[step * (index - 1) : step * index]
-                # new_dataset = (test_dataset.x[step * (index - 1):step * index], test_dataset.y[step * (index - 1):step * index])
             test_datasets_files.append(new_dataset)
             index += 1
         return test_datasets_files
@@ -217,13 +216,12 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             train_datasets[client_idx], validation_datasets, **kwargs
         )
         train_info["client_id"] = client_idx
-        aggClient = AggClient()
-        aggClient.num_samples = train_info["num_samples"]
-        aggClient.weights = self.clients[client_idx].get_weights()
-        self.lock.acquire()
-        self.aggregate_clients.append(aggClient)
-        self.train_infos.append(train_info)
-        self.lock.release()
+        agg_client = AggClient()
+        agg_client.num_samples = train_info["num_samples"]
+        agg_client.weights = self.clients[client_idx].get_weights()
+        with self.lock:
+            self.aggregate_clients.append(agg_client)
+            self.train_infos.append(train_info)
 
     def _train(self, train_datasets, **kwargs):
         """train the model on the clients
@@ -247,20 +245,20 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             t.join()
         LOGGER.info("finish training")
 
-    def send_weights_to_clients(self, global_weights):
-        super().send_weights_to_clients(global_weights)
-
     def helper_function(self, train_infos):
         """helper function for FCI Method
-           Many of the FCI algorithms need server to perform some operations after the training of each round e.g data generation, model update etc.
+           Many of the FCI algorithms need server to perform some operations
+           after the training of each round e.g data generation, model update etc.
         Args:
             train_infos (list of dict): the train info that the clients want to send to the server
         """
-        for i in range(len(self.clients)):
+
+        for i in range(self.clients_number):
             helper_info = self.aggregator.helper_function(train_infos[i])
             self.clients[i].helper_function(helper_info)
         LOGGER.info("finish helper function")
 
+    # pylint: disable=too-many-arguments
     def evaluation(self, testdataset_files, incremental_round):
         """evaluate the model performance on old classes
 
@@ -269,8 +267,11 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             incremental_round (int): the total incremental training round
 
         Returns:
-            float: forget rate for the current round  reference: https://ieeexplore.ieee.org/document/10574196/
+            float:  forget rate for the current round
+                    reference: https://ieeexplore.ieee.org/document/10574196/
         """
+        if self.accuracy_func is None:
+            raise ValueError("accuracy function is not defined")
         LOGGER.info("*" * 20 + "start evaluation" + "*" * 20)
         if isinstance(testdataset_files, str):
             testdataset_files = [testdataset_files]

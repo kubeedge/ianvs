@@ -11,12 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import random
 import numpy as np
-import random 
 from sedna.datasources import BaseDataSource
+from core.common.log import LOGGER
 
 
-def read_data_from_file_to_npy( files: BaseDataSource):
+def read_data_from_file_to_npy(files: BaseDataSource):
     """
     read data from file to numpy array
 
@@ -33,12 +34,12 @@ def read_data_from_file_to_npy( files: BaseDataSource):
     """
     x_train = []
     y_train = []
-    print(files.x, files.y)
+    LOGGER.info(f"{files.x}, {files.y}")
     for i, file in enumerate(files.x):
         x = np.load(file)
         print(x.shape)
         # print(type(files.y[i]))
-        y = np.full((x.shape[0], ), (files.y[i]).astype(np.int32))
+        y = np.full((x.shape[0],), (files.y[i]).astype(np.int32))
         x_train.append(x)
         y_train.append(y)
     x_train = np.concatenate(x_train, axis=0)
@@ -47,7 +48,7 @@ def read_data_from_file_to_npy( files: BaseDataSource):
     return x_train, y_train
 
 
-def partition_data(datasets, client_number, data_partition ='iid', non_iid_ratio = 0.6):
+def partition_data(datasets, client_number, data_partition="iid", non_iid_ratio=0.6):
     """
     Partition data into clients.
 
@@ -65,30 +66,29 @@ def partition_data(datasets, client_number, data_partition ='iid', non_iid_ratio
     list
         A list of data for each client in numpy array format.
     """
-    print(data_partition)
-    if data_partition == 'iid':
+    LOGGER.info(data_partition)
+    data = []
+    if data_partition == "iid":
         x_data = datasets[0]
         y_data = datasets[1]
-        print(f'x_data shape: {x_data.shape}, y_data shape: {y_data.shape}')
+        LOGGER.info(f"x_data shape: {x_data.shape}, y_data shape: {y_data.shape}")
         indices = np.arange(len(x_data))
         np.random.shuffle(indices)
-        data = []
         for i in range(client_number):
             start = i * len(x_data) // client_number
             end = (i + 1) * len(x_data) // client_number
             data.append([x_data[indices[start:end]], y_data[indices[start:end]]])
-        return data
-    elif data_partition == 'non-iid':
+    elif data_partition == "non-iid":
         class_num = len(np.unique(datasets[1]))
         x_data = datasets[0]
         y_data = datasets[1]
-        data = []   
+
         for i in range(client_number):
             sample_number = int(class_num * non_iid_ratio)
             current_class = random.sample(range(class_num), sample_number)
-            print(f'for client{i} the class is {current_class}')
+            LOGGER.info(f"for client{i} the class is {current_class}")
             indices = np.where(y_data == current_class)[0]
             data.append([x_data[indices], y_data[indices]])
-        return data
     else:
         raise ValueError("paritiion_methods must be 'iid' or 'non-iid'")
+    return data
