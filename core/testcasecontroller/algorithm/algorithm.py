@@ -80,6 +80,7 @@ class Algorithm:
         self._parse_config(config)
         self._load_third_party_packages()
 
+    # pylint: disable=R0911
     def paradigm(self, workspace: str, **kwargs):
         """
         get test process of AI algorithm paradigm.
@@ -98,7 +99,6 @@ class Algorithm:
         """
 
         config = kwargs
-        
         # pylint: disable=C0103
         for k, v in self.__dict__.items():
             config.update({k: v})

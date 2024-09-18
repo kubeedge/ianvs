@@ -23,9 +23,10 @@ class FederatedLearning(JobBase):
 
     # pylint: disable=too-many-locals
     def __init__(self, estimator):
-        super(FederatedLearning, self).__init__(estimator)
+        super().__init__(estimator)
         self.estimator = estimator
 
+    # pylint: disable=W0221
     def train(self, train_data, vald_data, **kwargs):
         """Local training function
 

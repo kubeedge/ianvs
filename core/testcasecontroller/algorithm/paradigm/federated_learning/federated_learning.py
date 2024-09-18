@@ -187,6 +187,11 @@ class FederatedLearning(ParadigmBase):
         LOGGER.info("finish training")
 
     def send_weights_to_clients(self, global_weights):
+        """send weights to clients
+
+        Args:
+            global_weights (list): aggregated weights
+        """
         for client in self.clients:
             client.set_weights(global_weights)
         LOGGER.info("finish send weights to clients")

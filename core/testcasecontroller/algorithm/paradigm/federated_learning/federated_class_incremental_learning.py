@@ -16,7 +16,6 @@
 # pylint: disable=C0412
 # pylint: disable=W1203
 import numpy as np
-from sedna.algorithms.aggregation import AggClient
 from core.common.log import LOGGER
 from core.common.constant import ParadigmType, SystemMetricType
 from core.testcasecontroller.metrics.metrics import get_metric_func
@@ -136,6 +135,10 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             for _ in range(self.clients_number)
         ]
 
+    # pylint: disable=C0103
+    # pylint: disable=C0206
+    # pylint: disable=C0201
+    # pylint: disable=W1203
     def run(self):
         """run the Federated Class-Incremental Learning paradigm
             This function will run the Federated Class-Incremental Learning paradigm.
@@ -150,6 +153,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             list: prediction result
             dict: system metric information
         """
+
         self.init_client()
         dataset_files = self._split_dataset(self.incremental_rounds)
         test_dataset_files = self._split_test_dataset(self.incremental_rounds)
@@ -158,10 +162,10 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         for task_id in range(self.incremental_rounds):
             train_datasets, task_size = self.task_definition(dataset_files, task_id)
             testdatasets = test_dataset_files[: task_id + 1]
-            for round in range(self.rounds):
-                LOGGER.info(f"Round {round} task id: {task_id}")
+            for r in range(self.rounds):
+                LOGGER.info(f"Round {r} task id: {task_id}")
                 self.train(
-                    train_datasets, task_id=task_id, round=round, task_size=task_size
+                    train_datasets, task_id=task_id, round=r, task_size=task_size
                 )
                 global_weights = self.aggregator.aggregate(self.aggregate_clients)
                 if hasattr(self.aggregator, "helper_function"):
@@ -200,9 +204,6 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             index += 1
         return test_datasets_files
 
-    def train_data_partition(self, train_dataset_file):
-        return super().train_data_partition(train_dataset_file)
-
     def client_train(self, client_idx, train_datasets, validation_datasets, **kwargs):
         """client train function that will be called by the thread
 
@@ -216,16 +217,6 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         )
         with self.lock:
             self.train_infos.append(train_info)
-        # train_info = self.clients[client_idx].train(
-        #     train_datasets[client_idx], validation_datasets, **kwargs
-        # )
-        # train_info["client_id"] = client_idx
-        # agg_client = AggClient()
-        # agg_client.num_samples = train_info["num_samples"]
-        # agg_client.weights = self.clients[client_idx].get_weights()
-        # with self.lock:
-        #     self.aggregate_clients.append(agg_client)
-        #     self.train_infos.append(train_info)
 
     def helper_function(self, train_infos):
         """helper function for FCI Method
@@ -241,6 +232,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         LOGGER.info("finish helper function")
 
     # pylint: disable=too-many-locals
+    # pylint: disable=C0200
     def evaluation(self, testdataset_files, incremental_round):
         """evaluate the model performance on old classes
 
@@ -254,7 +246,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         """
         if self.accuracy_func is None:
             raise ValueError("accuracy function is not defined")
-        LOGGER.info("*" * 20 + "start evaluation" + "*" * 20)
+        LOGGER.info("********start evaluation********")
         if isinstance(testdataset_files, str):
             testdataset_files = [testdataset_files]
         job = self.get_global_model()
@@ -285,7 +277,8 @@ class FederatedClassIncrementalLearning(FederatedLearning):
                 acc_per_round = self.accuracy_per_round[j]
                 if i < len(acc_per_round):
                     LOGGER.info(
-                        f"acc_per_round: {acc_per_round[i]} and diff is {acc_per_round[i] - old_class_acc_list[i]}"
+                        f"acc_per_round: {acc_per_round[i]}"
+                        + f" and diff is {acc_per_round[i] - old_class_acc_list[i]}"
                     )
                     max_acc_diff = max(
                         max_acc_diff, acc_per_round[i] - old_class_acc_list[i]
