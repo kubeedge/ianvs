@@ -74,6 +74,10 @@ class FederatedLearning(ParadigmBase):
             for i in range(self.clients_number)
         ]
 
+    # pylint: disable=C0103
+    # pylint: disable=C0206
+    # pylint: disable=C0201
+    # pylint: disable=W1203
     def run(self):
         """
         run the test flow of incremental learning paradigm.
@@ -90,8 +94,8 @@ class FederatedLearning(ParadigmBase):
         dataset_files = self._split_dataset(1)  # only one split ——all the data
         train_dataset_file, _ = dataset_files[0]
         train_datasets = self.train_data_partition(train_dataset_file)
-        for round in range(self.rounds):
-            self.train(train_datasets, round=round)
+        for r in range(self.rounds):
+            self.train(train_datasets, round=r)
             global_weights = self.aggregator.aggregate(self.aggregate_clients)
             self.send_weights_to_clients(global_weights)
             self.aggregate_clients.clear()
