@@ -1,0 +1,31 @@
+benchmarkingjob:
+  # job name of bechmarking; string type;
+  name: "benchmarkingjob"
+  # the url address of job workspace that will reserve the output of tests; string type;
+  workspace: "./workspace"
+
+  testenv: "./examples/llm-benchmark-suite/single_task_bench_with_compression/testenv/testenv.yaml"
+
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "deepspeed_mii_inference"
+        url: "./examples/llm-benchmark-suite/single_task_bench_with_compression/testalgorithms/algorithm.yaml"
+
+  rank:
+    sort_by: 
+      - { "latency": "descend" }
+      - { "throughput": "ascend" }
+      - { "perplexity": "ascend" }
+
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+
+    selected_dataitem:
+      paradigms: [ "all" ]
+      modules: [ "all" ]
+      hyperparameters: [ "all" ]
+      metrics: [ "latency", "throughput", "perplexity" ]
+
+    save_mode: "selected_and_all"
