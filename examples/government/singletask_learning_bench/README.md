@@ -8,6 +8,37 @@ Constructs a suite for the government sector, including test datasets, evaluatio
 
 This Benchmark consists of two parts: subjective evaluation data and objective evaluation data.
 
+## Design
+
+Dataset format:
+
+|name|optionality|information|
+|---|---|---|
+|prompt|optional|the background of the LLM testing|
+|question|required|the testing question|
+|response|required|the answer of the question|
+|explanation|optional|the explanation of the answer|
+|judge_prompt|optional|the prompt of the judge model|
+|level_1_dim|optional|single-modal or multi-modal|
+|level_2_dim|optional|single-modal: text, image, video; multi-modal: text-image, text-video, text-image-video|
+|level_3_dim|required|details|
+|level_4_dim|required|details|
+
+data example:
+
+```json
+{
+    "prompt": "Please think step by step and answer the question.",
+    "question": "Which one is the correct answer of xxx? A. xxx B. xxx C. xxx D. xxx",
+    "response": "C",
+    "explanation": "xxx",
+    "level_1_dim": "singel-modal",
+    "level_2_dim": "text",
+    "level_3_dim": "knowledge Q&A",
+    "level_4_dim": "medical knowledge"
+}
+```
+
 
 ## Change to Core Code
 
