@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, division, LOGGER.info_function
+from __future__ import absolute_import, division
 
 import os
 import tempfile
@@ -59,17 +59,16 @@ class BaseModel:
 
     def predict(self, data, input_shape=None, **kwargs):
         LOGGER.info("BaseModel predict")
-        
-        if 'infer_system_prompt' in data.prompts:
-            infer_system_prompt = data.prompts['infer_system_prompt']
+        LOGGER.info(f"Dataset: {data.dataset_name}")
+        LOGGER.info(f"Description: {data.description}")
+        LOGGER.info(f"Data Level 1 Dim: {data.level_1_dim}")
+        LOGGER.info(f"Data Level 2 Dim: {data.level_2_dim}")
         
         answer_list = []
         for line in tqdm(data.x, desc="Processing", unit="question"):
             # 3-shot
             indices = random.sample([i for i, l in enumerate(data.x) if l != line], 3)
             history = []
-            if infer_system_prompt:
-                history.append({"role": "system", "content": infer_system_prompt})
             for idx in indices:
                 history.append({"role": "user", "content": data.x[idx]})
                 history.append({"role": "assistant", "content": data.y[idx]})

@@ -10,19 +10,43 @@ This Benchmark consists of two parts: subjective evaluation data and objective e
 
 ## Design
 
-Dataset format:
+### Metadata Format
 
-|name|optionality|information|
+| Name | Field Name | Option | Description |
+| --- | --- | --- | --- |
+| Data Name | dataset |  Required | Name of the dataset |
+| Data Description | description | Optional | Dataset description, such as usage scope, sample size, etc. |
+| First-level Dimension | level_1_dim | Required | Should fill in "Single Modal" or "Multi-Modal" |
+| Second-level Dimension | level_2_dim | Required | For "Single Modal", fill in "Text", "Image", or "Audio". For "Multi-Modal", fill in "Text-Image", "Text-Audio", "Image-Audio", or "Text-Image-Audio" |
+| Third-level Dimension | level_3_dim | Optional | Should be filled if all samples in the dataset have the same third-level dimension. If filled, content should be based on the standards shown in the normative reference document |
+| Fourth-level Dimension | level_4_dim | Optional | Should be filled if all samples in the dataset have the same third-level dimension. If filled, content should be based on the standards shown in the normative reference document |
+
+metadata example:
+
+```json
+{
+    "dataset": "Medical BenchMark",
+    "description": "xxx",
+    "level_1_dim": "single-modal",
+    "level_2_dim": "text",
+    "level_3_dim": "Q&A",
+    "level_4_dim": "medical"
+}
+```
+
+### Data format:
+
+|name|Option|information|
 |---|---|---|
-|prompt|optional|the background of the LLM testing|
-|question|required|the testing question|
-|response|required|the answer of the question|
-|explanation|optional|the explanation of the answer|
-|judge_prompt|optional|the prompt of the judge model|
-|level_1_dim|optional|single-modal or multi-modal|
-|level_2_dim|optional|single-modal: text, image, video; multi-modal: text-image, text-video, text-image-video|
-|level_3_dim|required|details|
-|level_4_dim|required|details|
+|prompt|Optional|the background of the LLM testing|
+|question|Required|the testing question|
+|response|Required|the answer of the question|
+|explanation|Optional|the explanation of the answer|
+|judge_prompt|Optional|the prompt of the judge model|
+|level_1_dim|Optional|single-modal or multi-modal|
+|level_2_dim|Optional|single-modal: text, image, video; multi-modal: text-image, text-video, text-image-video|
+|level_3_dim|Required|details|
+|level_4_dim|Required|details|
 
 data example:
 
@@ -32,7 +56,7 @@ data example:
     "question": "Which one is the correct answer of xxx? A. xxx B. xxx C. xxx D. xxx",
     "response": "C",
     "explanation": "xxx",
-    "level_1_dim": "singel-modal",
+    "level_1_dim": "single-modal",
     "level_2_dim": "text",
     "level_3_dim": "knowledge Q&A",
     "level_4_dim": "medical knowledge"
@@ -52,24 +76,20 @@ You can download dataset in [kaggle](https://www.kaggle.com/datasets/hsj576/gove
 dataset/government
 ├── objective
 │   ├── test_data
-│   │   ├── data_info.json
 │   │   ├── data.jsonl
-│   │   └── prompts.json
+│   │   └── metadata.json
 │   └── train_data
 └── subjective
     ├── test_data
     │   ├── data_full.jsonl
-    │   ├── data_info.json
     │   ├── data.jsonl
-    │   └── prompts.json
+    │   └── metadata.json
     └── train_data
 ```
 
 ## Prepare Environment
 
-You need to install the changed-sedna package, which added `JSONDataInfoParse` in `sedna.datasources`
-
-Replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `examples/resources/sedna-jsondatainfo.zip`
+You should change your sedna package like this: [my sedna repo commit](https://github.com/IcyFeather233/sedna/commit/e13b82363c03dc771fca4922a24798554ca32a9f)
 
 ## Run Ianvs
 

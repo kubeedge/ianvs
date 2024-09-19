@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import, division, LOGGER.info_function
+from __future__ import absolute_import, division
 
 import os
 import tempfile
@@ -59,17 +59,15 @@ class BaseModel:
 
     def predict(self, data, input_shape=None, **kwargs):
         LOGGER.info("BaseModel predict")
-        
-        if 'infer_system_prompt' in data.prompts:
-            infer_system_prompt = data.prompts['infer_system_prompt']
+        LOGGER.info(f"Dataset: {data.dataset_name}")
+        LOGGER.info(f"Description: {data.description}")
+        LOGGER.info(f"Data Level 1 Dim: {data.level_1_dim}")
+        LOGGER.info(f"Data Level 2 Dim: {data.level_2_dim}")
         
         answer_list = []
         for line in tqdm(data.x, desc="Processing", unit="question"):
             history = []
-            query = line.split('||')[0]
-            if infer_system_prompt:
-                history.append({"role": "system", "content": infer_system_prompt})
-            history.append({"role": "user", "content": query})
+            history.append({"role": "user", "content": line})
             response = self._infer(history)
             answer_list.append(response)
 
@@ -77,7 +75,7 @@ class BaseModel:
 
         # evaluate by llm
         for index in tqdm(range(len(answer_list)), desc="Evaluating", ascii=False, ncols=75):
-            prompt = data.prompts['eval_user_template'].replace('{question}', data.x[index].split('||')[0]).replace('{reference}', data.x[index].split('||')[1]).replace('{answer}', answer_list[index])
+            prompt = data.judge_prompts[index] + answer_list[index]
             judgement = self._openai_generate(prompt)
             judgement_list.append(judgement)
 
@@ -113,6 +111,8 @@ class BaseModel:
 
     def _openai_generate(self, user_question, system=None):
         key = os.getenv("DEEPSEEK_API_KEY")
+        if not key:
+            raise ValueError("You should set DEEPSEEK_API_KEY in your env.")
         client = OpenAI(api_key=key, base_url="https://api.deepseek.com")
 
         messages = []

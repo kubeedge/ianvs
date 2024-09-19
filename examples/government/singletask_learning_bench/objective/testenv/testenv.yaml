@@ -4,7 +4,7 @@ testenv:
     # the url address of train dataset index; string type;
     train_data: "/home/icyfeather/Projects/ianvs/dataset/government/objective/train_data/data.jsonl"
     # the url address of test dataset index; string type;
-    test_data_info: "/home/icyfeather/Projects/ianvs/dataset/government/objective/test_data/data_info.json"
+    test_data_info: "/home/icyfeather/Projects/ianvs/dataset/government/objective/test_data/metadata.json"
 
   # metrics configuration for test case's evaluation; list type;
   metrics:
