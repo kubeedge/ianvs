@@ -19,7 +19,7 @@ import tempfile
 import json
 
 import pandas as pd
-from sedna.datasources import CSVDataParse, TxtDataParse, JSONDataParse, JsonlDataParse, JSONDataInfoParse
+from sedna.datasources import CSVDataParse, TxtDataParse, JSONDataParse, JsonlDataParse, JSONMetaDataParse
 
 from core.common import utils
 from core.common.constant import DatasetFormat
@@ -436,8 +436,8 @@ class Dataset:
             e.g.: TxtDataParse, CSVDataParse.
 
         """
-        if file.split('/')[-1] == "data_info.json":
-            data = JSONDataInfoParse(data_type=data_type, func=feature_process)
+        if file.split('/')[-1] == "metadata.json":
+            data = JSONMetaDataParse(data_type=data_type, func=feature_process)
             data.parse(file)
             return data
 
