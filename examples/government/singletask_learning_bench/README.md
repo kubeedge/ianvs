@@ -91,6 +91,8 @@ dataset/government
 
 You should change your sedna package like this: [my sedna repo commit](https://github.com/IcyFeather233/sedna/commit/e13b82363c03dc771fca4922a24798554ca32a9f)
 
+Or you can replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `examples/resources/sedna-llm.zip`
+
 ## Run Ianvs
 
 ### Objective
