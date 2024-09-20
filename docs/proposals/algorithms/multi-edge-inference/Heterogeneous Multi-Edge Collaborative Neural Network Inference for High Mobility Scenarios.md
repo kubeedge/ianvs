@@ -52,9 +52,6 @@ def load(self, model_url=None):
         raise Exception(f"model url is None")
 ```
 
-The overall process is illustrated in the following diagram:
-![old process](images/old_process.png)
-
 Based on the above process analysis, we find that the existing multi-edge inference benchmarking job only uses Ianvs to create and manage test cases, where the core algorithmic processes such as multi-device parallelism and model partitioning are left to the user to implement. It is also worth mentioning that the nn.DataParallel(self.model) used in this case only achieves data parallelism, and for scenarios with low computing power on the edge and large models, relying solely on data parallelism is obviously insufficient to support edge inference needs. Therefore, this project needs to implement model parallel capabilities based on model partitioning and encapsulate these capabilities (partitioning and scheduling) into an function, separated from the user's code, as an optional feature in the multiedge_inference paradigm supported by Ianvs.
 
 ## Module Design and Code Integration 
@@ -110,7 +107,10 @@ Further, provide the load method of the BaseModel class in the  benchmarking job
 At the same time, the corresponding multi-edge inference benchmarking job for high-mobility scenarios will be provided in the _examples_ folder.
 
 In conjunction with the process design, the newly added automatic partitioning module will be inserted into the position indicated in the diagram below, thereby forming a new complete flowchart:
-![new process](images/new_process.png)
+![process](images/process.png)
+
+The following diagram illustrates the framework of the entire system after the modifications:
+![framework](images/framework.png)
 
 ## Method Desgin
 ![image](images/partition_method.png)
