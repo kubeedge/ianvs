@@ -12,5 +12,14 @@ testenv:
     - name: "accuracy"
       # the url address of python file
       url: "./examples/imagenet/multiedge_inference_bench/testenv/accuracy.py"
+    - name: "fps"
+      # the url address of python file
+      url: "./examples/imagenet/multiedge_inference_bench/testenv/fps.py"
+    - name: "peak_memory"
+      # the url address of python file
+      url: "./examples/imagenet/multiedge_inference_bench/testenv/peak_memory.py"
+    - name: "peak_power"
+      # the url address of python file
+      url: "./examples/imagenet/multiedge_inference_bench/testenv/peak_power.py"
   devices:
     - url : "./devices.yaml"
