@@ -12,50 +12,57 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os 
+import os
 import numpy as np
 import keras
 import tensorflow as tf
 from sedna.common.class_factory import ClassType, ClassFactory
 from model import resnet10
 from FedCiMatch import FedCiMatch
-import logging 
+import logging
 
-os.environ['BACKEND_TYPE'] = 'KERAS'
+os.environ["BACKEND_TYPE"] = "KERAS"
 __all__ = ["BaseModel"]
 logging.getLogger().setLevel(logging.INFO)
 
-@ClassFactory.register(ClassType.GENERAL, alias='fci_ssl')
+
+@ClassFactory.register(ClassType.GENERAL, alias="fci_ssl")
 class BaseModel:
     def __init__(self, **kwargs) -> None:
         self.kwargs = kwargs
-        self.learning_rate = kwargs.get('learning_rate', 0.001)
-        self.epochs = kwargs.get('epochs', 1)
-        self.batch_size = kwargs.get('batch_size', 32)
-        self.task_size = kwargs.get('task_size', 10)
-        self.memory_size = kwargs.get('memory_size', 2000)
+        self.learning_rate = kwargs.get("learning_rate", 0.001)
+        self.epochs = kwargs.get("epochs", 1)
+        self.batch_size = kwargs.get("batch_size", 32)
+        self.task_size = kwargs.get("task_size", 10)
+        self.memory_size = kwargs.get("memory_size", 2000)
         # self.fe = self.build_feature_extractor()
-        self.num_classes = 10 # the number of class for the first task
-        self.FedCiMatch = FedCiMatch( self.num_classes, self.batch_size, self.epochs, self.learning_rate, self.memory_size, )
+        self.num_classes = 2  # the number of class for the first task
+        self.FedCiMatch = FedCiMatch(
+            self.num_classes,
+            self.batch_size,
+            self.epochs,
+            self.learning_rate,
+            self.memory_size,
+        )
         self.class_learned = 0
 
     def get_weights(self):
         print("get weights")
         return self.FedCiMatch.get_weights()
-    
+
     def set_weights(self, weights):
         print("set weights")
         self.FedCiMatch.set_weights(weights)
-            
-    def train(self, train_data,val_data, **kwargs):
-        task_id = kwargs.get('task_id', 0)
-        round = kwargs.get('round', 1)
+
+    def train(self, train_data, val_data, **kwargs):
+        task_id = kwargs.get("task_id", 0)
+        round = kwargs.get("round", 1)
         round = task_id * 1 + round
-        task_size = kwargs.get('task_size', self.task_size)
+        task_size = kwargs.get("task_size", self.task_size)
         logging.info(f"in train: {round} task_id:  {task_id}")
         self.FedCiMatch.before_train(task_id, round, train_data, task_size)
         self.FedCiMatch.train(task_id, round)
-        return {'num_samples': self.FedCiMatch.get_data_size() , 'task_id': task_id}
+        return {"num_samples": self.FedCiMatch.get_data_size(), "task_id": task_id}
 
     def predict(self, data_files, **kwargs):
         result = {}

@@ -52,7 +52,10 @@ class FederatedClassIncrementalLearning(FederatedLearning):
     def __init__(self, workspace, **kwargs):
         super().__init__(workspace, **kwargs)
         self.incremental_rounds = kwargs.get("incremental_rounds", 1)
-        self.system_metric_info = {SystemMetricType.FORGET_RATE.value: []}
+        self.system_metric_info = {
+            SystemMetricType.FORGET_RATE.value: [],
+            SystemMetricType.TASK_AVG_ACC.value: {},
+        }
 
         self.aggregate_clients = []
         self.train_infos = []
@@ -266,6 +269,10 @@ class FederatedClassIncrementalLearning(FederatedLearning):
                     [testdataset_files[index]["y"][data_index]], res
                 )
                 acc_list.append(acc)
+            if index == len(testdataset_files) - 1:
+                self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value][
+                    "accuracy"
+                ] = np.mean(acc_list)
             old_class_acc_list.extend(acc_list)
         current_forget_rate = 0.0
         max_acc_sum = 0

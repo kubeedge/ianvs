@@ -20,7 +20,7 @@ algorithm:
               - 0.001
         - epochs:
             values:
-              - 10
+              - 1
     - type: "aggregation"
       name: "FedAvg"
       url: "./examples/cifar100/fci_ssl/fed_ci_match/algorithm/aggregation.py"

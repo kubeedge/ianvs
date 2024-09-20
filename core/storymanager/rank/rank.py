@@ -138,7 +138,7 @@ class Rank:
 
             if metric_name not in all_metric_names:
                 continue
-
+            print(metric_name)
             sort_metric_list.append(metric_name)
             is_ascend_list.append(ele.get(metric_name) == "ascend")
 

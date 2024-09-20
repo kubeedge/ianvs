@@ -191,7 +191,7 @@ class FedCiMatch:
                 # print('in get train loader' , exm_set[0].shape)
                 train_x = np.concatenate((train_x, exm_set[0]), axis=0)
                 label = np.array(exm_set[1])
-                label = label.reshape(-1, 1)
+                # label = label.reshape(-1, 1)
                 train_y = np.concatenate((train_y, label), axis=0)
             logging.info(
                 f"train_x shape: {train_x.shape} and train_y shape: {train_y.shape}"

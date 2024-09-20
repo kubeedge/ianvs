@@ -148,7 +148,7 @@ def forget_rate_func(system_metric_info: dict):
     compute task forget rate
     """
     info = system_metric_info.get(SystemMetricType.FORGET_RATE.value)
-    forget_rate = np.mean(info['forget_rate'])
+    forget_rate = np.mean(info)
     print(f"forget_rate: {forget_rate}")
     return forget_rate
 

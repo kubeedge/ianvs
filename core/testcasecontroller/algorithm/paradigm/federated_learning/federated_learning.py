@@ -91,7 +91,7 @@ class FederatedLearning(ParadigmBase):
         # init client wait for connection
         # self.init_client()
         self.init_client()
-        dataset_files = self._split_dataset(1)  # only one split ——all the data
+        dataset_files = self.get_all_train_data()
         train_dataset_file, _ = dataset_files[0]
         train_datasets = self.train_data_partition(train_dataset_file)
         for r in range(self.rounds):
@@ -101,6 +101,10 @@ class FederatedLearning(ParadigmBase):
             self.aggregate_clients.clear()
         test_res = self.predict(self.dataset.test_url)
         return test_res, self.system_metric_info
+
+    def get_all_train_data(self):
+        split_time = 1  # only one split ——all the data
+        return self._split_dataset(split_time)
 
     def _split_dataset(self, splitting_dataset_times=1):
         """spit the dataset using ianvs dataset.split dataset method

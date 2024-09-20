@@ -247,6 +247,9 @@ class FedCiMatch:
     def _loss_l2(self, global_model):
         return 0.0
     
+    def unsupervised_loss(self, sux, wux):
+        return 0.0
+    
     def _merge_models(self, round, base_model_weights, meta_model_weights):
         eta = np.exp(-self.beta * (round + 1 ) / self.num_rounds)
         merged_meta_parameters = [

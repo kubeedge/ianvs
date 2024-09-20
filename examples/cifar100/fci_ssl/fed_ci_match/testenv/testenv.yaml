@@ -33,4 +33,4 @@ testenv:
     - name: "forget_rate"
   # incremental rounds setting of incremental learning; int type; default value is 2;
   incremental_rounds: 10
-  round: 3
+  round: 1
