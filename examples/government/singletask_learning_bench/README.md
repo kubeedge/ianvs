@@ -70,7 +70,7 @@ data example:
 
 ## Prepare Datasets
 
-You can download dataset in [kaggle](https://www.kaggle.com/datasets/hsj576/government-bench-master)
+You can download dataset in [kaggle](https://www.kaggle.com/datasets/kubeedgeianvs/the-government-affairs-dataset-govaff/data?select=government_benchmark)
 
 ```
 dataset/government
