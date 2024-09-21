@@ -3,11 +3,11 @@
 
 ## 1 Motivation
 
-Due to model size and data scale, LLMs are often trained in the cloud. At the same time, since the use of large language models often involves business secrets or user privacy, deploying LLMs on edge devices has gradually become a research hotspot. LLMs quantization technology is enabling LLMs edge inference. However, the limited resources of edge devices have an impact on the inference latency and accuracy of cloud-trained LLMs. Ianvs aims to leverage container resource management capabilities and edge-cloud collaboration capabilities to perform edge-side deployment benchmarking for cloud-trained LLMs.
+Due to model size and data scale, LLMs are often trained in the cloud. At the same time, since the use of large language models often involves business secrets or user privacy, deploying LLMs on **edge devices** has gradually become a research hotspot. LLMs quantization technology is enabling LLMs **edge inference**. However, the limited resources of **edge devices** have an impact on the inference latency and accuracy of cloud-trained LLMs. Ianvs aims to leverage container resource management capabilities and edge-cloud collaboration capabilities to perform **edge-side** deployment benchmarking for cloud-trained LLMs.
 
 ## 2 Goals
 
-The primary goal is to develop a benchmarking suite for Large Language Models (LLMs) on edge devices using the KubeEdge-Ianvs platform. This suite will enable thorough testing and validation of LLMs, focusing on performance, accuracy, and resource utilization on edge devices.
+The primary goal is to develop a benchmarking suite for Large Language Models (LLMs) on **edge devices** using the KubeEdge-Ianvs platform. This suite will enable thorough testing and validation of LLMs, focusing on performance, accuracy, and resource utilization on **edge devices**.
 
 
 ### 2.1 Flexibility and Scalability
@@ -25,10 +25,10 @@ Integrate CI/CD processes to automate the management and continual updating of t
 ## 3 Proposal
 
 
-The proposal includes developing a benchmark suite that utilizes Ianvs to evaluate the performance of LLMs under various edge-cloud configurations. This will include:
+The proposal includes developing a benchmark suite that utilizes Ianvs to evaluate the performance of LLMs under various **edge-cloud** configurations. This will include:
 
 ### 3.1 Dataset Integration And Accuracy Evaluation
-Integrate widely-used benchmark datasets to evaluate the performance of LLMs on edge devices across various tasks and domains. Some key datasets to consider:
+Integrate widely-used benchmark datasets to evaluate the performance of LLMs on **edge devices** across various tasks and domains. Some key datasets to consider:
 
 1. MMLU (Measuring Massive Multitask Language Understanding):
 - A comprehensive English benchmark for evaluating the knowledge and reasoning abilities of language models across 57 disciplines, from humanities and social sciences to STEM fields.
@@ -71,10 +71,10 @@ Sure, here's a brief introduction to the Qwen, LLaMA, and ChatGLM models, simila
 
 ### 3.3 Benchmarking LLMs on Edge Devices
 
-**Objective**: Evaluate the performance of LLMs on edge devices by measuring key metrics such as memory usage, CPU load, and bandwidth consumption. This benchmarking helps in understanding the resource requirements and limitations of deploying LLMs on edge devices with constrained resources. While the focus is on single-device performance, the insights gained can provide valuable reference points for designing efficient edge-cloud collaborative inference systems in the future.
+**Objective**: Evaluate the performance of LLMs on **edge devices** by measuring key metrics such as memory usage, CPU load, and bandwidth consumption. This benchmarking helps in understanding the resource requirements and limitations of deploying LLMs on **edge devices** with constrained resources. While the focus is on single-device performance, the insights gained can provide valuable reference points for designing efficient edge-cloud collaborative inference systems in the future.
 
 #### 3.3.1 Inference Speed 
-- Measure the time taken for the LLM to generate responses on edge devices for various input lengths and types.
+- Measure the time taken for the LLM to generate responses on **edge devices** for various input lengths and types.
 
 - Compare inference speeds across different model sizes (e.g., 7B vs. 13B vs. 65B) and hardware configurations (e.g., CPU vs. GPU, different memory constraints).
 
