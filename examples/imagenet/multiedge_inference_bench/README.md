@@ -33,7 +33,7 @@ Then, you need to process the dataset and generate the _train.txt_ and _val.txt_
 
 ```shell
 cd <Ianvs_HOME>
-python ./examples/imagenet/multiedge_inference_bench/testalgorithms/dataset.py
+python ./examples/imagenet/multiedge_inference_bench/testalgorithms/manual/dataset.py
 ```
 
 ## Step 2. Prepare Model
@@ -44,7 +44,7 @@ Next, download pretrained model via [[huggingface]](https://huggingface.co/optim
 We are now ready to run the ianvs for benchmarking image clasification for high mobility scenarios on the ImageNet dataset.
 
 ```python
-ianvs -f ./examples/imagenet/multiedge_inference_bench/classification_job.yaml
+ianvs -f ./examples/imagenet/multiedge_inference_bench/classification_job_manual.yaml
 ```
 
 The benchmarking process takes a few minutes and varies depending on devices.
@@ -73,7 +73,7 @@ More partitioning algorithms will be added in the future and you can customize t
 
 ```
 def partiton(self, initial_model):
-    ## 1. parsing devices.yaml
+    ## 1. parsing
     ## 2. modeling
     ## 3. partition
     return models_dir, map_info

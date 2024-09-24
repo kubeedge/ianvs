@@ -19,7 +19,7 @@ benchmarkingjob:
       - name: "classification"
       #   # the url address of test algorithm configuration file; string type;
       #   # the file format supports yaml/yml;
-        url: "./examples/imagenet/multiedge_inference_bench/testalgorithms/classification_algorithm.yaml"
+        url: "./examples/imagenet/multiedge_inference_bench/testalgorithms/manual/classification_algorithm.yaml"
 
   # the configuration of ranking leaderboard
   rank:

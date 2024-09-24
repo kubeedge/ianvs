@@ -17,7 +17,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "Classification"
       # the url address of python module; string type;
-      url: "./examples/imagenet/multiedge_inference_bench/testalgorithms/basemodel.py"
+      url: "./examples/imagenet/multiedge_inference_bench/testalgorithms/manual/basemodel.py"
 
       # hyperparameters configuration for the python module; list type;
       hyperparameters:

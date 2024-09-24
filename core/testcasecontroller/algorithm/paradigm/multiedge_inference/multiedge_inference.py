@@ -96,13 +96,11 @@ class MultiedgeInference(ParadigmBase):
         return infer_res
 
     def _partition(self, partition_point_list, initial_model_path, sub_model_dir):
-        cnt = 0
         map_info = dict({})
-        for point in partition_point_list:
-            cnt += 1
+        for idx, point in enumerate(partition_point_list):
             input_names = point['input_names']
             output_names = point['output_names']
-            sub_model_path = sub_model_dir + '/' + 'sub_model_' + str(cnt) + '.onnx'
+            sub_model_path = sub_model_dir + '/' + 'sub_model_' + str(idx+1) + '.onnx'
             try:
                 onnx.utils.extract_model(initial_model_path, sub_model_path, input_names, output_names)
             except Exception as e:
