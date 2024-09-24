@@ -40,8 +40,8 @@ python ./examples/imagenet/multiedge_inference_bench/testalgorithms/manual/datas
 
 Next, download pretrained model via [[huggingface]](https://huggingface.co/optimum/vit-base-patch16-224/tree/main), rename it to vit-base-patch16-224.onnx and put it under <Ianvs_HOME>/initial_model/
 
-## Step 3. Run Benchmarking Job
-We are now ready to run the ianvs for benchmarking image clasification for high mobility scenarios on the ImageNet dataset.
+## Step 3. Run Benchmarking Job - Manual
+We are now ready to run the ianvs for benchmarking image classification for high mobility scenarios on the ImageNet dataset.
 
 ```python
 ianvs -f ./examples/imagenet/multiedge_inference_bench/classification_job_manual.yaml
@@ -60,6 +60,26 @@ You can view the graphical representation of relevant metrics in /ianvs/multiedg
 ![plot](images/plot.png)
 
 To compare the running conditions of the model with and without parallelism in the multiedge inference scenario, you can modify the value of --devices_info in base_model.py to devices_one.yaml to view the relevant metrics when the model runs on a single device.
+
+## Step 5. Run Benchmarking Job - Automatic
+We offer a profiling-based plus memory matching segmentation algorithm to compare with the method of manually specifying partitioning points. This method prioritizes the memory matching between the computational subgraph and the device. First, we profile the initial model on the CPU to collect memory usage, the number of parameters, computational cost, and the input and output data shapes for each layer, as well as the total number of layers and their names in the entire model. To facilitate subsequent integration, we have implemented profiling for three types of transformer models: vit, bert, and deit. Secondly, based on the results of the profiling and the device information provided in devices.yaml, we can identify the partitioning point that matches the device memory through a single traversal and perform model partitioning.
+
+You should first run the following command to generate a profiling result:
+```shell
+cd <Ianvs_HOME>
+python ./examples/imagenet/multiedge_inference_bench/testalgorithms/automatic/profiler.py
+```
+
+Then you will find a profiler_results.yml file in the <Ianvs_HOME>/examples/imagenet/multiedge_inference_bench/testalgorithms/automatic directory, just like this:
+![profiler_result](images/profiler_results.png)
+
+Then you can run the following command to perform benchmarking:
+```shell
+ianvs -f ./examples/imagenet/multiedge_inference_bench/classification_job_auto.yaml
+```
+
+After running, you will see the profit from the automatic method compared with the manual method.
+![result](images/auto_result.png)
 
 ## Explanation for devices.yaml
 
