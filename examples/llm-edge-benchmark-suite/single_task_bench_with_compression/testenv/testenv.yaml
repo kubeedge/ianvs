@@ -1,0 +1,15 @@
+testenv:
+  dataset:
+    train_url: "dataset/train_data/index.txt"
+    test_url: "dataset/test_data/index.txt"
+
+
+  metrics:
+    - name: "latency"
+      url: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/testenv/latency.py"
+    - name: "throughput"
+      url: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/testenv/throughput.py"
+    - name: "prefill_latency"
+      url: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/testenv/prefill_latency.py"
+    - name: "mem_usage"
+      url: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/testenv/mem_usage.py"

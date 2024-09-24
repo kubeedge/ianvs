@@ -1,0 +1,29 @@
+benchmarkingjob:
+  name: "benchmarkingjob"
+  workspace: "./workspace"
+
+  testenv: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/testenv/testenv.yaml"
+
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "llama-cpp"
+        url: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/testalgorithms/algorithm.yaml"
+
+  rank:
+    sort_by: 
+      - { "latency": "descend" }
+      - { "throughput": "ascend" }
+      - { "perplexity": "ascend" }
+
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+
+    selected_dataitem:
+      paradigms: [ "all" ]
+      modules: [ "all" ]
+      hyperparameters: [ "all" ]
+      metrics: [ "latency", "throughput", "perplexity" ]
+
+    save_mode: "selected_and_all"
