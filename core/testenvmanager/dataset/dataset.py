@@ -16,10 +16,15 @@
 
 import os
 import tempfile
-import json
 
 import pandas as pd
-from sedna.datasources import CSVDataParse, TxtDataParse, JSONDataParse, JsonlDataParse, JSONDataInfoParse
+from sedna.datasources import (
+    CSVDataParse,
+    TxtDataParse,
+    JSONDataParse,
+    JsonlDataParse,
+    JSONDataInfoParse
+)
 
 from core.common import utils
 from core.common.constant import DatasetFormat
@@ -131,8 +136,10 @@ class Dataset:
         file_format = utils.get_file_format(file_url)
         if file_format == DatasetFormat.JSONFORLLM.value:
             return file_url
-        else:
-            raise ValueError(f"The Data Info File must be named as `data_info.json`, but the current file is {file_url}.")
+        raise ValueError(
+            f"The Data Info File must be named as `data_info.json`, "
+            f"but the current file is {file_url}."
+        )
 
     def process_dataset(self):
         """
@@ -151,7 +158,7 @@ class Dataset:
             # raise NotImplementedError('to be done')
         else:
             raise NotImplementedError('not one of train_index/train_data/train_data_info')
-        
+
         if self.test_index:
             self.test_url = self._process_index_file(self.test_index)
         elif self.test_data:

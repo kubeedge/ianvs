@@ -104,7 +104,7 @@ class Algorithm:
 
         if self.paradigm_type == ParadigmType.LIFELONG_LEARNING.value:
             return LifelongLearning(workspace, **config)
-        
+
         if self.paradigm_type == ParadigmType.JOINT_INFERENCE.value:
             return JointInference(workspace, **config)
 

@@ -16,15 +16,10 @@
 
 # Ianvs imports
 import os
-from copy import deepcopy
+from tqdm import tqdm
 
-import torch.cuda
 from core.common.constant import ParadigmType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
-from sedna.common.class_factory import ClassFactory, ClassType
-
-from tqdm import tqdm
-# from sedna_joint_inference import JointInference as SednaJointInference
 
 class JointInference(ParadigmBase):
     """
@@ -55,7 +50,10 @@ class JointInference(ParadigmBase):
     def __init__(self, workspace, **kwargs):
         ParadigmBase.__init__(self, workspace, **kwargs)
         self.kwargs = kwargs
-        self.hard_example_mining_mode = kwargs.get("hard_example_mining_mode", "mining-then-inference")
+        self.hard_example_mining_mode = kwargs.get(
+            "hard_example_mining_mode",
+            "mining-then-inference"
+        )
 
     def run(self):
         """
@@ -88,14 +86,14 @@ class JointInference(ParadigmBase):
         os.makedirs(inference_output_dir, exist_ok=True)
 
         results = []
-        
+
         cloud_count, edge_count = 0,0
         pbar = tqdm(inference_dataset.x, ncols=100)
 
         for data in pbar:
-        # inference via sedna JointInference API 
+            # inference via sedna JointInference API
             infer_res = job.inference(
-                {"prompts": inference_dataset.prompts, "question":data}, 
+                {"prompts": inference_dataset.prompts, "question":data},
                 mining_mode=self.hard_example_mining_mode
             )
 
@@ -103,11 +101,9 @@ class JointInference(ParadigmBase):
                 edge_count += 1
             elif infer_res[3]:
                 cloud_count += 1
-    
+
             pbar.set_postfix({"Edge": edge_count, "Cloud": cloud_count})
-            
+
             results.append(infer_res)
 
         return results # (is_hard_example, res, edge_result, cloud_result)
-    
-        
