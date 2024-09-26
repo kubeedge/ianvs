@@ -79,12 +79,6 @@ What happens if you put a trained Agent model in a mismatched scenario? Here are
 
 <img src="images/Q2A_task_plan.png" alt="Q2A" style="zoom:100%;" />
 
-### 3.2.2 The DAily Home LIfe Activity Dataset
-
-DAHLIA dataset is devoted to human activity recognition, which is a major issue for adapting smart-home services such as user assistance.
-
-<img src="images/DAHLIA.png" alt="DAHLIA" style="zoom:100%;" />
-
 ## 3.3 Ianvs Implement
 
 <img src="images/llm_agent_ianvs.png" alt="llm_agent_ianvs" style="zoom:100%;" />
