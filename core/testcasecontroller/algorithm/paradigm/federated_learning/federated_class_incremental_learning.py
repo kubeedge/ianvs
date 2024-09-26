@@ -269,33 +269,27 @@ class FederatedClassIncrementalLearning(FederatedLearning):
                     [testdataset_files[index]["y"][data_index]], res
                 )
                 acc_list.append(acc)
-            if index == len(testdataset_files) - 1:
-                self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value][
-                    "accuracy"
-                ] = np.mean(acc_list)
             old_class_acc_list.extend(acc_list)
         current_forget_rate = 0.0
         max_acc_sum = 0
         self.accuracy_per_round.append(old_class_acc_list)
+        self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value]["accuracy"] = (
+            np.mean(old_class_acc_list)
+        )
         # caculate the forget rate
         for i in range(len(old_class_acc_list)):
             max_acc_diff = 0
             for j in range(incremental_round):
                 acc_per_round = self.accuracy_per_round[j]
                 if i < len(acc_per_round):
-                    LOGGER.info(
-                        f"acc_per_round: {acc_per_round[i]}"
-                        + f" and diff is {acc_per_round[i] - old_class_acc_list[i]}"
-                    )
                     max_acc_diff = max(
                         max_acc_diff, acc_per_round[i] - old_class_acc_list[i]
                     )
             max_acc_sum += max_acc_diff
-            LOGGER.info(f"max_acc_diff: {max_acc_diff}")
         current_forget_rate = (
             max_acc_sum / len(old_class_acc_list) if incremental_round > 0 else 0.0
         )
         LOGGER.info(
-            f"for current round: {incremental_round} forget rate: {current_forget_rate}"
+            f"for current round: {incremental_round} forget rate: {current_forget_rate} task avg acc: {self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value]['accuracy']}"
         )
         return current_forget_rate

@@ -140,6 +140,7 @@ class FedCiMatch:
         if self.task_size is None:
             self.task_size = task_size
         is_new_task = task_id != self.old_task_id
+        self.is_new_task = is_new_task
         if is_new_task:
             self.best_old_model = (
                 (self.feature_extractor, self.classifier)
@@ -152,7 +153,7 @@ class FedCiMatch:
             logging.info(f"num_classes: {self.num_classes}")
             if self.current_classes is not None:
                 self.last_classes = self.current_classes
-            self.build_classifier()
+            # self.build_classifier()
             self.current_classes = np.unique(train_data["label_y"]).tolist()
             logging.info(f"current_classes: {self.current_classes}")
 
@@ -196,10 +197,10 @@ class FedCiMatch:
             logging.info(
                 f"train_x shape: {train_x.shape} and train_y shape: {train_y.shape}"
             )
-            logging.info(
-                f"unlabel_x shape: {self.unlabeled_train_set[0].shape} and unlabel_y shape: {self.unlabeled_train_set[1].shape}"
-            )
 
+        logging.info(
+            f"train_x shape: {train_x.shape} and train_y shape: {train_y.shape}"
+        )
         label_data_loader = self.data_preprocessor.preprocess_labeled_dataset(
             train_x, train_y, self.batch_size
         )
@@ -209,6 +210,9 @@ class FedCiMatch:
                 self.unlabeled_train_set[0],
                 self.unlabeled_train_set[1],
                 self.batch_size,
+            )
+            logging.info(
+                f"unlabel_x shape: {self.unlabeled_train_set[0].shape} and unlabel_y shape: {self.unlabeled_train_set[1].shape}"
             )
         return label_data_loader, unlabel_data_loader
 
@@ -243,15 +247,25 @@ class FedCiMatch:
         exemplar_data = []
         exemplar_label = []
         class_mean, fe_ouput = self.compute_exemplar_mean(images)
-        now_class_mean = np.zeros((1, fe_ouput.shape[1]))
-        for i in range(m):
-            x = class_mean - (now_class_mean + fe_ouput) / (i + 1)
-            x = np.linalg.norm(x)
-            index = np.argmin(x)
-            now_class_mean += fe_ouput[index]
-            exemplar_data.append(images[index])
-            exemplar_label.append(class_id)
+        # cl_mean = tf.reduce_mean(class_mean, axis=0)
+        # now_class_mean = np.zeros((1, fe_ouput.shape[1]))
+        diff = tf.abs(fe_ouput - class_mean)
+        distance = [float(tf.reduce_sum(dis).numpy()) for dis in diff]
+
+        sorted_index = np.argsort(distance).tolist()
+        if len(sorted_index) > m:
+            sorted_index = sorted_index[:m]
+        exemplar_data = [images[i] for i in sorted_index]
+        exemplar_label = [class_id] * len(exemplar_data)
         self.exemplar_set.append((exemplar_data, exemplar_label))
+        # for i in range(m):
+        #     x = class_mean - (now_class_mean + fe_ouput) / (i + 1)
+        #     x = np.linalg.norm(x)
+        #     index = np.argmin(x)
+        #     now_class_mean += fe_ouput[index]
+        #     exemplar_data.append(images[index])
+        #     exemplar_label.append(class_id)
+        # self.exemplar_set.append((exemplar_data, exemplar_label))
 
     def compute_exemplar_mean(self, images):
         images_data = (
@@ -261,24 +275,28 @@ class FedCiMatch:
         )
         fe_output = self.feature_extractor.predict(images_data)
         print("fe_output shape:", fe_output.shape)
-        fe_output = tf.nn.l2_normalize(fe_output).numpy()
-        class_mean = np.mean(fe_output, axis=0)
+        class_mean = tf.reduce_mean(fe_output, axis=0)
+        # class_mean = np.mean(fe_output, axis=0)
         return class_mean, fe_output
 
     def train(self, round):
-
+        # optimizer = keras.optimizers.SGD(
+        #     learning_rate=self.learning_rate, momentum=0.9, weight_decay=0.0001
+        # )
         optimizer = keras.optimizers.Adam(
-            learning_rate=self.learning_rate, weight_decay=0.00001
+            learning_rate=self.learning_rate, weight_decay=0.0001
         )
-        feature_extractor_params = self.feature_extractor.trainable_variables
-        classifier_params = self.classifier.trainable_variables
+        q = []
+        logging.info(f"is new task: {self.is_new_task}")
+        # if self.classifier is not None:
+        #     q = self.caculate_pre_update()
+        if self.is_new_task:
+            self.build_classifier()
+            # self.is_new_task = False
         all_params = []
-        all_params.extend(feature_extractor_params)
-        all_params.extend(classifier_params)
-        # all_params = []
-        # all_params.extend(self.feature_extractor.trainable_variables)
-        # all_params.extend(self.classifier.trainable_variables)
-        q = self.caculate_pre_update()
+        all_params.extend(self.feature_extractor.trainable_variables)
+        all_params.extend(self.classifier.trainable_variables)
+
         for epoch in range(self.epochs):
             # for (labeled_data, unlabeled_data) in zip(self.labeled_train_loader, self.unlabeled_train_loader):
             for step, (labeled_x, labeled_y) in enumerate(self.labeled_train_loader):
@@ -295,13 +313,16 @@ class FedCiMatch:
                     correct = tf.reduce_sum(
                         tf.cast(tf.equal(label_pred, labeled_y), dtype=tf.int32)
                     )
-                    loss = self.supervised_loss(labeled_x, labeled_y, q, step)
+                    CE_loss = self.supervised_loss(labeled_x, labeled_y)
+                    KD_loss = self.distil_loss(labeled_x, labeled_y, q, step)
                     # loss = tf.reduce_mean(keras.losses.sparse_categorical_crossentropy(labeled_y, y_pred, from_logits=True))
                     # if round > self.warm_up_round:
                     #     unsupervised_loss = self.unsupervised_loss(weak_unlabeled_x, strong_unlabeled_x, unlabeled_x)
                     #     loss = 0.5 * supervised_loss + 0.5 * unsupervised_loss
+                    loss = CE_loss if KD_loss == 0 else CE_loss + 0.4 * KD_loss
+                    loss = CE_loss
                 logging.info(
-                    f"epoch {epoch} step {step} loss: {loss} correct {correct} and total {labeled_x.shape[0]}"
+                    f"epoch {epoch} step {step} loss: {loss}  correct {correct} and total {labeled_x.shape[0]} class is {np.unique(labeled_y)}"
                 )
                 grads = tape.gradient(loss, all_params)
                 optimizer.apply_gradients(zip(grads, all_params))
@@ -316,7 +337,7 @@ class FedCiMatch:
         logging.info(f"q shape: {len(q)}")
         return q
 
-    def supervised_loss(self, x, y, q, step):
+    def supervised_loss(self, x, y):
         input = x
         input = self.feature_extractor(input, training=True)
         y_pred = self.classifier(input, training=True)
@@ -324,35 +345,43 @@ class FedCiMatch:
         loss = keras.losses.categorical_crossentropy(target, y_pred, from_logits=True)
         logging.info(f"loss shape: {loss.shape}")
         loss = tf.reduce_mean(loss)
-        KD_loss = self.distil_loss(x, y, q, step)
-        return loss + KD_loss
+        logging.info(f"CE loss: {loss}")
+
+        return loss
 
     def distil_loss(self, x, y, q, step):
         KD_loss = 0
+
         if len(self.learned_classes) > 0 and self.best_old_model is not None:
             g = self.feature_extractor(x, training=True)
             g = self.classifier(g, training=True)
             og = self.best_old_model[0](x, training=False)
             og = self.best_old_model[1](og, training=False)
-            logging.info(f"og shape: {og.shape} g shape: {g.shape}")
-            og = tf.nn.sigmoid(og)
-            g = tf.nn.sigmoid(g)
-            distil_target = tf.Variable(g)
-            distil_target[:, : og.shape[1]].assign(og)
-            q_i = q[step]
-            are_equal = tf.reduce_all(tf.equal(q_i, g))
-            logging.info(
-                f"q_i shape: {q_i.shape} g shape: {g.shape}  are equal: {are_equal.numpy()}"
+            # logging.info(f"og shape: {og.shape} g shape: {g.shape}")
+            sigmoid_og = tf.nn.sigmoid(og)
+            sigmoid_g = tf.nn.sigmoid(g)
+            softmax_og = tf.nn.softmax(og)
+            softmax_g = tf.nn.softmax(g)
+            kl_loss = keras.losses.kl_divergence(
+                softmax_og, softmax_g[:, : og.shape[1]]
             )
+            # distil_target = tf.Variable(g)
+            # distil_target[:, : og.shape[1]].assign(og)
+            # q_i = q[step]
+            # are_equal = tf.reduce_all(tf.equal(q_i, g))
+            # logging.info(
+            #     f"q_i shape: {q_i.shape} g shape: {g.shape}  are equal: {are_equal.numpy()}"
+            # )
             BCELoss = keras.losses.BinaryCrossentropy()
-            test_distill_loss = BCELoss(distil_target, g)
-            logging.info(f"test loss {test_distill_loss}")
+            # test_distill_loss = BCELoss(og, g[:, : og.shape[1]])
+            # logging.info(f"test loss {kl_loss.numpy()}")
             loss = []
             for y in self.learned_classes:
                 if y not in self.current_classes:
-                    loss.append(BCELoss(q_i[:, y], g[:, y]))
-            # logging.info(f"test loss: {len(loss)}")
+                    loss.append(BCELoss(sigmoid_og[:, y], sigmoid_g[:, y]))
+            # logging.info(f"test loss: {len(loss)} {loss}")
             KD_loss = tf.reduce_sum(loss)
+            # KD_loss = tf.reduce_mean(kl_loss)
         logging.info(f"KD_loss: {KD_loss}")
         return KD_loss
 
@@ -377,8 +406,8 @@ class FedCiMatch:
         prob = tf.nn.softmax(pred, axis=1)
         pred = tf.argmax(prob, axis=1)
         pred = tf.cast(pred, dtype=tf.int32)
-        return pred 
-    
+        return pred
+
     def icarl_predict(self, x):
         mean = np.array((0.5071, 0.4867, 0.4408), np.float32).reshape(1, 1, -1)
         std = np.array((0.2675, 0.2565, 0.2761), np.float32).reshape(1, 1, -1)

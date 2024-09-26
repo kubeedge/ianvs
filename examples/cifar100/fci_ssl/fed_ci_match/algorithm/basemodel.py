@@ -11,7 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import sys
 
+sys.path.append(".")
+sys.path.append("..")
 import os
 import numpy as np
 import keras
@@ -26,17 +29,17 @@ __all__ = ["BaseModel"]
 logging.getLogger().setLevel(logging.INFO)
 
 
-@ClassFactory.register(ClassType.GENERAL, alias="fci_ssl")
+@ClassFactory.register(ClassType.GENERAL, alias="FedCILMatch")
 class BaseModel:
     def __init__(self, **kwargs) -> None:
         self.kwargs = kwargs
         self.learning_rate = kwargs.get("learning_rate", 0.001)
         self.epochs = kwargs.get("epochs", 1)
         self.batch_size = kwargs.get("batch_size", 32)
-        self.task_size = kwargs.get("task_size", 10)
+        self.task_size = kwargs.get("task_size", 2)
         self.memory_size = kwargs.get("memory_size", 2000)
         # self.fe = self.build_feature_extractor()
-        self.num_classes = 10  # the number of class for the first task
+        self.num_classes = 50  # the number of class for the first task
         self.FedCiMatch = FedCiMatch(
             self.num_classes,
             self.batch_size,
@@ -71,7 +74,7 @@ class BaseModel:
         for data in data_files:
             x = np.load(data)
             logging.info(f"predicting {x.shape}")
-            res = self.FedCiMatch.icarl_predict(x)
+            res = self.FedCiMatch.predict(x)
             # pred = tf.cast(tf.argmax(logits, axis=1), tf.int32)
             result[data] = res.numpy()
         print("finish predict")

@@ -32,12 +32,10 @@ class FedAvg(BaseAggregation, abc.ABC):
     def __init__(self):
         super(FedAvg, self).__init__()
         self.proxy_server = ProxyServer(
-            learning_rate=0.01,
-            num_classes=10,
-            test_data=None
+            learning_rate=0.01, num_classes=10, test_data=None
         )
-        self.task_id = -1 
-        self.num_classes =10
+        self.task_id = -1
+        self.num_classes = 50
 
     def aggregate(self, clients):
         """
@@ -59,37 +57,35 @@ class FedAvg(BaseAggregation, abc.ABC):
             return self.weights
         self.total_size = sum([c.num_samples for c in clients])
         # print(next(iter(clients)).weights)
-        old_weight = [np.zeros(np.array(c).shape) for c in
-                      next(iter(clients)).weights]
+        old_weight = [np.zeros(np.array(c).shape) for c in next(iter(clients)).weights]
         updates = []
         for inx, row in enumerate(old_weight):
             for c in clients:
-                row += (np.array(c.weights[inx]) * c.num_samples
-                        / self.total_size)
+                row += np.array(c.weights[inx]) * c.num_samples / self.total_size
             updates.append(row.tolist())
-        
-        self.weights  = [np.array(layer) for layer in updates]
-        
+
+        self.weights = [np.array(layer) for layer in updates]
+
         print("finish aggregation....")
         return self.weights
 
-    def helper_function(self,train_infos, **kwargs):
+    def helper_function(self, train_infos, **kwargs):
         proto_grad = []
         task_id = -1
         # print(train_infos)
-        for key, value  in train_infos.items():
-            if 'proto_grad' == key and value is not None:
+        for key, value in train_infos.items():
+            if "proto_grad" == key and value is not None:
                 # print(info)
                 for grad_i in value:
                     proto_grad.append(grad_i)
                 # proto_grad.append(info['proto_grad'])
-            if 'task_id' == key:
+            if "task_id" == key:
                 task_id = max(value, task_id)
         self.proxy_server.dataload(proto_grad)
         if task_id > self.task_id:
             self.task_id = task_id
-            print(f'incremental num classes is {self.num_classes * (task_id + 1)}')
-            self.proxy_server.increment_class( self.num_classes * (task_id + 1) )
+            print(f"incremental num classes is {self.num_classes * (task_id + 1)}")
+            self.proxy_server.increment_class(self.num_classes * (task_id + 1))
         self.proxy_server.set_weights(self.weights)
-        print(f'finish set weight for proxy server')
-        return {'best_old_model': self.proxy_server.model_back()}
+        print(f"finish set weight for proxy server")
+        return {"best_old_model": self.proxy_server.model_back()}

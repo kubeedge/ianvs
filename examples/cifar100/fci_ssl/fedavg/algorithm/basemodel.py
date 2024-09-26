@@ -7,58 +7,62 @@ import tensorflow as tf
 from keras import Sequential
 from keras.src.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
 from sedna.common.class_factory import ClassType, ClassFactory
-from resnet import resnet10
-from network import NetWork, incremental_learning
+from model import resnet10
+
 __all__ = ["BaseModel"]
-os.environ['BACKEND_TYPE'] = 'KERAS'
+os.environ["BACKEND_TYPE"] = "KERAS"
 logging.getLogger().setLevel(logging.INFO)
 
 
-@ClassFactory.register(ClassType.GENERAL, alias='fcil')
+@ClassFactory.register(ClassType.GENERAL, alias="fedavg")
 class BaseModel:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
         print(f"kwargs: {kwargs}")
-        self.batch_size = kwargs.get('batch_size', 1)
+        self.batch_size = kwargs.get("batch_size", 1)
         print(f"batch_size: {self.batch_size}")
-        self.epochs = kwargs.get('epochs', 1)
-        self.lr = kwargs.get('lr', 0.001)
-        self.optimizer = keras.optimizers.SGD(learning_rate=self.lr)
+        self.epochs = kwargs.get("epochs", 1)
+        self.learning_rate = kwargs.get("learning_rate", 0.001)
+        self.num_classes = 50
+        self.task_size = 50
         self.old_task_id = -1
-        self.fe = resnet10(10)
+        self.mean = np.array((0.5071, 0.4867, 0.4408), np.float32).reshape(1, 1, -1)
+        self.std = np.array((0.2675, 0.2565, 0.2761), np.float32).reshape(1, 1, -1)
+        self.fe = resnet10()
         logging.info(type(self.fe))
-        self.model = NetWork(100, self.fe)
+        self.classifier = None
         self._init_model()
 
-
-
     def _init_model(self):
-        self.model.compile(optimizer='sgd', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-        x = np.random.rand(1, 32, 32, 3)
-        y = np.random.randint(0, 10, 1)
-
-        self.model.fit(x, y, epochs=1)
+        self.fe.compile(
+            optimizer="sgd",
+            loss="sparse_categorical_crossentropy",
+            metrics=["accuracy"],
+        )
+        self.fe.call(keras.Input(shape=(32, 32, 3)))
+        fe_weights = self.fe.get_weights()
+        self.fe_weights_length = len(fe_weights)
 
     def load(self, model_url=None):
         logging.info(f"load model from {model_url}")
-        extra_model_path = os.path.basename(model_url) + "/model"
-        with zipfile.ZipFile(model_url, 'r') as zip_ref:
-            zip_ref.extractall(extra_model_path)
-        self.model = tf.saved_model.load(extra_model_path)
 
     def _initialize(self):
         logging.info(f"initialize finished")
 
     def get_weights(self):
-        logging.info(f"get_weights")
-        weights = [layer.tolist() for layer in self.model.get_weights()]
-        logging.info(len(weights))
+        weights = []
+        fe_weights = self.fe.get_weights()
+        self.fe_weights_length = len(fe_weights)
+        clf_weights = self.classifier.get_weights()
+        weights.extend(fe_weights)
+        weights.extend(clf_weights)
         return weights
 
     def set_weights(self, weights):
-        weights = [np.array(layer) for layer in weights]
-        self.model.set_weights(weights)
-        logging.info("----------finish set weights-------------")
+        fe_weights = weights[: self.fe_weights_length]
+        clf_weights = weights[self.fe_weights_length :]
+        self.fe.set_weights(fe_weights)
+        self.classifier.set_weights(clf_weights)
 
     def save(self, model_path=""):
         logging.info("save model")
@@ -67,45 +71,106 @@ class BaseModel:
         logging.info("model info")
         return {}
 
+    def build_classifier(self):
+        if self.classifier != None:
+            new_classifier = keras.Sequential(
+                [
+                    # tf.keras.Input(shape=(None, self.feature_extractor.layers[-2].output_shape[-1])),
+                    keras.layers.Dense(
+                        self.num_classes, kernel_initializer="lecun_normal"
+                    )
+                ]
+            )
+            new_classifier.build(
+                input_shape=(None, self.fe.layers[-2].output_shape[-1])
+            )
+            new_weights = new_classifier.get_weights()
+            old_weights = self.classifier.get_weights()
+            # 复制旧参数
+            # weight
+            new_weights[0][0 : old_weights[0].shape[0], 0 : old_weights[0].shape[1]] = (
+                old_weights[0]
+            )
+            # bias
+            new_weights[1][0 : old_weights[1].shape[0]] = old_weights[1]
+            new_classifier.set_weights(new_weights)
+            self.classifier = new_classifier
+        else:
+            logging.info(f"input shape is {self.fe.layers[-2].output_shape[-1]}")
+            self.classifier = keras.Sequential(
+                [
+                    # tf.keras.Input(shape=(None, self.feature_extractor.layers[-2].output_shape[-1])),
+                    keras.layers.Dense(
+                        self.num_classes, kernel_initializer="lecun_normal"
+                    )
+                ]
+            )
+            self.classifier.build(
+                input_shape=(None, self.fe.layers[-2].output_shape[-1])
+            )
 
-    
-    def train(self, train_data, valid_data,  **kwargs):
+        logging.info(f"finish ! initialize classifier {self.classifier.summary()}")
+
+    def train(self, train_data, valid_data, **kwargs):
+        optimizer = keras.optimizers.SGD(
+            learning_rate=self.learning_rate, momentum=0.9, weight_decay=0.0001
+        )
         round = kwargs.get("round", -1)
         task_id = kwargs.get("task_id", -1)
         task_size = kwargs.get("task_size", 10)
-        self.model.compile(optimizer=self.optimizer, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-        logging.info(f"train data: {train_data[0].shape} {train_data[1].shape}")
-        train_db = self.data_process(train_data)
+        if self.old_task_id != task_id:
+            self.old_task_id = task_id
+            self.num_classes = self.task_size * (task_id + 1)
+            self.build_classifier()
+        # logging.info(f"train data: {train_data[0].shape} {train_data[1].shape}")
+        data = (train_data["label_x"], train_data["label_y"])
+        train_db = self.data_process(data)
         logging.info(train_db)
+        all_params = []
+        all_params.extend(self.fe.trainable_variables)
+        all_params.extend(self.classifier.trainable_variables)
         for epoch in range(self.epochs):
             total_loss = 0
             total_num = 0
             logging.info(f"Epoch {epoch + 1} / {self.epochs}")
             logging.info("-" * 50)
-            for x, y  in train_db:
+            for x, y in train_db:
                 # self.model.fit(x, y, batch_size=self.batch_size)
                 with tf.GradientTape() as tape:
-                    logits = self.model(x, training=True)
-                    loss = tf.reduce_mean(keras.losses.sparse_categorical_crossentropy(y, logits, from_logits=True))
-                grads = tape.gradient(loss, self.model.trainable_variables)
-                self.optimizer.apply(grads, self.model.trainable_variables)
+                    logits = self.classifier(self.fe(x, training=True), training=True)
+                    loss = tf.reduce_mean(
+                        keras.losses.sparse_categorical_crossentropy(
+                            y, logits, from_logits=True
+                        )
+                    )
+                grads = tape.gradient(loss, all_params)
+                optimizer.apply(grads, all_params)
                 # self.optimizer.apply_gradients(zip(grads, self.model.trainable_variables))
                 total_loss += loss
                 total_num += 1
 
-            logging.info(f"train round {round}: Epoch {epoch + 1} avg loss: {total_loss / total_num}")
+                logging.info(
+                    f"train round {round}: Epoch {epoch + 1} avg loss: {total_loss / total_num}"
+                )
         logging.info(f"finish round {round} train")
-        self.eval(train_data, round)
-        return {"num_samples": train_data[0].shape[0]}
+        # self.eval(train_data, round)
+        return {"num_samples": data[0].shape[0]}
 
-    def predict(self, data, **kwargs):
+    def predict(self, data_files, **kwargs):
         result = {}
-        for data in data.x:
+        for data in data_files:
             x = np.load(data)
-            logits = self.model(x, training=False)
-            pred = tf.cast(tf.argmax(logits, axis=1), tf.int32)
+            logging.info(f"predicting {x.shape}")
+            mean = np.array((0.5071, 0.4867, 0.4408), np.float32).reshape(1, 1, -1)
+            std = np.array((0.2675, 0.2565, 0.2761), np.float32).reshape(1, 1, -1)
+            x = (tf.cast(x, dtype=tf.float32) / 255.0 - mean) / std
+            pred = self.classifier(self.fe(x, training=False))
+            prob = tf.nn.softmax(pred, axis=1)
+            pred = tf.argmax(prob, axis=1)
+            pred = tf.cast(pred, dtype=tf.int32)
+            # pred = tf.cast(tf.argmax(logits, axis=1), tf.int32)
             result[data] = pred.numpy()
-        logging.info("finish predict")
+        print("finish predict")
         return result
 
     def eval(self, data, round, **kwargs):
@@ -118,7 +183,6 @@ class BaseModel:
             # prob = tf.nn.softmax(logits, axis=1)
             pred = tf.argmax(logits, axis=1)
             pred = tf.cast(pred, dtype=tf.int32)
-            pred = tf.reshape(pred, y.shape)
             # print(pred.shape, y.shape)
             correct = tf.cast(tf.equal(pred, y), dtype=tf.int32)
             correct = tf.reduce_sum(correct)
@@ -132,6 +196,16 @@ class BaseModel:
 
     def data_process(self, data, **kwargs):
 
-        assert data is not None,  "data is None"
-        # data[0]'shape = (50000, 32,32,3) data[1]'shape = (50000,1)
-        return tf.data.Dataset.from_tensor_slices((data[0], data[1])).shuffle(100000).batch(self.batch_size)
+        assert data is not None, "data is None"
+        # data[0]'shape = (50000, 32,32,3) data[1]'shape = (50000,)
+        return (
+            tf.data.Dataset.from_tensor_slices((data[0], data[1]))
+            .shuffle(100000)
+            .map(
+                lambda x, y: (
+                    (tf.cast(x, dtype=tf.float32) / 255.0 - self.mean) / self.std,
+                    tf.cast(y, dtype=tf.int32),
+                )
+            )
+            .batch(self.batch_size)
+        )

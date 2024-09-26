@@ -34,3 +34,4 @@ testenv:
   # incremental rounds setting of incremental learning; int type; default value is 2;
   incremental_rounds: 50
   round: 1
+  client_number: 2

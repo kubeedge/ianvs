@@ -9,18 +9,18 @@ algorithm:
 
   modules:
     - type: "basemodel"
-      name: "fci_ssl"
+      name: "FedCILMatch"
       url: "./examples/cifar100/fci_ssl/fed_ci_match/algorithm/basemodel.py"
       hyperparameters:
         - batch_size:
             values:
-              - 128
+              - 64
         - learning_rate:
             values:
               - 0.001
         - epochs:
             values:
-              - 1
+              - 24
     - type: "aggregation"
       name: "FedAvg"
       url: "./examples/cifar100/fci_ssl/fed_ci_match/algorithm/aggregation.py"
