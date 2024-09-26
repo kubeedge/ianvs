@@ -69,7 +69,11 @@ This project presents three scenarios, which are audio task, human posture class
 
 What happens if you put a trained Agent model in a mismatched scenario? Here are two examples:
 1. Set ***Agent #1*** to ***Scene #3***: Data source does not match;
+<<<<<<< HEAD
 2. Place ***Agent #3*** in ***Scene #2***: A task planning error occurred.
+=======
+2. Set ***Agent #3*** in ***Scene #2***: A task planning error occurred.
+>>>>>>> 1e635499adc6b2b7a5d1e56fd146bb609de668ad
 
 ## 3.2 DataSet
 
@@ -79,6 +83,11 @@ What happens if you put a trained Agent model in a mismatched scenario? Here are
 
 <img src="images/Q2A_task_plan.png" alt="Q2A" style="zoom:100%;" />
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 1e635499adc6b2b7a5d1e56fd146bb609de668ad
 ## 3.3 Ianvs Implement
 
 <img src="images/llm_agent_ianvs.png" alt="llm_agent_ianvs" style="zoom:100%;" />
