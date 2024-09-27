@@ -1,0 +1,27 @@
+algorithm:
+  # paradigm name; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  paradigm_type: "multiedgeinference"
+  # the url address of initial model; string type; optional;
+  initial_model_url: "./initial_model/vit-base-patch16-224.onnx"
+
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # kind of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel"
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "Classification"
+      # the url address of python module; string type;
+      url: "./examples/imagenet/multiedge_inference_bench/testalgorithms/manual/basemodel.py"
+
+      # hyperparameters configuration for the python module; list type;
+      hyperparameters:
+        # name of the hyperparameter; string type;
+          - batch_size:
+             values:
+              - 1
