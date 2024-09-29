@@ -1,0 +1,2421 @@
+[
+    {
+        "code_snippet":"    private void drawURL(Graphics g) {\n\tString sense = (String)getAttribute(\"Sensitive\");\n\tif (sense != null && sense.length() > 0) {\n\t    Rectangle r = displayBox();\n\t    g.setColor(Color.red);\n\t    g.setFont(dialogFont);\n\t    g.drawString(\"url=\" + sense, r.x, r.y + r.height);\n\t}\n    }\n",
+        "comment": "draws the map of the figure\n"
+    },
+    {
+        "code_snippet":"    protected SVGDrawingPanel createDrawingComponent() {\n        SVGDrawingPanel p = new SVGDrawingPanel();\n        DefaultDrawingEditor editor = new DefaultDrawingEditor();\n        p.setEditor(new DefaultDrawingEditor());\n\n        return p;\n    }\n",
+        "comment": "creates the drawing component\n"
+    },
+    {
+        "code_snippet":"    public PropertyChangeListener getTarget() {\n        return weakRef.get();\n    }\n",
+        "comment": "returns the target of this proxy\n"
+    },
+    {
+        "code_snippet":"    protected Method getSetter() {\n        try {\n            return source.getClass().getMethod(\"set\" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1), type);\n        } catch (Exception e) {\n            InternalError ie = new InternalError(\"Couldn't find setter for property \\\"\" + propertyName + \"\\\" in \" + source);\n            ie.initCause(e);\n            throw ie;\n        }\n    }\n",
+        "comment": "returns the setter for the property\n"
+    },
+    {
+        "code_snippet":"    public void add(JMenu submenu) {\n        JMenuItem item = getPopupMenu().add(submenu);\n        updateItemFont(submenu);\n    }\n",
+        "comment": "adds a sub menu to the popup menu\n"
+    },
+    {
+        "code_snippet":"    protected Connector findConnectableConnector(Figure connectableFigure, Point2D.Double p) {\n        Connector target = (connectableFigure == null) ? null : connectableFigure.findConnector(p, getConnection());\n\n        if ((connectableFigure != null) && connectableFigure.isConnectable() && !connectableFigure.includes(getOwner()) && getConnection().canConnect(connector, target)) {\n            return target;\n        }\n        return null;\n    }\n",
+        "comment": "finds a connection end figure\n"
+    },
+    {
+        "code_snippet":"    public void setDrawingEditor(DrawingEditor newValue) {\n        DrawingEditor oldValue = drawingEditor;\n        if (drawingEditor != null) {\n            drawingEditor.removePropertyChangeListener(eventHandler);\n        }\n        this.drawingEditor = newValue;\n        if (drawingEditor != null) {\n            drawingEditor.addPropertyChangeListener(new WeakPropertyChangeListener(eventHandler));\n        }\n        updateActiveView();\n    }\n",
+        "comment": "attaches the figure attribute editor handler to the specified drawing editor\n"
+    },
+    {
+        "code_snippet":"    protected InputMap createInputMap() {\n        return null;\n    }\n",
+        "comment": "override this method to create a tool specific input map which\n"
+    },
+    {
+        "code_snippet":"    protected ActionMap createActionMap() {\n        return null;\n    }\n",
+        "comment": "override this method to create a tool specific action map which\n"
+    },
+    {
+        "code_snippet":"    public ImageIcon getIconProperty(String key, Class baseClass) {\n        try {\n            String rsrcName = getStringRecursive(key + \".icon\");\n\n            if (rsrcName.equals(\"\")) {\n                return null;\n            }\n\n            URL url = baseClass.getResource(rsrcName);\n            if (isVerbose && url == null) {\n                System.err.println(\"Warning ResourceBundleUtil[\" + baseName + \"].getIconProperty \\\"\" + key + \".icon\\\" resource:\" + rsrcName + \" not found.\");\n            }\n            return (url == null) ? null : new ImageIcon(url);\n        } catch (MissingResourceException e) {\n            if (isVerbose) {\n                System.err.println(\"Warning ResourceBundleUtil[\" + baseName + \"].getIconProperty \\\"\" + key + \".icon\\\" not found.\");\n                //e.printStackTrace();\n            }\n            return null;\n        }\n    }\n",
+        "comment": "get an image icon from the resource bundle\n"
+    },
+    {
+        "code_snippet":"    protected void addAction(JMenu m, View view, String actionID) {\n        addAction(m, getAction(view, actionID));\n    }\n",
+        "comment": "adds the specified action as a menu item to the supplied menu\n"
+    },
+    {
+        "code_snippet":"    protected void maybeAddSeparator(JMenu m) {\n        m.putClientProperty(\"needsSeparator\", Boolean.TRUE);\n    }\n",
+        "comment": "adds a separator to the supplied menu\n"
+    },
+    {
+        "code_snippet":"    protected void updateView(View oldValue, View newValue) {\n        // We only need to do this, if the view has not been explicitly set\n        if (view == null) {\n            if (oldValue != null) {\n                uninstallViewListeners(oldValue);\n            }\n            if (newValue != null) {\n                installViewListeners(newValue);\n            }\n            firePropertyChange(VIEW_PROPERTY, oldValue, newValue);\n            updateEnabled(oldValue != null && oldValue.isEnabled(),\n                    newValue != null && newValue.isEnabled());\n            updateView();\n        }\n    }\n",
+        "comment": "updates the listeners of this action depending on the current view\n"
+    },
+    {
+        "code_snippet":"    protected void updateEnabled(boolean oldValue, boolean newValue) {\n        firePropertyChange(\"enabled\", oldValue, isEnabled());\n    }\n",
+        "comment": "updates the enabled state of this action depending on the new enabled\n"
+    },
+    {
+        "code_snippet":"    protected void notifyPropertyChangeListener(String property, Object oldValue, Object newValue) {\n        // make a copy of the listener vector to synchronized not needed for transmit\n        Vector v;\n        synchronized(this)\n            {\n                v = (Vector) listeners.clone();\n            }\n        if (log.isDebugEnabled()) log.debug(\"notify \"+v.size()\n                                            +\" listeners about property \"\n                                            +property);\n        // forward to all listeners\n        int cnt = v.size();\n        for (int i=0; i < cnt; i++) {\n            PropertyChangeListener client = (PropertyChangeListener) v.elementAt(i);\n            client.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));\n        }\n    }\n",
+        "comment": "trigger the notification of all property change listeners\n"
+    },
+    {
+        "code_snippet":"    public void update() {\n\tpreviousValue = currentValue;\n\t currentValue = component.getPollData();\n    }\n",
+        "comment": "save the last value from the component and then get the latest value\n"
+    },
+    {
+        "code_snippet":"    public void poll() {\n\tcontroller.poll();\n\n\tfor (JInputComponent c: components)\n\t    c.update();\n    }\n",
+        "comment": "poll the current state of the jinput device\n"
+    },
+    {
+        "code_snippet":"    private void startPolling() {\n\t\tif ((pollTimer != null) ) {\n\t\t    if (!pollTimer.isRunning())\n\t\t    \tpollTimer.start();\n\t\t}\n    }\n",
+        "comment": "setup a timer to start polling the jinput devices at a specified time\n"
+    },
+    {
+        "code_snippet":"    private void stopPolling() {\n\t\tif ((pollTimer != null) && (listenerList.getListenerCount() <= 0)) {\n\t\t    if (pollTimer.isRunning())\n\t\t    \tpollTimer.stop();\n\t\t}\n    }    \n",
+        "comment": "stop polling if there are no registered listeners\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean hasFixedLength() {\n\t\treturn length != 0;\n\t}\n",
+        "comment": "returns whether or not the property has a fixed length\n"
+    },
+    {
+        "code_snippet":"\tpublic int getFixedLength() {\n\t\treturn length;\n\t}\n",
+        "comment": "returns the fixed length of the property or code 0 code if the\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean supportsFrameFileAlterDiscard() {\n\t\treturn false;\n\t}\n",
+        "comment": "returns whether or not this spec supports the file alteration discard\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean supportsFrameReadOnly() {\n\t\treturn false;\n\t}\n",
+        "comment": "returns whether or not this spec supports read only mode\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean supportsFrameGroupID() {\n\t\treturn false;\n\t}\n",
+        "comment": "returns whether or not this spec supports a group id\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean supportsFrameCompression() {\n\t\treturn false;\n\t}\n",
+        "comment": "returns whether or not this spec supports the compression of\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean supportsFrameEncryption() {\n\t\treturn false;\n\t}\n",
+        "comment": "returns whether or not this spec supports the encryption of\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean supportsFrameUnsynchronisation() {\n\t\treturn false;\n\t}\n",
+        "comment": "returns whether or not this spec supports unsynchronisation on frame\n"
+    },
+    {
+        "code_snippet":"\tpublic void addPropertyChangeListener(PropertyChangeListener l) {\n\t\tchangeSupport.addPropertyChangeListener(l);\n\t}\n",
+        "comment": "adds the specified property change listener to receive property change\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean supportsTagUnsynchronisation() {\n\t\treturn false;\n\t}\n",
+        "comment": "returns whether or not this implementation supports tag wide\n"
+    },
+    {
+        "code_snippet":"\tpublic void removePropertyChangeListener(PropertyChangeListener l) {\n\t\tchangeSupport.removePropertyChangeListener(l);\n\t}\n",
+        "comment": "removes the specified property change listener so that it no longer\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean supportsTagFooter() {\n\t\treturn false;\n\t}\n",
+        "comment": "returns whether or not this implementation supports the include of a tag\n"
+    },
+    {
+        "code_snippet":"\tpublic Object createFrameSpecDataObject(ID3v2Frame frame) {\n\t\treturn null;\n\t}\n",
+        "comment": "subclasses may override this method to return an object where spec\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean supports(int frameType) {\n\t\treturn (frameType == ID3v2Frame.UNDEFINED_FRAME_TYPE) ||\n\t\t\t   (getFrameDefinition(frameType) != defUndefinedFrame);\n\t}\n",
+        "comment": "returns whether or not the frame type code frame type code is supported\n"
+    },
+    {
+        "code_snippet":"\tprotected byte getByteValue(String framePropertyValue) {\n\t\tbyte[] byteArray = getByteArrayValue(framePropertyValue);\n\t\tif (byteArray.length > 0)\n\t\t\treturn byteArray[0];\n\t\treturn 0x00;\n\t}\n",
+        "comment": "returns the byte value that is represented by the frame property value\n"
+    },
+    {
+        "code_snippet":"\tpublic int getFrameType(String frameID) {\n\t\tInteger type = (Integer) frameIDToTypeMappings.get(frameID);\n\t\tif (type == null) {\n\t\t\treturn ID3v2Frame.UNDEFINED_FRAME_TYPE;\n\t\t}\n\t\treturn type.intValue();\n\t}\n",
+        "comment": "returns the spec independent frame type for the spec dependent frame id\n"
+    },
+    {
+        "code_snippet":"\tpublic FrameDefinition getFrameDefinition(int type) {\n\t\tFrameDefinition definition = frameTypeToDefinitionMappings[type];\n\t\tif (definition == null) {\n\t\t\tdefinition = defUndefinedFrame;\n\t\t}\n\t\treturn definition;\n\t}\n",
+        "comment": "returns the default frame definition for a frame of type\n"
+    },
+    {
+        "code_snippet":"\tpublic FrameDefinition getFrameDefinition(int frameType, String id) {\n\t\tFrameDefinition def = (FrameDefinition) getFrameDefinition(frameType);\n\t\tif (frameType == ID3v2Frame.UNDEFINED_FRAME_TYPE) {\n\t\t\tdef = (FrameDefinition) def.clone();\n\t\t\tdef.id = id;\n\t\t}\n\t\treturn def;\n\t}\n",
+        "comment": "creates a unique frame definition object for the frame\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean equals(Object o) {\n\t\tif (!(o instanceof ID3v2Frame))\n\t\t\treturn false;\n\t\tID3v2Frame frame = (ID3v2Frame) o;\n\t\tif (frame == this)\n\t\t\treturn true;\n\t\tif (frame.getType() == type) {\n\t\t\tfor (int i = 0; i < definition.propertyDefinitions.length; ++i) {\n\t\t\t\tif (! definition.propertyDefinitions[i].equals(frame.getPropertyAt(i)))\n\t\t\t\t\treturn false;\n\t\t\t}\n\t\t\treturn true;\n\t\t}\n\t\treturn false;\n\t}\n",
+        "comment": "returns whether or not the\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean equals(Object o) {\n\t\tif (o instanceof ID3v2Spec) {\n\t\t\tID3v2Spec spec = (ID3v2Spec) o;\n\t\t\tif (spec.getVersion() == this.getVersion()\n\t\t\t\t\t&& spec.getRevision() == this.getRevision())\n\t\t\t\treturn true;\n\t\t}\n\t\treturn false;\n\t}\n",
+        "comment": "returns whether or not this spec and the code object code\n"
+    },
+    {
+        "code_snippet":"\tpublic Object getSpecData() {\n\t\treturn specData;\n\t}\n",
+        "comment": "returns the object an\n"
+    },
+    {
+        "code_snippet":"\tprotected void setTagSize(ID3v2Tag tag, int size) {\n\t\ttag.setSize(size);\n\t}\n",
+        "comment": "really ugly method that subclasses may use to set the tags size without\n"
+    },
+    {
+        "code_snippet":"\tpublic ID3v2Spec getSpec() {\n\t\treturn spec;\n\t}\n",
+        "comment": "returns the spec used by this frame\n"
+    },
+    {
+        "code_snippet":"\tpublic String getID() {\n\t\treturn definition.id;\n\t}\n",
+        "comment": "returns the spec dependent lexical id identifying this frame just as you\n"
+    },
+    {
+        "code_snippet":"\tpublic Iterator properties() {\n\t\treturn new Iterator() {\n\t\t\tint index = 0;\n\n\t\t\tpublic boolean hasNext() {\n\t\t\t\treturn index < properties.length;\n\t\t\t}\n\n\t\t\tpublic Object next() throws NoSuchElementException {\n\t\t\t\tif (index >= definition.propertyDefinitions.length - 1)\n\t\t\t\t\tthrow new NoSuchElementException();\n\t\t\t\tFrameProperty property = properties[index++];\n\t\t\t\treturn property;\n\t\t\t}\n\n\t\t\tpublic void remove() throws UnsupportedOperationException {\n\t\t\t\tthrow new UnsupportedOperationException();\n\t\t\t}\n\t\t};\n\t}\n",
+        "comment": "returns an enumeration of all\n"
+    },
+    {
+        "code_snippet":"\tpublic int getPropertyCount() {\n\t\treturn definition.propertyDefinitions.length;\n\t}\n",
+        "comment": "returns the property count of this frame\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean contains(int type) {\n\t\tfor (int i = 0; i < definition.propertyDefinitions.length; ++i)\n\t\t\tif (properties[i].getDefinition().getID() == type)\n\t\t\t\treturn true;\n\t\treturn false;\n\t}\n",
+        "comment": "returns whether or not this frame contains a code frame property code\n"
+    },
+    {
+        "code_snippet":"\tpublic FrameProperty get(int type) {\n\t\tfor (int i = 0; i < definition.propertyDefinitions.length; ++i) {\n\t\t\tif (properties[i].getDefinition().getID() == type) {\n\t\t\t\treturn properties[i];\n\t\t\t}\n\t\t}\n\t\treturn null;\n\t}\n",
+        "comment": "returns the code frame property code of type code type code or\n"
+    },
+    {
+        "code_snippet":"\tpublic FrameProperty getPropertyAt(int index) {\n\t\treturn properties[index];\n\t}\n",
+        "comment": "returns the frame property at index code index code\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean isReadOnly() {\n\t\treturn isReadOnly;\n\t}\n",
+        "comment": "returns whether or not the frames data is supposed to be read only\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean getUseGroupID() {\n\t\treturn useGroupID;\n\t}\n",
+        "comment": "returns whether or not a group id was set for this frame\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean getUseEncryption() {\n\t\treturn useEncryption;\n\t}\n",
+        "comment": "returns whether or not the frames data is to be encrypted\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean getUseCompression() {\n\t\treturn useCompression;\n\t}\n",
+        "comment": "returns whether or not the frames data is to be compressed\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean getUseUnsynchronisation() {\n\t\treturn useUnsynchronisation;\n\t}\n",
+        "comment": "returns whether or not this frames data is to be unsynchronised\n"
+    },
+    {
+        "code_snippet":"\tpublic void setTagAlterDiscard(boolean b) {\n\t\tif (!spec.supportsFrameTagAlterDiscard() && b) {\n\t\t\ttestChange();\n\t\t\ttag.requestSpecWhich(\"supportsFrameTagAlterDiscard\");\n\t\t}\n\t\tthis.tagAlterDiscard = b;\n\t\tif (tag != null)\n\t\t\ttag.notifyFlagChanged(this);\n\t}\n",
+        "comment": "marks this frame to be discardered on tag alteration\n"
+    },
+    {
+        "code_snippet":"\tpublic void setReadOnly(boolean b) throws IllegalTagStateException {\n\t\tif (!spec.supportsFrameReadOnly() && b) {\n\t\t\ttestChange();\n\t\t\ttag.requestSpecWhich(\"supportsFrameReadOnly\");\n\t\t}\n\t\tthis.isReadOnly = b;\n\t\tif (tag != null)\n\t\t\ttag.notifyFlagChanged(this);\n\t}\n",
+        "comment": "tries to set the frames data to be read only\n"
+    },
+    {
+        "code_snippet":"\tpublic void setUseCompression(boolean b) {\n\t\tboolean oldValue = useCompression;\n\t\tboolean newValue = b;\n\t\tif (!spec.supportsFrameCompression() && newValue) {\n\t\t\ttestChange();\n\t\t\ttag.requestSpecWhich(\"supportsFrameCompression\");\n\t\t}\n\t\tthis.useCompression = newValue;\n\t\tchangeSupport.firePropertyChange(\n\t\t\tUSE_COMPRESSION_PROPERTY,\n\t\t\toldValue,\n\t\t\tnewValue);\n\t\tif (tag != null)\n\t\t\ttag.notifyFlagChanged(this);\n\t}\n",
+        "comment": "tries to set the frames data to be compressed\n"
+    },
+    {
+        "code_snippet":"\tpublic void setUseGroupID(boolean useGroupID, byte groupID) {\n\t\tboolean oldValue = this.useGroupID;\n\t\tboolean newValue = useGroupID;\n\t\tif (!spec.supportsFrameGroupID() && newValue) {\n\t\t\ttestChange();\n\t\t\ttag.requestSpecWhich(\"supportsFrameGroupID\");\n\t\t}\n\t\tthis.useGroupID = newValue;\n\t\tthis.groupID = groupID;\n\t\tchangeSupport.firePropertyChange(\n\t\t\tUSE_GROUP_ID_PROPERTY,\n\t\t\toldValue,\n\t\t\tnewValue);\n\t\tif (tag != null)\n\t\t\ttag.notifyFlagChanged(this);\n\t}\n",
+        "comment": "tries to set a group id for this frame\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean equals(Object object) {\n\t\tif (!(object instanceof FrameProperty))\n\t\t\treturn false;\n\t\tFrameProperty property = (FrameProperty) object;\n\t\tif (definition.getDataType() == property.getDefinition().getDataType())\n\t\t\tif (value.equals(property.toString()))\n\t\t\t\treturn true;\n\t\treturn false;\n\t}\n",
+        "comment": "returns whether or not the object code object code is equal to this\n"
+    },
+    {
+        "code_snippet":"\tpublic byte toByte() {\n\t\tbyte[] bytes = toByteArray();\n\t\tif (bytes.length == 0)\n\t\t\treturn 0x00;\n\t\treturn bytes[0];\n\t}\n",
+        "comment": "returns the byte value of the property\n"
+    },
+    {
+        "code_snippet":"\tpublic ID3v2Frame getFrame() {\n\t\treturn frame;\n\t}\n",
+        "comment": "returns the frame this property belongs to\n"
+    },
+    {
+        "code_snippet":"\tpublic void setFrame(ID3v2Frame f) {\n\t\tthis.frame = f;\n\t}\n",
+        "comment": "sets the code id3v2 frame code this property belongs to\n"
+    },
+    {
+        "code_snippet":"\tpublic void setValue(String newValue) throws IllegalArgumentException {\n\t\tif (frame != null) {\n\t\t\tif (! frame.getSpec().supports(definition.getID(), newValue))\n\t\t\t\tthrow new IllegalArgumentException(value);\n\t\t}\n\t\tString oldValue = value;\n\t\tthis.value = newValue;\n\t\tif (frame != null) {\n\t\t\tframe.notifyFramePropertyChanged(this, oldValue, newValue);\n\t\t}\n\t}\n",
+        "comment": "sets the string value for this property to the value\n"
+    },
+    {
+        "code_snippet":"\tpublic void setValue(byte value) throws IllegalArgumentException {\n\t\tsetValue(new byte[] { value }, 0, 1);\n\t}\n",
+        "comment": "sets the byte value for this property to the value code value code\n"
+    },
+    {
+        "code_snippet":"\tpublic void setValue(byte[] value) throws IllegalArgumentException {\n\t\tsetValue(value, 0, value.length);\n\t}\n",
+        "comment": "sets the binary value for this property to the value\n"
+    },
+    {
+        "code_snippet":"\tpublic void add(ID3v2Frame frame) throws IllegalArgumentException {\n\t\t//if (frame.get(FrameProperty.MAIN).toString().equals(\"\"))\n\t\t//\tthrow new IllegalArgumentException(\"FrameProperty.MAIN must not be empty\");\n\t\tif (frames.contains(frame)) {\n\t\t\tthrow new IllegalArgumentException(\"frame is already part of the tag.\");\n\t\t}\n\n\t\tframe.setTag(this);\n\t\tframes.add(frame);\n\n\t\tint frameCount = getFrameCount();\n\t\tchangeSupport.firePropertyChange(\n\t\t\tFRAME_COUNT_PROPERTY,\n\t\t\tframeCount - 1,\n\t\t\tframeCount);\n\n\t\tsizeChanged = true;\n\t}\n",
+        "comment": "adds the frame code frame code to the tag\n"
+    },
+  {
+        "code_snippet":"\tpublic boolean remove(ID3v2Frame frame) {\n\t\tboolean success = frames.remove(frame);\n\n\t\tif (success) {\n\t\t\tframe.setTag(null);\n\t\t\tint frameCount = getFrameCount();\n\t\t\tchangeSupport.firePropertyChange(\n\t\t\t\tFRAME_COUNT_PROPERTY,\n\t\t\t\tframeCount + 1,\n\t\t\t\tframeCount);\n\n\t\t\tsizeChanged = true;\n\t\t}\n\t\treturn success;\n\t}\n",
+        "comment": "removes the frame code frame code from the tag\n"
+    },
+    {
+        "code_snippet":"\tpublic void remove(int type) {\n\t\tremove(type, 0);\n\t}\n",
+        "comment": "removes the first frame of type code type code in the tag\n"
+    },
+    {
+        "code_snippet":"\tpublic void removeAll(int type) {\n\t\tfor (int i = 0; i < frames.size(); ++i) {\n\t\t\tID3v2Frame frame = (ID3v2Frame) frames.elementAt(i);\n\t\t\tif (frame.getType() == type) {\n\t\t\t\tremove(frame);\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t}\n",
+        "comment": "removes all frames of type code type code in the tag\n"
+    },
+    {
+        "code_snippet":"\tpublic void removeAll() {\n\t\tint frameCount = frames.size();\n\t\tframes.clear();\n\t\tif (frameCount > 0) {\n\t\t\tchangeSupport.firePropertyChange(\n\t\t\t\tFRAME_COUNT_PROPERTY,\n\t\t\t\tframeCount,\n\t\t\t\t0);\n\t\t}\n\t}\n",
+        "comment": "removes all frames from the tag\n"
+    },
+    {
+        "code_snippet":"\tpublic void recalculateSize() {\n\t\ttry {\n\t\t\tthis.contentSize = spec.getSize(this);\n\t\t} catch (RuntimeException e) {\n\t\t\tlogger.error(\"ID3v2Tag::recalculateSize(): \"\n\t\t\t\t+ \"Unexpected exception in spec \"+spec+\" getSize(ID3v2Tag).\\n\"\n\t\t\t\t+ \"Spec is probably buggy.\", e);\n\t\t\tthrow e;\n\t\t}\n\t\tsizeChanged = false;\n\t}\n",
+        "comment": "recalculates the binary size of the tag\n"
+    },
+    {
+        "code_snippet":"\tpublic int getSize() {\n\t\trecalculateSizeIfNeccessary();\n\t\tif (preferredSizeMode == ID3Constants.ABSOLUTE)\n\t\t\treturn (contentSize < preferredSize ? preferredSize : contentSize);\n\t\telse /* if (preferredSizeType == ID3Constants.RELATIVE) */\n\t\t\treturn contentSize + preferredSize;\n\t}\n",
+        "comment": "returns the tags size including the padding\n"
+    },
+    {
+        "code_snippet":"\tpublic int getPreferredSize() {\n\t\treturn preferredSize;\n\t}\n",
+        "comment": "returns the preferred size of the tag\n"
+    },
+    {
+        "code_snippet":"\tpublic int getContentSize() {\n\t\trecalculateSizeIfNeccessary();\n\t\treturn contentSize;\n\t}\n",
+        "comment": "returns the tag size excluding the padding\n"
+    },
+    {
+        "code_snippet":"\tpublic int getPaddingSize() {\n\t\tif (preferredSizeMode == ID3Constants.ABSOLUTE) {\n\t\t\trecalculateSizeIfNeccessary();\n\t\t\treturn (contentSize < preferredSize ? preferredSize - contentSize : 0);\n\t\t} else {\n\t\t\treturn preferredSize;\n\t\t}\n\t}\n",
+        "comment": "returns the amount of padding being used by the tag\n"
+    },
+    {
+        "code_snippet":"\tpublic int getSpecPolicy() {\n\t\treturn specPolicy;\n\t}\n",
+        "comment": "returns the current spec policy\n"
+    },
+    {
+        "code_snippet":"\tpublic int getVersion() {\n\t\treturn spec.getVersion();\n\t}\n",
+        "comment": "returns the version number of the current spec\n"
+    },
+    {
+        "code_snippet":"\tpublic int getRevision() {\n\t\treturn spec.getRevision();\n\t}\n",
+        "comment": "returns the revision number of the current spec\n"
+    },
+    {
+        "code_snippet":"\tpublic String getVersionString() {\n\t\treturn spec.toString();\n\t}\n",
+        "comment": "returns a string formatted 2\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean contains(int type) {\n\t\tID3v2Frame frame = get(type, 0);\n\t\tif (frame != null)\n\t\t\tlastRequestedFrame = frame;\n\t\treturn frame != null;\n\t}\n",
+        "comment": "returns whether or not the tag contains a frame of type\n"
+    },
+    {
+        "code_snippet":"\tpublic int getFrameCount() {\n\t\treturn frames.size();\n\t}\n",
+        "comment": "returns the total amount of frames in the tag\n"
+    },
+    {
+        "code_snippet":"\tpublic int getFrameCount(int type) {\n\t\tint count = 0;\n\t\tfor (int i = 0; i < frames.size(); ++i) {\n\t\t\tID3v2Frame current = (ID3v2Frame) frames.get(i);\n\t\t\tif (current.getType() == type)\n\t\t\t\t++count;\n\t\t}\n\t\treturn count;\n\t}\n",
+        "comment": "returns the amount of frames of type code type code in the tag\n"
+    },
+    {
+        "code_snippet":"\tpublic ID3v2Frame get(int type) {\n\t\tif (lastRequestedFrame != null)\n\t\t\tif (lastRequestedFrame.getType() == type)\n\t\t\t\treturn lastRequestedFrame;\n\t\tlastRequestedFrame = get(type, 0);\n\t\treturn lastRequestedFrame;\n\t}\n",
+        "comment": "this method is a convenience for code get id 0 code\n"
+    },
+    {
+        "code_snippet":"\tpublic ID3v2Frame get(int frameType, int propertyType, byte value) {\n\t\treturn get(frameType, propertyType, new byte[] { value });\n\t}\n",
+        "comment": "returns the frame which is of type code type code and additionally\n"
+    },
+    {
+        "code_snippet":"\tpublic ID3v2Frame get(int frameType, int propertyType, byte[] value) {\n\t\ttry {\n\t\t\treturn get(\n\t\t\t\tframeType,\n\t\t\t\tpropertyType,\n\t\t\t\tnew String(value, 0, value.length, \"8859_1\"));\n\t\t} catch (UnsupportedEncodingException e) {\n\t\t\treturn null;\n\t\t}\n\t}\n",
+        "comment": "returns the frame which is of type code type code and additionally\n"
+    },
+    {
+        "code_snippet":"\tpublic ID3v2Frame get(int frameType, int propertyType, String value) {\n\t\tfor (int i = 0; i < frames.size(); ++i) {\n\t\t\tID3v2Frame current = (ID3v2Frame) frames.elementAt(i);\n\t\t\tif (current.getType() == frameType)\n\t\t\t\tif (current.get(propertyType).toString().equals(value))\n\t\t\t\t\treturn current;\n\t\t}\n\t\treturn null;\n\t}\n",
+        "comment": "returns the frame which is of type code type code and additionally\n"
+    },
+    {
+        "code_snippet":"\tpublic Iterator frames() {\n\t\treturn frames.iterator();\n\t}\n",
+        "comment": "returns an iteration over all frames in the tag\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean isExperimental() {\n\t\treturn experimental;\n\t}\n",
+        "comment": "returns whether or not the tag is to be considered experimental\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean getUseCRC() {\n\t\treturn useCRC;\n\t}\n",
+        "comment": "returns whether or not a crc32 is included in the binary tag\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean isRestricted() {\n\t\treturn restrictions != null;\n\t}\n",
+        "comment": "returns whether or not this tag is restricted in some way\n"
+    },
+    {
+        "code_snippet":"\tpublic ID3v2Restrictions getRestrictions() {\n\t\treturn restrictions;\n\t}\n",
+        "comment": "returns the restrictions that affect this tag or code null code if\n"
+    },
+    {
+        "code_snippet":"\tpublic void setSpecPolicy(int policy) throws IllegalArgumentException {\n\t\tif (policy != ID3Constants.FIXED_SPEC\n\t\t\t&& policy != ID3Constants.DYNAMIC_SPEC)\n\t\t\tthrow new IllegalArgumentException(String.valueOf(policy));\n\t\tthis.specPolicy = policy;\n\t}\n",
+        "comment": "sets the spec policy which may either be code id3 constants\n"
+    },
+    {
+        "code_snippet":"\tpublic void setPreferredSize(int value, int preferredSizeMode) throws IllegalArgumentException {\n\t\tif ((preferredSizeMode != ID3Constants.ABSOLUTE\n\t\t\t&& preferredSizeMode != ID3Constants.RELATIVE)\n\t\t\t|| (value < 0))\n\t\t\tthrow new IllegalArgumentException();\n\n\t\tthis.preferredSize     = value;\n\t\tthis.preferredSizeMode = preferredSizeMode;\n\t}\n",
+        "comment": "sets the preferred size of the tag\n"
+    },
+    {
+        "code_snippet":"\tpublic void setExperimental(boolean b) throws IllegalTagStateException {\n\t\tif (!spec.supportsTagIsExperimentalIndicator())\n\t\t\trequestSpecWhich(\"supportsTagIsExperimentalIndicator\");\n\t\tboolean oldValue = experimental;\n\t\tboolean newValue = b;\n\t\tif (oldValue != newValue) {\n\t\t\tthis.experimental = newValue;\n\t\t\tchangeSupport.firePropertyChange(\n\t\t\t\tEXPERIMENTAL_PROPERTY,\n\t\t\t\toldValue,\n\t\t\t\tnewValue);\n\t\t}\n\t\tthis.sizeChanged = true;\n\t}\n",
+        "comment": "sets whether or not the tag is to be considered experimental\n"
+    },
+    {
+        "code_snippet":"\tpublic int write(OutputStream out) throws IOException {\n\t\tif (frames.size() == 0)\n\t\t\tthrow new IOException(\"Tag does not have any frames\");\n\t\tlogger.debug(\"ID3v2Tag::write(OutputStream): \"\n\t\t\t+ \"Writing tag. Calling spec.write(this, out)\");\n\t\treturn spec.write(this, out);\n\t}\n",
+        "comment": "writes the tag to the\n"
+    },
+    {
+        "code_snippet":"\tpublic K getKey(V value) {\n\t\treturn valueKeyMap.get(value);\n\t}\n",
+        "comment": "returns key for the given value\n"
+    },
+    {
+        "code_snippet":"\tpublic String getErrorMessage() {\n\t\treturn hasNegativeCapacities ? ERROR_MESSAGE : \"\";\n\t}\n",
+        "comment": "if any errors exist return error message\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean hasNegativeCapacities() {\n\t\treturn hasNegativeCapacities;\n\t}\n",
+        "comment": "checks whether given graph had edges with negative capacities\n"
+    },
+    {
+        "code_snippet":"\tpublic V extractMin() {\n\t\tif (isEmpty()) {\n\t\t\treturn null;\n\t\t}\n\t\tV tmp = heap.get(0);\n\t\tvalueIndexMap.remove(tmp);\n\t\tvalueKeyMap.remove(tmp);\n\t\theap.set(0, heap.get(size() - 1));\n\t\tvalueIndexMap.put(heap.get(0), 0);\n\t\theap.remove(size() - 1);\n\t\tsiftDown(0);\n\t\treturn tmp;\n\t}\n",
+        "comment": "removes the minimal element of this binary heap and returns it\n"
+    },
+    {
+        "code_snippet":"\tpublic int getMaximumFlowSize() {\n\t\tif (hasNegativeCapacities()) {\n\t\t\tthrow new IllegalStateException(\"This graph has negative capacities. Ford-Falkerson doesn't work correctly.\");\n\t\t}\n\t\treturn maxFlowSize;\n\t}\n",
+        "comment": "return maximum flow size\n"
+    },
+    {
+        "code_snippet":"\tpublic V getMin() {\n\t\tif (isEmpty()) {\n\t\t\treturn null;\n\t\t}\n\t\treturn heap.get(0);\n\t}\n",
+        "comment": "returns but not removes the minimal element of this binary heap\n"
+    },
+    {
+        "code_snippet":"\tpublic void decreaseKey(V value, K newKey) {\n\t\tInteger tmp = valueIndexMap.get(value);//myData.indexOf(element);\n\t\tif (tmp == null) {\n\t\t\tthrow new NoSuchElementException();\n\t\t}\n\t\tif (valueKeyMap.get(value).compareTo(newKey) < 0) {\n\t\t\tthrow new IllegalArgumentException(\"The key replaced is less than the new one\");\n\t\t}\n\t\tvalueKeyMap.put(value, newKey);\n\t\tsiftUp(tmp);\n\t}\n",
+        "comment": "decreases key of the given element\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean hasLoops() {\n\t\treturn !loopEdges.isEmpty();\n\t}\n",
+        "comment": "checks whether graph has loops\n"
+    },
+    {
+        "code_snippet":"\tpublic String getErrorMessage() {\n\t\treturn hasNegativeWeights ? ERROR_MESSAGE : \"\";\n\t}\n",
+        "comment": "if any errors exist return error message\n"
+    },
+    {
+        "code_snippet":"\tpublic void increaseKey(V value, K newKey) {\n\t\tInteger tmp = valueIndexMap.get(value);//myData.indexOf(element);\n\t\tif (tmp == null) {\n\t\t\tthrow new NoSuchElementException();\n\t\t}\n\t\tif (valueKeyMap.get(value).compareTo(newKey) >= 0) {\n\t\t\tthrow new IllegalArgumentException(\"The key replaced is greater than the new one\");\n\t\t}\n\t\tvalueKeyMap.put(value, newKey);\n\t\tsiftDown(tmp);\n\t}\n",
+        "comment": "increases key of the given element\n"
+    },
+    {
+        "code_snippet":"\tpublic String getErrorMessage() {\n\t\tif (hasLoops()) {\n\t\t\treturn ERROR_MESSAGE;\n\t\t}\n\t\treturn \"\";\n\t}\n",
+        "comment": "if any errors exist return error message\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean hasNegativeWeights() {\n\t\treturn hasNegativeWeights;\n\t}\n",
+        "comment": "checks whether givaen graph had edges with negative weights\n"
+    },
+    {
+        "code_snippet":"\tpublic String getErrorMessage() {\n\t\treturn !isConnected() ? ERROR_MESSAGE : \"\";\n\t}\n",
+        "comment": "if any errors exist return error message\n"
+    },
+    {
+        "code_snippet":"\tpublic void pushCommand(Command command) {\n\t\tredoCommands.clear();\n\t\tif (undoCommands.size() == capacity) {\n\t\t\tundoCommands.remove(0);\n\t\t}\n\t\tundoCommands.add(command);\n\t}\n",
+        "comment": "pushes new command to this buffer\n"
+    },
+    {
+        "code_snippet":"\tpublic void performLayout() {\n\t\tfor (VertexPresentation vp : positionMap.keySet()) {\n\t\t\tvp.setCenter(positionMap.get(vp));\n\t\t}\n\t}\n",
+        "comment": "performs this layout\n"
+    },
+    {
+        "code_snippet":"\tpublic void clear() {\n\t\tundoCommands.clear();\n\t\tredoCommands.clear();\n\t}\n",
+        "comment": "clears this buffer\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean hasUndo() {\n\t\treturn (undoCommands.size() > 0);\n\t}\n",
+        "comment": "checks whether there are command for undoing\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean hasRedo() {\n\t\treturn (redoCommands.size() > 0);\n\t}\n",
+        "comment": "checks whether there are command for redoing\n"
+    },
+    {
+        "code_snippet":"\tpublic void addVisualStateListener(VisualStateListener listener) {\n\t\tlisteners.add(listener);\n\t}\n",
+        "comment": "adds the specified visual state listaner to recive notification about state\n"
+    },
+    {
+        "code_snippet":"\tpublic void removeVisualStateListener(VisualStateListener listener) {\n\t\tlisteners.remove(listener);\n\t}\n",
+        "comment": "removes the specified visual state listaner from this presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic void setGraphPresentation(GraphPresentation graphPresentation) {\n\t\tthis.graphPresentation = graphPresentation;\n\t\tunselect();\n\t}\n",
+        "comment": "sets new graph presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic void setGraphPresentation(GraphPresentation graphPresentation) {\n\t\tthis.graphPresentation = graphPresentation;\n\t\tunmark();\n\t}\n",
+        "comment": "sets new graph presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic void paint(Graphics gr, Color backgroundColor) {\n\t\tGraphics2D gr2D = (Graphics2D) gr;\n\t\tStroke prevStroke = gr2D.getStroke();\n\t\tgr2D.setStroke(DASHED_STROKE);\n\t\timaginaryEdge.paint(gr2D, backgroundColor);\n\t\tgr2D.setStroke(prevStroke);\n\t}\n",
+        "comment": "paints imaginary edge\n"
+    },
+    {
+        "code_snippet":"\tpublic void markEdges(Collection<Edge> edgesToMark, boolean isError) {\n\t\tfor (Edge edge : edgesToMark) {\n\t\t\tgraphPresentation.getPresentationForEdge(edge).mark(isError ? ERROR_COLOR : MARK_COLOR);\n\t\t\tmarkedEdges.add(graphPresentation.getPresentationForEdge(edge));\n\t\t}\n\t\tfireVisualStateChange();\n\t}\n",
+        "comment": "marks presentations of given edges\n"
+    },
+    {
+        "code_snippet":"\tpublic void selectEdge(EdgePresentation ep) {\n\t\tselectedEdges.add(ep);\n\t\tfireVisualStateChange();\n\t}\n",
+        "comment": "selects givet edge presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean select(Point point) {\n\t\treturn selectVerticesOnPoint(point) || selectEdgesOnPoint(point);\n\t}\n",
+        "comment": "finds and marks element containing given point\n"
+    },
+    {
+        "code_snippet":"\tpublic void selectInRect(int x1, int y1, int x2, int y2) {\n\t\tfor (VertexPresentation vp : graphPresentation.getVertexPresentations()) {\n\t\t\tif (vp.isInRect(x1, y1, x2, y2)) {\n\t\t\t\tselectedVertices.add(vp);\n\t\t\t}\n\t\t}\n\t\tfor (EdgePresentation ep : graphPresentation.getEdgePresentations()) {\n\t\t\tif (ep.isInRect(x1, y1, x2, y2)) {\n\t\t\t\tselectedEdges.add(ep);\n\t\t\t}\n\t\t}\n\t\tif ((selectedEdges.size() != 0) || (selectedVertices.size() != 0)) {\t\n\t\t\tfireVisualStateChange();\n\t\t}\n\t}\n",
+        "comment": "selects all item within given rectangle\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean isInSelectedItem(Point point) {\n\t\tfor (VertexPresentation vp : selectedVertices) {\n\t\t\tif (vp.containsPoint(point)) {\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\t\tfor (EdgePresentation ep : selectedEdges) {\n\t\t\tif (ep.containsPoint(point)) {\n\t\t\t\treturn true;\n\t\t\t}\n\t\t}\n\t\treturn false;\n\t}\n",
+        "comment": "checkes whether given point lies whithin an already selected item\n"
+    },
+    {
+        "code_snippet":"\tpublic void markVertex(VertexPresentation vp) {\n\t\tmarkedVertices.add(vp);\n\t\tfireVisualStateChange();\n\t}\n",
+        "comment": "markes selected vertex\n"
+    },
+    {
+        "code_snippet":"\tpublic void unselect() {\n\t\tselectedEdges.clear();\n\t\tselectedVertices.clear();\n\t\tfireVisualChandesCancelled();\n\t}\n",
+        "comment": "unselects previously selected elements\n"
+    },
+    {
+        "code_snippet":"\tpublic void markVertices(Collection<Vertex> verticesToMark) {\n\t\tfor (Vertex vertex : verticesToMark) {\n\t\t\tmarkedVertices.add(graphPresentation.getPresentationForVertex(vertex));\t\t\t\n\t\t}\n\t\tfireVisualStateChange();\n\t}\n",
+        "comment": "markes given vertices\n"
+    },
+    {
+        "code_snippet":"\tpublic void unmark() {\n\t\tfor (Iterator<EdgePresentation> it = markedEdges.iterator(); it.hasNext();) {\n\t\t\tEdgePresentation ep = it.next();\n\t\t\tep.unmark();\n\t\t\tit.remove();\n\t\t}\n\t\tverticesData.clear();\n\t\tedgesData.clear();\n\t\tmarkedVertices.clear();\n\t\tfireVisualChandesCancelled();\n\t}\n",
+        "comment": "unmarks previously marked elements\n"
+    },
+    {
+        "code_snippet":"\tpublic void unmarkEdges() {\n\t\tfor (Iterator<EdgePresentation> it = markedEdges.iterator(); it.hasNext();) {\n\t\t\tEdgePresentation ep = it.next();\n\t\t\tep.unmark();\n\t\t\tit.remove();\n\t\t}\n\t\t//if ((verticesData.size() == 0) && (markedVertices.size() == 0)) {\n\t\t//\tfireVisualChandesCancelled();\n\t\t//} else {\n\t\t\tfireVisualStateChange();\n\t\t//}\n\t}\n",
+        "comment": "unmarks previously marked edges\n"
+    },
+    {
+        "code_snippet":"\tpublic EdgePresentation getEdgeWithSelectedWeight(Point point) {\n\t\tif (!graphPresentation.isWeighted()) {\n\t\t\treturn null;\n\t\t}\n\t\tfor (EdgePresentation ep : graphPresentation.getEdgePresentations()) {\n\t\t\tif (ep.isWeightSelected(point)) {\n\t\t\t\treturn ep;\n\t\t\t}\n\t\t}\n\t\treturn null;\n\t}\n",
+        "comment": "if graph is weighted and weight of some edge contains selected point\n"
+    },
+    {
+        "code_snippet":"\tpublic void unmarkVertices() {\n\t\tmarkedVertices.clear();\n\t\tfireVisualStateChange();\n\t}\n",
+        "comment": "unmarks previously marked vertices\n"
+    },
+    {
+        "code_snippet":"\tpublic EdgePresentation getEdgeWithSelectedEnd(Point point) {\n\t\tfor (EdgePresentation ep : selectedEdges) {\n\t\t\tif (isEdgeEndSelected(ep, point) || isEdgeStartSelected(ep, point)) {\n\t\t\t\treturn ep;\n\t\t\t}\n\t\t}\n\t\treturn null;\n\t}\n",
+        "comment": "if any selected edge end mark contains given point returns this edge\n"
+    },
+    {
+        "code_snippet":"\tpublic void setGraphPresentation(GraphPresentation presentation) {\n\t\tremoveCurrentPresentation();\n\t\tundoClear();\n\t\tattachNewPresentation(presentation);\n\t}\n",
+        "comment": "sets new graph presentation to this component\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean isEdgeEndSelected(EdgePresentation ep, Point point) {\n\t\treturn (square(ep.getEnd().x - point.x) + square(ep.getEnd().y - point.y) < square(EDGE_SELECTION_RADIX));\n\t}\n",
+        "comment": "veryfies whether edge end mark was selected\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean isEdgeStartSelected(EdgePresentation ep, Point point) {\n\t\treturn (square(ep.getStart().x - point.x) + square(ep.getStart().y - point.y) < square(EDGE_SELECTION_RADIX));\n\t}\n",
+        "comment": "veryfies whether edge start mark was selected\n"
+    },
+    {
+        "code_snippet":"\tpublic Command getNewAddVertexCommand(Point point) {\n\t\treturn new AddVertexCommand(point, graphPresentation, graphSelection);\n\t}\n",
+        "comment": "returns new add vertex command\n"
+    },
+    {
+        "code_snippet":"\tpublic Command getNewAddEdgeCommand(VertexPresentation sourcePr, VertexPresentation destinPr) {\n\t\treturn new AddEdgeCommand(sourcePr, destinPr, graphPresentation, graphSelection);\n\t}\n",
+        "comment": "returns new add edge command\n"
+    },
+    {
+        "code_snippet":"\tpublic Command getNewEdgeEndEditCommand(EdgePresentation edge, VertexPresentation sourcePr, VertexPresentation destinPr) {\n\t\treturn new EdgeEndEditCommand(edge, sourcePr, destinPr, graphPresentation, graphSelection);\n\t}\n",
+        "comment": "returns new edge end editing command\n"
+    },
+    {
+        "code_snippet":"\tpublic Command getNewDeleteCommand() {\n\t\treturn new DeleteCommand(graphPresentation, graphSelection);\n\t}\n",
+        "comment": "returns new delete command\n"
+    },
+    {
+        "code_snippet":"\tpublic Command getNewDragCommand(Point start, Point end) {\n\t\treturn new DragCommand(start, end, graphPresentation, graphSelection);\n\t}\n",
+        "comment": "returns new drag command\n"
+    },
+    {
+        "code_snippet":"\tpublic Command getNewDragCommand(Map<VertexPresentation, Point> beforeDragPositions) {\n\t\treturn new DragCommand(beforeDragPositions, graphPresentation, graphSelection);\n\t}\n",
+        "comment": "returns new drag command\n"
+    },
+    {
+        "code_snippet":"\tpublic void setTool(Tool tool) {\n\t\tcurrentTool.finalActions();\n\t\tcurrentTool = tool;\n\t}\n",
+        "comment": "sets a tool to handle events\n"
+    },
+    {
+        "code_snippet":"\tpublic Command getNewLayoutCommand(Layout layout) {\n\t\treturn new LayoutCommand(layout, graphPresentation);\n\t}\n",
+        "comment": "returns new layout command\n"
+    },
+    {
+        "code_snippet":"\tpublic GraphPresentation getGraphPresentation() {\n\t\treturn graphPresentation;\n\t}\n",
+        "comment": "returns graph presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic Command getWeightChangeCommand(int oldWeight, int newWeight,  EdgePresentation edge) {\n\t\treturn new WeightChangeCommand(oldWeight, newWeight, edge, graphSelection);\n\t}\n",
+        "comment": "returns new weight change command\n"
+    },
+    {
+        "code_snippet":"\tpublic Command getConvertToWeightedCommand(PresentationController controller) {\n\t\treturn new ConvertToWeightedCommand(graphPresentation, controller);\n\t}\n",
+        "comment": "returns new convert to weighted command\n"
+    },
+    {
+        "code_snippet":"\tpublic Command getConvertToUnweightedCommand(PresentationController controller) {\n\t\treturn new ConvertToUnweightedCommand(graphPresentation, controller);\n\t}\n",
+        "comment": "returns new convert to unweighted command\n"
+    },
+    {
+        "code_snippet":"\tpublic Command getConvertToUndirectedCommand(PresentationController controller) {\n\t\treturn new ConvertToUndirectedCommand(graphPresentation, controller);\n\t}\n",
+        "comment": "returns new convert to undirected command\n"
+    },
+    {
+        "code_snippet":"\tpublic Tool getSelectTool() {\n\t\tselectTool.returnToInitialState();\n\t\treturn selectTool;\n\t}\n",
+        "comment": "returns select tool\n"
+    },
+    {
+        "code_snippet":"\tpublic Tool getAddVertexTool() {\n\t\treturn addVertexTool;\n\t}\n",
+        "comment": "returns add vertex tool\n"
+    },
+    {
+        "code_snippet":"\tpublic Tool getAddEdgeTool() {\n\t\treturn addEdgeTool;\n\t}\n",
+        "comment": "returns add edge tool\n"
+    },
+    {
+        "code_snippet":"\tpublic Tool getDijkstraSelectionTool() {\n\t\tdijkstraSelectTool.returnToInitialState();\n\t\treturn dijkstraSelectTool;\n\t}\n",
+        "comment": "returns dijkstra selection tool\n"
+    },
+    {
+        "code_snippet":"\tpublic Tool getMaxFlowSelectionTool() {\n\t\tmaxFlowSelectionTool.returnToInitialState();\n\t\treturn maxFlowSelectionTool;\n\t}\n",
+        "comment": "returns max flow selection tool\n"
+    },
+    {
+        "code_snippet":"\tpublic ToolFactory getToolFactory() {\n\t\treturn toolFactory;\n\t}\n",
+        "comment": "returns tool factory\n"
+    },
+    {
+        "code_snippet":"\tpublic EditingActionsFactory getEditingActionsFactory() {\n\t\treturn editingActionsFactory;\n\t}\n",
+        "comment": "returns component editing actions factory\n"
+    },
+    {
+        "code_snippet":"\tpublic AlgorythmActionsFactory getAlgorythmActionsFactory() {\n\t\treturn algorythmActionsFactory;\n\t}\n",
+        "comment": "returns component algorythm actions factory\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean isDirected() {\n\t\tif (!wasTypeChoosen) {\n\t\t\tthrow new IllegalStateException(\"User didn't choose anything\");\n\t\t}\n\t\treturn isDirected;\n\t}\n",
+        "comment": "returns whether user has choosen directed or undirected graph\n"
+    },
+    {
+        "code_snippet":"\tpublic ConvertionActionsFactory getConvertionActionsFactory() {\n\t\treturn convertionActionsFactory;\n\t}\n",
+        "comment": "returns component convertion actions factory\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean isWeighted() {\n\t\tif (!wasTypeChoosen) {\n\t\t\tthrow new IllegalStateException(\"User didn't choose anything\");\n\t\t}\n\t\treturn isWeighted;\n\t}\n",
+        "comment": "returns whether user has choosen directed or undirected graph\n"
+    },
+    {
+        "code_snippet":"\tpublic void addTempComponent(Component component) {\n\t\tadd(component);\n\t\trevalidate();\n\t\trepaint();\n\t}\n",
+        "comment": "adds temrorary component to this component\n"
+    },
+    {
+        "code_snippet":"\tpublic void removeTempComponent(Component component) {\n\t\tremove(component);\n\t\trevalidate();\n\t\trepaint();\n\t}\n",
+        "comment": "removes temprorary component from this component\n"
+    },
+    {
+        "code_snippet":"\tpublic void addCommand(Command command) {\n\t\twasChanged = true;\n\t\tundoBuffer.pushCommand(command);\n\t\teditingActionsFactory.getUndoAction().setEnabled(true);\n\t\teditingActionsFactory.getRedoAction().setEnabled(false);\n\t}\n",
+        "comment": "adds new command to this component\n"
+    },
+    {
+        "code_snippet":"\tpublic void finalActions() {\n\t}\n",
+        "comment": "performs required actions before another tool is set\n"
+    },
+    {
+        "code_snippet":"\tpublic void setState(ToolState state) {\n\t\t\n\t}\n",
+        "comment": "sets new state for this tool\n"
+    },
+    {
+        "code_snippet":"\tpublic void paint(Graphics g, Color backgroundColor) {\n\n\t}\n",
+        "comment": "performs any additional painting required\n"
+    },
+    {
+        "code_snippet":"\tpublic void addAlgorythmErrorListener(AlgorythmMessageListener listener) {\n\t\tlisteners.add(listener);\n\t}\n",
+        "comment": "adds the specified algorythm error listener to recive notification about state\n"
+    },
+    {
+        "code_snippet":"\tpublic ToggleAction getSelectAction() {\n\t\treturn selectAction;\n\t}\n",
+        "comment": "returns an action for selecting mode\n"
+    },
+    {
+        "code_snippet":"\tpublic void removeAlgorythmErrorListener(AlgorythmMessageListener listener) {\n\t\tlisteners.remove(listener);\n\t}\n",
+        "comment": "removes the specified algorythm error listener from this presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic void addButton(AbstractButton button) {\n\t\tbuttons.add(button);\n\t}\n",
+        "comment": "adds button to the list of users\n"
+    },
+    {
+        "code_snippet":"\tpublic ToggleAction getAddVertexAction() {\n\t\treturn addVertexAction;\n\t}\n",
+        "comment": "returns an action for adding vertices mode\n"
+    },
+    {
+        "code_snippet":"\tpublic ToggleAction getAddEdgeAction() {\n\t\treturn addEdgeAction;\n\t}\n",
+        "comment": "returns an action for adding edges mode\n"
+    },
+    {
+        "code_snippet":"\tpublic Action getToWeightedAction() {\n\t\treturn toWeightedAction;\n\t}\n",
+        "comment": "returns an action for converting graph from unweighted to weighted\n"
+    },
+    {
+        "code_snippet":"\tpublic Action getToUnweightedAction() {\n\t\treturn toUnweightedAction;\n\t}\n",
+        "comment": "returns an action for converting graph from weighted to unweighted\n"
+    },
+    {
+        "code_snippet":"\tpublic Action getToUndirectedAction() {\n\t\treturn toUndirectedAction;\n\t}\n",
+        "comment": "returns an action for converting graph from directed to undirected\n"
+    },
+    {
+        "code_snippet":"\tpublic Action getCircleLayoutAction() {\n\t\treturn circleLayoutAction;\n\t}\n",
+        "comment": "returns an action for layout\n"
+    },
+    {
+        "code_snippet":"\tpublic void messageUnactive() {\n\t\tif (isMessageActive) {\n\t\t\tfireMessageUnactive();\n\t\t}\n\t}\n",
+        "comment": "makes required actions if message is no longer active\n"
+    },
+    {
+        "code_snippet":"\tpublic Action getDiscardHighlightingAction() {\n\t\treturn discardHighlightingAction;\n\t}\n",
+        "comment": "return an action for manually discaring highlighting\n"
+    },
+    {
+        "code_snippet":"\tpublic void meaasgeActive(String message, boolean isErrorMessage) {\n\t\tfireMessageRecieved(message, isErrorMessage);\n\t}\n",
+        "comment": "makes required actions if message is active\n"
+    },
+    {
+        "code_snippet":"\tpublic Action getExitAction() {\n\t\treturn exitAction;\n\t}\n",
+        "comment": "returns an action for exit\n"
+    },
+    {
+        "code_snippet":"\tpublic Action getTopSortAction() {\n\t\treturn topSortAction;\n\t}\n",
+        "comment": "returns an action for topological sort\n"
+    },
+    {
+        "code_snippet":"\tpublic Action getDijkstraTreeAction() {\n\t\treturn dijkstraAction;\n\t}\n",
+        "comment": "returns an action for dijkstra algorythm\n"
+    },
+    {
+        "code_snippet":"\tpublic Action getMinSpanningTreeAction() {\n\t\treturn mstAction;\n\t}\n",
+        "comment": "returns an action for minimal spanning tree algorythm\n"
+    },
+    {
+        "code_snippet":"\tpublic Action getMaxFlowAction() {\n\t\treturn maxFlowAction;\n\t}\n",
+        "comment": "returns an action for maximum flow algorythm\n"
+    },
+    {
+        "code_snippet":"\tpublic Action getSaveAsAction() {\n\t\treturn saveAsAction;\n\t}\n",
+        "comment": "returns an action for saving as\n"
+    },
+    {
+        "code_snippet":"\tpublic void addElementStateListener(ElementStateListener listener) {\n\t\tlisteners.add(listener);\n\t}\n",
+        "comment": "adds the specified element state listaner to recive notification about state\n"
+    },
+    {
+        "code_snippet":"\tpublic void removeElementStateListener(ElementStateListener listener) {\n\t\tlisteners.remove(listener);\n\t}\n",
+        "comment": "removes the specified element state listaner from this presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic Point getCenter() {\n\t\treturn (Point) center.clone();\n\t}\n",
+        "comment": "retrieves the center point of this presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic void setCenter(Point center) {\n\t\tthis.center.setLocation(center);\n\t\tfirePositionChanged();\n\t}\n",
+        "comment": "sets the center point of this presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic void paint(Graphics g) {\n\t\tg.setColor(Color.WHITE);\n\t\tg.fillOval(center.x - RADIX, center.y - RADIX, 2 * RADIX, 2 * RADIX);\n\t\tg.setColor(borderColor);\n\t\tg.drawOval(center.x - RADIX, center.y - RADIX, 2 * RADIX, 2 * RADIX);\n\t}\n",
+        "comment": "paints this vertex using given graphics\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean containsPoint(Point point) {\n\t\treturn (square(point.x - center.x)  + square(point.y - center.y) < square(RADIX) );\n\t}\n",
+        "comment": "verifies whether this presentation contains given point\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean isInRect(int x1, int y1, int x2, int y2) {\n\t\treturn (Math.min(x1, x2) <= center.x) && (Math.max(x1, x2) >= center.x) && (Math.min(y1, y2) <= center.y) && (Math.max(y1, y2) >= center.y);\n\t}\n",
+        "comment": "verifies whether this presentation lays whithin giver rectangle\n"
+    },
+    {
+        "code_snippet":"\tpublic void addGraphStateListener(GraphStateListener listener) {\n\t\tlisteners.add(listener);\n\t}\n",
+        "comment": "adds the specified graph state listaner to recive notification about state\n"
+    },
+    {
+        "code_snippet":"\tpublic void removeGraphStateListener(GraphStateListener listener) {\n\t\tlisteners.remove(listener);\n\t}\n",
+        "comment": "removes the specified graph state listaner from this presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic void pauseFiringChanges() {\n\t\tisPaused = true;\n\t}\n",
+        "comment": "pauses all changes firing until resume is not called\n"
+    },
+    {
+        "code_snippet":"\tpublic void resumeFiringChanges() {\n\t\tisPaused = false;\n\t\tif (wasPositionChangedRecieved) {\n\t\t\tfirePositionChanged();\n\t\t\twasPositionChangedRecieved = false;\n\t\t}\n\t\tif (wasStructureChangedRecieved) {\n\t\t\tfireStructureChanged();\n\t\t\twasStructureChangedRecieved = false;\n\t\t}\n\t}\n",
+        "comment": "resumes firing changes\n"
+    },
+    {
+        "code_snippet":"\tpublic Point getStart() {\n\t\tVertexPresentation sourcePresentation = verticesMap.get(edge\n\t\t\t\t.getSource());\n\t\tPoint sourceCenter = sourcePresentation.getCenter();\n\t\tVertexPresentation destinationPresentation = verticesMap.get(edge\n\t\t\t\t.getDestination());\n\t\tPoint destinationCenter = destinationPresentation.getCenter();\n\t\treturn calculatePoint(destinationCenter, sourceCenter);\n\t}\n",
+        "comment": "returns edge start point\n"
+    },
+    {
+        "code_snippet":"\tpublic void paint(Graphics gr, Color backgroundColor) {\n\t\tfor (EdgePresentation ep : edges) {\n\t\t\tep.paint(gr, backgroundColor);\n\t\t}\n\t\tfor (VertexPresentation vp : vertices) {\n\t\t\tvp.paint(gr);\n\t\t}\n\t}\n",
+        "comment": "paints this graph using given graphics\n"
+    },
+    {
+        "code_snippet":"\tpublic void addVertex(VertexPresentation vp) {\n\t\tgraph.addVertex(vp.getVertex());\n\t\tvertices.add(vp);\n\t\tverticesMap.put(vp.getVertex(), vp);\n\t\tvp.addElementStateListener(elementStateListener);\n\t\tfireStructureChanged();\n\t}\n",
+        "comment": "adds this vertex presentation to graph presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic void removeVertex(VertexPresentation vp) {\n\t\tfor (Edge edge : vp.getVertex().getOutgoingEdges()) {\n\t\t\tEdgePresentation ep = edgesMap.remove(edge);\n\t\t\tedges.remove(ep);\n\t\t}\n\t\tfor (Edge edge : vp.getVertex().getIncomingEdges()) {\n\t\t\tEdgePresentation ep = edgesMap.remove(edge);\n\t\t\tedges.remove(ep);\n\t\t}\n\t\tgraph.removeVertex(vp.getVertex());\n\t\tvertices.remove(vp);\n\t\tverticesMap.remove(vp);\n\t\tvp.removeElementStateListener(elementStateListener);\n\t\tfireStructureChanged();\n\t}\n",
+        "comment": "removes this vertex presentation from graph presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic void paint(Graphics gr, Color backgroundColor) {\n\t\tgr.setColor(color);\n\t\tPoint start = getStart();\n\t\tPoint end = getEnd();\n\t\t\n\t\tgr.drawLine(start.x, start.y, end.x, end.y);\n\t\tif (isDirected) {\n\t\t\tdrawArrow(gr, start, end);\n\t\t}\n\t\tif (isWeighted) {\n\t\t\tdrawWeight(gr, start, end, backgroundColor);\n\t\t}\n\t}\n",
+        "comment": "paints this edge using given graphics\n"
+    },
+    {
+        "code_snippet":"\tpublic void addEdge(EdgePresentation ep) {\n\t\tgraph.addEdge(ep.getEdge());\n\t\tedges.add(ep);\n\t\tedgesMap.put(ep.getEdge(), ep);\n\t\tep.addElementStateListener(elementStateListener);\n\t\tfireStructureChanged();\n\t}\n",
+        "comment": "adds this edge presentation to graph presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic void removeEdge(EdgePresentation ep) {\n\t\tgraph.disconnect(ep.getEdge().getSource(), ep.getEdge()\n\t\t\t\t.getDestination());\n\t\tedges.remove(ep);\n\t\tedgesMap.remove(ep);\n\t\tep.removeElementStateListener(elementStateListener);\n\t\tfireStructureChanged();\n\t}\n",
+        "comment": "removes this edge presentation from graph presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean areConnected(VertexPresentation sourcePr, VertexPresentation destinPr) {\n\t\treturn graph.areConnected(sourcePr.getVertex(), destinPr.getVertex());\n\t}\n",
+        "comment": "checks whether given vertices are connected\n"
+    },
+    {
+        "code_snippet":"\tprivate void validate() throws ParserConfigurationException, SAXException, IOException {\n\t\tDocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();\n\t\tfactory.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);\n\t\tfactory.setAttribute(JAXP_SCHEMA_SOURCE, new File(ClassLoader\n\t\t\t\t\t.getSystemResource(MY_SCHEMA).getFile()));\n\t\t\n\t\t\n\t\tDocumentBuilder builder = factory.newDocumentBuilder();\n\t\tbuilder.setErrorHandler(errorHandler);\n\t\tdocument = builder.parse(file);\n\t\tif (getErrorMessages().size() != 0) {\n\t\t\tthrow new SAXException();\n\t\t}\n\t}\n",
+        "comment": "validates file according to xml schema\n"
+    },
+    {
+        "code_snippet":"\tpublic Dimension getPreferredSize() {\n\t\tint resultX = 0;\n\t\tint resultY = 0;\n\t\tfor (VertexPresentation vp : vertices) {\n\t\t\tresultX = Math.max(resultX, vp.getCenter().x + VertexPresentation.RADIX + 1);\n\t\t\tresultY = Math.max(resultY, vp.getCenter().y + VertexPresentation.RADIX + 1);\n\t\t}\n\t\treturn new Dimension(resultX, resultY);\n\t}\n",
+        "comment": "returns preferred graph view size\n"
+    },
+    {
+        "code_snippet":"\tpublic void parseGraph() throws ParserConfigurationException, SAXException, IOException {\n\t\tvalidate();\n\t\t\n\t\tElement root = document.getDocumentElement();\n\t\tNode graphNode = root.getElementsByTagName(\"model\").item(0);\n\t\tNodeList vertices = root.getElementsByTagName(\"vertex\");\n\t\tNodeList edges = root.getElementsByTagName(\"edge\");\n\t\t\n\t\tif (\"yes\".equals(graphNode.getAttributes().getNamedItem(\"directed\").getNodeValue())) {\n\t\t\tgraph = new DirectedGraph();\n\t\t\tisDirected = true;\n\t\t} else {\n\t\t\tgraph = new UndirectedGraph();\n\t\t\tisDirected = false;\n\t\t}\n\t\t\n\t\tparseGraphElements(vertices, edges);\n\t}\n",
+        "comment": "parses graph from file\n"
+    },
+    {
+        "code_snippet":"\tpublic AbstractGraph getGraph() {\n\t\treturn graph;\n\t}\n",
+        "comment": "returns model graph of this presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic void parsePresentation() throws ParserConfigurationException, SAXException, IOException {\n\t\tparseGraph();\n\t\t\n\t\tElement root = document.getDocumentElement();\n\t\tNode presentationNode = root.getElementsByTagName(\"presentation\").item(0);\n\t\tNodeList centers = root.getElementsByTagName(\"center\");\n\t\t\n\t\tif (\"yes\".equals(presentationNode.getAttributes().getNamedItem(\"weighted\").getNodeValue())) {\n\t\t\tpresentation = new GraphPresentation(graph, isDirected, true);\n\t\t} else {\n\t\t\tpresentation = new GraphPresentation(graph, isDirected, false);\n\t\t}\n\t\t\n\t\tparseVertexCenters(centers);\n\t}\n",
+        "comment": "parses graph presentation from file\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean isWeighted() {\n\t\treturn isWeighted;\n\t}\n",
+        "comment": "checks whether this presentation is weighted\n"
+    },
+    {
+        "code_snippet":"\tpublic void setWeight(int weight) {\n\t\tedge.setWeight(weight);\n\t\tfireStructureChanged();\n\t}\n",
+        "comment": "sets weight of this presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic AbstractGraph getGraph() {\n\t\tif (graph == null) {\n\t\t\tthrow new IllegalStateException(\"Graph hasn't been parsed yet!\");\n\t\t}\n\t\treturn graph;\n\t}\n",
+        "comment": "returns parsed graph\n"
+    },
+    {
+        "code_snippet":"\tpublic GraphPresentation getGraphPresentation() {\n\t\tif (presentation == null) {\n\t\t\tthrow new IllegalStateException(\"Presentation hasn't been parsed yet!\");\n\t\t}\n\t\treturn presentation;\n\t}\n",
+        "comment": "returns parsed graph presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic int getWeight() {\n\t\treturn edge.getWeight();\n\t}\n",
+        "comment": "returns this presentation weight\n"
+    },
+    {
+        "code_snippet":"\tpublic void saveGraph(AbstractGraph graph) throws ParserConfigurationException, TransformerException {\n\t\tcreateDOMTreeRoot();\n\t\tgraphElement.appendChild(createModelElement(graph));\n\t\twriteTreeToFile();\n\t}\n",
+        "comment": "saves given graph to xml file\n"
+    },
+    {
+        "code_snippet":"\tpublic void saveGraphPresentation(GraphPresentation graphPresentation) throws ParserConfigurationException, TransformerException {\n\t\tcreateDOMTreeRoot();\n\t\tgraphElement.appendChild(createModelElement(graphPresentation.getGraph()));\n\t\tgraphElement.appendChild(createPresentationElement(graphPresentation));\n\t\twriteTreeToFile();\n\t}\n",
+        "comment": "saves given graph presentation to xml file\n"
+    },
+    {
+        "code_snippet":"\tpublic Point getUpperLeftWeightPoint() {\n\t\tif (!isWeighted) {\n\t\t\treturn null;\n\t\t}\n\t\tint x = (getStart().x + getEnd().x) / 2;\n\t\tint y = (getStart().y + getEnd().y) / 2;\n\t\treturn new Point(x - WEIGHT_SHIFT / 2, y - weightHeight / 2 - WEIGHT_SHIFT\n\t\t\t\t/ 2);\n\t}\n",
+        "comment": "return upper left point of weight rect\n"
+    },
+    {
+        "code_snippet":"\tpublic void mark(Color markColor) {\n\t\tthis.color = markColor;\n\t}\n",
+        "comment": "marks this presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic Vertex getDestination() {\n\t\treturn destination;\n\t}\n",
+        "comment": "returns a destination vertex of this edge\n"
+    },
+    {
+        "code_snippet":"\tpublic Vertex getOppositeVertex(Vertex vertex) {\n\t\treturn vertex.equals(source) ? destination : (vertex\n\t\t\t\t.equals(destination) ? source : null);\n\t}\n",
+        "comment": "returns a vertex opposite to the given one\n"
+    },
+    {
+        "code_snippet":"\tpublic void unmark() {\n\t\tcolor = Color.black;\n\t}\n",
+        "comment": "unmarks this presentation\n"
+    },
+    {
+        "code_snippet":"\tpublic void addVertex(Vertex vertex) {\n\t\tif (vertices.contains(vertex)) {\n\t\t\tthrow new IllegalArgumentException(\"Vertex already in graph\");\n\t\t}\n\t\tif ((vertex.getOutgoingEdges().size() != 0) || (vertex.getIncomingEdges().size() != 0)) {\n\t\t\tthrow new IllegalArgumentException(\"Vertex has adjusted edges\");\n\t\t}\n\t\tvertices.add(vertex);\n\t}\n",
+        "comment": "adds given vertex to graph\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean containsPoint(Point point) {\n\t\tPoint start = getStart();\n\t\tPoint end = getEnd();\n\t\tint scalarProdWithStart = scalarProduct(point.x - start.x, point.y\n\t\t\t\t- start.y, end.x - start.x, end.y - start.y);\n\t\tint scalarProdWithEnd = scalarProduct(point.x - end.x, point.y - end.y,\n\t\t\t\tend.x - start.x, end.y - start.y);\n\t\tif ((scalarProdWithStart >= 0) && (scalarProdWithEnd <= 0)) {\n\t\t\treturn (distanceToEdge(point, start, end) <= SELECTING_DISTANCE);\n\n\t\t}\n\t\treturn false;\n\t}\n",
+        "comment": "verifies whether this presentation contains given point\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean areConnected(Vertex source, Vertex destination) {\n\t\treturn (getConnectingEdge(source, destination) != null);\n\t}\n",
+        "comment": "checkes whether two given vertices are connected with an edge\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean isInRect(int x1, int y1, int x2, int y2) {\n\t\treturn isPointInRect(getStart(), x1, y1, x2, y2)\n\t\t\t\t&& isPointInRect(getEnd(), x1, y1, x2, y2);\n\t}\n",
+        "comment": "verifies whether this presentation lays whithin giver rectangle\n"
+    },
+    {
+        "code_snippet":"\tprotected void testVertexToConnect(Vertex source, Vertex destination) {\n\t\ttestVertices(source, destination);\n\t\tif (areConnected(source, destination)) {\n\t\t\tthrow new IllegalArgumentException(\"Vertices already connected\");\n\t\t}\n\t}\n",
+        "comment": "checkes all contracts of connect\n"
+    },
+    {
+        "code_snippet":"\tprotected void addVertexToGraph(Vertex vertex) {\n\t\tvertices.add(vertex);\n\t}\n",
+        "comment": "enables subclasses to add vertices to graph\n"
+    },
+    {
+        "code_snippet":"\tprotected void removeVertexFromGraph(Vertex vertex) {\n\t\tvertex.removeEdges();\n\t\tvertices.remove(vertex);\n\t}\n",
+        "comment": "enables subclasses to remove vertices from graph\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean isWeightSelected(Point point) {\n\t\tint x = (getStart().x + getEnd().x) / 2;\n\t\tint y = (getStart().y + getEnd().y) / 2;\n\t\treturn (isWeighted && (x - WEIGHT_SHIFT / 2) <= point.x)\n\t\t\t\t&& (point.x <= (x + weightWidth + WEIGHT_SHIFT))\n\t\t\t\t&& ((y - weightHeight - WEIGHT_SHIFT / 2) <= point.y)\n\t\t\t\t&& (point.y <= (y + weightHeight + WEIGHT_SHIFT));\n\t}\n",
+        "comment": "verifies whether given point is in this prenentation weight rect\n"
+    },
+    {
+        "code_snippet":"\tprotected boolean isVertexInGraph(Vertex vertex) {\n\t\treturn vertices.contains(vertex);\n\t}\n",
+        "comment": "checks whether the given vertex is in graph\n"
+    },
+    {
+        "code_snippet":"\tprotected void testVertices(Vertex source, Vertex destination) {\n\t\tif (!isVertexInGraph(source)) {\n\t\t\tthrow new IllegalArgumentException(\n\t\t\t\t\t\"Source vertex not in this graph.\");\n\t\t}\n\t\tif (!isVertexInGraph(destination)) {\n\t\t\tthrow new IllegalArgumentException(\n\t\t\t\t\t\"Destination vertex not in this graph.\");\n\t\t}\n\t}\n",
+        "comment": "checks whether the given vertices are in graph\n"
+    },
+    {
+        "code_snippet":"\tpublic void testWrongDisconnection() {\n\t\tAssert.assertTrue(!graph.disconnect(vertices[0], vertices[3]));\n\t}\n",
+        "comment": "tests special case of\n"
+    },
+    {
+        "code_snippet":"  public Class getComponentType() {\n    return type;\n  }\n",
+        "comment": "get the component type\n"
+    },
+    {
+        "code_snippet":"  public Object getComponentKey() {\n    return ckey;\n  }\n",
+        "comment": "get the component key\n"
+    },
+    {
+        "code_snippet":"  public int getOrdinalPosition() {\n    return num;\n  }\n",
+        "comment": "get the ordinal position of the parameter starting from 0\n"
+    },
+    {
+        "code_snippet":"  public ComponentMonitor getComponentMonitor(){\n    return (ComponentMonitor)java.lang.reflect.Proxy.newProxyInstance(\n      getClass().getClassLoader(), new Class[]{ComponentMonitor.class},\n      new java.lang.reflect.InvocationHandler(){\n        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {\n          return fire(method, args);\n        }\n      }\n    );\n  }\n",
+        "comment": "to create a component monitor instance that sequentially invoke\n"
+    },
+    {
+        "code_snippet":"  public Signature getSource() {\n    return source;\n  }\n",
+        "comment": "to get the signature of the method call that caused this error\n"
+    },
+    {
+        "code_snippet":"  public Object getPropertyKey() {\n    return lkey;\n  }\n",
+        "comment": "get the property key\n"
+    },
+    {
+        "code_snippet":"  public Class getParameterType() {\n    return type;\n  }\n",
+        "comment": "get the expected property type\n"
+    },
+    {
+        "code_snippet":"  public boolean isPooled(){\n    return pooled;\n  }\n",
+        "comment": "is this pool currently having something in cache\n"
+    },
+    {
+        "code_snippet":"  public Object getObject() throws Exception {\n    return yan.instantiateComponent(cc);\n  }\n",
+        "comment": "instantiate the component\n"
+    },
+    {
+        "code_snippet":"  public Class getObjectType() {\n    return cc.getType();\n  }\n",
+        "comment": "get the static type of the component\n"
+    },
+    {
+        "code_snippet":"  public Component getComponent() {\n    return cc;\n  }\n",
+        "comment": "get the component in this object\n"
+    },
+    {
+        "code_snippet":"  public Container getContainer() {\n    return yan;\n  }\n",
+        "comment": "get the container in this object\n"
+    },
+    {
+        "code_snippet":"  public int getBeanDefinitionCount() {\n    final Set keys = yan.keys();\n    int ret = 0;\n    for(Iterator it=keys.iterator(); it.hasNext();){\n      final Object key = it.next();\n      if(key instanceof String){\n        ret++;\n      }\n    }\n    return ret;\n  }\n",
+        "comment": "get the number of components registered under a string key\n"
+    },
+    {
+        "code_snippet":"  public Object getState() {\n    return null;\n  }\n",
+        "comment": "gets the user state of this component\n"
+    },
+    {
+        "code_snippet":"  public Component withState(Object obj){\n    return Components.withState(this, obj);\n  }\n",
+        "comment": "create a new component object with the specified user state\n"
+    },
+    {
+        "code_snippet":"  public Component singleton(){\n    return Components.singleton(this);\n  }\n",
+        "comment": "create a new component that utilizes singleton pattern when creating instance\n"
+    },
+    {
+        "code_snippet":"  public Component singleton(Pool scope){\n    return Components.singleton(this, scope);\n  }\n",
+        "comment": "create a new component that utilizes singleton pattern\n"
+    },
+    {
+        "code_snippet":"  public Component factory(Class factory_type, String toString){\n    return Components.factory(this, factory_type, toString);\n  }\n",
+        "comment": "create a component that instantiates a factory interface\n"
+    },
+    {
+        "code_snippet":"  public Map getBeansOfType(Class type) throws BeansException {\n    return getBeansOfType(type, true, true);\n  }\n",
+        "comment": "get the string object map of all components with the given type\n"
+    },
+    {
+        "code_snippet":"  public Component factory(Class factory_type){\n    return factory(factory_type, factory_type.getName());\n  }\n",
+        "comment": "create a component that instantiates a factory interface\n"
+    },
+    {
+        "code_snippet":"  public Component ctor(Constructor ctor){\n    return Components.fun(ctor(ctor, mon));\n  }\n",
+        "comment": "create a component for a constructor with monitoring support\n"
+    },
+    {
+        "code_snippet":"  public Object getDuplicatedKey() {\n    return key;\n  }\n",
+        "comment": "get the key object duplicated\n"
+    },
+    {
+        "code_snippet":"  public Component factory(String toString){\n    return Components.factory(this, toString);\n  }\n",
+        "comment": "create a component that instantiates the\n"
+    },
+    {
+        "code_snippet":"  public Component factory(){\n    return factory(\"factory\");\n  }\n",
+        "comment": "create a component that instantiates the\n"
+    },
+    {
+        "code_snippet":"  public Component guard(){\n    return Components.guard(this);\n  }\n",
+        "comment": "decorate this component so that\n"
+    },
+    {
+        "code_snippet":"  public Component method(Object obj, Method mtd){\n    return Components.fun(method(obj, mtd, mon));\n  }\n",
+        "comment": "create a component for a method with monitoring support\n"
+    },
+    {
+        "code_snippet":"  public Object getBean(final String name) throws BeansException {\n    /*\n    if(BeanFactoryUtils.isFactoryDereference(name)){\n     final String factoryname = BeanFactoryUtils.transformedBeanName(name);\n     return getFactoryBean(findComponent(factoryname));\n    }\n    else{\n     return instantiate(findComponent(name)); \n    }*/\n    return getBean(name, null);\n  }\n",
+        "comment": "get a bean object\n"
+    },
+    {
+        "code_snippet":"  public Component bindArguments(ParameterBinder binder){\n    return Components.bindArguments(this, binder);\n  }\n",
+        "comment": "create a new component object that\n"
+    },
+    {
+        "code_snippet":"  public Component bindArgument(int k, ParameterBinder binder){\n    return Components.bindArgument(this, k, binder);\n  }\n",
+        "comment": "create a new component object that\n"
+    },
+    {
+        "code_snippet":"  public Component withArguments(Part part){\n    return Components.withArguments(this, part);\n  }\n",
+        "comment": "create a new component object that\n"
+    },
+    {
+        "code_snippet":"  public Component withProperty(Object k, Creator factory){\n    return Components.withProperty(this, k, factory);\n  }\n",
+        "comment": "create a new component object that\n"
+    },
+    {
+        "code_snippet":"  public Component withProperty(Object k, Part p){\n    return Components.withProperty(this, k, p);\n  }\n",
+        "comment": "create a new component object that\n"
+    },
+    {
+        "code_snippet":"  public Component withProperties(Map props){\n    return Components.withProperties(this, props);\n  }\n",
+        "comment": "create a new component object that\n"
+    },
+    {
+        "code_snippet":"  public Component withProperties(String[] keys, Creator[] creators){\n    return Components.withProperties(this, keys, creators);\n  }\n",
+        "comment": "create a new component object that\n"
+    },
+    {
+        "code_snippet":"  public Component bindProperties(PropertyBinder binder){\n    return Components.bindProperties(this, binder);\n  }\n",
+        "comment": "create a new component object that\n"
+    },
+    {
+        "code_snippet":"  public Registrar getChild() {\n    return child;\n  }\n",
+        "comment": "get the child container\n"
+    },
+    {
+        "code_snippet":"  public Registrar getParent() {\n    return parent;\n  }\n",
+        "comment": "get the parent container\n"
+    },
+    {
+        "code_snippet":"  public Component bindProperty(Object k, PropertyBinder binder){\n    return Components.bindProperty(this, k, binder);\n  }\n",
+        "comment": "create a new component object that\n"
+    },
+    {
+        "code_snippet":"  public void registerComponent(Object key, Component cc) {\n    child.registerComponent(key, cc);\n  }\n",
+        "comment": "registers the component to the child container\n"
+    },
+    {
+        "code_snippet":"  public void unregisterComponentsOfType(Class type){\n    child.unregisterComponentsOfType(type);\n  }\n",
+        "comment": "unregisters components of a provided type from child container\n"
+    },
+    {
+        "code_snippet":"  public void unregisterComponent(Object key) {\n    child.unregisterComponent(key);\n    //parent.unregisterComponent(key);\n  }\n",
+        "comment": "unregisters a component identified by a key\n"
+    },
+    {
+        "code_snippet":"  public Component getComponent(Object key) {\n    Component cc = child.getComponent(key);\n    if(cc==null) return parent.getComponent(key);\n    else return cc;\n  }\n",
+        "comment": "retrieves a component identified by a key\n"
+    },
+    {
+        "code_snippet":"  public Component getComponentOfType(Class type){\n    Component c1 = getComponent(type);\n    if(c1!=null) return c1;\n    c1 = child.getComponentOfType(type);\n    if(c1!=null) return c1;\n    else return parent.getComponentOfType(type);\n  }\n",
+        "comment": "retrieves a component of a provided type\n"
+    },
+    {
+        "code_snippet":"  public Component withProperties(Part p){\n    return Components.withProperties(this, p);\n  }\n",
+        "comment": "create a new component object that uses a part object\n"
+    },
+    {
+        "code_snippet":"  public Dependency getDependencyOfType(Class type, ComponentMap cmap){\n    if(type==null || child.containsType(type))\n      return child.getDependencyOfType(type, cmap);\n    else return parent.getDependencyOfType(type, parent);\n  }\n",
+        "comment": "gets the dependency object for a component of\n"
+    },
+    {
+        "code_snippet":"  public Component subsume(Class type){\n    return Components.subsume(this, type);\n  }\n",
+        "comment": "create a new component object that returns the given type\n"
+    },
+    {
+        "code_snippet":"  public void verify(ComponentMap cmap) {\n    child.verify(cmap);\n    parent.verify(parent);\n  }\n",
+        "comment": "verifies all components in this container\n"
+    },
+    {
+        "code_snippet":"  public Component cast(Class type){\n    return Components.cast(this, type);\n  }\n",
+        "comment": "create a new component object that returns the given type\n"
+    },
+    {
+        "code_snippet":"  public Component transform(Object key, Component cc){\n    return transform(cc);\n  }\n",
+        "comment": "transforms one component object to another\n"
+    },
+    {
+        "code_snippet":"  public Component proxy(Class[] itfs){\n    return Components.proxy(this, itfs);\n  }\n",
+        "comment": "create a new component object that uses dynamic proxy\n"
+    },
+    {
+        "code_snippet":"  public Component proxy(Class itf){\n    return Components.proxy(this, itf);\n  }\n",
+        "comment": "create a new component object that uses dynamic proxy\n"
+    },
+    {
+        "code_snippet":"  public Component proxy(){\n    return Components.proxy(this);\n  }\n",
+        "comment": "create a new component object that uses dynamic proxy\n"
+    },
+    {
+        "code_snippet":"  public Object getComponentKey(){\n    return key;\n  }\n",
+        "comment": "get the component key\n"
+    },
+    {
+        "code_snippet":"  public Class getSource() {\n    return source;\n  }\n",
+        "comment": "to get the source of the exception\n"
+    },
+    {
+        "code_snippet":"  public Component map(jfun.yan.Map m){\n    return Monad.map(this, m);\n  }\n",
+        "comment": "create a new component that upon creation\n"
+    },
+    {
+        "code_snippet":"  public Component mutate(Mutation m){\n    return Components.mutate(this, m);\n  }\n",
+        "comment": "create a new component that upon creation\n"
+    },
+    {
+        "code_snippet":"  public Component incomplete(){\n    return Components.incomplete(this);\n  }\n",
+        "comment": "by default all components depended by this component\n"
+    },
+    {
+        "code_snippet":"  public Method getMethod() {\n    return mtd;\n  }\n",
+        "comment": "get the problematic method\n"
+    },
+    {
+        "code_snippet":"  public int getParameterCount() {\n    return num_params;\n  }\n",
+        "comment": "get the total number of parameters\n"
+    },
+    {
+        "code_snippet":"  public Map getParameters() {\n    return params;\n  }\n",
+        "comment": "get the parameters\n"
+    },
+    {
+        "code_snippet":"  public Map getProperties() {\n    return props;\n  }\n",
+        "comment": "get the properties\n"
+    },
+    {
+        "code_snippet":"  public Class getComponentType(){\n    return rtype;\n  }\n",
+        "comment": "get the property type\n"
+    },
+    {
+        "code_snippet":"  public void registerConstructor(Class c){\n    registerConstructor(c, c);\n  }\n",
+        "comment": "the component is transformed by\n"
+    },
+    {
+        "code_snippet":"  public Object getPropertyKey() {\n    return key;\n  }\n",
+        "comment": "gets the property key\n"
+    },
+    {
+        "code_snippet":"  public Object getObject() {\n    return obj;\n  }\n",
+        "comment": "gets the object that has the property\n"
+    },
+    {
+        "code_snippet":"  protected Component defaultTransform(Component comp){\n    return comp.singleton();\n  }\n",
+        "comment": "transforms a component by calling singleton\n"
+    },
+    {
+        "code_snippet":"  public Component ignoreProperty(Object key){\n    return withProperty(key, Components.useDefault());\n  }\n",
+        "comment": "ignore the property identified by a key and use the default mechanism\n"
+    },
+    {
+        "code_snippet":"  public void registerConstructor(Object key, Class c){\n    registerComponent(key, defaultTransform(Components.ctor(c)));\n  }\n",
+        "comment": "the component is transformed by\n"
+    },
+    {
+        "code_snippet":"  public void registerConstructor(Class c, Class[] param_types){\n    registerConstructor(c, c, param_types);\n  }\n",
+        "comment": "the component is transformed by\n"
+    },
+    {
+        "code_snippet":"  public Component optionalProperty(Object key){\n    return Components.optionalProperty(this, key);\n  }\n",
+        "comment": "make a property identified by a key optional\n"
+    },
+    {
+        "code_snippet":"  public void registerConstructor(Object key, Class c, Class[] param_types){\n    registerComponent(key, \n        defaultTransform(Components.ctor(c, param_types)));\n  }\n",
+        "comment": "the component is transformed by\n"
+    },
+    {
+        "code_snippet":"  public void registerStaticMethod(Class c, String name){\n    final Component comp = Components.static_method(c, name);\n    registerComponent(defaultTransform(comp));\n  }\n",
+        "comment": "the component is transformed by\n"
+    },
+    {
+        "code_snippet":"  public Class getActualType() {\n    return actual_type;\n  }\n",
+        "comment": "get the actual argument type\n"
+    },
+    {
+        "code_snippet":"  public Class getExpectedType() {\n    return expected_type;\n  }\n",
+        "comment": "get the expected type\n"
+    },
+    {
+        "code_snippet":"  public Component optionalProperties(){\n    return Components.optionalProperties(this);\n  }\n",
+        "comment": "make sure the properties are optional\n"
+    },
+    {
+        "code_snippet":"  public void registerStaticMethod(Object key, Class c, String name){\n    registerComponent(key, \n        defaultTransform(Components.static_method(c, name)));\n  }\n",
+        "comment": "the component is transformed by\n"
+    },
+    {
+        "code_snippet":"  public void registerStaticMethod(Class c, String name, Class[] param_types){\n    final Component comp = Components.static_method(c, name, param_types);\n    registerComponent(defaultTransform(comp));\n  }\n",
+        "comment": "the component is transformed by\n"
+    },
+    {
+        "code_snippet":"  public void registerStaticMethod(Object key, Class c, String name, Class[] param_types){\n    registerComponent(key, \n        defaultTransform(Components.static_method(c, name, param_types)));\n  }\n",
+        "comment": "the component is transformed by\n"
+    },
+    {
+        "code_snippet":"  public Component optionalParameter(int ind){\n    return Components.optionalParameter(this, ind);\n  }\n",
+        "comment": "make a parameter optional\n"
+    },
+    {
+        "code_snippet":"  public void checkElement(int i, Class type){}\n",
+        "comment": "subclasses may choose to override this method\n"
+    },
+    {
+        "code_snippet":"  public ResourceLoader getPrimary(){\n    return primary;\n  }\n",
+        "comment": "get the primary resource\n"
+    },
+    {
+        "code_snippet":"  public ResourceLoader getAlternative(){\n    return alt;\n  }\n",
+        "comment": "get the alternative resource\n"
+    },
+    {
+        "code_snippet":"  public Component optionalParameters(){\n    return Components.optionalParameters(this);\n  }\n",
+        "comment": "make sure the parameters are optional\n"
+    },
+    {
+        "code_snippet":"  public Component withDefaultProperty(Object key, Creator def){\n    return Components.withDefaultProperty(this, key, def);\n  }\n",
+        "comment": "create a component object that will use an alternative creator object\n"
+    },
+    {
+        "code_snippet":"  public Component withDefaultArgument(int ind, Creator def){\n    return Components.withDefaultArgument(this, ind, def);\n  }\n",
+        "comment": "create a component object that will use an alternative creator object\n"
+    },
+    {
+        "code_snippet":"  public Constructor getConstructor(Class[] param_types){\n    final Params params = new Params(param_types);\n    return (Constructor)ctors.get(params);\n  }\n",
+        "comment": "get the public constructor object identified by an array of parameter types\n"
+    },
+    {
+        "code_snippet":"  public Component optional(){\n    return Monad.mplus(this, Components.useDefault());\n  }\n",
+        "comment": "creates an optional component\n"
+    },
+    {
+        "code_snippet":"  public Component option(Object val){\n    return Monad.mplus(this, Components.value(val));\n  }\n",
+        "comment": "creates an optional component\n"
+    },
+    {
+        "code_snippet":"  public Component recover(Recovery r){\n    return Monad.recover(this, r);\n  }\n",
+        "comment": "create a new component object that will recover errors\n"
+    },
+    {
+        "code_snippet":"  public Component bind(Binder binder){\n    return Monad.bind(this, binder);\n  }\n",
+        "comment": "monadic bind operation\n"
+    },
+    {
+        "code_snippet":"  public Component bind(ComponentBinder binder){\n    return Monad.bind(this, binder);\n  }\n",
+        "comment": "monadic bind operation\n"
+    },
+    {
+        "code_snippet":"  public Component ifelse(Component yes, Component no){\n    return Monad.ifelse(this, yes, no);\n  }\n",
+        "comment": "create a component object according to the boolean value returned from this component\n"
+    },
+    {
+        "code_snippet":"  public Method getMethod(String name, Class[] param_types, boolean suppress_security){\n    if(suppress_security)\n      return getAnyMethod(name, param_types);\n    else\n      return getMethod(name, param_types);\n  }\n",
+        "comment": "get the method identified by a signature\n"
+    },
+    {
+        "code_snippet":"  public Component followedBy(ComponentBinder binder){\n    return Monad.followedBy(this, binder);\n  }\n",
+        "comment": "create a staged component\n"
+    },
+    {
+        "code_snippet":"  protected Object getServiceKey(Service service){\n    return \"service.\" + service.getSimpleName();\n  }\n",
+        "comment": "get the key for caching a service\n"
+    },
+    {
+        "code_snippet":"  public Method getMethod(String name, Class[] param_types){\n    return mtds.getMethod(new Sig(name, param_types));\n  }\n",
+        "comment": "get the public method identified by a signature\n"
+    },
+    {
+        "code_snippet":"  public Component followedBy(Binder binder){\n    return Monad.followedBy(this, binder);\n  }\n",
+        "comment": "create a staged component\n"
+    },
+    {
+        "code_snippet":"  public Component followedBy(Creator c2){\n    return Monad.followedBy(this, c2);\n  }\n",
+        "comment": "create a staged component\n"
+    },
+    {
+        "code_snippet":"    public Factory getServant(){\n        return servant;\n    }\n",
+        "comment": "gets the factory that creates the servant object who backs this service\n"
+    },
+    {
+        "code_snippet":"  public Field getField(String name, boolean suppress_security){\n    if(suppress_security)\n      return getAnyField(name);\n    else\n      return getField(name);\n  }\n",
+        "comment": "get the field object identified by name\n"
+    },
+    {
+        "code_snippet":"  public Component seq(Creator c2){\n    return Monad.seq(this, c2);\n  }\n",
+        "comment": "monadic sequence operation\n"
+    },
+    {
+        "code_snippet":"  public Field getField(String name){\n    return flds.getField(name);\n  }\n",
+        "comment": "get the public field object identified by name\n"
+    },
+    {
+        "code_snippet":"  public Component fromProperties(Object[] keys){\n    return Components.fromProperties(this, keys);\n  }\n",
+        "comment": "redirects resolution of arguments to properties\n"
+    },
+    {
+        "code_snippet":"  public Component fromArguments(Object[] keys){\n    return Components.fromArguments(this, keys);\n  }\n",
+        "comment": "redirects resolution of properties to arguments\n"
+    },
+    {
+        "code_snippet":"  public Component seal(){\n    return Components.seal(this);\n  }\n",
+        "comment": "create a sealed component\n"
+    },
+    {
+        "code_snippet":"  public Component getServant(){\n    final Component cc = getComponent();\n    if(cc!=null) return cc;\n    if(this.implementationClass != null)\n      return Components.ctor(this.implementationClass);\n    if(this.serviceInterface != null)\n      return Components.ctor(this.serviceInterface);\n    throw raise(\n        \"at least one of \\\"component\\\", \\\"serviceClass\\\" or \\\"implementationClass\\\" has to be specified.\");  \n  }\n",
+        "comment": "get the component for the actual servant\n"
+    },
+    {
+        "code_snippet":"  public TypeFilteredPropertyPredicate addType(Class type){\n    try{\n      final BeanType btype = BeanType.instance(type);\n      final Set names = btype.getPropertyNames();\n      for(Iterator it=names.iterator();it.hasNext();){\n        final String key = (String)it.next();\n        final Method writer = btype.getWriter(key);\n        if(writer!=null){\n          addProperty(writer.getDeclaringClass(), key);\n        }\n      }\n    }\n    catch(IntrospectionException e){}\n    return this;\n  }\n",
+        "comment": "add property setters of an entire class to the filter list\n"
+    },
+    {
+        "code_snippet":"  public TypeFilteredPropertyPredicate addProperty(Class type, String key){\n    final Object slot = filter_types.get(key);\n    if(slot==null){\n      filter_types.put(key, type);\n    }\n    else{\n      final ArrayList list = toArrayList(slot);\n      list.add(type);\n      filter_types.put(key, list);\n    }\n    return this;\n  }\n",
+        "comment": "add a single property of a type to the filter list\n"
+    },
+    {
+        "code_snippet":"  public Class getType() {\n    return componentType;\n  }\n",
+        "comment": "get the component type\n"
+    },
+    {
+        "code_snippet":"  public Class getType1() {\n    return t1;\n  }\n",
+        "comment": "gets the type of the first candidate component\n"
+    },
+    {
+        "code_snippet":"  public Class getType2() {\n    return t2;\n  }\n",
+        "comment": "gets the type of the second candidate component\n"
+    },
+    {
+        "code_snippet":"  public Function getFunction() {\n    return f;\n  }\n",
+        "comment": "gets the function object\n"
+    },
+    {
+        "code_snippet":"  public int getOrdinalPosition() {\n    return pos;\n  }\n",
+        "comment": "gets the ordinal position of the parameter\n"
+    },
+    {
+        "code_snippet":"  public Object getArrayObject() {\n    return arr;\n  }\n",
+        "comment": "get the array object that stores the elements\n"
+    },
+    {
+        "code_snippet":"  public Component method(final java.lang.reflect.Method mtd){\n    return Components.bindMethod(this, mtd);\n  }\n",
+        "comment": "creates a component that will call a certain method\n"
+    },
+    {
+        "code_snippet":"  public int getBegin() {\n    return begin;\n  }\n",
+        "comment": "get the begin index\n"
+    },
+    {
+        "code_snippet":"  public Set getSet() {\n    return set;\n  }\n",
+        "comment": "get the set object storing the component instances\n"
+    },
+    {
+        "code_snippet":"  public Component field(final java.lang.reflect.Field fld){\n    return Components.bindField(this, fld);\n  }\n",
+        "comment": "creates a component that will read a certain field\n"
+    },
+    {
+        "code_snippet":"  public Component repeat(int times){\n    return Components.repeat(this, times);\n  }\n",
+        "comment": "create a new component that repeatedly call this component for\n"
+    },
+    {
+        "code_snippet":"  public Component synchronize(){\n    return Components.synchronizedComponent(this);\n  }\n",
+        "comment": "create a component that the create method is put in a\n"
+    },
+    {
+        "code_snippet":"  public void contextInitialized(ServletContextEvent event) {\n    this.yanLoader = createYanLoader();\n    this.yanLoader.initContainer(event.getServletContext());\n  }\n",
+        "comment": "initialize the root web application context\n"
+    },
+    {
+        "code_snippet":"  protected YanLoader createYanLoader() {\n    return new YanLoader();\n  }\n",
+        "comment": "create the yan loader to use\n"
+    },
+    {
+        "code_snippet":"  public void init() throws ServletException {\n    this.YanLoader = createYanLoader();\n    this.YanLoader.initContainer(getServletContext());\n  }\n",
+        "comment": "initialize the root web application context\n"
+    },
+    {
+        "code_snippet":"  public YanLoader getYanLoader() {\n    return yanLoader;\n  }\n",
+        "comment": "return the yan loader used by this listener\n"
+    },
+    {
+        "code_snippet":"  public void contextDestroyed(ServletContextEvent event){\n    if (this.yanLoader != null) {\n      this.yanLoader.destroy(event.getServletContext());\n    }\n  }\n",
+        "comment": "close the root web application context\n"
+    },
+    {
+        "code_snippet":"  public void destroy() {\n    if (this.YanLoader != null) {\n      this.YanLoader.destroy(getServletContext());\n    }\n  }\n",
+        "comment": "close the root web application context\n"
+    },
+    {
+        "code_snippet":"  public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {\n    getServletContext().log(\n        \"Attempt to call service method on YanLoaderServlet as [\" +\n        request.getRequestURI() + \"] was ignored\");\n    response.sendError(HttpServletResponse.SC_BAD_REQUEST);\n  }\n",
+        "comment": "this should never even be called since no mapping to this servlet should\n"
+    },
+    {
+        "code_snippet":"  public ServletContext getServletContext(){\n    return ctxt;\n  }\n",
+        "comment": "to get the servlet context object\n"
+    },
+    {
+        "code_snippet":"  public ResourceLoader getResourceLoader(){\n    return loader;\n  }\n",
+        "comment": "to get the resource loader object\n"
+    },
+    {
+        "code_snippet":"    protected Object getMutex(){\n      return getSession();\n    }\n",
+        "comment": "this is not guaranteed to be safe\n"
+    },
+    {
+        "code_snippet":"    public Procedure getProcedure() {\n      return proc;\n    }\n",
+        "comment": "to get the procedure to invoke\n"
+    },
+    {
+        "code_snippet":"  public Container initContainer(ServletContext ctxt){\n    return initContainer(\n        ClassLoaderUtils.guessClassLoader(getClass().getClassLoader()),\n        ctxt);\n  }\n",
+        "comment": "initialize this object by instantiating container and life cycle manager\n"
+    },
+    {
+        "code_snippet":"  public boolean isEmpty(){\n    return entries.isEmpty();\n  }\n",
+        "comment": "is any life cycle phase defined at all\n"
+    },
+    {
+        "code_snippet":"  public ExceptionHandler getExceptionHandler() {\n    return handler;\n  }\n",
+        "comment": "to get the exception handler of this phase\n"
+    },
+    {
+        "code_snippet":"  public Object getPhaseKey() {\n    return key;\n  }\n",
+        "comment": "to get the key of this phase\n"
+    },
+    {
+        "code_snippet":"  public void put(Object key, Procedure proc, boolean reentrant){\n    entries.put(key, new Entry(proc, reentrant));\n  }\n",
+        "comment": "to add a phase\n"
+    },
+    {
+        "code_snippet":"  public void remove(Object key){\n    entries.remove(key);\n  }\n",
+        "comment": "to remove a phase definition\n"
+    },
+    {
+        "code_snippet":"  public boolean containsPhase(Object key){\n    return procs.containsKey(key);\n  }\n",
+        "comment": "to determine if a certain phase exists in the life cycle\n"
+    },
+    {
+        "code_snippet":"  public Entry get(Object key){\n    return (Entry)entries.get(key);\n  }\n",
+        "comment": "to get a phase entry\n"
+    },
+    {
+        "code_snippet":"  public Set keys(){\n    return entries.keySet();\n  }\n",
+        "comment": "to get all the phase keys\n"
+    },
+    {
+        "code_snippet":"  public Collection entries(){\n    return Collections.unmodifiableCollection(entries.values());\n  }\n",
+        "comment": "to get all the entries\n"
+    },
+    {
+        "code_snippet":"  public void addLiveObject(LiveObject lo){\n    history.add(lo);\n  }\n",
+        "comment": "add a live object into the lifecycle manager\n"
+    },
+    {
+        "code_snippet":"  public Component withLifecycle(Component c, Life life){\n    return c.mutate(new InstanceTracker(life, history));\n  }\n",
+        "comment": "to create a component object that enables life cycle support\n"
+    },
+    {
+        "code_snippet":"  public Set getManagedInstances(){\n    return history;\n  }\n",
+        "comment": "to get the managed\n"
+    },
+    {
+        "code_snippet":"  public void push(Object obj){\n    trace.push(obj);\n  }\n",
+        "comment": "pushes a resolution frame to the exception\n"
+    },
+    {
+        "code_snippet":"  public Stack getResolutionTrace(){\n    return trace;\n  }\n",
+        "comment": "get the resolution trace\n"
+    },{
+        "code_snippet":"  public void printResolutionTrace(PrintStream out){\n    printResolutionTrace(new java.io.PrintWriter(out, true));\n  }\n",
+        "comment": "print the resolution trace\n"
+    },
+    {
+        "code_snippet":"  public void printResolutionTrace(java.io.PrintWriter out){\n    final int size = trace.size();\n    for(int i=0; i<size; i++){\n      out.println(trace.get(i));\n    }\n  }\n",
+        "comment": "print the resultion trace\n"
+    },
+    {
+        "code_snippet":"  public void printResolutionTrace(){\n    printResolutionTrace(System.err);\n  }\n",
+        "comment": "prints the resolution trace to the standard error output\n"
+    },
+    {
+        "code_snippet":"  public void clearResolutionTrace(){\n    trace.clear();\n  }\n",
+        "comment": "clear the resolution trace\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle opener(Procedure proc, boolean reentrant){\n      desc.opener(this, proc, reentrant);\n      return this;\n    }\n",
+        "comment": "to register the open phase\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle closer(Procedure proc, boolean reentrant){\n      desc.closer(this, proc, reentrant);\n      return this;\n    }\n",
+        "comment": "to register the close phase\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle initializer(Procedure proc, boolean reentrant){\n      desc.initializer(this, proc, reentrant);\n      return this;\n    }\n",
+        "comment": "to register the init phase\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor opener(Lifecycle lc, Procedure proc, boolean reentrant){\n    return addLifeProc(lc, opener, proc, reentrant);\n  }\n",
+        "comment": "to register the open phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle disposer(Procedure proc, boolean reentrant){\n      desc.disposer(this, proc, reentrant);\n      return this;\n    }\n",
+        "comment": "to register the dispose phase\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor closer(Lifecycle lc, Procedure proc, boolean reentrant){\n    return addLifeProc(lc, closer, proc, reentrant);\n  }\n",
+        "comment": "to register the close phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle verifier(Procedure proc, boolean reentrant){\n      desc.verifier(this, proc, reentrant);\n      return this;\n    }\n",
+        "comment": "to register the verify phase\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor initializer(Lifecycle lc, Procedure proc, boolean reentrant){\n    return addLifeProc(lc, initializer, proc, reentrant);\n  }\n",
+        "comment": "to register the init phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle starter(Procedure proc, boolean reentrant){\n      desc.starter(this, proc, reentrant);\n      return this;\n    }\n",
+        "comment": "to register the start phase\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle stopper(Procedure proc, boolean reentrant){\n      desc.stopper(this, proc, reentrant);\n      return this;\n    }\n",
+        "comment": "to register the stop phase\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor disposer(Lifecycle lc, Procedure proc, boolean reentrant){\n    return addLifeProc(lc, disposer, proc, reentrant);\n  }\n",
+        "comment": "to register the dispose phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle opener(Procedure proc){\n      desc.opener(this, proc);\n      return this;\n    }\n",
+        "comment": "to register the open phase as re entrant\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor verifier(Lifecycle lc, Procedure proc, boolean reentrant){\n    return addLifeProc(lc, verifier, proc, reentrant);\n  }\n",
+        "comment": "to register the verify phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle closer(Procedure proc){\n      desc.closer(this, proc);\n      return this;\n    }\n",
+        "comment": "to register the close phase as re entrant\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor starter(Lifecycle lc, Procedure proc, boolean reentrant){\n    return addLifeProc(lc, starter, proc, reentrant);\n  }\n",
+        "comment": "to register the start phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle initializer(Procedure proc){\n      desc.initializer(this, proc);\n      return this;\n    }\n",
+        "comment": "to register the init phase as non reentrant\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor stopper(Lifecycle lc, Procedure proc, boolean reentrant){\n    return addLifeProc(lc, stopper, proc, reentrant);\n  }\n",
+        "comment": "to register the stop phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle disposer(Procedure proc){\n      desc.disposer(this, proc);\n      return this;\n    }\n",
+        "comment": "to register the dispose phase as non reentrant\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle verifier(Procedure proc){\n      desc.verifier(this, proc);\n      return this;\n    }\n",
+        "comment": "to register the verify phase as reentrant\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor opener(Lifecycle lc, Procedure proc){\n    return opener(lc, proc, true);\n  }\n",
+        "comment": "to register the open phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle starter(Procedure proc){\n      desc.starter(this, proc);\n      return this;\n    }\n",
+        "comment": "to register the start phase as re entrant\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor closer(Lifecycle lc, Procedure proc){\n    return closer(lc, proc, true);\n  }\n",
+        "comment": "to register the close phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle stopper(Procedure proc){\n      desc.stopper(this, proc);\n      return this;\n    }\n",
+        "comment": "to register the stop phase as re entrant\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor initializer(Lifecycle lc, Procedure proc){\n    return initializer(lc, proc, false);\n  }\n",
+        "comment": "to register the init phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"  public void addBeanPostProcessor(String name, Component bpp){\n    names.add(name);\n    queue.add(bpp);\n  }\n",
+        "comment": "add a component that instantiates bean post processor\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle opener(String method_name){\n      opener(Procedures.method(method_name));\n      return this;\n    }\n",
+        "comment": "to register the open phase as re entrant\n"
+    },
+    {
+        "code_snippet":"  public String getName(int i){\n    return (String)names.get(i);\n  }\n",
+        "comment": "get the name of a bean post processor component\n"
+    },
+    {
+        "code_snippet":"  public Component getBeanPostProcessor(int i){\n    return (Component)queue.get(i);\n  }\n",
+        "comment": "get a bean post processor component\n"
+    },
+    {
+        "code_snippet":"  public int size(){\n    return names.size();\n  }\n",
+        "comment": "to get the number of bean post processor components stored in the queue\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle closer(String method_name){\n      closer(Procedures.method(method_name));\n      return this;\n    }\n",
+        "comment": "to register the close phase as re entrant\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor disposer(Lifecycle lc, Procedure proc){\n    return disposer(lc, proc, false);\n  }\n",
+        "comment": "to register the dispose phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle initializer(String method_name){\n      initializer(Procedures.method(method_name));\n      return this;\n    }\n",
+        "comment": "to register the init phase as non reentrant\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor verifier(Lifecycle lc, Procedure proc){\n    return verifier(lc, proc, true);\n  }\n",
+        "comment": "to register the verify phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle disposer(String method_name){\n      disposer(Procedures.method(method_name));\n      return this;\n    }\n",
+        "comment": "to register the dispose phase as non reentrant\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor starter(Lifecycle lc, Procedure proc){\n    return starter(lc, proc, true);\n  }\n",
+        "comment": "to register the start phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"  public ApplicationContext getApplicationContext(){\n    return actxt;\n  }\n",
+        "comment": "get the application context object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle verifier(String method_name){\n      verifier(Procedures.method(method_name));\n      return this;\n    }\n",
+        "comment": "to register the verify phase as reentrant\n"
+    },
+    {
+        "code_snippet":"  public void manageDisposableBean(DisposableBean db){\n    bean_lifecycle.manageInstance(new BeanDisposer(db));\n  }\n",
+        "comment": "report an existence of a disposable bean object\n"
+    },
+    {
+        "code_snippet":"  public void addBeanPostProcessor(String key, Class type, Component bpp){\n    if(DestructionAwareBeanPostProcessor.class.isAssignableFrom(type)){\n      destructions.addBeanPostProcessor(key, bpp);\n    }\n    if(BeanPostProcessor.class.isAssignableFrom(type)){\n      processors.addBeanPostProcessor(key, bpp);\n    }\n  }\n",
+        "comment": "report an existence of a component that instantiates bean post processor\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleDescriptor stopper(Lifecycle lc, Procedure proc){\n    return stopper(lc, proc, true);\n  }\n",
+        "comment": "to register the stop phase into a lifecycle object\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle starter(String method_name){\n      starter(Procedures.method(method_name));\n      return this;\n    }\n",
+        "comment": "to register the start phase as re entrant\n"
+    },
+    {
+        "code_snippet":"  public BeanPostProcessorQueue getProcessorQueue(){\n    return processors;\n  }\n",
+        "comment": "get all the bean post processor components\n"
+    },
+    {
+        "code_snippet":"  public BeanPostProcessorQueue getDestructionAwares(){\n    return destructions;\n  }\n",
+        "comment": "get all the destruction aware bean post processor components\n"
+    },
+    {
+        "code_snippet":"    public DefaultLifecycle stopper(String method_name){\n      stopper(Procedures.method(method_name));\n      return this;\n    }\n",
+        "comment": "to register the stop phase as re entrant\n"
+    },
+    {
+        "code_snippet":"    public Component manage(Component c){\n      if(this.isEmpty()) return c;\n      return withLifecycle(c, this);\n    }\n",
+        "comment": "to create a component with the current lifecycle\n"
+    },
+    {
+        "code_snippet":"  public Phase getCloser() {\n    return closer;\n  }\n",
+        "comment": "to get the closer phase\n"
+    },
+    {
+        "code_snippet":"    public void manageInstance(Object obj){\n      if(this.isEmpty()) return;\n      addLiveObject(bear(obj));\n    }\n",
+        "comment": "manage an instances life\n"
+    },
+    {
+        "code_snippet":"  public void setCloser(Phase closer) {\n    this.closer = closer;\n  }\n",
+        "comment": "to set the close phase\n"
+    },
+    {
+        "code_snippet":"  public Phase getDisposer() {\n    return disposer;\n  }\n",
+        "comment": "to get the disposer phase\n"
+    },
+    {
+        "code_snippet":"  protected Component getMandatory(){\n    checkMandatory(\"component\", cc);\n    return cc;\n  }\n",
+        "comment": "get the component object\n"
+    },
+    {
+        "code_snippet":"  public PropertyBinder getPropertyAutowireMode() {\n    final PropertyBinder mode = super.getPropertyAutowireMode();\n    if(mode==null) return null;\n    return SpringUtils.getAutowireWithoutAwareMarkerInterfaces(mode);\n  }\n",
+        "comment": "decorate the autowire mode by filtering out setters defined\n"
+    },
+    {
+        "code_snippet":"  public void setDisposer(Phase disposer) {\n    this.disposer = disposer;\n  }\n",
+        "comment": "to set the dispose phase\n"
+    },
+    {
+        "code_snippet":"  protected void delegateTo(Component cc){\n    this.cc = cc;\n  }\n",
+        "comment": "subclass override this method to wrap around the delegate target\n"
+    },
+    {
+        "code_snippet":"  public boolean isVal1Set() {\n    return set1;\n  }\n",
+        "comment": "is the val1 attribute set\n"
+    },
+    {
+        "code_snippet":"  public boolean isVal2Set() {\n    return set2;\n  }\n",
+        "comment": "is the val2 attribute set\n"
+    },
+    {
+        "code_snippet":"  public Phase getInitializer() {\n    return initializer;\n  }\n",
+        "comment": "to get the init phase\n"
+    },
+    {
+        "code_snippet":"  public void setInitializer(Phase initializer) {\n    this.initializer = initializer;\n  }\n",
+        "comment": "to set the init phase\n"
+    },
+    {
+        "code_snippet":"  public Phase getOpener() {\n    return opener;\n  }\n",
+        "comment": "to get the open phase\n"
+    },
+    {
+        "code_snippet":"  protected boolean isEagerlyInstantiating(){\n    if(eager_mode_specified){\n      return eager_init;\n    }\n    else{\n      return this.getNutEnvironment().isEagerlyInstantiating();\n    }\n  }\n",
+        "comment": "is this registration eagerly instantiated\n"
+    },
+    {
+        "code_snippet":"  protected void registerValue(Object key, Object val){\n    if(val==null) return;\n    if(isEagerlyInstantiating() && val instanceof Creator){\n      registerEagerInstantiation(NutsUtils.asComponent(val));\n    }\n    register(key, val, overridable, overriding);\n  }\n",
+        "comment": "dynamically register a value\n"
+    },
+    {
+        "code_snippet":"  public void setOpener(Phase opener) {\n    this.opener = opener;\n  }\n",
+        "comment": "to set the open phase\n"
+    },
+    {
+        "code_snippet":"  public Phase getStarter() {\n    return starter;\n  }\n",
+        "comment": "to get the start phase\n"
+    },
+    {
+        "code_snippet":"  public void setStarter(Phase starter) {\n    this.starter = starter;\n  }\n",
+        "comment": "to set the start phase\n"
+    },
+    {
+        "code_snippet":"  protected Object calcFQN(Object id){\n    if(prefix==null){\n      if(suffix==null)\n        return id;\n      else\n        return \"\"+id+suffix;\n    }\n    else if(suffix==null){\n      return prefix+id;\n    }\n    else\n      return prefix+id+suffix;\n  }\n",
+        "comment": "calculate the fully qualified name using the prefix and suffix\n"
+    },
+    {
+        "code_snippet":"  protected void loop(Object id, Object val){\n    registerValue(calcFQN(id), getMandatoryBody().call(createArgs(val)));\n  }\n",
+        "comment": "loop once by calling the body function and register the result\n"
+    },
+    {
+        "code_snippet":"  public Phase getStopper() {\n    return stopper;\n  }\n",
+        "comment": "to get the stop phase\n"
+    },
+    {
+        "code_snippet":"  protected void loop(Object id, Object val1, Object val2){\n    registerValue(calcFQN(id), getMandatoryBody().call(createArgs(val1, val2)));\n  }\n",
+        "comment": "loop once by calling the body function and register the result\n"
+    },
+    {
+        "code_snippet":"  public void setStopper(Phase stopper) {\n    this.stopper = stopper;\n  }\n",
+        "comment": "to set the stop phase\n"
+    },
+    {
+        "code_snippet":"  public Phase getVerifier() {\n    return verifier;\n  }\n",
+        "comment": "to get the verify phase\n"
+    },
+    {
+        "code_snippet":"  public Class getDeclaringClass(){\n    return type;\n  }\n",
+        "comment": "get the class that declares the constructor\n"
+    },
+    {
+        "code_snippet":"  protected Component evaluateNoLifecycle(){\n    checkMandatory(\"class\", type);\n    final Constructor ctor = lookupConstructor();\n    Component result = Components.fun(Functions.ctor(ctor));\n    return decorateComponent(result);\n  }\n",
+        "comment": "evaluate the component without applying life cycle\n"
+    },
+    {
+        "code_snippet":"  public void setVerifier(Phase verifier) {\n    this.verifier = verifier;\n  }\n",
+        "comment": "to set the verify phase\n"
+    },
+    {
+        "code_snippet":"  protected Binder getMandatory(){\n    checkMandatory(\"binder\", binder);\n    return binder;\n  }\n",
+        "comment": "get the binder object\n"
+    },
+    {
+        "code_snippet":"  public void setKey_type(Class key_type) {\n    throw raise(\"attribute \\\"key-type\\\" not supported.\");\n  }\n",
+        "comment": "disable key type by throwing exception\n"
+    },
+    {
+        "code_snippet":"  public void setOf(Class of) {\n    throw raise(\"attribute \\\"of\\\" not supported.\");\n  }\n",
+        "comment": "disable of by throwing exception\n"
+    },
+    {
+        "code_snippet":"  public void setType(Class type) {\n    if(type!=null&&!type.isInterface()){\n      raise(Misc.getTypeName(type) + \" is not an interface\");\n    }\n    this.type = type;\n  }\n",
+        "comment": "set the factory interface\n"
+    },
+    {
+        "code_snippet":"  public Class getType(Class deftype){\n    return type==null?deftype:type;\n  }\n",
+        "comment": "get the type attribute\n"
+    },
+    {
+        "code_snippet":"  public int getMaxArgsCount(){\n    return max_arg_num;\n  }\n",
+        "comment": "get the maximum number of the arguments\n"
+    },
+    {
+        "code_snippet":"  public boolean containsExplicitProperty(String key){\n    if(prop_names!=null){\n      for(int i=0; i<prop_names.length; i++){\n        final String name = prop_names[i];\n        if(name!=null && name.equals(key)){\n          return true;\n        }\n      }\n    }\n    final int sz = prop_elements.size();\n    for(int i=0; i<sz; i++){\n      final Prop prop = (Prop)prop_elements.get(i);\n      if(prop.getKey().equals(key)){\n        return true;\n      }\n    }\n    return false;\n  }\n",
+        "comment": "is the a property explicitly specified\n"
+    },
+    {
+        "code_snippet":"  public PropertyBinder getAutoWire(){\n    return prop_autowire_mode;\n  }\n",
+        "comment": "get the specified autowire mode\n"
+    },
+    {
+        "code_snippet":"  protected boolean isBeanByDefault(){\n    return false;\n  }\n",
+        "comment": "when no property names is specified no property values are set\n"
+    },
+    {
+        "code_snippet":"  protected Component informAwares(Component c){\n    return c;\n  }\n",
+        "comment": "in case the component implements any marker interface or has any specific\n"
+    },
+    {
+        "code_snippet":"  public PropertyBinder getPropertyAutowireMode(){\n    if(prop_autowire_str==null){\n      //use default\n      return getPropertyWiring(null);\n    }\n    else return prop_autowire_mode;\n  }\n",
+        "comment": "get the auto wire mode for properties\n"
+    },
+    {
+        "code_snippet":"  public ParameterBinder getParameterAutowireMode(){\n    if(param_autowire_str==null){\n      return getParameterWiring(null);\n    }\n    else return param_autowire_mode;\n  }\n",
+        "comment": "get the auto wire mode for parameters\n"
+    },
+    {
+        "code_snippet":"  public Method getAdder(String name){\n    return (Method)adders.get(name);\n  }\n",
+        "comment": "to get the adder method for a given name\n"
+    },
+    {
+        "code_snippet":"  public Method getAnonymousAdder(Object arg){\n    return anonymous_adder_suite.getMethod(arg);\n  }\n",
+        "comment": "get the adder method for adding sub elements anonymously\n"
+    },
+    {
+        "code_snippet":"  public Class getAdderType(String name){\n    return (Class)addertypes.get(name);\n  }\n",
+        "comment": "to get the parameter type for a given adder method\n"
+    },
+    {
+        "code_snippet":"  public boolean isAllProperties(){\n    return(prop_names!=null && prop_names.length==1 \n        && Constants.WILDCARD.equals(prop_names[0]));\n  }\n",
+        "comment": "is wildcard used\n"
+    },
+    {
+        "code_snippet":"  public boolean isCollectionNut() {\n    return collection;\n  }\n",
+        "comment": "is this a collection nut\n"
+    },
+    {
+        "code_snippet":"  public Evaluator getEvaluator() {\n    return evaluator;\n  }\n",
+        "comment": "get the evaluator object that evaluates a nut object\n"
+    },
+    {
+        "code_snippet":"  public Map getPropertyDescriptors(){\n    return props;\n  }\n",
+        "comment": "get a map of the property descriptors for this type\n"
+    },
+    {
+        "code_snippet":"  protected Component decorateComponent(Component component){\n    return applyProperties(applyArguments(informAwares(component)));\n  }\n",
+        "comment": "apply arguments and then properties to the component\n"
+    },
+    {
+        "code_snippet":"  public NutDescriptor getSubDescriptor(String name){\n    return (NutDescriptor)rdesc.sub_descriptors.get(name);\n  }\n",
+        "comment": "get the nut descriptor object for a given sub element\n"
+    },
+    {
+        "code_snippet":"  public Method getSetter(){\n    return cdesc.setter;\n  }\n",
+        "comment": "if the nut is a collection nut get the method corresponding\n"
+    },
+    {
+        "code_snippet":"  public boolean isGloballyDefined(){\n    return globallyDefined;\n  }\n",
+        "comment": "is this tag defined globally\n"
+    },
+    {
+        "code_snippet":"  public Class getSetterElementType(){\n    return cdesc.elem_type;\n  }\n",
+        "comment": "if the nut is a collection nut get the element type of the\n"
+    },
+    {
+        "code_snippet":"  public int getSequenceNumber(){\n    return seq_no;\n  }\n",
+        "comment": "get the sequence number starting from 0\n"
+    },
+    {
+        "code_snippet":"  public int getColumnNo() {\n    return col;\n  }\n",
+        "comment": "get the 1 based column number\n"
+    },
+    {
+        "code_snippet":"  public int getLineNo() {\n    return line;\n  }\n",
+        "comment": "get the 1 based line number\n"
+    },
+    {
+        "code_snippet":"  public Object getComponentId() {\n    return id;\n  }\n",
+        "comment": "get the id of the component within the containing module\n"
+    },
+    {
+        "code_snippet":"  public Object getModuleId() {\n    return module_id;\n  }\n",
+        "comment": "get the id of the containing module\n"
+    },
+    {
+        "code_snippet":"  public Location getTagLocation(){\n    return loc;\n  }\n",
+        "comment": "get this tags location within the configuration file\n"
+    },
+    {
+        "code_snippet":"  public int getEvaluationSequence(){\n    return evaluation_seq;\n  }\n",
+        "comment": "get the sequence number in the order of tag evaluation\n"
+    },
+    {
+        "code_snippet":"  public int getDeclarationSequence(){\n    return declaration_seq;\n  }\n",
+        "comment": "get the sequence number in the order of tag declaration\n"
+    },
+    {
+        "code_snippet":"  public void initSequenceNumber(int seq){\n    this.seq_no = seq;\n  }\n",
+        "comment": "to set the sequence number of the tag in the enclosing scope\n"
+    },
+    {
+        "code_snippet":"  public void initGloballyDefined(boolean gd){\n    this.globallyDefined = gd;\n  }\n",
+        "comment": "to set whether the tag is defined globally\n"
+    },
+    {
+        "code_snippet":"  public void initTagLocation(Location loc){\n    this.loc = loc;\n  }\n",
+        "comment": "the framework calls this method to set the location\n"
+    },
+    {
+        "code_snippet":"  public void initNutEnvironment(NutEnvironment env){\n    this.env = env;\n  }\n",
+        "comment": "the framework calls this method to set the environment\n"
+    },
+    {
+        "code_snippet":"  public ClassLoader getComponentClassLoader() {\n    return env.getComponentClassLoader();\n  }\n",
+        "comment": "get the class loader used to load the component classes\n"
+    },
+    {
+        "code_snippet":"  public ClassLoader getNutClassLoader(String classpath){\n    try{\n      return NutsUtils.getClassLoader(getClass().getClassLoader(),\n          classpath, \n          env.getBaseDir());\n    }\n    catch(MalformedURLException e){\n      throw new ConfigurationException(\"invalid classpath\", \n          loc);\n    }\n  }\n",
+        "comment": "get a class loader object that uses the current class loader\n"
+    },
+    {
+        "code_snippet":"  public void initTagName(String name){\n    this.tagname = name;\n  }\n",
+        "comment": "the framework calls this method to set the tag name\n"
+    },
+    {
+        "code_snippet":"  public NutEnvironment getNutEnvironment() {\n    return env;\n  }\n",
+        "comment": "get the environment that the nut object is running in\n"
+    },
+    {
+        "code_snippet":"  public ParameterBinder getParameterWiring(){\n    return param_wiring;\n  }\n",
+        "comment": "get the default parameter auto wiring mode\n"
+    },
+    {
+        "code_snippet":"  public PropertyBinder getPropertyWiring(){\n    return prop_wiring;\n  }\n",
+        "comment": "get the default property auto wiring mode\n"
+    },
+    {
+        "code_snippet":"  public SingletonMode getSingletonMode(){\n    return singleton_mode;\n  }\n",
+        "comment": "get the default singleton mode\n"
+    },
+    {
+        "code_snippet":"  public Object convert(Class target_type, Object v){\n    return env.convert(target_type, v, loc);\n  }\n",
+        "comment": "convert an object to a target type\n"
+    },
+    {
+        "code_snippet":"  public Stack getDependencyTrace(){\n    return trace;\n  }\n",
+        "comment": "get the dependency trace that caused the cycle\n"
+    },
+    {
+        "code_snippet":"  public void printDependencyTrace(PrintStream out){\n    printDependencyTrace(new java.io.PrintWriter(out, true));\n  }\n",
+        "comment": "print the dependency trace\n"
+    },
+    {
+        "code_snippet":"  public void printDependencyTrace(java.io.PrintWriter out){\n    final int size = trace.size();\n    for(int i=0; i<size; i++){\n      out.println(trace.get(i));\n    }\n  }\n",
+        "comment": "print the dependency trace\n"
+    },
+    {
+        "code_snippet":"  public void printDependencyTrace(){\n    printDependencyTrace(System.err);\n  }\n",
+        "comment": "prints the dependency trace to the standard error output\n"
+    },
+    {
+        "code_snippet":"  public Component cast(final Class target_type, Component c){\n    return env.cast(target_type, c, this.getTagLocation());\n  }\n",
+        "comment": "transforms a component so that the instantiated instance\n"
+    },
+    {
+        "code_snippet":"  public void registerEagerInstantiation(Component c){\n    if(!globallyDefined){\n      raise(\"only global tags can be registered as eager instantiated\");\n    }\n    /*\n    if(id==null){\n      raise(\"id is required to eager initialize a Component\");\n    }*/\n    env.registerEagerInstantiation(seq_no, id, c);\n  }\n",
+        "comment": "register a component to be eagerly instantiated using the current tags id\n"
+    },
+    {
+        "code_snippet":"  public ConfigurationException raise(String msg){\n    throw new ConfigurationException(tagname+\": \" + msg, loc);\n  }\n",
+        "comment": "throws a configuration exception with the current tag name and location information\n"
+    },
+    {
+        "code_snippet":"  public ConfigurationException raise(Throwable e){\n    throw new ConfigurationException(tagname+\": \" + e.getMessage(), e, loc);\n  }\n",
+        "comment": "throws a configuration exception with the current tag name and location information\n"
+    },
+    {
+        "code_snippet":"  protected void checkMandatory(String attrname, Object v){\n    if(v==null)\n      raise(\"missing mandatory attribute <\"+attrname +\">\");\n  }\n",
+        "comment": "make sure an object is not null\n"
+    },
+    {
+        "code_snippet":"  protected void checkDuplicate(String attrname, Object v){\n    if(v!=null){\n      raise(\"attribute <\"+attrname+\"> already specified.\");\n    }\n  }\n",
+        "comment": "makes sure that a certain attribute is not set yet\n"
+    },
+    {
+        "code_snippet":"  /*protected void checkSingleChild(Object[] vals){\n    if(vals.length>1)\n      throw raise(\"only one sub-element is allowed\");\n  }*/\n",
+        "comment": "makes sure the array only contains one element\n"
+    },
+    {
+        "code_snippet":"  public ParameterBinder getParameterWiring(String mode){\n    return env.getParameterWiringMode(mode, loc);\n  }\n",
+        "comment": "to get the parameter binder object that encapsulates the auto wiring strategy\n"
+    },
+    {
+        "code_snippet":"  public PropertyBinder getPropertyWiring(String mode){\n    return env.getPropertyWiringMode(mode, loc);\n  }\n",
+        "comment": "to get the property binder object that encapsulates the auto wiring strategy\n"
+    },
+    {
+        "code_snippet":"  public boolean isDeserializable(Class type){\n    return type.isAssignableFrom(String.class) \n      || deserializers.get(type)!=null\n      || PropertyEditorManager.findEditor(type)!=null;\n  }\n",
+        "comment": "to determine if string literal can be converted to the target type\n"
+    },
+    {
+        "code_snippet":"  public Map preInstantiate(Container container, Map store){\n    final UID[] keys = getOrderedUIDs();\n    for(int i=0; i<keys.length; i++){\n      final UID key = keys[i];\n      final Creator c = (Creator)eager_instantiations.get(key);\n      store.put(key, container.instantiateComponent(key, c));\n    }\n    return store;\n  }\n",
+        "comment": "pre initialize eagerly instantiated components\n"
+    },
+    {
+        "code_snippet":"  public Map preInstantiate(Container container){\n    return preInstantiate(container, new HashMap());    \n  }\n",
+        "comment": "pre initialize eagerly instantiated components\n"
+    },
+    {
+        "code_snippet":"  public Map preInstantiate(Map store){\n    return preInstantiate(yan, store);\n  }\n",
+        "comment": "pre initialize eagerly instantiated components\n"
+    },
+    {
+        "code_snippet":"  public Map preInstantiate(){\n    return preInstantiate(yan);\n  }  \n",
+        "comment": "pre initialize eagerly instantiated components\n"
+    },
+    {
+        "code_snippet":"  public DefaultLifecycleManager getLifecycleManager() {\n    return manager;\n  }\n",
+        "comment": "to get the lifecycle manager used by this processor\n"
+    },
+    {
+        "code_snippet":"  public File getBaseDir() {\n    return basedir;\n  }\n",
+        "comment": "to get the base directory used by the processor\n"
+    },
+    {
+        "code_snippet":"  public ClassLoader getClassLoader() {\n    return cloader;\n  }\n",
+        "comment": "to get the class loader used to load component classes\n"
+    },
+    {
+        "code_snippet":"  public ResourceLoader getResourceLoader(){\n    return rloader;\n  }\n",
+        "comment": "to get the resource loader used to load resources\n"
+    },
+    {
+        "code_snippet":"  public void registerAutoWiring(String mode_name, PropertyBinder mode){\n    custom_wiring_modes.addWiringMode(mode_name, mode);\n  }\n",
+        "comment": "register a property autowiring mode\n"
+    },
+    {
+        "code_snippet":"  public void registerAutoWiring(String mode_name, ParameterBinder mode){\n    custom_wiring_modes.addWiringMode(mode_name, mode);\n  }\n",
+        "comment": "register a parameter autowiring mode\n"
+    },
+    {
+        "code_snippet":"    protected Component prepSER_isSerializable(Container yan) {\n        throw new AssertionFailedError(\"You have to overwrite this method for a useful test\");\n    }\n",
+        "comment": "prepare the test em is serializable em\n"
+    },
+    {
+        "code_snippet":"  public Object findService(Object key){\n    return services.get(key);\n  }\n",
+        "comment": "to find the service object registered using\n"
+    },
+    {
+        "code_snippet":"  public void registerService(Object key, Object service){\n    services.put(key, service);\n  }\n",
+        "comment": "to register a service object that can be read by customized nuts classes\n"
+    },
+    {
+        "code_snippet":"  public void unregisterService(Object key){\n    services.remove(key);\n  }\n",
+        "comment": "to unregister a service object\n"
+    },
+    {
+        "code_snippet":"  public Set getServiceKeys(){\n    return services.keySet();\n  }\n",
+        "comment": "get the set of the keys of the service objects\n"
+    },
+    {
+        "code_snippet":"    protected Component prepSER_isXStreamSerializable(Container yan) {\n        throw new AssertionFailedError(\"You have to overwrite this method for a useful test\");\n    }\n",
+        "comment": "prepare the test em is xstream serializable em\n"
+    },
+    {
+        "code_snippet":"  public void registerNut(String key, NutDescriptor desc){\n    external_nuts.put(key, desc);\n  }\n",
+        "comment": "add an external nut descriptor for the processor to use\n"
+    },
+    {
+        "code_snippet":"    protected Component prepVER_verificationFails(Container yan) {\n        throw new AssertionFailedError(\"You have to overwrite this method for a useful test\");\n    }\n",
+        "comment": "prepare the test em verification fails with unsatisfied dependency em\n"
+    },
+    {
+        "code_snippet":"  public NutDescriptor findNut(String key){\n    return (NutDescriptor)external_nuts.get(key);\n  }\n",
+        "comment": "get a nut descriptor registered by put nut\n"
+    },
+    {
+        "code_snippet":"  public void removeNut(String key){\n    external_nuts.remove(key);\n  }\n",
+        "comment": "unregister a nut descriptor\n"
+    },
+    {
+        "code_snippet":"    protected Component prepINS_createsNewInstances(Container yan) {\n        throw new AssertionFailedError(\"You have to overwrite this method for a useful test\");\n    }\n",
+        "comment": "prepare the test em creates new instances em\n"
+    },
+    {
+        "code_snippet":"  public void registerVariable(String key, Object val){\n    variables.put(key, val);\n  }\n",
+        "comment": "register a variable that can be referenced in the xml file\n"
+    },
+    {
+        "code_snippet":"  public Object getVariable(String key){\n    return variables.get(key);\n  }\n",
+        "comment": "to get a variable value\n"
+    },
+    {
+        "code_snippet":"  public boolean hasVariable(String key){\n    return variables.containsKey(key);\n  }\n",
+        "comment": "checks whether a variable name exists\n"
+    },
+    {
+        "code_snippet":"    protected Component prepINS_runtimeExceptionIsRethrown(Container yan) {\n        throw new AssertionFailedError(\"You have to overwrite this method for a useful test\");\n    }\n",
+        "comment": "prepare the test em runtime exception is rethrown em\n"
+    },
+    {
+        "code_snippet":"  public void removeVariable(String key){\n    variables.remove(key);\n  }\n",
+        "comment": "to remove a registration of a variable\n"
+    },
+    {
+        "code_snippet":"  public Set getNutKeys(){\n    return external_nuts.keySet();\n  }\n",
+        "comment": "get the set of keys of nut descriptors\n"
+    },
+    {
+        "code_snippet":"  public NutsProcessor createMetaProcessor(ClassLoader loader){\n    return createMetaProcessor(loader, new ClassLoader2ResourceLoader(loader));\n  }\n",
+        "comment": "create an nuts processor object thats gonna be used to\n"
+    },
+    {
+        "code_snippet":"  public NutsProcessor createMetaInterpreter(){\n    return createMetaProcessor(cloader, rloader);\n  }\n",
+        "comment": "create an nuts processor object thats gonna be used to\n"
+    },
+    {
+        "code_snippet":"    protected Component prepRES_failingVerificationWithCyclicDependencyException(Container yan) {\n        throw new AssertionFailedError(\"You have to overwrite this method for a useful test\");\n    }\n",
+        "comment": "prepare the test em failing verification with cyclic dependency exception em\n"
+    },
+    {
+        "code_snippet":"  public Component factory(Class factory_type){\n    return Components.factory(this, factory_type);\n  }\n",
+        "comment": "create a component that instantiates a factory interface\n"
+    },
+    {
+        "code_snippet":"  public Component echo(){\n    return Components.echo(this);\n  }\n",
+        "comment": "make sure the component will notify the listener when an\n"
+    },
+    {
+        "code_snippet":"  public Container getChild() {\n    return child;\n  }\n",
+        "comment": "get the child container\n"
+    },
+    {
+        "code_snippet":"  public Container getParent() {\n    return parent;\n  }\n",
+        "comment": "get the parent container\n"
+    },
+    {
+        "code_snippet":"  public Dependency getDependencyOfType(Class type, ComponentMap cmap){\n    if(child.getComponentOfType(type)!=null)\n      return child.getDependencyOfType(type, cmap);\n    else return parent.getDependencyOfType(type, parent);\n  }\n",
+        "comment": "gets the dependency object for a component of\n"
+    },
+    {
+        "code_snippet":"  public Component bind(VerificationBinder binder){\n    return Monad.bind(this, binder);\n  }\n",
+        "comment": "monadic bind operation\n"
+    },
+    {
+        "code_snippet":"  public Component followedBy(VerificationBinder binder){\n    return Monad.followedBy(this, binder);\n  }\n",
+        "comment": "create a staged component\n"
+    },
+    {
+        "code_snippet":"  public Component seq(Component c2){\n    return Monad.seq(this, c2);\n  }\n",
+        "comment": "monadic sequence operation\n"
+    },
+    {
+        "code_snippet":"  public void init(){\n    yan.fifo(_init);\n  }\n",
+        "comment": "run initliazation for components with java\n"
+    },
+    {
+        "code_snippet":"  public void start(){\n    yan.fifo(_start);\n  }\n",
+        "comment": "run start for components with java\n"
+    },
+    {
+        "code_snippet":"  public void stop(){\n    yan.filo(_stop);\n  }\n",
+        "comment": "run stop for components with java\n"
+    },
+    {
+        "code_snippet":"  public void dispose(){\n    yan.filo(_dispose);\n  }\n",
+        "comment": "run dispose for components with java\n"
+    },
+    {
+        "code_snippet":"  public Component get(){\n    return cc;\n  }\n",
+        "comment": "get the result component object\n"
+    },
+    {
+        "code_snippet":"  public LifecycleHelper setAction(Object key, InstanceListener a){\n    final Object state = cc.getState();\n    if(state==null){\n      final Map map = new java.util.HashMap();\n      map.put(key, a);\n      this.cc = this.cc.withState(map);\n    }\n    else{\n      final Map map = (Map)state;\n      map.put(key, a);\n    }\n    return this;\n  }\n",
+        "comment": "add an action identified by an action key to the user state\n"
+    },
+    {
+        "code_snippet":"  public LifecycleHelper starter(InstanceListener a){\n    return setAction(DefaultLifecycle.START, a);\n  }\n",
+        "comment": "add a starter action\n"
+    },
+    {
+        "code_snippet":"  public LifecycleHelper stopper(InstanceListener a){\n    return setAction(DefaultLifecycle.STOP, a);\n  }\n",
+        "comment": "add a stopper action\n"
+    },
+    {
+        "code_snippet":"  public LifecycleHelper initializer(InstanceListener a){\n    return setAction(DefaultLifecycle.INIT, a);\n  }\n",
+        "comment": "add an initializer action\n"
+    },
+    {
+        "code_snippet":"  public LifecycleHelper disposer(InstanceListener a){\n    return setAction(DefaultLifecycle.DISPOSE, a);\n  }\n",
+        "comment": "add a disposer action\n"
+    },
+    {
+        "code_snippet":"  public Constructor getConstructor() {\n    return ctor;\n  }\n",
+        "comment": "gets the encapsulated constructor object\n"
+    },
+    {
+        "code_snippet":"  public Field getField() {\n    return fld;\n  }\n",
+        "comment": "get the encapsulated field object\n"
+    },
+    {
+        "code_snippet":"  public Set getPropertyNames(){\n    return java.util.Collections.unmodifiableSet(props.keySet());\n  }\n",
+        "comment": "get the property names of this bean type\n"
+    },
+    {
+        "code_snippet":"  public PropertyDescriptor getPropertyDescriptor(String name){\n    return (PropertyDescriptor)props.get(name);\n  }\n",
+        "comment": "get the property descriptor for a given property\n"
+    },
+    {
+        "code_snippet":"    protected Component prepSER_isSerializable(YanContainer yan) {\n        throw new AssertionFailedError(\"You have to overwrite this method for a useful test\");\n    }\n",
+        "comment": "prepare the test em is serializable em\n"
+    },
+    {
+        "code_snippet":"    protected Component prepSER_isXStreamSerializable(YanContainer yan) {\n        throw new AssertionFailedError(\"You have to overwrite this method for a useful test\");\n    }\n",
+        "comment": "prepare the test em is xstream serializable em\n"
+    },
+    {
+        "code_snippet":"    protected Component prepVER_verificationFails(YanContainer yan) {\n        throw new AssertionFailedError(\"You have to overwrite this method for a useful test\");\n    }\n",
+        "comment": "prepare the test em verification fails with unsatisfied dependency em\n"
+    },
+    {
+        "code_snippet":"    protected Component prepINS_createsNewInstances(YanContainer yan) {\n        throw new AssertionFailedError(\"You have to overwrite this method for a useful test\");\n    }\n",
+        "comment": "prepare the test em creates new instances em\n"
+    },
+    {
+        "code_snippet":"    protected Component prepINS_runtimeExceptionIsRethrown(YanContainer yan) {\n        throw new AssertionFailedError(\"You have to overwrite this method for a useful test\");\n    }\n",
+        "comment": "prepare the test em runtime exception is rethrown em\n"
+    },
+    {
+        "code_snippet":"    protected Component prepRES_failingVerificationWithCyclicDependencyException(YanContainer yan) {\n        throw new AssertionFailedError(\"You have to overwrite this method for a useful test\");\n    }\n",
+        "comment": "prepare the test em failing verification with cyclic dependency exception em\n"
+    },
+    {
+        "code_snippet":"\tpublic void buildClassifier(Instances data) throws Exception {\n\t\t  // Classifier\n\t\t // testovani datoveho souboru, jestli vyhovuje\n        // pokud nevyhovuje, testWithFail() vyhodi Exception\n\t\tgetCapabilities().testWithFail(data);  \n\t\t\n        // remove instances with missing class\n\t    data = new Instances(data);\n\t    data.deleteWithMissingClass();\n\t\t// tady pak vola\n\t}\n",
+        "comment": "this method construct classsifier\n"
+    },
+    {
+        "code_snippet":"\tpublic String getTabTitle() {\n\t\treturn \"ERP Preprocess\";\n\t}\n",
+        "comment": "returns the title for the tab in the explorer\n"
+    },
+    {
+        "code_snippet":"\tpublic String getTabTitleToolTip() {\n\t\treturn \"Weka-ERP preprocess tab for ERP and EEG researchs\";\n\t}\n",
+        "comment": "returns the tooltip for the tab in the explorer\n"
+    },
+    {
+        "code_snippet":"\tpublic void setExplorer(Explorer parent) {\n\t\texplorer = parent;\n\t\t\n\t}\n",
+        "comment": "sets the explorer to use as parent frame\n"
+    },
+    {
+        "code_snippet":"\tpublic void setLog(Logger newLog) {\n\t\tlog = newLog;\n\t}\n",
+        "comment": "sets the logger to receive informational messages\n"
+    },
+    {
+        "code_snippet":"\tpublic String globalInfo() {\n\t\treturn \"Reads a file that is MTRARFF format.\"\n\t      \t+ \" For more information about MTRARFF file, please visit http://www.zcu.cz/\";\n\t  }\n",
+        "comment": "returns a string describing this attribute evaluator\n"
+    },
+    {
+        "code_snippet":"\tpublic Instances getDataSet() throws IOException {\n\t\tInstances dataset = null;\n\t\t\n\t\tif(mtr != null) {\n\t\t\t// set all relations tables\n\t\t\trelTables = mtr.getRelations();\n\t\t}\n\t\treturn dataset;\n\t}\n",
+        "comment": "return the full data set\n"
+    },
+    {
+        "code_snippet":"\t  public String globalInfo() {\n\t    return \"Reads a file that is EDF format.\"\n\t      + \" For more information about EDF(European Data format) file, please visit http://www.edfplus.info/\";\n\t  }\n",
+        "comment": "returns a string describing this attribute evaluator\n"
+    },
+    {
+        "code_snippet":"\tpublic String getFileDescription() {\n\t\treturn \"MrtArff data files\";\n\t}\n",
+        "comment": "returns a description of the file type\n"
+    },
+    {
+        "code_snippet":"\tprivate void setView(boolean view) {\n\t\tthis.view = view;\n\t}\n",
+        "comment": "nastaven viditelnosti ciz ho kl e\n"
+    },
+    {
+        "code_snippet":"\tprivate void setDisplay(boolean isDisplay) {\n\t\tthis.isDisplay = isDisplay;\n\t}\n",
+        "comment": "nastaven zobrazitelnosti tabulky\n"
+    },
+    {
+        "code_snippet":"\tpublic void setURL(String url) throws Exception {\n\t\t// NOT IMPLEMENTED YET\t\t\n\t}\n",
+        "comment": "not implemented yet\n"
+    },
+    {
+        "code_snippet":"  protected void createTitle(String title) {\n    String\tnewTitle;\n    \n    newTitle = \"Weka-ERP \" + Copyright.getVersionZCU();\n    if (title.length() != 0)\n      newTitle += \" - \" + title;\n    \n    setTitle(newTitle);\n  }\n",
+        "comment": "creates and displays the title\n"
+    },
+    {
+        "code_snippet":"    public void reset() {\n       for ( int ia=0; ia<m_nbargs; ia++ )\n       {\n           m_dx[ia]=0.;\n           m_dy[ia]=0.;\n       }\n    }\n",
+        "comment": "reset all aggrgates positions\n"
+    },
+    {
+        "code_snippet":"    public double getDx(int index) {\n        return m_dx[index];\n    }\n",
+        "comment": "accessor to the x displacement\n"
+    },
+    {
+        "code_snippet":"    public double getDy(int index) {\n        return m_dy[index];\n    }\n",
+        "comment": "accessor to the y displacement\n"
+    },
+    {
+        "code_snippet":"\tprivate String evalGroups(String queryString, Matcher matcher) {\n\t\tString result = queryString;\n\t\t\n\t\tPattern p = Pattern.compile(\"\\\\[(\\\\d*)\\\\]\");\n\t\tMatcher m = p.matcher(result);\n\t\t\n\t\t// replace all group IDs by the corresponding parts of the question\n\t\twhile (m.find()) {\n\t\t\tint group = Integer.parseInt(m.group(1));\n\t\t\t\n\t\t\tresult = result.replace(m.group(), matcher.group(group));\n\t\t}\n\t\t\n\t\treturn result;\n\t}\n",
+        "comment": "replaces group identifiers of the format code group no code by the\n"
+    },
+    {
+        "code_snippet":"\tpublic float getScore() {\n\t\treturn score;\n\t}\n",
+        "comment": "returns the score of the reformulation used by the answer selection\n"
+    },
+    {
+        "code_snippet":"\tprotected String readLine() {\n\t\ttry {\n\t\t\treturn new java.io.BufferedReader(new\n\t\t\t\tjava.io.InputStreamReader(System.in)).readLine();\n\t\t}\n\t\tcatch(java.io.IOException e) {\n\t\t\treturn new String(\"\");\n\t\t}\n\t}\n",
+        "comment": "reads a line from the command prompt\n"
+    },
+    {
+        "code_snippet":"\tpublic String translateEnglish(String question) {\n\t\tString translatedQuestion = question;\n\t\t\n\t\ttry {\n\t\t\ttranslatedQuestion = Translate.translate(question, Language.GERMAN, Language.ENGLISH); \n\t\t} catch (Exception e) {\n\t\t\tMsgPrinter.printErrorMsg(\"Could not perform Translation, please contact your software vendor to report this error!\");\n\t\t}\n\t\t\n\t\treturn translatedQuestion;\n\t}\n",
+        "comment": "translates a german question into english\n"
+    },
+    {
+        "code_snippet":"\tpublic String queryString(String target, String[] context, String kws[]) {\n\t\t// include the TARGET object in the query string\n\t\tString queryString = \"\\\"\" + target + \"\\\"\";\n\t\t\n\t\t// include the CONTEXT objects (if any) in the query string\n\t\tfor (String ct : context) queryString += \" \\\"\" + ct + \"\\\"\";\n\t\t\n\t\t// include the keywords (for question answering) or the answer string\n\t\t// (for pattern learning) in the query string\n\t\tfor (String kw : kws) queryString += \" \" + kw;\n\t\t\n\t\treturn queryString;\n\t}\n",
+        "comment": "creates a query string from the interpretation of a question and the\n"
+    },
+    {
+        "code_snippet":"\tpublic AnalyzedQuestion getAnalyzedQuestion() {\n\t\treturn analyzedQuestion;\n\t}\n",
+        "comment": "returns the analyzed question\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean extractWith(String technique) {\n\t\tif (extractionTechniques == null) return false;\n\t\t\n\t\tfor (String extractionTechnique : extractionTechniques)\n\t\t\tif (technique.equals(extractionTechnique)) return true;\n\t\t\n\t\treturn false;\n\t}\n",
+        "comment": "checks if the given answer extraction technique is applied to results\n"
+    },
+    {
+        "code_snippet":"\tpublic QuestionInterpretation getInterpretation() {\n\t\treturn qi;\n\t}\n",
+        "comment": "returns the interpretation of the question used to generate this query\n"
+    },
+    {
+        "code_snippet":"\tpublic void setAnalyzedQuestion(AnalyzedQuestion analyzedQuestion) {\n\t\tthis.analyzedQuestion = analyzedQuestion;\n\t}\n",
+        "comment": "sets the analyzed question\n"
+    },
+    {
+        "code_snippet":"\tpublic void setScore(float score) {\n\t\tthis.score = score;\n\t}\n",
+        "comment": "sets the score of the query\n"
+    },
+    {
+        "code_snippet":"\tpublic void setExtractionTechniques(String[] techniques) {\n\t\textractionTechniques = techniques;\n\t}\n",
+        "comment": "sets the answer extraction techniques that are applied to results\n"
+    },
+    {
+        "code_snippet":"\tpublic boolean addExtractionTechnique(String technique) {\n\t\t// check if the extraction technique has already been added\n\t\tif (extractionTechniques != null)\n\t\t\tfor (String existing : extractionTechniques)\n\t\t\t\tif (technique.equals(existing)) return false;\n\t\t\n\t\t// add new extraction technique\n\t\tString[] newTechniques;\n\t\tif (extractionTechniques == null) {\n\t\t\tnewTechniques = new String[1];\n\t\t} else {\n\t\t\tnewTechniques = new String[extractionTechniques.length + 1];\n\t\t\tfor (int i = 0; i < extractionTechniques.length; i++)\n\t\t\t\tnewTechniques[i] = extractionTechniques[i];\n\t\t}\n\t\tnewTechniques[newTechniques.length - 1] = technique;\n\t\textractionTechniques = newTechniques;\n\t\treturn true;\n\t}\n",
+        "comment": "adds an answer extraction technique that is applied to results retrieved\n"
+    },
+    {
+        "code_snippet":"\tpublic void setInterpretation(QuestionInterpretation qi) {\n\t\tthis.qi = qi;\n\t}\n",
+        "comment": "sets the interpretation of the question used to generate this query\n"
+    },
+    {
+        "code_snippet":"\tpublic void setQuestionString(String questionString) {\n\t\tthis.questionString = questionString;\n\t}\n",
+        "comment": "sets a modified question string e\n"
+    },
+    {
+        "code_snippet":"\tpublic void setAnswers(TRECAnswer[] answers) {\n\t\tthis.answers = answers;\n\t}\n",
+        "comment": "sets the answers determined by the qa engine\n"
+    },
+    {
+        "code_snippet":"\tpublic Query getCopy() {\n\t\tQuery query = new Query(queryString, analyzedQuestion, score);\n\t\tquery.extractionTechniques = extractionTechniques;\n\t\tquery.qi = qi;\n\t\t\n\t\treturn query;\n\t}\n",
+        "comment": "return a copy of this code query code object\n"
+    },
+    {
+        "code_snippet":"\tpublic void setInterpretation(QuestionInterpretation interpretation) {\n\t\tthis.interpretation = interpretation;\n\t}\n",
+        "comment": "sets the question interpretation that led to the top answer\n"
+    },
+    {
+        "code_snippet":"\tpublic String getQuestionString() {\n\t\treturn questionString;\n\t}\n",
+        "comment": "returns the question string\n"
+    },
+    {
+        "code_snippet":"\tpublic QuestionInterpretation getInterpretation() {\n\t\treturn interpretation;\n\t}\n",
+        "comment": "returns the question interpretation that led to the top answer if\n"
+    },
+    {
+        "code_snippet":"\tpublic String getAnswerString() {\n\t\treturn answerString;\n\t}\n",
+        "comment": "returns the answer string\n"
+    },
+    {
+        "code_snippet":"\tpublic String getSupportDoc() {\n\t\treturn supportDoc;\n\t}\n",
+        "comment": "returns the supporting document\n"
+    },
+    {
+        "code_snippet":"\tpublic String getCondensedTarget() {\n\t\treturn condensedTarget;\n\t}\n",
+        "comment": "returns the condensed target\n"
+    }
+]

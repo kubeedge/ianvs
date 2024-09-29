@@ -1,0 +1,38 @@
+[
+    {
+        "title": "How to set_epoch with interleave_datasets?",
+        "html_url": "https://github.com/huggingface/datasets/issues/7051",
+        "comments_url": "https://api.github.com/repos/huggingface/datasets/issues/7051/comments",
+        "labels": "[]",
+        "state": "open",
+        "pull_request": "NaN",
+        "is_pull_request": false
+    },
+    {
+        "title": "add checkpoint and resume title in docs",
+        "html_url": "https://github.com/huggingface/datasets/pull/7050",
+        "comments_url": "https://api.github.com/repos/huggingface/datasets/issues/7050/comments",
+        "labels": "[]",
+        "state": "closed",
+        "pull_request": "{'diff_url': 'https://github.com/huggingface/datasets/pull/7050.diff', 'html_url': 'https://github.com/huggingface/datasets/pull/7050', 'merged_at': '2024-07-15T15:59:56Z', 'patch_url': 'https://github.com/huggingface/datasets/pull/7050.patch', 'url': 'https://api.github.com/repos/huggingface/datasets/pulls/7050'}",
+        "is_pull_request": true
+    },
+    {
+        "title": "Save nparray as list",
+        "html_url": "https://github.com/huggingface/datasets/issues/7049",
+        "comments_url": "https://api.github.com/repos/huggingface/datasets/issues/7049/comments",
+        "labels": "[]",
+        "state": "open",
+        "pull_request": "NaN",
+        "is_pull_request": false
+    },
+    {
+        "title": "ImportError: numpy.core.multiarray when using `filter`",
+        "html_url": "https://github.com/huggingface/datasets/issues/7048",
+        "comments_url": "https://api.github.com/repos/huggingface/datasets/issues/7048/comments",
+        "labels": "[]",
+        "state": "open",
+        "pull_request": "NaN",
+        "is_pull_request": false
+    }
+]

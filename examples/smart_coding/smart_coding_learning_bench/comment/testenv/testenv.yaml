@@ -1,0 +1,14 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_data: "/root/xieb/ianvs/dataset/smart_conding/comment/train_data/data.jsonl"
+    # the url address of test dataset index; string type;
+    test_data_info: "/root/xieb/ianvs/dataset/smart_conding/comment/test_data/data_info.json"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "llm_judgement"
+      # the url address of python file
+      url: "./examples/smart_coding/smart_coding_learning_bench/comment/testenv/llm_judgement.py"
