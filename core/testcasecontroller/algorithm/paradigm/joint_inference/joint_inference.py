@@ -79,9 +79,14 @@ class JointInference(ParadigmBase):
         return inference_result, self.system_metric_info
 
     def _inference(self, job):
+        shot_nums = self.kwargs.get("shot_nums", 0)
         # Ianvs API
-        inference_dataset = self.dataset.load_data(self.dataset.test_data_info, "inference")
-        inference_output_dir = os.path.join(os.path.dirname(self.workspace), "output/inference/")
+        inference_dataset = self.dataset.load_data(
+            self.dataset.test_data_info, 
+            "inference", 
+            shot_nums = shot_nums
+        )
+        inference_output_dir = os.path.join(os.path.dirname(self.workspace), f"{shot_nums}-shot/")
         os.environ["RESULT_SAVED_URL"] = inference_output_dir
         os.makedirs(inference_output_dir, exist_ok=True)
 
@@ -93,7 +98,7 @@ class JointInference(ParadigmBase):
         for data in pbar:
             # inference via sedna JointInference API
             infer_res = job.inference(
-                {"prompts": inference_dataset.prompts, "question":data},
+                data,
                 mining_mode=self.hard_example_mining_mode
             )
 

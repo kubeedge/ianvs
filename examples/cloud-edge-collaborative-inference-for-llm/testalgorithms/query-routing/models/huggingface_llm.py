@@ -27,11 +27,11 @@ class HuggingfaceLLM(BaseLLM):
             trust_remote_code=True
         )
 
-    def _infer(self, question, system_prompt):
+    def _infer(self, messages):
         st = time.perf_counter()
         most_recent_timestamp = st
 
-        messages = self.get_message_chain(question, system_prompt)
+        # messages = self.get_message_chain(question, system_prompt)
 
         streamer = TextIteratorStreamer(self.tokenizer)
 

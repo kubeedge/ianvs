@@ -44,8 +44,8 @@ class VllmLLM(BaseLLM):
             use_tqdm=False
         )
 
-    def _infer(self, question, system_prompt):
-        messages = self.get_message_chain(question, system_prompt)
+    def _infer(self, messages):
+        # messages = self.get_message_chain(question, system_prompt)
 
         outputs = self.model.chat(
             messages=messages,

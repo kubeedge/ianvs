@@ -17,31 +17,30 @@ class BaseLLM:
         self.repetition_penalty = kwargs.get("repetition_penalty", 1.05)
         self.max_tokens = kwargs.get("max_tokens", 512)
         self.use_cache = kwargs.get("use_cache", True)
-
-    def cache_response(self, question, cache_dir):
-        with open(cache_dir, "r") as f:
-            f.write(question)
-        self.kwargs
-
+    
     def inference(self, data):
-        if isinstance(data, list):
+        
+        if isinstance(data, dict):
             return [self._infer(line) for line in data]
         
         elif isinstance(data, str):
             return self._infer(data)
         
-        elif isinstance(data, dict):
+        elif isinstance(data, list):
             # from viztracer import VizTracer
             # import sys
             # with VizTracer(output_file="optional.json") as tracer:
-            question, system_prompt = self.parse_input(data)
+            # question, system_prompt = self.parse_input(data)
+            messages = data
+            system_prompt = messages[0]["content"]
+            question = messages[-1]["content"]
 
             if self.use_cache:
                 response = self.try_cache(question, system_prompt)
                 if response is not None:
                     return response
 
-            response = self._infer(question, system_prompt)
+            response = self._infer(messages)
             if self.use_cache:
                 self._update_cache(question, system_prompt, response)
 
@@ -82,7 +81,7 @@ class BaseLLM:
 
         return question, system_prompt
 
-    def _infer(self, question, system_prompt):
+    def _infer(self, messages):
         raise NotImplementedError
     
     def _format_response(self, text, prompt_tokens, completion_tokens, time_to_first_token, internal_token_latency, throughput):

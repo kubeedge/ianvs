@@ -19,8 +19,8 @@ class APIBasedLLM(BaseLLM):
     def load(self, model):
         self.model = model
     
-    def _infer(self, question, system_prompt):
-        messages = self.get_message_chain(question, system_prompt)
+    def _infer(self, messages):
+        # messages = self.get_message_chain(question, system_prompt)
 
         time_to_first_token = 0.0
         internal_token_latency = []
