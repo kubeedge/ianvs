@@ -4,9 +4,10 @@ testenv:
     # the url address of train dataset index; string type;
     train_data: "./dataset/mmlu/train_data/data.json"
     # the url address of test dataset index; string type;
-    test_data_info: "./dataset/mmlu/test_data/data_info.json"
-    
-
+    test_data_info: "./dataset/mmlu/test_data/metadata.json"
+  
+  shot_nums: 5
+  
   # metrics configuration for test case's evaluation; list type;
   metrics:
       # metric name; string type;
@@ -37,3 +38,4 @@ testenv:
 
     - name: "Internal Token Latency"
       url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/internal_token_latency.py"
+

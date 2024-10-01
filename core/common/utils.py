@@ -37,7 +37,7 @@ def is_local_dir(url):
 def get_file_format(url):
     """Get file format of the url."""
     # Check if the url
-    if os.path.basename(url) == "data_info.json":
+    if os.path.basename(url) == "metadata.json":
         return "jsonforllm"
 
     # Check if the url

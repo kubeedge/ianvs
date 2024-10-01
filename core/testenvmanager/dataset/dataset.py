@@ -23,7 +23,7 @@ from sedna.datasources import (
     TxtDataParse,
     JSONDataParse,
     JsonlDataParse,
-    JSONDataInfoParse
+    JSONMetaDataParse
 )
 
 from core.common import utils
@@ -420,7 +420,7 @@ class Dataset:
         return data_files
 
     @classmethod
-    def load_data(cls, file: str, data_type: str, label=None, use_raw=False, feature_process=None):
+    def load_data(cls, file: str, data_type: str, label=None, use_raw=False, feature_process=None, **kwargs):
         """
         load data
 
@@ -464,7 +464,7 @@ class Dataset:
             data.parse(file)
 
         if data_format == DatasetFormat.JSONFORLLM.value:
-            data = JSONDataInfoParse(data_type=data_type, func=feature_process)
-            data.parse(file)
+            data = JSONMetaDataParse(data_type=data_type, func=feature_process)
+            data.parse(file, **kwargs)
 
         return data
