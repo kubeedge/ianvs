@@ -103,6 +103,11 @@ class FederatedLearning(ParadigmBase):
         return test_res, self.system_metric_info
 
     def get_all_train_data(self):
+        """Get all train data for the paradigm of federated learning.
+
+        Returns:
+            list: train data list
+        """
         split_time = 1  # only one split ——all the data
         return self._split_dataset(split_time)
 

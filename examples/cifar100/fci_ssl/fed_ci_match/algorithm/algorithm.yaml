@@ -3,13 +3,13 @@ algorithm:
   fl_data_setting:
     train_ratio: 1.0
     splitting_method: "default"
-    label_data_ratio: 1.0
+    label_data_ratio: 0.3
     data_partition: "iid"
   initial_model_url: "/home/wyd/ianvs/project/init_model/cnn.pb"
 
   modules:
     - type: "basemodel"
-      name: "FedCILMatch"
+      name: "FediCarl-Client"
       url: "./examples/cifar100/fci_ssl/fed_ci_match/algorithm/basemodel.py"
       hyperparameters:
         - batch_size:

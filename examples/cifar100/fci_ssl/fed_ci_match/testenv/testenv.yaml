@@ -27,9 +27,9 @@ testenv:
   # metrics configuration for test case's evaluation; list type;
   metrics:
       # metric name; string type;
-    - name: "accuracy"
-      # the url address of python file
-      url: "/home/wyd/ianvs/project/ianvs/examples/cifar100/fci_ssl/fed_ci_match/testenv/acc.py"
+    # - name: "accuracy"
+    #   # the url address of python file
+    #   url: "/home/wyd/ianvs/project/ianvs/examples/cifar100/fci_ssl/fed_ci_match/testenv/acc.py"
     - name: "forget_rate"
     - name: "task_avg_acc"
   # incremental rounds setting of incremental learning; int type; default value is 2;

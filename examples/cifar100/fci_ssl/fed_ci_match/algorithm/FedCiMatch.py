@@ -42,8 +42,8 @@ class FedCiMatch:
         self.learning_rate = learning_rate
         self.memory_size = memory_size
         self.task_size = None
-        self.warm_up_round = 1
-        self.accept_threshold = 0.85
+        self.warm_up_round = 4
+        self.accept_threshold = 0.95
         self.old_task_id = -1
 
         self.classifier = None
@@ -69,8 +69,12 @@ class FedCiMatch:
 
     def build_feature_extractor(self):
         feature_extractor = resnet10()
+
         feature_extractor.build(input_shape=(None, 32, 32, 3))
         feature_extractor.call(keras.Input(shape=(32, 32, 3)))
+        feature_extractor.load_weights(
+            "examples/cifar100/fci_ssl/fed_ci_match/algorithm/feature_extractor.weights.h5"
+        )
         return feature_extractor
 
     def build_classifier(self):
@@ -298,11 +302,15 @@ class FedCiMatch:
         all_params.extend(self.classifier.trainable_variables)
 
         for epoch in range(self.epochs):
-            # for (labeled_data, unlabeled_data) in zip(self.labeled_train_loader, self.unlabeled_train_loader):
-            for step, (labeled_x, labeled_y) in enumerate(self.labeled_train_loader):
+            for labeled_data, unlabeled_data in zip(
+                self.labeled_train_loader, self.unlabeled_train_loader
+            ):
+                # for step, (labeled_x, labeled_y) in enumerate(self.labeled_train_loader):
                 # print(labeled_data.shape)
-                # labeled_x, labeled_y = labeled_data
-                # unlabeled_x, weak_unlabeled_x, strong_unlabeled_x, unlabeled_y = unlabeled_data
+                labeled_x, labeled_y = labeled_data
+                unlabeled_x, weak_unlabeled_x, strong_unlabeled_x, unlabeled_y = (
+                    unlabeled_data
+                )
                 with tf.GradientTape() as tape:
                     input = self.feature_extractor(inputs=labeled_x, training=True)
                     y_pred = self.classifier(inputs=input, training=True)
@@ -314,15 +322,21 @@ class FedCiMatch:
                         tf.cast(tf.equal(label_pred, labeled_y), dtype=tf.int32)
                     )
                     CE_loss = self.supervised_loss(labeled_x, labeled_y)
-                    KD_loss = self.distil_loss(labeled_x, labeled_y, q, step)
+                    KD_loss = self.distil_loss(labeled_x, labeled_y)
                     # loss = tf.reduce_mean(keras.losses.sparse_categorical_crossentropy(labeled_y, y_pred, from_logits=True))
-                    # if round > self.warm_up_round:
-                    #     unsupervised_loss = self.unsupervised_loss(weak_unlabeled_x, strong_unlabeled_x, unlabeled_x)
+                    supervised_loss = CE_loss
+                    # logging.info(f"supervised loss: {supervised_loss}")
+                    # if epoch > self.warm_up_round:
+                    #     unsupervised_loss = self.unsupervised_loss(
+                    #         weak_unlabeled_x, strong_unlabeled_x, unlabeled_x
+                    #     )
+                    #     logging.info(f"unsupervised loss: {unsupervised_loss}")
                     #     loss = 0.5 * supervised_loss + 0.5 * unsupervised_loss
-                    loss = CE_loss if KD_loss == 0 else CE_loss + 0.4 * KD_loss
-                    loss = CE_loss
+                    # else:
+                    #     loss = supervised_loss
+                    loss = CE_loss + KD_loss
                 logging.info(
-                    f"epoch {epoch} step {step} loss: {loss}  correct {correct} and total {labeled_x.shape[0]} class is {np.unique(labeled_y)}"
+                    f"epoch {epoch}  loss: {loss}  correct {correct} and total {labeled_x.shape[0]} class is {np.unique(labeled_y)}"
                 )
                 grads = tape.gradient(loss, all_params)
                 optimizer.apply_gradients(zip(grads, all_params))
@@ -349,7 +363,7 @@ class FedCiMatch:
 
         return loss
 
-    def distil_loss(self, x, y, q, step):
+    def distil_loss(self, x, y):
         KD_loss = 0
 
         if len(self.learned_classes) > 0 and self.best_old_model is not None:
@@ -386,15 +400,23 @@ class FedCiMatch:
         return KD_loss
 
     def unsupervised_loss(self, weak_x, strong_x, x):
-        prob_on_wux = tf.nn.softmax(self.model_call(weak_x, training=True))
+        prob_on_wux = tf.nn.softmax(
+            self.classifier(
+                self.feature_extractor(weak_x, training=True), training=True
+            )
+        )
         pseudo_mask = tf.cast(
             tf.reduce_max(prob_on_wux, axis=1) > self.accept_threshold, tf.float32
         )
-        pse_uy = tf.one_hot(tf.argmax(prob_on_wux, axis=1), depth=self.num_classes)
-        prob_on_sux = tf.nn.softmax(self.model_call(strong_x, training=True))
-        loss = keras.losses.categorical_crossentropy(
-            pse_uy, prob_on_sux, from_logits=True
+        pse_uy = tf.one_hot(
+            tf.argmax(prob_on_wux, axis=1), depth=self.num_classes
+        ).numpy()
+        prob_on_sux = tf.nn.softmax(
+            self.classifier(
+                self.feature_extractor(strong_x, training=True), training=True
+            )
         )
+        loss = keras.losses.categorical_crossentropy(pse_uy, prob_on_sux)
         loss = tf.reduce_mean(loss * pseudo_mask)
         return loss
 

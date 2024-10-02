@@ -18,6 +18,8 @@ import tensorflow as tf
 import keras
 import logging
 from network import NetWork, incremental_learning, copy_model
+from agumentation import *
+from data_prepocessor import *
 from model import resnet10
 
 
@@ -72,11 +74,18 @@ class GLFC_Client:
         # assert self.classifier is not None
         self.labeled_train_set = None
         self.unlabeled_train_set = None
+        self.data_preprocessor = Dataset_Preprocessor(
+            "cifar100", Weak_Augment("cifar100"), RandAugment("cifar100")
+        )
+        self.warm_up_epochs = 10
 
     def build_feature_extractor(self):
         self.feature_extractor = resnet10()
         self.feature_extractor.build(input_shape=(None, 32, 32, 3))
         self.feature_extractor.call(keras.Input(shape=(32, 32, 3)))
+        self.feature_extractor.load_weights(
+            "examples/cifar100/fci_ssl/glfc/algorithm/feature_extractor.weights.h5"
+        )
 
     def _initialize_classifier(self):
         if self.classifier != None:
@@ -142,7 +151,9 @@ class GLFC_Client:
             self.old_model = old_model[0]
         self.labeled_train_set = (train_data["label_x"], train_data["label_y"])
         self.unlabeled_train_set = (train_data["unlabel_x"], train_data["unlabel_y"])
-        self.train_loader = self._get_train_loader(True)
+        self.labeled_train_loader, self.unlabeled_train_loader = self._get_train_loader(
+            True
+        )
         logging.info(
             f"------finish before train task_id: {task_id} {self.current_classes}------"
         )
@@ -174,17 +185,20 @@ class GLFC_Client:
                 train_x = np.concatenate((train_x, exm_set[0]), axis=0)
                 train_y = np.concatenate((train_y, label), axis=0)
         # logging.info(f'{ train_set[0].shape}, {self.train_set[1].shape}')
-        return (
-            tf.data.Dataset.from_tensor_slices((train_x, train_y))
-            .shuffle(buffer_size=10000000)
-            .batch(self.batch_size)
-            .map(
-                lambda x, y: (
-                    (tf.cast(x, dtype=tf.float32) / 255.0 - self.mean) / self.std,
-                    tf.cast(y, dtype=tf.int32),
-                )
-            )
+        label_data_loader = self.data_preprocessor.preprocess_labeled_dataset(
+            train_x, train_y, self.batch_size
         )
+        unlabel_data_loader = None
+        if len(self.unlabeled_train_set[0]) > 0:
+            unlabel_data_loader = self.data_preprocessor.preprocess_unlabeled_dataset(
+                self.unlabeled_train_set[0],
+                self.unlabeled_train_set[1],
+                self.batch_size,
+            )
+            logging.info(
+                f"unlabel_x shape: {self.unlabeled_train_set[0].shape} and unlabel_y shape: {self.unlabeled_train_set[1].shape}"
+            )
+        return (label_data_loader, unlabel_data_loader)
 
     def train(self, round):
         # self._initialize_classifier()
@@ -199,16 +213,32 @@ class GLFC_Client:
         all_params.extend(classifier_params)
 
         for epoch in range(self.epochs):
-            for step, (x, y) in enumerate(self.train_loader):
+            # for labeled_data, unlabeled_data in zip(
+            #     self.labeled_train_loader, self.unlabeled_train_loader
+            # ):
+            #     labeled_x, labeled_y = labeled_data
+            #     unlabeled_x, weak_unlabeled_x, strong_unlabeled_x, unlabeled_y = (
+            #         unlabeled_data
+            #     )
+            for step, (x, y) in enumerate(self.labeled_train_loader):
                 # opt = keras.optimizers.SGD(learning_rate=self.learning_rate, weight_decay=0.00001)
                 with tf.GradientTape() as tape:
                     # input = self.feature_extractor(inputs=x,training=True)
                     # y_pred = self.classifier(inputs=input, training=True)
                     # target = get_one_hot(y, self.num_classes)
                     # loss = tf.reduce_mean(keras.losses.sparse_categorical_crossentropy(y, y_pred, from_logits=True))
-                    loss = self._compute_loss(x, y)
+                    supervised_loss = self._compute_loss(x, y)
+                    loss = supervised_loss
+                    # if epoch > self.warm_up_epochs:
+                    #     unsupervised_loss = self.unsupervised_loss(
+                    #         weak_unlabeled_x, strong_unlabeled_x
+                    #     )
+                    #     loss = loss + 0.5 * unsupervised_loss
+                    #     logging.info(
+                    #         f"supervised loss is {supervised_loss} unsupervised loss is {unsupervised_loss}"
+                    #     )
                 logging.info(
-                    f"------round{round} epoch{epoch} step{step} loss: {loss} and loss dim is {loss.shape}------"
+                    f"------round{round} epoch{epoch}  loss: {loss} and loss dim is {loss.shape}------"
                 )
                 grads = tape.gradient(loss, all_params)
                 # # print(f'grads shape is {len(grads)} and type is {type(grads)}')
@@ -270,7 +300,29 @@ class GLFC_Client:
                 )
             )
             logging.info(f"loss old  is {loss_old}")
-            return 0.5 * loss + 0.5 * loss_old
+            return loss + loss_old
+
+    def unsupervised_loss(self, weak_x, strong_x):
+        self.accept_threshold = 0.95
+        prob_on_wux = tf.nn.softmax(
+            self.classifier(
+                self.feature_extractor(weak_x, training=True), training=True
+            )
+        )
+        pseudo_mask = tf.cast(
+            (tf.reduce_max(prob_on_wux, axis=1) >= self.accept_threshold), tf.float32
+        )
+        pse_uy = tf.one_hot(
+            tf.argmax(prob_on_wux, axis=1), depth=self.num_classes
+        ).numpy()
+        prob_on_sux = tf.nn.softmax(
+            self.classifier(
+                self.feature_extractor(strong_x, training=True), training=True
+            )
+        )
+        loss = keras.losses.categorical_crossentropy(pse_uy, prob_on_sux)
+        loss = tf.reduce_mean(loss * pseudo_mask)
+        return loss
 
     def efficient_old_class_weight(self, output, labels):
         # print("---calculate efficient old class weight---")

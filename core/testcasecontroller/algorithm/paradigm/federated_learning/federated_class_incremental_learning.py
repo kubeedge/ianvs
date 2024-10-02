@@ -289,7 +289,11 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         current_forget_rate = (
             max_acc_sum / len(old_class_acc_list) if incremental_round > 0 else 0.0
         )
+        tavk_avg_acc = self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value][
+            "accuracy"
+        ]
         LOGGER.info(
-            f"for current round: {incremental_round} forget rate: {current_forget_rate} task avg acc: {self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value]['accuracy']}"
+            f"for current round: {incremental_round} forget rate: {current_forget_rate}"
+            f"task avg acc: {tavk_avg_acc}"
         )
         return current_forget_rate

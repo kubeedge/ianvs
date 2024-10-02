@@ -37,7 +37,6 @@ def read_data_from_file_to_npy(files: BaseDataSource):
     """
     x_train = []
     y_train = []
-    LOGGER.info(f"{files.x}, {files.y}")
     for i, file in enumerate(files.x):
         x_data = np.load(file)
         # print(x_data.shape)
@@ -47,7 +46,6 @@ def read_data_from_file_to_npy(files: BaseDataSource):
         y_train.append(y_data)
     x_train = np.concatenate(x_train, axis=0)
     y_train = np.concatenate(y_train, axis=0)
-    print(x_train.shape, y_train.shape)
     return x_train, y_train
 
 

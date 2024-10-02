@@ -64,6 +64,40 @@ def read_data_from_file_to_npy(files, incremental_round=10):
     return tasks
 
 
+def read_data_from_file_to_npy_no_step(files):
+    """
+    read data from file to numpy array
+
+    Parameters
+    ---------
+    files: list
+        the address url of data file.
+
+    Returns
+    -------
+    list
+        data in numpy array.
+
+    """
+
+    # print(files.x, files.y)
+    tasks = []
+    x_train = []
+    y_train = []
+    for i, file in enumerate(files.x):
+        x = np.load(file)
+        # print(x.shape)
+        # print((files.y[][i]))
+        y = np.full((x.shape[0],), (files.y[i]).astype(np.int32))
+        x_train.append(x)
+        y_train.append(y)
+    x_train = np.concatenate(x_train, axis=0)
+    y_train = np.concatenate(y_train, axis=0)
+    tasks.append((x_train, y_train))
+    print(x_train.shape, y_train.shape, np.unique(y_train), len(tasks))
+    return tasks
+
+
 def train(
     feature_extractor,
     classifier,
@@ -170,39 +204,28 @@ def main():
     test_data.parse(test_file)
     # print(train_data.x, train_data.y)
     # print(test_data.x, test_data.y)
-    incremental_round = 10
+    incremental_round = 1
 
-    tasks = read_data_from_file_to_npy(train_data, incremental_round)
-    test_tasks = read_data_from_file_to_npy(test_data, incremental_round)
+    tasks = read_data_from_file_to_npy_no_step(train_data)
     config = {
         "learning_rate": 0.01,
-        "epochs": 10,
+        "epochs": 100,
         "batch_size": 128,
-        "task_size": 10,
+        "task_size": 100,
         "memory_size": 2000,
     }
     estimator = BaseModel(**config)
-
-    for i, task in enumerate(tasks):
-
-        train_data = task_to_data(task)
-
-        estimator.train(train_data, None, task_id=i, round=i)
-
-        test_x = []
-        test_y = []
-        for test_task in test_tasks[:1]:
-            print(test_task[0].shape, test_task[1].shape)
-            test_x.append(test_task[0])
-            test_y.append(test_task[1])
-        test_x = np.concatenate(test_x, axis=0)
-        test_y = np.concatenate(test_y, axis=0)
-        evaluate(
-            estimator.FedCiMatch.feature_extractor,
-            estimator.FedCiMatch.classifier,
-            test_x,
-            test_y,
-        )
+    feature_extractor = estimator.FedCiMatch.feature_extractor
+    classifier = keras.Sequential(
+        [
+            # tf.keras.Input(shape=(None, self.feature_extractor.layers[-2].output_shape[-1])),
+            keras.layers.Dense(100, kernel_initializer="lecun_normal")
+        ]
+    )
+    classifier.build(input_shape=(None, feature_extractor.layers[-2].output_shape[-1]))
+    train_data = tasks[0]
+    train(feature_extractor, classifier, train_data, epochs=60)
+    feature_extractor.save_weights("./feature_extractor.weights.h5")
 
 
 if __name__ == "__main__":

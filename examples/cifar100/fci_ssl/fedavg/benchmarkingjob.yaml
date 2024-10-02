@@ -14,9 +14,9 @@ benchmarkingjob:
     # currently the option of value is "algorithms",the others will be added in succession.
     type: "algorithms"
     # test algorithm configuration files; list type;
-    algorithms:
+    algorithms:conda
       # algorithm name; string type;
-      - name: "fcil_test"
+      - name: "basic-fedavg"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
         url: "./examples/cifar100/fci_ssl/fedavg/algorithm/algorithm.yaml"

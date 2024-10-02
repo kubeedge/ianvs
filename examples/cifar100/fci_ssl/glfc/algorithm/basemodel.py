@@ -27,7 +27,7 @@ __all__ = ["BaseModel"]
 logging.getLogger().setLevel(logging.INFO)
 
 
-@ClassFactory.register(ClassType.GENERAL, alias="glfc")
+@ClassFactory.register(ClassType.GENERAL, alias="GLFCMatch-Client")
 class BaseModel:
     def __init__(self, **kwargs) -> None:
         self.kwargs = kwargs

@@ -14,7 +14,7 @@ os.environ["BACKEND_TYPE"] = "KERAS"
 logging.getLogger().setLevel(logging.INFO)
 
 
-@ClassFactory.register(ClassType.GENERAL, alias="fedavg")
+@ClassFactory.register(ClassType.GENERAL, alias="fedavg-client")
 class BaseModel:
     def __init__(self, **kwargs):
         self.kwargs = kwargs

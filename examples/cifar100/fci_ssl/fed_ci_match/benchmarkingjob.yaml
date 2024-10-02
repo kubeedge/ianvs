@@ -16,7 +16,7 @@ benchmarkingjob:
     # test algorithm configuration files; list type;
     algorithms:
       # algorithm name; string type;
-      - name: "fci_ssl_test"
+      - name: "FediCarl"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
         url: "./examples/cifar100/fci_ssl/fed_ci_match/algorithm/algorithm.yaml"

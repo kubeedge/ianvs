@@ -29,7 +29,7 @@ __all__ = ["BaseModel"]
 logging.getLogger().setLevel(logging.INFO)
 
 
-@ClassFactory.register(ClassType.GENERAL, alias="FedCILMatch")
+@ClassFactory.register(ClassType.GENERAL, alias="FediCarl-Client")
 class BaseModel:
     def __init__(self, **kwargs) -> None:
         self.kwargs = kwargs
