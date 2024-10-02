@@ -1,0 +1,37 @@
+testenv:
+  backend: "tensorflow"
+  dataset:
+    name: 'cifar100'
+    # the url address of train dataset index; string type;
+    train_url: "/home/wyd/ianvs/project/data/cifar100/cifar100_train.txt"
+    # the url address of test dataset index; string type;
+    test_url: "/home/wyd/ianvs/project/data/cifar100/cifar100_test.txt"
+
+
+  # network eval configuration of incremental learning;
+  model_eval:
+    # metric used for network evaluation
+    model_metric:
+      # metric name; string type;
+      name: "accuracy"
+      # the url address of python file
+      url: "/home/wyd/ianvs/project/ianvs/examples/cifar100/federated_learning/fedavg/testenv/acc.py"
+
+    # condition of triggering inference network to update
+    # threshold of the condition; types are float/int
+    threshold: 0.01
+    # operator of the condition; string type;
+    # values are ">=", ">", "<=", "<" and "=";
+    operator: "<="
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "accuracy"
+      # the url address of python file
+      url: "/home/wyd/ianvs/project/ianvs/examples/cifar100/federated_learning/fedavg/testenv/acc.py"
+
+  # incremental rounds setting of incremental learning; int type; default value is 2;
+  task_size: 10
+  incremental_rounds: 10
+  round: 200
