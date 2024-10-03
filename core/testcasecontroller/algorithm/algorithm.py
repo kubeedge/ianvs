@@ -67,6 +67,8 @@ class Algorithm:
         self.initial_model_url: str = ""
         self.modules: list = []
         self.modules_list = None
+        self.quantization_type: str = ""
+        self.llama_quantize_path: str = ""
         self._parse_config(config)
         self._load_third_party_packages()
 

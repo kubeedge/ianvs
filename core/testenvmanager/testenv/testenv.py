@@ -44,6 +44,7 @@ class TestEnv:
         self.metrics = []
         self.incremental_rounds = 2
         self.dataset = None
+        self.use_gpu = False  # default false
         self._parse_config(config)
 
     def _check_fields(self):
@@ -60,6 +61,8 @@ class TestEnv:
         for k, v in config_dict.items():
             if k == str.lower(Dataset.__name__):
                 self.dataset = Dataset(v)
+            elif k == 'use_gpu':
+                self.use_gpu = bool(v)  
             else:
                 if k in self.__dict__:
                     self.__dict__[k] = v
