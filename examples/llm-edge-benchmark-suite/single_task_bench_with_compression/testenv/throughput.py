@@ -20,7 +20,6 @@ __all__ = ["throughput"]
 
 @ClassFactory.register(ClassType.GENERAL, alias="throughput")
 def throughput(y_true, y_pred):
-    # total_time = y_pred.get('avg_total_time', [])
     results_list = y_pred.get('results', [])
     num_requests = len(results_list)
     total_latency = 0.0

@@ -33,9 +33,6 @@ class LlamaCppModel:
         )
 
     def predict(self, data, input_shape=None, **kwargs):
-        print("=============================")
-        print(len(data))
-        print("=============================")
         data = data[:10]
         process = psutil.Process(os.getpid())
         start_time = time.time()
@@ -88,9 +85,6 @@ class LlamaCppModel:
     def _parse_timings(self, stdout_output):
         import re
         timings = {}
-        print("================================")
-        print(stdout_output)
-        print("================================")
         for line in stdout_output.split('\n'):
             match = re.match(r'llama_print_timings:\s*(.+?)\s*=\s*([0-9\.]+)\s*ms', line)
             if match:
