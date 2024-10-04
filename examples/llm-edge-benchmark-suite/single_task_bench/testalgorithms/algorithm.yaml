@@ -1,0 +1,16 @@
+algorithm:
+  paradigm_type: "singletasklearningwithcompression"
+
+  initial_model_url: "models/qwen/qwen_1_5_0_5b.gguf"
+
+  modules:
+    - type: "basemodel"
+      name: "LlamaCppModel"
+      url: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/testalgorithms/basemodel.py"
+      hyperparameters:
+        - model_path:
+            values:
+              - "models/qwen/qwen_1_5_0_5b.gguf"
+        - n_ctx:
+            values:
+              - 2048
