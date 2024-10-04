@@ -15,7 +15,7 @@
 """Single Task Learning Paradigm"""
 
 import os
-
+import subprocess
 from core.common.constant import ParadigmType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 
@@ -49,6 +49,11 @@ class SingleTaskLearning(ParadigmBase):
     def __init__(self, workspace, **kwargs):
         ParadigmBase.__init__(self, workspace, **kwargs)
         self.initial_model = kwargs.get("initial_model_url")
+        self.mode = kwargs.get("mode")
+        self.quantization_type = kwargs.get("quantization_type")
+        self.llama_quantize_path = kwargs.get("llama_quantize_path")
+        if kwargs.get("use_gpu", True):
+            os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
     def run(self):
         """
@@ -66,9 +71,45 @@ class SingleTaskLearning(ParadigmBase):
 
         trained_model = self._train(job, self.initial_model)
 
+        if trained_model is None:
+            trained_model = self.initial_model
+
+        if self.mode == 'with_compression':
+            trained_model = self._compress(job, trained_model)
+        
         inference_result = self._inference(job, trained_model)
 
         return inference_result, self.system_metric_info
+
+
+    def _compress(self, job, trained_model):
+        if not os.path.exists(trained_model):
+            print(f"model path not found: {model_path}")
+            return None
+
+        if self.llama_quantize_path is None or not os.path.exists(self.llama_quantize_path):
+            print(f"invalid llama_quantize path: {self.llama_quantize_path}")
+            return None
+
+        if self.quantization_type is None:
+            print("invalid quantization_type escape quantization。")
+            return None
+
+        compressed_model = trained_model.replace('.gguf', f'_{self.quantization_type}.gguf')
+        
+        command = [
+            self.llama_quantize_path,
+            trained_model,
+            compressed_model,
+            self.quantization_type
+        ]
+
+        try:
+            subprocess.run(command, check=True)
+        except subprocess.CalledProcessError as e:
+            return trained_model
+
+        return compressed_model
 
     def _train(self, job, initial_model):
         train_output_dir = os.path.join(self.workspace, "output/train/")
@@ -84,5 +125,8 @@ class SingleTaskLearning(ParadigmBase):
         inference_output_dir = os.path.join(self.workspace, "output/inference/")
         os.environ["RESULT_SAVED_URL"] = inference_output_dir
         job.load(trained_model)
-        infer_res = job.predict(inference_dataset.x)
+        if hasattr(inference_dataset, 'need_other_info'):
+            infer_res = job.predict(inference_dataset)
+        else:
+            infer_res = job.predict(inference_dataset.x)
         return infer_res
