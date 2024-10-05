@@ -7,9 +7,6 @@ import os
 device = "cuda"
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 
-from logging import getLogger
-logger = getLogger("HuggingfaceLLM")
-
 class HuggingfaceLLM(BaseLLM):
     def __init__(self, **kwargs) -> None:
         BaseLLM.__init__(self, **kwargs)

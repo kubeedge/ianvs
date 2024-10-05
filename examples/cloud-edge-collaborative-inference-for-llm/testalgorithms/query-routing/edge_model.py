@@ -18,7 +18,6 @@ import os
 import tempfile
 import time
 import zipfile
-import logging
 
 import numpy as np
 from sedna.common.config import Context
@@ -29,14 +28,9 @@ from models import HuggingfaceLLM, APIBasedLLM, VllmLLM
 from transformers import AutoModelForCausalLM, AutoTokenizer
 device = "cuda" # the device to load the model onto
 
-os.environ['BACKEND_TYPE'] = 'TORCH'
+from core.common.log import LOGGER
 
-logging.disable(logging.WARNING)
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger("EdgeModel")
+os.environ['BACKEND_TYPE'] = 'TORCH'
 
 __all__ = ["BaseModel"]
 
@@ -46,6 +40,8 @@ class EdgeModel:
         This is actually the Edge Model.
     """
     def __init__(self, **kwargs):
+        LOGGER.info(kwargs)
+
         self.kwargs = kwargs
         self.model_name = kwargs.get("model", None)
         self.backend = kwargs.get("backend", "huggingface") 
@@ -71,7 +67,6 @@ class EdgeModel:
         else:
             raise Exception(f"Backend {self.backend} is not supported")
         
-        logger.info(f"Using Backend: {self.backend}")
         self.model.load(model_url=self.model_name)
             
         # TODO cloud service must be configured in JointInference
