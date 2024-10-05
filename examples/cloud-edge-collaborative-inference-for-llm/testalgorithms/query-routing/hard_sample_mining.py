@@ -18,11 +18,15 @@ import abc
 import random
 from transformers import pipeline
 from sedna.common.class_factory import ClassFactory, ClassType
+from core.common.log import LOGGER
 
 __all__ = ('ThresholdFilter', 'CrossEntropyFilter', 'IBTFilter')
 
 class BaseFilter(metaclass=abc.ABCMeta):
     """The base class to define unified interface."""
+
+    def __init__(self, **kwargs):
+        LOGGER.info(f"USING {self.__class__.__name__}")
 
     def __call__(self, infer_result=None):
         """
@@ -49,7 +53,10 @@ class BaseFilter(metaclass=abc.ABCMeta):
 @ClassFactory.register(ClassType.HEM, alias="BERTRouter")
 class BERTFilter(BaseFilter, abc.ABC):
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
         self.kwargs = kwargs
+        LOGGER.info(kwargs)
 
         self.model = kwargs.get("model", "routellm/bert")
         self.task = kwargs.get("task", "text-classification")
@@ -77,9 +84,8 @@ class BERTFilter(BaseFilter, abc.ABC):
         return is_hard_example
     
     def _preprocess(self, data):
-        if "question" in data:
-            data = data.get("question")
-        return data[:self.max_length]
+        messages = data.get("messages")
+        return messages[-1]["content"][:self.max_length]
     
     def cleanup(self):
         del self.classifier
@@ -91,7 +97,7 @@ class BERTFilter(BaseFilter, abc.ABC):
 @ClassFactory.register(ClassType.HEM, alias="EdgeOnly")
 class EdgeOnlyFilter(BaseFilter, abc.ABC):
     def __init__(self, **kwargs):
-        pass
+        super().__init__(**kwargs)
 
     def __call__(self, data=None) -> bool:
         return False
@@ -99,7 +105,7 @@ class EdgeOnlyFilter(BaseFilter, abc.ABC):
 @ClassFactory.register(ClassType.HEM, alias="CloudOnly")
 class CloudOnlyFilter(BaseFilter, abc.ABC):
     def __init__(self, **kwargs):
-        pass
+        super().__init__(**kwargs)
 
     def __call__(self, data=None) -> bool:
         return True
@@ -107,7 +113,55 @@ class CloudOnlyFilter(BaseFilter, abc.ABC):
 @ClassFactory.register(ClassType.HEM, alias="RandomRouter")
 class RandomRouterFilter(BaseFilter, abc.ABC):
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.threshold = kwargs.get("threshold", 0)
 
     def __call__(self, data=None) -> bool:
         return False if random.random() < self.threshold else True
+
+@ClassFactory.register(ClassType.HEM, alias="OracleRouter")
+class OracleRouterFilter(BaseFilter, abc.ABC):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.edge_better = 0
+        self.cloud_better = 0
+        self.both_right = 0
+        self.both_wrong = 0
+
+        self.edge_model = kwargs.get("edgemodel")
+        self.cloud_model = kwargs.get("cloudmodel")
+
+    def __call__(self, data=None) -> bool:
+        gold = data.get("gold", None)
+
+        edge_result = self.edge_model.predict(data).get("prediction")
+        cloud_result = self.cloud_model.inference(data).get("prediction")
+
+        both_right = edge_result == gold and cloud_result == gold
+        both_wrong = edge_result != gold and cloud_result != gold
+        edge_better = edge_result == gold and cloud_result != gold
+        cloud_better = edge_result != gold and cloud_result == gold
+
+        if both_right:
+            self.both_right +=1
+        elif both_wrong:
+            self.both_wrong += 1
+        elif edge_better:
+            self.edge_better += 1
+        elif cloud_better:
+            self.cloud_better += 1
+
+        if cloud_better:
+            # cloud is better than edge, hard sample
+            return True
+        else:
+            # both correct + both wrong + edge_better, easy sample
+            return False
+        
+    def cleanup(self):
+        print(
+            f"Both Wrong: {self.both_wrong}\n",
+            f"Both Correct: {self.both_right}\n",
+            f"Edge Better: {self.edge_better}\n",
+            f"Cloud Better: {self.cloud_better}"
+        )

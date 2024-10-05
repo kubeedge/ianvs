@@ -15,10 +15,10 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import json
 import tempfile
 import time
 import zipfile
-import logging
 
 import numpy as np
 from sedna.common.config import Context
@@ -29,15 +29,16 @@ from models import HuggingfaceLLM, APIBasedLLM, VllmLLM
 from transformers import AutoModelForCausalLM, AutoTokenizer
 device = "cuda" # the device to load the model onto
 
-os.environ['BACKEND_TYPE'] = 'TORCH'
+from core.common.log import LOGGER
 
-logging.disable(logging.WARNING)
+os.environ['BACKEND_TYPE'] = 'TORCH'
 
 __all__ = ["BaseModel"]
 
 @ClassFactory.register(ClassType.GENERAL, alias="CloudModel")
 class CloudModel:
     def __init__(self, **kwargs):
+        LOGGER.info(kwargs)
         # The API KEY and API URL are confidential data and should not be written in yaml.
 
         self.model = APIBasedLLM(**kwargs)
