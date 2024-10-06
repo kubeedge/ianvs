@@ -15,20 +15,12 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-import tempfile
-import time
-import zipfile
-
-import numpy as np
-from sedna.common.config import Context
+from core.common.log import LOGGER
 from sedna.common.class_factory import ClassType, ClassFactory
 
 from models import HuggingfaceLLM, APIBasedLLM, VllmLLM
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
 device = "cuda" # the device to load the model onto
-
-from core.common.log import LOGGER
 
 os.environ['BACKEND_TYPE'] = 'TORCH'
 

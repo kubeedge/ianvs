@@ -159,9 +159,11 @@ class OracleRouterFilter(BaseFilter, abc.ABC):
             return False
         
     def cleanup(self):
-        print(
-            f"Both Wrong: {self.both_wrong}\n",
-            f"Both Correct: {self.both_right}\n",
-            f"Edge Better: {self.edge_better}\n",
+        message = [
+            f"OracleRouter Statistics: \n",
+            f"Both Wrong: {self.both_wrong},  ",
+            f"Both Correct: {self.both_right},  ",
+            f"Edge Better: {self.edge_better},  ",
             f"Cloud Better: {self.cloud_better}"
-        )
+        ]
+        LOGGER.info("".join(message))
