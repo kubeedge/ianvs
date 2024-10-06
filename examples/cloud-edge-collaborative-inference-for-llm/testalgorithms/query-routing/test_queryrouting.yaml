@@ -22,7 +22,9 @@ algorithm:
       # name of the hyperparameter; string type;
         - model:
             values:
-              - "Qwen/Qwen2.5-0.5B-Instruct"
+              - "Qwen/Qwen2.5-1.5B-Instruct"
+              - "Qwen/Qwen2.5-3B-Instruct"
+              - "Qwen/Qwen2.5-7B-Instruct"
         - backend:
             values:
               - "vllm"
@@ -32,7 +34,7 @@ algorithm:
         - top_p:
             values:
               - 0.8
-        -  max_token:
+        -  max_tokens:
             values:
               - 512
         -  repetition_penalty:
@@ -41,7 +43,7 @@ algorithm:
         -  tensor_parallel_size:
             values:
             # 1 or total count of gpu
-              - 1
+              - 4
         -  gpu_memory_utilization:
             values:
               - 0.9
@@ -68,7 +70,7 @@ algorithm:
         - top_p:
             values:
               - 0.8
-        -  max_token:
+        -  max_tokens:
             values:
               - 512
         -  repetition_penalty:
@@ -80,7 +82,7 @@ algorithm:
         
     - type: "hard_example_mining"
       # name of python module; string type;
-      # BERTRouter, EdgeOnly, CloudOnly, RandomRouter
+      # BERTRouter, EdgeOnly, CloudOnly, RandomRouter, OracleRouter
       name: "OracleRouter"
       # the url address of python module; string type;
       url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/hard_sample_mining.py"

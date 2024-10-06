@@ -8,5 +8,7 @@ def edge_rate(y_true, y_pred):
 
     y_pred = [pred.is_hard_example for pred in infer_res]
 
-    return round(1 - sum(y_pred) / len(y_pred),2)
+    edge_rate = 1 - sum(y_pred) / len(y_pred)
+
+    return round(edge_rate * 100,2)
         
