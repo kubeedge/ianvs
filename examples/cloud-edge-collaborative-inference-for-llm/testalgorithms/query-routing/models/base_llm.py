@@ -19,11 +19,13 @@ class BaseLLM:
         self.config = kwargs
         self._parse_kwargs(**kwargs)
         self.is_cache_loaded = False
+        self.model_loaded = False
 
     def load(self):
         raise NotImplementedError
 
     def _parse_kwargs(self, **kwargs):
+        self.model_name = kwargs.get("model", None)
         self.quantization = kwargs.get("quantization", "full")
         self.temperature = kwargs.get("temperature", 0.8)
         self.top_p = kwargs.get("top_p", 0.8)
@@ -47,7 +49,7 @@ class BaseLLM:
             if messages[0]['role'] == "system":
                 system_prompt = messages[0]["content"]
             else:
-                system_prompt = ""
+                system_prompt = None
 
             question = messages[-1]["content"]
 
@@ -55,6 +57,9 @@ class BaseLLM:
                 response = self._try_cache(question, system_prompt)
                 if response is not None:
                     return response
+                
+            if not self.model_loaded:
+                self.load(self.model_name)
 
             response = self._infer(messages)
 

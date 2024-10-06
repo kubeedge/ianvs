@@ -16,8 +16,7 @@ class HuggingfaceLLM(BaseLLM):
             model_url,
             torch_dtype="auto",
             device_map="auto",
-            trust_remote_code=True,
-            # quantization = self.quantization # Need to align with HF API
+            trust_remote_code=True
         )
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_url,

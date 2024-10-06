@@ -66,8 +66,6 @@ class EdgeModel:
             self.model = APIBasedLLM(**self.kwargs)
         else:
             raise Exception(f"Backend {self.backend} is not supported")
-        
-        self.model.load(model_url=self.model_name)
             
         # TODO cloud service must be configured in JointInference
 

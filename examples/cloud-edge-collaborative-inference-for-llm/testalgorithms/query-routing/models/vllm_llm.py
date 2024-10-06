@@ -81,4 +81,5 @@ class VllmLLM(BaseLLM):
         destroy_model_parallel()
         destroy_distributed_environment()
 
-        del self.model.llm_engine.model_executor
+        if hasattr(self, "model"):
+            del self.model.llm_engine.model_executor
