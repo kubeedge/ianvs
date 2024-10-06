@@ -1,0 +1,88 @@
+algorithm:
+  # paradigm name; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  paradigm_type: "jointinference"
+
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # kind of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel"
+    - type: "edgemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      # This defines the edge model
+      name: "EdgeModel"
+      # the url address of python module; string type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/edge_model.py"
+
+      hyperparameters:
+      # name of the hyperparameter; string type;
+        - model:
+            values:
+              - "Qwen/Qwen2.5-1.5B-Instruct"
+              - "Qwen/Qwen2.5-3B-Instruct"
+              - "Qwen/Qwen2.5-7B-Instruct"
+        - backend:
+            values:
+              - "vllm"
+        - temperature:
+            values:
+              - 0
+        - top_p:
+            values:
+              - 0.8
+        -  max_tokens:
+            values:
+              - 512
+        -  repetition_penalty:
+            values:
+              - 1.05
+        -  tensor_parallel_size:
+            values:
+            # 1 or total count of gpu
+              - 4
+        -  gpu_memory_utilization:
+            values:
+              - 0.9
+        -  use_cache:
+            values:
+              - true
+
+    - type: "cloudmodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      # This defines the edge model
+      name: "CloudModel"
+      # the url address of python module; string type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/cloud_model.py"
+
+      hyperparameters:
+        # name of the hyperparameter; string type;
+        - model:
+            values:
+              - "gpt-4o-mini"
+        - temperature:
+            values:
+              - 0
+        - top_p:
+            values:
+              - 0.8
+        -  max_tokens:
+            values:
+              - 512
+        -  repetition_penalty:
+            values:
+              - 1.05
+        -  use_cache:
+            values:
+              - true
+        
+    - type: "hard_example_mining"
+      # name of python module; string type;
+      # BERTRouter, EdgeOnly, CloudOnly, RandomRouter, OracleRouter
+      name: "OracleRouter"
+      # the url address of python module; string type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/hard_sample_mining.py"
