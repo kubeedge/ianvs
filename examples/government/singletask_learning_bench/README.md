@@ -39,7 +39,7 @@ metadata example:
 |name|Option|information|
 |---|---|---|
 |prompt|Optional|the background of the LLM testing|
-|question|Required|the testing question|
+|query|Required|the testing question|
 |response|Required|the answer of the question|
 |explanation|Optional|the explanation of the answer|
 |judge_prompt|Optional|the prompt of the judge model|
