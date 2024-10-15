@@ -204,7 +204,7 @@ class Dataset:
 
         return data
     
-    # pylint: disable=too-many-positional-arguments, R0913
+    # pylint: disable=R0913
     def _get_dataset_file(self, data, output_dir, dataset_type, index, dataset_format):
         data_file = self._get_file_url(output_dir, dataset_type, index, dataset_format)
 
@@ -212,7 +212,7 @@ class Dataset:
 
         return data_file
     
-    # pylint: disable=too-many-positional-arguments, R0913
+    # pylint: disable=R0913
     def _splitting_more_times(self, data_file, data_format, ratio,
                               data_types=None, output_dir=None, times=1):
         if not data_types:
@@ -246,7 +246,7 @@ class Dataset:
 
         return data_files
 
-    # pylint: disable=too-many-positional-arguments, R0913
+    # pylint: disable=R0913
     def _fwt_splitting(self, data_file, data_format, ratio,
                               data_types=None, output_dir=None, times=1):
         if not data_types:
@@ -286,7 +286,7 @@ class Dataset:
         return data_files
 
     # add new splitting method for semantic segmentation
-    # pylint: disable=too-many-positional-arguments, R0913
+    # pylint: disable=R0913
     def _city_splitting(self, data_file, data_format, ratio,
                               data_types=None, output_dir=None, times=1):
         if not data_types:
@@ -331,7 +331,7 @@ class Dataset:
 
         return data_files
 
-    # pylint: disable=too-many-positional-arguments, R0913
+    # pylint: disable=R0913
     def _hard_example_splitting(self, data_file, data_format, ratio,
                               data_types=None, output_dir=None, times=1):
         if not data_types:
@@ -371,7 +371,7 @@ class Dataset:
         return data_files
 
     @classmethod
-    # pylint: disable=too-many-positional-arguments, R0913
+    # pylint: disable=R0913
     def load_data(cls, file: str, data_type: str, label=None, use_raw=False, feature_process=None):
         """
         load data
