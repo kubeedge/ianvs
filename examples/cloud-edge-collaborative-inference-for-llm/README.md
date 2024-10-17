@@ -103,44 +103,35 @@ You need to create a dataset folder in`ianvs/` in the following structure.
 ├── dataset
 │   └── mmlu
 │       ├── test_data
-│       │   ├── data_info.json
 │       │   ├── data.jsonl
-│       │   └── prompts.json
+│       │   └── metadata.json
 │       └── train_data
 │           └── data.json
 ```
 
 Leave `train_data/data.jsonl` as empty.
 
-The file `data.jsonl` stores the main content of the dataset. Each line contains some keys.
+The file `data.jsonl` stores the main content of the dataset. Each line contains must contain keys `query`, `response`, `explanation`,`level_1_dim`, `level_2_dim`, `level_3_dim`, `level_4_dim`
 
 Here is an example:
 
 ```json
-{"question": "The metal surfaces for electrical resistance welding must be", "A": "rough.", "B": "clean.", "C": "moistened", "D": "coloured", "subject": "electrical_engineering", "answer": "B"}
-{"question": "China and Vietnam's dispute over the Spratley Islands is", "A": "a positional dispute.", "B": "a territorial dispute.", "C": "a resource dispute.", "D": "a functional dispute.", "subject": "high_school_geography", "answer": "C"}
-```
+{"query": "Question: Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q.\nA. 0\nB. 4\nC. 2\nD. 6", "response": "B", "explanation": "", "level_1_dim": "single-modal", "level_2_dim": "text", "level_3_dim": "knowledge Q&A", "level_4_dim": "abstract_algebra"}
+{"query": "Question: Let p = (1, 2, 5, 4)(2, 3) in S_5 . Find the index of <p> in S_5.\nA. 8\nB. 2\nC. 24\nD. 120", "response": "C", "explanation": "", "level_1_dim": "single-modal", "level_2_dim": "text", "level_3_dim": "knowledge Q&A", "level_4_dim": "abstract_algebra"}
+``` 
 
-The `data_info.jsonl` stores information about the data, including `keys` and `answer_key`. The `keys` are the keys of the data, which can be used as placeholders in `prompts.json` to synthesize prompts, while the `answer_key` is the key for the answers. 
-
-Here is an example:
-
-```json
-{
-    "keys": ["question", "A", "B", "C", "D", "subject","answer"],
-    "answer_key": "answer"
-}
-```
-
-The `prompts.jsonl` stores the prompt information for testing, including `infer_system_prompt`, `infer_user_template`, and `infer_answer_template`. You can use the `keys` declared in `data_info.jsonl` as placeholders to fill in the data. 
+The `metadata.jsonl` stores information about the data, including `dataset`, `description`, `level_1_dim`, `level_2_dim`, `level_3_dim`, `level_4_dim`. 
 
 Here is an example:
 
 ```json
 {
-    "infer_system_prompt": "You are a helpful assistant.",
-    "infer_user_template": "There is a single choice question about {subject}. Answer the question by replying A, B, C or D.\nQuestion:{question}\nA:{A}\nB:{B}\nC:{C}\nD:{D}\n",
-    "infer_answer_template": "Answer:{answer}\n"
+    "dataset": "MMLU",
+    "description": "Measuring Massive Multitask Language Understanding by Dan Hendrycks, Collin Burns, Steven Basart, Andy Zou, Mantas Mazeika, Dawn Song, and Jacob Steinhardt (ICLR 2021).",
+    "level_1_dim": "single-modal",
+    "level_2_dim": "text", 
+    "level_3_dim": "Q&A",
+    "level_4_dim": "general"
 }
 ```
 
@@ -227,12 +218,22 @@ Currently, supported routers include:
 | ------------ | ------------------------------------------------------------ | ---------------- |
 | EdgeOnly     | Route all queries to the edge model.                         | -                |
 | CloudOnly    | Route all queries to the cloud model.                        | -                |
+| OracleRouter | Optimal Router         |         |
 | BERTRouter   | Use a BERT classifier to route the query to the edge or cloud model. | model, threshold |
 | RandomRouter | Route the query to the edge or cloud model randomly.         | threshold        |
 
 You can modify the `router` parameter in `test_queryrouting.yaml` to select the router you want to use.
 
 For BERT router, you can use [routellm/bert](https://huggingface.co/routellm/bert) or [routellm/bert_mmlu_augmented](https://huggingface.co/routellm/bert_mmlu_augmented) or your own BERT model/
+
+#### Data Processor Configuration
+Data Processor 允许你在 `ianvs` 读取数据集后，自行实现需要的数据构造形式，如 few-shot、CoT 等复杂的 prompts 等。
+
+Currently, supported routers include:
+
+| Data Processor  | Description                                                  | Parameters       |
+| ------------ | ------------------------------------------------------------ | ---------------- |
+| MultiShotGenertor     | Few-shot query generator                      |   shot-nums         |
 
 ## Step 3. Run Ianvs
 
@@ -245,27 +246,17 @@ After the process finished, you will see output.
 By changing different models and Router parameters, you may see output like:
 
 ```bash
-+------+---------------+----------+--------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+------------------------------------+-------------------+------------------+
-| rank |   algorithm   | Accuracy | Rate to Edge | Time to First Token | Throughput | Internal Token Latency | Cloud Prompt Tokens | Cloud Completion Tokens | Edge Prompt Tokens | Edge Completion Tokens |    paradigm    | hard_example_mining |          edgemodel-model           | edgemodel-backend | cloudmodel-model |
-+------+---------------+----------+--------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+------------------------------------+-------------------+------------------+
-|  1   | query-routing |  67.85   |     1.0      |        0.067        |   135.89   |         0.007          |          0          |            0            |      2103586       |         392448         | jointinference |       EdgeOnly      |      Qwen/Qwen2.5-7B-Instruct      |        vllm       |  deepseek-chat   |
-|  2   | query-routing |  65.11   |     0.0      |        0.521        |   13.55    |         0.074          |       2035996       |          152806         |         0          |           0            | jointinference |      CloudOnly      | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int8 |        vllm       |  deepseek-chat   |
-|  3   | query-routing |  65.07   |     0.0      |        0.515        |   13.58    |         0.074          |       2028425       |          152393         |        7498        |          1213          | jointinference |      BERTRouter     | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int8 |        vllm       |  deepseek-chat   |
-|  4   | query-routing |  64.89   |     0.04     |        0.496        |   14.15    |         0.071          |       1865823       |          143046         |       170344       |          9997          | jointinference |      BERTRouter     | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int8 |        vllm       |  deepseek-chat   |
-|  5   | query-routing |  64.58   |     0.14     |        0.451        |   15.49    |         0.065          |       1502331       |          121653         |       536153       |         29820          | jointinference |      BERTRouter     | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int8 |        vllm       |  deepseek-chat   |
-|  6   | query-routing |  63.92   |     0.24     |        0.406        |   17.09    |         0.059          |       1191670       |          99516          |       850519       |         51685          | jointinference |      BERTRouter     | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int8 |        vllm       |  deepseek-chat   |
-|  7   | query-routing |  63.55   |     0.31     |         0.37        |   18.75    |         0.053          |       1030285       |          86470          |      1016798       |         62231          | jointinference |      BERTRouter     | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int8 |        vllm       |  deepseek-chat   |
-|  8   | query-routing |  62.26   |     0.42     |        0.318        |   21.81    |         0.046          |        840353       |          72551          |      1215723       |         75624          | jointinference |      BERTRouter     | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int8 |        vllm       |  deepseek-chat   |
-|  9   | query-routing |  61.76   |     0.52     |        0.275        |    25.4    |         0.039          |        701936       |          60792          |      1361799       |         82517          | jointinference |      BERTRouter     | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int8 |        vllm       |  deepseek-chat   |
-|  10  | query-routing |   60.9   |     0.65     |        0.215        |   33.21    |          0.03          |        509627       |          43354          |      1565065       |         90016          | jointinference |      BERTRouter     | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int8 |        vllm       |  deepseek-chat   |
-|  11  | query-routing |  60.48   |     0.84     |        0.123        |    59.4    |         0.017          |        232907       |          20583          |      1857170       |         98897          | jointinference |      BERTRouter     | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int8 |        vllm       |  deepseek-chat   |
-|  12  | query-routing |  60.43   |     1.0      |        0.045        |   185.51   |         0.005          |          0          |            0            |      2103586       |         104979         | jointinference |       EdgeOnly      | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int8 |        vllm       |  deepseek-chat   |
-|  13  | query-routing |  60.43   |     1.0      |        0.045        |   185.38   |         0.005          |         101         |            7            |      2103475       |         104977         | jointinference |      BERTRouter     | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int8 |        vllm       |  deepseek-chat   |
-|  14  | query-routing |  60.21   |     1.0      |        0.057        |   212.8    |         0.005          |          0          |            0            |      2103586       |         113141         | jointinference |       EdgeOnly      |      Qwen/Qwen2.5-3B-Instruct      |        vllm       |  deepseek-chat   |
-|  15  | query-routing |  58.67   |     1.0      |        0.042        |   261.83   |         0.004          |          0          |            0            |      2103586       |         117313         | jointinference |       EdgeOnly      | Qwen/Qwen2.5-3B-Instruct-GPTQ-Int4 |        vllm       |  deepseek-chat   |
-|  16  | query-routing |  57.57   |     1.0      |        0.053        |   166.88   |         0.006          |          0          |            0            |      2103586       |         153574         | jointinference |       EdgeOnly      |    Qwen/Qwen2.5-3B-Instruct-AWQ    |        vllm       |  deepseek-chat   |
-|  17  | query-routing |   56.2   |     1.0      |        0.041        |   343.21   |         0.003          |          0          |            0            |      2103586       |         136572         | jointinference |       EdgeOnly      |     Qwen/Qwen2.5-1.5B-Instruct     |        vllm       |  deepseek-chat   |
-+------+---------------+----------+--------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+------------------------------------+-------------------+------------------+
++------+---------------+----------+--------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+----------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
+| rank |   algorithm   | Accuracy | Rate to Edge | Time to First Token | Throughput | Internal Token Latency | Cloud Prompt Tokens | Cloud Completion Tokens | Edge Prompt Tokens | Edge Completion Tokens |    paradigm    | hard_example_mining |      edgemodel-model       | edgemodel-backend | cloudmodel-model |         time        |                                         url                                         |
++------+---------------+----------+--------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+----------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
+|  1   | query-routing |  83.48   |    88.32     |        0.362        |   139.53   |         0.007          |       1416860       |          11836          |      10987945      |         48533          | jointinference |     OracleRouter    |  Qwen/Qwen2.5-7B-Instruct  |        vllm       |   gpt-4o-mini    | 2024-10-17 15:52:21 | ./workspace-mmlu/benchmarkingjob/query-routing/9f85b598-8c5c-11ef-ad26-51366965e425 |
+|  2   | query-routing |  82.64   |    76.89     |        0.277        |   338.51   |         0.003          |       2804317       |          15707          |      9547941       |         24060          | jointinference |     OracleRouter    | Qwen/Qwen2.5-1.5B-Instruct |        vllm       |   gpt-4o-mini    | 2024-10-17 15:51:51 | ./workspace-mmlu/benchmarkingjob/query-routing/9f85b596-8c5c-11ef-ad26-51366965e425 |
+|  3   | query-routing |   82.1   |    81.78     |        0.313        |   248.38   |         0.004          |       2214701       |          11887          |      10161486      |         81147          | jointinference |     OracleRouter    |  Qwen/Qwen2.5-3B-Instruct  |        vllm       |   gpt-4o-mini    | 2024-10-17 15:52:06 | ./workspace-mmlu/benchmarkingjob/query-routing/9f85b597-8c5c-11ef-ad26-51366965e425 |
+|  4   | query-routing |  76.43   |     0.0      |        0.782        |  1194.58   |         0.001          |       12017546      |          47583          |         0          |           0            | jointinference |      CloudOnly      | Qwen/Qwen2.5-1.5B-Instruct |        vllm       |   gpt-4o-mini    | 2024-10-17 15:50:39 | ./workspace-mmlu/benchmarkingjob/query-routing/747c4176-8c5c-11ef-ad26-51366965e425 |
+|  5   | query-routing |   71.8   |    100.0     |        0.306        |   125.22   |         0.008          |          0          |            0            |      12456589      |         55634          | jointinference |       EdgeOnly      |  Qwen/Qwen2.5-7B-Instruct  |        vllm       |   gpt-4o-mini    | 2024-10-17 13:46:20 | ./workspace-mmlu/benchmarkingjob/query-routing/0ca33c20-8c4b-11ef-ad26-51366965e425 |
+|  6   | query-routing |  63.89   |    100.0     |        0.209        |   210.62   |         0.005          |          0          |            0            |      12456589      |         103378         | jointinference |       EdgeOnly      |  Qwen/Qwen2.5-3B-Instruct  |        vllm       |   gpt-4o-mini    | 2024-10-17 13:46:09 | ./workspace-mmlu/benchmarkingjob/query-routing/0ca33c1f-8c4b-11ef-ad26-51366965e425 |
+|  7   | query-routing |  59.53   |    100.0     |        0.124        |   278.34   |         0.004          |          0          |            0            |      12454484      |         31193          | jointinference |       EdgeOnly      | Qwen/Qwen2.5-1.5B-Instruct |        vllm       |   gpt-4o-mini    | 2024-10-17 13:45:58 | ./workspace-mmlu/benchmarkingjob/query-routing/0ca33c1e-8c4b-11ef-ad26-51366965e425 |
++------+---------------+----------+--------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+----------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
 ```
 
 Ianvs will output a `rank.csv` and `selected_rank.csv` in `ianvs/workspace`, which will record the test results of each test.
@@ -282,9 +273,14 @@ Query Routing is a very useful cloud-edge collaboration strategy based on two fa
 
 -  Not all tasks require calling top-tier models: For tasks like translation, organization, summarization, data formatting,and casual conversation, small models with 3B parameters or less can achieve satisfactory results.
 
-These two facts suggest that if we can call different models based on the difficulty of the task, it will help save unnecessary API calls and thus reduce costs. Additionally, if edge device performance is sufficient, locally deployed small models can also demonstrate excellent latency and throughput metrics, further enhancing user experience.
+These two facts suggest that if we can call different models based on the difficulty of the task, it will help save unnecessary API calls and thus reduce costs. Additionally, if edge device prformance is sufficient, locally deployed small models can also demonstrate excellent latency and throughput metrics, further enhancing user experience.
 
-Some related research $^{[1]}$ has trained routers that can save up to 40% of GPT-4 API calls while maintaining essentially unchanged accuracy on the test set.
+Our Oracle Router is the ideal router that can route problems where the actual performance of edge small models outperforms that of cloud large models to the edge. Experiments have shown that when Qwen2.5-7B-Instruct collaborates with gpt-4o-mini, the accuracy on the MMLU (5-shot) dataset is +11.68% compared to pure edge and +8.85% compared to pure cloud, with 88.32% of queries routed to edge.
+
+![](./assets/Oracle%20Router%20Demo.png)
+
+Some related research $^{[1]}$ has trained pratical routers that can save up to 40% of GPT-4 API calls while maintaining essentially unchanged accuracy on the test set.
+
 
 ## Future
 
