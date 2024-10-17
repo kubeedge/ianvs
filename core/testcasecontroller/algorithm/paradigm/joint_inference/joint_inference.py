@@ -71,9 +71,14 @@ class JointInference(ParadigmBase):
             shot_nums = self.kwargs.get("shot_nums", 0)
         )
 
+        dataset_processor = self.module_instances.get("dataset_processor", None)
+        if callable(dataset_processor):
+            self.inference_dataset = dataset_processor(self.inference_dataset)
+
         # validate module instances
         required_modules = {"edgemodel", "cloudmodel", "hard_example_mining"}
-        if self.module_instances.keys() != required_modules:
+
+        if not required_modules.issubset(set(self.module_instances.keys())):
             raise ValueError(
                 f"Required modules: {required_modules}, "
                 f"but got: {self.module_instances.keys()}"
@@ -129,7 +134,7 @@ class JointInference(ParadigmBase):
         LOGGER.info("Inference Start")
 
         pbar = tqdm(
-            zip(self.inference_dataset.x, self.inference_dataset.y), 
+            self.inference_dataset.x, 
             total=len(self.inference_dataset.x),
             ncols=100
         )
@@ -137,7 +142,7 @@ class JointInference(ParadigmBase):
         for data in pbar:
             # inference via sedna JointInference API
             infer_res = job.inference(
-                {"messages": data[0], "gold": data[1]},
+                data,
                 mining_mode=self.hard_example_mining_mode
             )
 

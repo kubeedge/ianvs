@@ -50,6 +50,9 @@ class ModuleType(Enum):
     EDGEMODEL = "edgemodel"
     CLOUDMODEL = "cloudmodel"
 
+    # Dataset Preprocessor
+    DATA_PROCESSOR = "dataset_processor" 
+
     # HEM
     HARD_EXAMPLE_MINING = "hard_example_mining"
 

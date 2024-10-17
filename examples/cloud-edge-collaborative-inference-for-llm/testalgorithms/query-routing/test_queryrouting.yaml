@@ -83,6 +83,15 @@ algorithm:
     - type: "hard_example_mining"
       # name of python module; string type;
       # BERTRouter, EdgeOnly, CloudOnly, RandomRouter, OracleRouter
-      name: "OracleRouter"
+      name: "EdgeOnly"
       # the url address of python module; string type;
       url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/hard_sample_mining.py"
+
+    - type: "dataset_processor"
+      name: "MultiShotGenertor"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/data_processor.py"
+
+      hyperparameters:
+        - shot_nums:
+            values:
+              - 5
