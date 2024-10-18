@@ -31,5 +31,11 @@ jobs:
           python -m pip install ${{github.workspace}}/examples/resources/third_party/*
           python -m pip install -r ${{github.workspace}}/requirements.txt
       - name: Analysing code of core with pylint
+        # `--max-positional-arguments=10` is set for Python 3.9 to avoid `R0917: too-many-positional-arguments`.
+        # See details at https://github.com/kubeedge/ianvs/issues/157
         run: |
-          pylint '${{github.workspace}}/core'
+          if [ "${{ matrix.python-version }}" = "3.9" ]; then
+            pylint --max-positional-arguments=10 '${{github.workspace}}/core'
+          else
+            pylint '${{github.workspace}}/core'
+          fi
