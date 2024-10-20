@@ -18,6 +18,7 @@ import os
 import tempfile
 import pandas as pd
 # pylint: disable=no-name-in-module
+# pylint: disable=too-many-instance-attributes
 from sedna.datasources import (
     CSVDataParse,
     TxtDataParse,
@@ -25,6 +26,7 @@ from sedna.datasources import (
     JsonlDataParse,
     JSONMetaDataParse,
 )
+# pylint: enable=too-many-instance-attributes
 # pylint: enable=no-name-in-module
 from core.common import utils
 from core.common.constant import DatasetFormat
