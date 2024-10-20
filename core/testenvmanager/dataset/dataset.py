@@ -26,8 +26,6 @@ from sedna.datasources import (
     JsonlDataParse,
     JSONMetaDataParse,
 )
-# pylint: enable=too-many-instance-attributes
-# pylint: enable=no-name-in-module
 from core.common import utils
 from core.common.constant import DatasetFormat
 
