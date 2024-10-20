@@ -16,11 +16,16 @@
 
 import os
 import tempfile
-import json
-
 import pandas as pd
-from sedna.datasources import CSVDataParse, TxtDataParse, JSONDataParse, JsonlDataParse, JSONMetaDataParse
-
+# pylint: disable=no-name-in-module
+from sedna.datasources import (
+    CSVDataParse,
+    TxtDataParse,
+    JSONDataParse,
+    JsonlDataParse,
+    JSONMetaDataParse,
+)
+# pylint: enable=no-name-in-module
 from core.common import utils
 from core.common.constant import DatasetFormat
 
