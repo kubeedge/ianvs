@@ -84,5 +84,8 @@ class SingleTaskLearning(ParadigmBase):
         inference_output_dir = os.path.join(self.workspace, "output/inference/")
         os.environ["RESULT_SAVED_URL"] = inference_output_dir
         job.load(trained_model)
-        infer_res = job.predict(inference_dataset.x)
+        if hasattr(inference_dataset, 'need_other_info'):
+            infer_res = job.predict(inference_dataset)
+        else:
+            infer_res = job.predict(inference_dataset.x)
         return infer_res
