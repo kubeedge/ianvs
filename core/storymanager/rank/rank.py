@@ -141,42 +141,49 @@ class Rank:
 
     def _get_all(self, test_cases, test_results) -> pd.DataFrame:
         all_df = pd.DataFrame(columns=self.all_df_header)
+
         for i, test_case in enumerate(test_cases):
-            all_df.loc[i] = [np.NAN for i in range(len(self.all_df_header))]
-            # fill name column of algorithm
             algorithm = test_case.algorithm
-            all_df.loc[i][0] = algorithm.name
-            # fill metric columns of algorithm
-            for metric_name in test_results[test_case.id][0]:
-                all_df.loc[i][metric_name] = test_results[test_case.id][0].get(metric_name)
+            test_result = test_results[test_case.id][0]
 
-            # file paradigm column of algorithm
-            all_df.loc[i]["paradigm"] = algorithm.paradigm_type
+            # add algorithm, paradigm, time, url of algorithm
+            row_data = {
+                "algorithm": algorithm.name,
+                "paradigm": algorithm.paradigm_type,
+                "time": test_results[test_case.id][1],
+                "url": test_case.output_dir
+            }
 
-            # fill module columns of algorithm
-            for module_type, module in algorithm.modules.items():
-                all_df.loc[i][module_type] = module.name
+            # add metric of algorithm
+            row_data.update(test_result)
 
-            # fill hyperparameters columns of algorithm modules
-            hps = self._get_algorithm_hyperparameters(algorithm)
+            # add module of algorithm
+            row_data.update({
+                module_type: module.name
+                for module_type, module in algorithm.modules.items()
+            })
 
-            # pylint: disable=C0103
-            for k, v in hps.items():
-                all_df.loc[i][k] = v
-            # fill time and output dir of testcase
-            all_df.loc[i][-2:] = [test_results[test_case.id][1], test_case.output_dir]
+            # add hyperparameters of algorithm modules
+            row_data.update(self._get_algorithm_hyperparameters(algorithm))
 
+            # fill data
+            all_df.loc[i] = row_data
+
+        new_df = self._concat_existing_data(all_df)
+
+        return self._sort_all_df(new_df, self._get_all_metric_names(test_results))
+
+    def _concat_existing_data(self, new_df):
         if utils.is_local_file(self.all_rank_file):
-            old_df = pd.read_csv(self.all_rank_file, delim_whitespace=True, index_col=0)
-            all_df = all_df.append(old_df)
-
-        return self._sort_all_df(all_df, self._get_all_metric_names(test_results))
+            old_df = pd.read_csv(self.all_rank_file, index_col=0)
+            new_df = pd.concat([old_df, new_df])
+        return new_df
 
     def _save_all(self):
         # pylint: disable=E1101
         all_df = copy.deepcopy(self.all_df)
-        all_df.index = pd.np.arange(1, len(all_df) + 1)
-        all_df.to_csv(self.all_rank_file, index_label="rank", encoding="utf-8", sep=" ")
+        all_df.index = np.arange(1, len(all_df) + 1)
+        all_df.to_csv(self.all_rank_file, index_label="rank", encoding="utf-8")
 
     def _get_selected(self, test_cases, test_results) -> pd.DataFrame:
         module_types = self.selected_dataitem.get("modules")
@@ -205,8 +212,8 @@ class Rank:
     def _save_selected(self, test_cases, test_results):
         # pylint: disable=E1101
         selected_df = self._get_selected(test_cases, test_results)
-        selected_df.index = pd.np.arange(1, len(selected_df) + 1)
-        selected_df.to_csv(self.selected_rank_file, index_label="rank", encoding="utf-8", sep=" ")
+        selected_df.index = np.arange(1, len(selected_df) + 1)
+        selected_df.to_csv(self.selected_rank_file, index_label="rank", encoding="utf-8")
 
     def _draw_pictures(self, test_cases, test_results):
         # pylint: disable=E1101
@@ -222,8 +229,11 @@ class Rank:
         all_metric_names = self._get_all_metric_names(test_results)
         all_hps_names = self._get_all_hps_names(test_cases)
         all_module_types = self._get_all_module_types(test_cases)
-        self.all_df_header = ["algorithm", *all_metric_names, "paradigm",
-                              *all_module_types, *all_hps_names, "time", "url"]
+        self.all_df_header = [
+            "algorithm", *all_metric_names,
+            "paradigm", *all_module_types,
+            *all_hps_names, "time", "url"
+        ]
 
         rank_output_dir = os.path.join(output_dir, "rank")
         if not utils.is_local_dir(rank_output_dir):
@@ -246,7 +256,6 @@ class Rank:
         output_dir: string
 
         """
-
         self._prepare(test_cases, test_results, output_dir)
 
         if self.save_mode == "selected_and_all":
