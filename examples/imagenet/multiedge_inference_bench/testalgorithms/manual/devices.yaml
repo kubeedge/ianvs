@@ -1,0 +1,26 @@
+devices:
+  - name: "gpu"
+    type: "gpu-0"
+    memory: "1024"
+    freq: "2.6"
+    bandwith: "100"
+  - name: "gpu-1"
+    type: "gpu"
+    memory: "1024"
+    freq: "2.6"
+    bandwith: "80"
+  - name: "gpu-2"
+    type: "gpu"
+    memory: "2048"
+    freq: "2.6"
+    bandwith: "90"
+partition_points:
+  - input_names: ["pixel_values"]
+    output_names: ["input.60"]
+    device_name: "gpu-0"
+  - input_names: ["input.60"]
+    output_names: ["input.160"]
+    device_name: "gpu-1"
+  - input_names: ["input.160"]
+    output_names: ["logits"]
+    device_name: "gpu-2"

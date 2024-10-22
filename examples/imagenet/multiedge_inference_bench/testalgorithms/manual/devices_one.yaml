@@ -1,0 +1,11 @@
+devices:
+  - name: "gpu-1"
+    type: gpu"
+    memory: "1024"
+    freq: "2.6"
+    bandwith: "100"
+
+partition_points:
+  - input_names: ["pixel_values"]
+    output_names: ["logits"]
+    device_name: "gpu-1"
