@@ -2,10 +2,10 @@ import tensorflow as tf
 import numpy as np
 from sedna.common.class_factory import ClassFactory, ClassType
 
-__all__ = ['acc']
+__all__ = ["acc"]
 
 
-@ClassFactory.register(ClassType.GENERAL, alias='accuracy')
+@ClassFactory.register(ClassType.GENERAL, alias="accuracy")
 def accuracy(y_true, y_pred, **kwargs):
     # print(f"y_pred: {y_pred}")
     y_pred_arr = [val for val in y_pred.values()]
@@ -21,4 +21,3 @@ def accuracy(y_true, y_pred, **kwargs):
     acc = float(int(correct) / total)
     print(f"acc:{acc}")
     return acc
-

@@ -18,13 +18,28 @@ import tensorflow as tf
 from PIL import Image, ImageEnhance, ImageOps
 
 
-'''
+"""
 Reference: https://github.com/heartInsert/randaugment
-'''
-class Rand_Augment():
+"""
+
+
+class Rand_Augment:
     def __init__(self, Numbers=None, max_Magnitude=None):
-        self.transforms = ['autocontrast', 'equalize', 'rotate', 'solarize', 'color', 'posterize',
-                           'contrast', 'brightness', 'sharpness', 'shearX', 'shearY', 'translateX', 'translateY']
+        self.transforms = [
+            "autocontrast",
+            "equalize",
+            "rotate",
+            "solarize",
+            "color",
+            "posterize",
+            "contrast",
+            "brightness",
+            "sharpness",
+            "shearX",
+            "shearY",
+            "translateX",
+            "translateY",
+        ]
         if Numbers is None:
             self.Numbers = len(self.transforms) // 2
         else:
@@ -49,43 +64,63 @@ class Rand_Augment():
             "sharpness": np.linspace(0.0, 0.9, 10),
             "brightness": np.linspace(0.0, 0.3, 10),
             "autocontrast": [0] * 10,
-            "equalize": [0] * 10,           
-            "invert": [0] * 10
+            "equalize": [0] * 10,
+            "invert": [0] * 10,
         }
         self.func = {
             "shearX": lambda img, magnitude: img.transform(
-                img.size, Image.AFFINE, (1, magnitude * random.choice([-1, 1]), 0, 0, 1, 0),
-                Image.BICUBIC, fill=fillcolor),
+                img.size,
+                Image.AFFINE,
+                (1, magnitude * random.choice([-1, 1]), 0, 0, 1, 0),
+                Image.BICUBIC,
+                fill=fillcolor,
+            ),
             "shearY": lambda img, magnitude: img.transform(
-                img.size, Image.AFFINE, (1, 0, 0, magnitude * random.choice([-1, 1]), 1, 0),
-                Image.BICUBIC, fill=fillcolor),
+                img.size,
+                Image.AFFINE,
+                (1, 0, 0, magnitude * random.choice([-1, 1]), 1, 0),
+                Image.BICUBIC,
+                fill=fillcolor,
+            ),
             "translateX": lambda img, magnitude: img.transform(
-                img.size, Image.AFFINE, (1, 0, magnitude * img.size[0] * random.choice([-1, 1]), 0, 1, 0),
-                fill=fillcolor),
+                img.size,
+                Image.AFFINE,
+                (1, 0, magnitude * img.size[0] * random.choice([-1, 1]), 0, 1, 0),
+                fill=fillcolor,
+            ),
             "translateY": lambda img, magnitude: img.transform(
-                img.size, Image.AFFINE, (1, 0, 0, 0, 1, magnitude * img.size[1] * random.choice([-1, 1])),
-                fill=fillcolor),
+                img.size,
+                Image.AFFINE,
+                (1, 0, 0, 0, 1, magnitude * img.size[1] * random.choice([-1, 1])),
+                fill=fillcolor,
+            ),
             "rotate": lambda img, magnitude: self.rotate_with_fill(img, magnitude),
             # "rotate": lambda img, magnitude: img.rotate(magnitude * random.choice([-1, 1])),
-            "color": lambda img, magnitude: ImageEnhance.Color(img).enhance(1 + magnitude * random.choice([-1, 1])),
+            "color": lambda img, magnitude: ImageEnhance.Color(img).enhance(
+                1 + magnitude * random.choice([-1, 1])
+            ),
             "posterize": lambda img, magnitude: ImageOps.posterize(img, magnitude),
             "solarize": lambda img, magnitude: ImageOps.solarize(img, magnitude),
             "contrast": lambda img, magnitude: ImageEnhance.Contrast(img).enhance(
-                1 + magnitude * random.choice([-1, 1])),
+                1 + magnitude * random.choice([-1, 1])
+            ),
             "sharpness": lambda img, magnitude: ImageEnhance.Sharpness(img).enhance(
-                1 + magnitude * random.choice([-1, 1])),
+                1 + magnitude * random.choice([-1, 1])
+            ),
             "brightness": lambda img, magnitude: ImageEnhance.Brightness(img).enhance(
-                1 + magnitude * random.choice([-1, 1])),
+                1 + magnitude * random.choice([-1, 1])
+            ),
             "autocontrast": lambda img, magnitude: ImageOps.autocontrast(img),
             "equalize": lambda img, magnitude: img,
-            "invert": lambda img, magnitude: ImageOps.invert(img)
+            "invert": lambda img, magnitude: ImageOps.invert(img),
         }
 
     def rand_augment(self):
         """Generate a set of distortions.
-             Args:
-             N: Number of augmentation transformations to apply sequentially. N  is len(transforms)/2  will be best
-             M: Max_Magnitude for all the transformations. should be  <= self.max_Magnitude """
+        Args:
+        N: Number of augmentation transformations to apply sequentially. N  is len(transforms)/2  will be best
+        M: Max_Magnitude for all the transformations. should be  <= self.max_Magnitude
+        """
 
         M = np.random.randint(0, self.max_Magnitude, self.Numbers)
 
@@ -94,7 +129,7 @@ class Rand_Augment():
 
     def __call__(self, image):
         operations = self.rand_augment()
-        for (op_name, M) in operations:
+        for op_name, M in operations:
             operation = self.func[op_name]
             mag = self.ranges[op_name][M]
             image = operation(image, mag)
@@ -103,22 +138,25 @@ class Rand_Augment():
     def rotate_with_fill(self, img, magnitude):
         #  I  don't know why  rotate  must change to RGBA , it is  copy  from Autoaugment - pytorch
         rot = img.convert("RGBA").rotate(magnitude)
-        return Image.composite(rot, Image.new("RGBA", rot.size, (128,) * 4), rot).convert(img.mode)
+        return Image.composite(
+            rot, Image.new("RGBA", rot.size, (128,) * 4), rot
+        ).convert(img.mode)
 
     def test_single_operation(self, image, op_name, M=-1):
-        '''
+        """
         :param image: image
         :param op_name: operation name in   self.transforms
         :param M: -1  stands  for the  max   Magnitude  in  there operation
         :return:
-        '''
+        """
         operation = self.func[op_name]
         mag = self.ranges[op_name][M]
         image = operation(image, mag)
         return image
 
+
 class Base_Augment:
-    def __init__(self, dataset_name:str) -> None:
+    def __init__(self, dataset_name: str) -> None:
         self.dataset_name = dataset_name
 
     def __call__(self, images):
@@ -128,52 +166,23 @@ class Base_Augment:
 class Weak_Augment(Base_Augment):
     def __init__(self, dataset_name: str) -> None:
         super().__init__(dataset_name)
-        if self.dataset_name in ['cifar10', 'cifar100']:
-            self.augment_impl = self.augment_for_cifar
-        elif self.dataset_name == 'svhn':
-            self.augment_impl = self.augment_for_svhn
-        elif self.dataset_name == 'stl10':
-            self.augment_impl = self.augment_for_stl10
-        elif self.dataset_name == 'mnist':
-            self.augment_impl = self.augment_for_mnist
-    
+        self.augment_impl = self.augment_for_cifar
+
     def augment_mirror(self, x):
-        '''
-        随机左右翻转图像
-        '''
         new_images = x.copy()
         indices = np.arange(len(new_images)).tolist()
-        sampled = random.sample(indices, int(round(0.5*len(indices)))) # flip horizontally 50%
+        sampled = random.sample(
+            indices, int(round(0.5 * len(indices)))
+        )  # flip horizontally 50%
         new_images[sampled] = np.fliplr(new_images[sampled])
-        return new_images # random shift
+        return new_images  # random shift
 
     def augment_shift(self, x, w):
-        '''
-        随机平移图像
-        '''
-        # 根据[b, 32, 32, 3]或[b, 96, 96, 3]填充图像
-        y = tf.pad(x, [[0] * 2, [w] * 2, [w] * 2, [0] * 2], mode='REFLECT')
-        return tf.image.random_crop(y, tf.shape(x))
-
-    def augment_shift_mnist(self, x, w):
-        '''
-        随机平移图像
-        '''
-        # 根据[b, 32, 32, 3]或[b, 96, 96, 3]填充图像
-        y = tf.pad(x, [[0] * 2, [w] * 2, [w] * 2], mode='REFLECT')
+        y = tf.pad(x, [[0] * 2, [w] * 2, [w] * 2, [0] * 2], mode="REFLECT")
         return tf.image.random_crop(y, tf.shape(x))
 
     def augment_for_cifar(self, images: np.ndarray):
         return self.augment_shift(self.augment_mirror(images), 4)
-
-    def augment_for_svhn(self, images: np.ndarray):
-        return self.augment_shift(images, 4)
-
-    def augment_for_stl10(self, images: np.ndarray):
-        return self.augment_shift(self.augment_mirror(images), 12)
-    
-    def augment_for_mnist(self, images: np.ndarray):
-        return self.augment_shift_mnist(images, 4)
 
     def __call__(self, images: np.ndarray):
         return self.augment_impl(images)
@@ -182,23 +191,18 @@ class Weak_Augment(Base_Augment):
 class Strong_Augment(Base_Augment):
     def __init__(self, dataset_name: str) -> None:
         super().__init__(dataset_name)
-    
+
     def augment_mirror(self, x):
-        '''
-        随机左右翻转图像
-        '''
         new_images = x.copy()
         indices = np.arange(len(new_images)).tolist()
-        sampled = random.sample(indices, int(round(0.5*len(indices)))) # flip horizontally 50%
+        sampled = random.sample(
+            indices, int(round(0.5 * len(indices)))
+        )  # flip horizontally 50%
         new_images[sampled] = np.fliplr(new_images[sampled])
-        return new_images # random shift
+        return new_images  # random shift
 
     def augment_shift_mnist(self, x, w):
-        '''
-        随机平移图像
-        '''
-        # 根据[b, 32, 32, 3]或[b, 96, 96, 3]填充图像
-        y = tf.pad(x, [[0] * 2, [w] * 2, [w] * 2], mode='REFLECT')
+        y = tf.pad(x, [[0] * 2, [w] * 2, [w] * 2], mode="REFLECT")
         return tf.image.random_crop(y, tf.shape(x))
 
     def __call__(self, images: np.ndarray):
@@ -209,13 +213,18 @@ class RandAugment(Base_Augment):
     def __init__(self, dataset_name: str) -> None:
         super().__init__(dataset_name)
         self.rand_augment = Rand_Augment()
-        if self.dataset_name in ['cifar10', 'cifar100', 'svhn']:
-            self.input_shape = (32, 32, 3)
-        elif self.dataset_name == 'stl10':
-            self.input_shape = (96, 96, 3)
+        self.input_shape = (32, 32, 3)
 
     def __call__(self, images):
-        print('images:', images.shape)
-        
-        return np.array([np.array(self.rand_augment(Image.fromarray(np.reshape(img, self.input_shape)))) for img in images])
+        print("images:", images.shape)
 
+        return np.array(
+            [
+                np.array(
+                    self.rand_augment(
+                        Image.fromarray(np.reshape(img, self.input_shape))
+                    )
+                )
+                for img in images
+            ]
+        )

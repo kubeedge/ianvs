@@ -1,11 +1,8 @@
 import os
-import zipfile
 import logging
 import keras
 import numpy as np
 import tensorflow as tf
-from keras import Sequential
-from keras.src.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
 from sedna.common.class_factory import ClassType, ClassFactory
 from model import resnet10
 
@@ -86,7 +83,6 @@ class BaseModel:
             )
             new_weights = new_classifier.get_weights()
             old_weights = self.classifier.get_weights()
-            # 复制旧参数
             # weight
             new_weights[0][0 : old_weights[0].shape[0], 0 : old_weights[0].shape[1]] = (
                 old_weights[0]
@@ -117,12 +113,10 @@ class BaseModel:
         )
         round = kwargs.get("round", -1)
         task_id = kwargs.get("task_id", -1)
-        task_size = kwargs.get("task_size", 10)
         if self.old_task_id != task_id:
             self.old_task_id = task_id
             self.num_classes = self.task_size * (task_id + 1)
             self.build_classifier()
-        # logging.info(f"train data: {train_data[0].shape} {train_data[1].shape}")
         data = (train_data["label_x"], train_data["label_y"])
         train_db = self.data_process(data)
         logging.info(train_db)
@@ -145,7 +139,6 @@ class BaseModel:
                     )
                 grads = tape.gradient(loss, all_params)
                 optimizer.apply(grads, all_params)
-                # self.optimizer.apply_gradients(zip(grads, self.model.trainable_variables))
                 total_loss += loss
                 total_num += 1
 
@@ -153,7 +146,6 @@ class BaseModel:
                     f"train round {round}: Epoch {epoch + 1} avg loss: {total_loss / total_num}"
                 )
         logging.info(f"finish round {round} train")
-        # self.eval(train_data, round)
         return {"num_samples": data[0].shape[0]}
 
     def predict(self, data_files, **kwargs):
@@ -168,7 +160,6 @@ class BaseModel:
             prob = tf.nn.softmax(pred, axis=1)
             pred = tf.argmax(prob, axis=1)
             pred = tf.cast(pred, dtype=tf.int32)
-            # pred = tf.cast(tf.argmax(logits, axis=1), tf.int32)
             result[data] = pred.numpy()
         print("finish predict")
         return result
@@ -177,13 +168,11 @@ class BaseModel:
         total_num = 0
         total_correct = 0
         data = self.data_process(data)
-        # print(f"in evalute data: {data}")
         for i, (x, y) in enumerate(data):
             logits = self.model(x, training=False)
             # prob = tf.nn.softmax(logits, axis=1)
             pred = tf.argmax(logits, axis=1)
             pred = tf.cast(pred, dtype=tf.int32)
-            # print(pred.shape, y.shape)
             correct = tf.cast(tf.equal(pred, y), dtype=tf.int32)
             correct = tf.reduce_sum(correct)
             total_num += x.shape[0]

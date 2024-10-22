@@ -14,12 +14,11 @@
 
 import os
 import tensorflow as tf
-import keras
 import numpy as np
 from keras.src.layers import Dense, MaxPooling2D, Conv2D, Flatten, Dropout
 from keras.src.models import Sequential
 
-os.environ['BACKEND_TYPE'] = 'KERAS'
+os.environ["BACKEND_TYPE"] = "KERAS"
 
 
 class Estimator:
@@ -32,9 +31,15 @@ class Estimator:
     @staticmethod
     def build():
         model = Sequential()
-        model.add(Conv2D(64, kernel_size=(3, 3),
-                         activation="relu", strides=(2, 2),
-                         input_shape=(32, 32, 3)))
+        model.add(
+            Conv2D(
+                64,
+                kernel_size=(3, 3),
+                activation="relu",
+                strides=(2, 2),
+                input_shape=(32, 32, 3),
+            )
+        )
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Conv2D(32, kernel_size=(3, 3), activation="relu"))
         model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -45,19 +50,26 @@ class Estimator:
         model.add(Dropout(0.5))
         model.add(Dense(1, activation="softmax"))
 
-        model.compile(loss="categorical_crossentropy",
-                      optimizer="adam",
-                      metrics=["accuracy"])
+        model.compile(
+            loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
+        )
         return model
 
-    def train(self,
-              train_data, valid_data=None,
-              epochs=1,
-              batch_size=1,
-              learning_rate=0.01,
-              validation_split=0.2):
-        """ Model train """
-        train_loader = tf.data.Dataset.from_tensor_slices(train_data).shuffle(500000).batch(batch_size)
+    def train(
+        self,
+        train_data,
+        valid_data=None,
+        epochs=1,
+        batch_size=1,
+        learning_rate=0.01,
+        validation_split=0.2,
+    ):
+        """Model train"""
+        train_loader = (
+            tf.data.Dataset.from_tensor_slices(train_data)
+            .shuffle(500000)
+            .batch(batch_size)
+        )
         history = self.model.fit(train_loader, epochs=int(epochs))
         return {k: list(map(np.float, v)) for k, v in history.history.items()}
 
@@ -79,10 +91,10 @@ class Estimator:
         pass
 
     def load(self, model_url):
-        print('load model')
-        
+        print("load model")
+
     def save(self, model_path=None):
         """
         save model as a single pb file from checkpoint
         """
-        print('save model')
+        print("save model")

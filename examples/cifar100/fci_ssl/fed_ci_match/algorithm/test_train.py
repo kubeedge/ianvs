@@ -237,6 +237,101 @@ def task_to_data(task):
     return train_data
 
 
+import tensorflow as tf
+from keras import Sequential
+from keras.src.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
+
+
+def build(num_classes: int):
+    model = Sequential()
+    model.add(
+        Conv2D(
+            64,
+            kernel_size=(3, 3),
+            activation="relu",
+            strides=(2, 2),
+            input_shape=(32, 32, 3),
+        )
+    )
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(32, kernel_size=(3, 3), activation="relu"))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Flatten())
+    model.add(Dropout(0.25))
+    model.add(Dense(64, activation="relu"))
+    model.add(Dense(32, activation="relu"))
+    model.add(Dropout(0.5))
+    model.add(Dense(num_classes, activation="softmax"))
+
+    model.compile(
+        loss="categorical_crossentropy", optimizer="sgd", metrics=["accuracy"]
+    )
+    return model
+
+
+def main_no_incremental_no_split():
+    from model import lenet5
+
+    model = lenet5(32, 100)
+    train_file = "/home/wyd/ianvs/project/data/cifar100/cifar100_train.txt"
+    train_data = TxtDataParse(data_type="train")
+    train_data.parse(train_file)
+    test_file = "/home/wyd/ianvs/project/data/cifar100/cifar100_test.txt"
+    test_data = TxtDataParse(data_type="eval")
+    test_data.parse(test_file)
+    # print(train_data.x, train_data.y)
+    # print(test_data.x, test_data.y)
+    incremental_round = 1
+    test_task = read_data_from_file_to_npy_no_step(test_data)[0]
+    print(test_task[0].shape, test_task[1].shape)
+    tasks = read_data_from_file_to_npy_no_step(train_data)
+    train_data = tasks[0]
+    mean = np.array((0.5071, 0.4867, 0.4408), np.float32).reshape(1, 1, -1)
+    std = np.array((0.2675, 0.2565, 0.2761), np.float32).reshape(1, 1, -1)
+    optimizer = tf.keras.optimizers.SGD(learning_rate=0.01, weight_decay=0.0001)
+    # optimizer = tf.keras.optimizers.Adam(
+    #     learning_rate=learning_rate, weight_decay=0.0001
+    # )
+    train_loader = (
+        tf.data.Dataset.from_tensor_slices(train_data)
+        .shuffle(500000)
+        .map(
+            lambda x, y: (
+                (tf.cast(x, dtype=tf.float32) / 255.0 - mean) / std,
+                tf.cast(y, dtype=tf.int32),
+            )
+        )
+        .batch(32)
+    )
+    for epoch in range(200):
+        epoch_loss = 0
+        step = 0
+        total_correct = 0
+        total_num = 0
+        for _, (x, y) in enumerate(train_loader):
+            logging.info(f"step {step} label is {np.unique(y)}")
+            with tf.GradientTape() as tape:
+                y_pred = model(x)
+                target = tf.one_hot(y, 100)
+                loss = tf.reduce_mean(
+                    keras.losses.categorical_crossentropy(
+                        target, y_pred, from_logits=True
+                    )
+                )
+            pre = tf.cast(tf.argmax(y_pred, axis=1), tf.int32)
+            y = tf.cast(y, tf.int32)
+            acc = tf.reduce_sum(tf.cast(tf.equal(pre, y), tf.float32))
+            step += 1
+            total_correct += int(acc)
+            total_num += x.shape[0]
+            epoch_loss += loss
+            grads = tape.gradient(loss, model.trainable_variables)
+            optimizer.apply_gradients(zip(grads, model.trainable_variables))
+        logging.info(
+            f"epoch {epoch} loss: {epoch_loss/step} acc : {total_correct/total_num}"
+        )
+
+
 def main_no_incremental():
     train_file = "/home/wyd/ianvs/project/data/cifar100/cifar100_train.txt"
     train_data = TxtDataParse(data_type="train")
@@ -275,7 +370,7 @@ def main_no_incremental():
 def load_data_from_tf(incremental_round=10):
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar100.load_data()
     print(x_train.shape, y_train.shape, x_test.shape, y_test.shape)
-    
+
     class_labels = np.unique(y_train)
     train_data_dict = {label: [] for label in class_labels}
     train_label_dict = {label: [] for label in class_labels}
@@ -292,7 +387,7 @@ def load_data_from_tf(incremental_round=10):
             x_data.append(np.array(train_data_dict[label]))
             y_data.append(np.array(train_label_dict[label]))
         x_data = np.concatenate(x_data, axis=0)
-        y_data = np.concatenate(y_data, axis=0)
+        y_data = np.array(y_data).reshape(-1)
         tasks.append((x_data, y_data))
         print(x_data.shape, y_data.shape, np.unique(y_data), len(tasks))
     return tasks
@@ -307,8 +402,8 @@ def main_incremental(incremental_round=10):
     test_data.parse(test_file)
     # train_task = read_data_from_file_to_npy(train_data, incremental_round)
     test_task = read_data_from_file_to_npy(test_data, incremental_round)
+    print("____________--------------__________________")
     train_task = load_data_from_tf(incremental_round)
-     
 
     config = {
         "learning_rate": 0.01,
@@ -322,7 +417,6 @@ def main_incremental(incremental_round=10):
     # classifier = None
 
     for i in range(incremental_round):
-        
         train_data = task_to_data(train_task[i])
         estimator.train(train_data, val_data=None, task_id=i, round=1)
         feature_extractor = estimator.FedCiMatch.feature_extractor

@@ -3,7 +3,6 @@ from copy import deepcopy
 from typing import List
 
 import numpy as np
-import tensorflow as tf
 from sedna.algorithms.aggregation.aggregation import BaseAggregation
 from sedna.common.class_factory import ClassType, ClassFactory
 
@@ -36,7 +35,6 @@ class FedAvg(BaseAggregation, abc.ABC):
         if not len(clients):
             return self.weights
         self.total_size = sum([c.num_samples for c in clients])
-        # print(next(iter(clients)).weights)
         old_weight = [np.zeros(np.array(c).shape) for c in next(iter(clients)).weights]
         updates = []
         for inx, row in enumerate(old_weight):

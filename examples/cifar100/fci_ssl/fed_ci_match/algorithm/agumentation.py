@@ -166,14 +166,7 @@ class Base_Augment:
 class Weak_Augment(Base_Augment):
     def __init__(self, dataset_name: str) -> None:
         super().__init__(dataset_name)
-        if self.dataset_name in ["cifar10", "cifar100"]:
-            self.augment_impl = self.augment_for_cifar
-        elif self.dataset_name == "svhn":
-            self.augment_impl = self.augment_for_svhn
-        elif self.dataset_name == "stl10":
-            self.augment_impl = self.augment_for_stl10
-        elif self.dataset_name == "mnist":
-            self.augment_impl = self.augment_for_mnist
+        self.augment_impl = self.augment_for_cifar
 
     def augment_mirror(self, x):
         new_images = x.copy()
@@ -188,21 +181,8 @@ class Weak_Augment(Base_Augment):
         y = tf.pad(x, [[0] * 2, [w] * 2, [w] * 2, [0] * 2], mode="REFLECT")
         return tf.image.random_crop(y, tf.shape(x))
 
-    def augment_shift_mnist(self, x, w):
-        y = tf.pad(x, [[0] * 2, [w] * 2, [w] * 2], mode="REFLECT")
-        return tf.image.random_crop(y, tf.shape(x))
-
     def augment_for_cifar(self, images: np.ndarray):
         return self.augment_shift(self.augment_mirror(images), 4)
-
-    def augment_for_svhn(self, images: np.ndarray):
-        return self.augment_shift(images, 4)
-
-    def augment_for_stl10(self, images: np.ndarray):
-        return self.augment_shift(self.augment_mirror(images), 12)
-
-    def augment_for_mnist(self, images: np.ndarray):
-        return self.augment_shift_mnist(images, 4)
 
     def __call__(self, images: np.ndarray):
         return self.augment_impl(images)
@@ -233,10 +213,7 @@ class RandAugment(Base_Augment):
     def __init__(self, dataset_name: str) -> None:
         super().__init__(dataset_name)
         self.rand_augment = Rand_Augment()
-        if self.dataset_name in ["cifar10", "cifar100", "svhn"]:
-            self.input_shape = (32, 32, 3)
-        elif self.dataset_name == "stl10":
-            self.input_shape = (96, 96, 3)
+        self.input_shape = (32, 32, 3)
 
     def __call__(self, images):
         print("images:", images.shape)

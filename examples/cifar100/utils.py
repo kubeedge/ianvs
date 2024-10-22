@@ -18,50 +18,53 @@ import os
 
 
 def process_cifar100():
-    if not os.path.exists('/home/wyd/ianvs/project/data/cifar100'):
-        os.makedirs('/home/wyd/ianvs/project/data/cifar100')
-    train_txt = '/home/wyd/ianvs/project/data/cifar100/cifar100_train.txt'
-    with open(train_txt, 'w') as f:
+    if not os.path.exists("/home/wyd/ianvs/project/data/cifar100"):
+        os.makedirs("/home/wyd/ianvs/project/data/cifar100")
+    train_txt = "/home/wyd/ianvs/project/data/cifar100/cifar100_train.txt"
+    with open(train_txt, "w") as f:
         pass
-    test_txt = '/home/wyd/ianvs/project/data/cifar100/cifar100_test.txt'
-    with open(test_txt, 'w') as f:
+    test_txt = "/home/wyd/ianvs/project/data/cifar100/cifar100_test.txt"
+    with open(test_txt, "w") as f:
         pass
-    # 加载CIFAR-100数据集
+    # load CIFAR-100 dataset
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar100.load_data()
     print(y_test.shape)
-    # 数据预处理：归一化
-    # x_train, x_test = x_train / 255.0, x_test / 255.0
 
-    # 将标签转换为类别索引
-    class_labels = np.unique(y_train)  # 获取所有类别
+    # change label to class index
+    class_labels = np.unique(y_train)  #  get all class
     train_class_dict = {label: [] for label in class_labels}
     test_class_dict = {label: [] for label in class_labels}
-    # train_cnt = 0
-    # train_file_str = []
-    # 按类别组织训练数据
+    # organize training data by category
     for img, label in zip(x_train, y_train):
-        # print(type(img))
-        # print('----')
         train_class_dict[label[0]].append(img)
-    # # 按类别组织测试数据
+    # organize testing data by category
     for img, label in zip(x_test, y_test):
         # test_class_dict[label[0]].append(img)
         test_class_dict[label[0]].append(img)
-    # 保存训练数据到本地文件
+    # save training data to local file
     for label, imgs in train_class_dict.items():
         data = np.array(imgs)
         print(data.shape)
-        np.save(f'/home/wyd/ianvs/project/data/cifar100/cifar100_train_index_{label}.npy',data)
-        with open(train_txt, 'a') as f:
-            f.write(f'/home/wyd/ianvs/project/data/cifar100/cifar100_train_index_{label}.npy\t{label}\n')
-    # 保存测试数据到本地文件
+        np.save(
+            f"/home/wyd/ianvs/project/data/cifar100/cifar100_train_index_{label}.npy",
+            data,
+        )
+        with open(train_txt, "a") as f:
+            f.write(
+                f"/home/wyd/ianvs/project/data/cifar100/cifar100_train_index_{label}.npy\t{label}\n"
+            )
+    #  save test data to local file
     for label, imgs in test_class_dict.items():
-        np.save(f'/home/wyd/ianvs/project/data/cifar100/cifar100_test_index_{label}.npy', np.array(imgs))
-        with open(test_txt, 'a') as f:
-            f.write(f'/home/wyd/ianvs/project/data/cifar100/cifar100_test_index_{label}.npy\t{label}\n')
-    print(f'CIFAR-100 数据集已按类别保存到本地文件。')
+        np.save(
+            f"/home/wyd/ianvs/project/data/cifar100/cifar100_test_index_{label}.npy",
+            np.array(imgs),
+        )
+        with open(test_txt, "a") as f:
+            f.write(
+                f"/home/wyd/ianvs/project/data/cifar100/cifar100_test_index_{label}.npy\t{label}\n"
+            )
+    print(f"CIFAR-100 have saved as ianvs format")
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     process_cifar100()

@@ -92,7 +92,6 @@ class FedCiMatch:
             )
             new_weights = new_classifier.get_weights()
             old_weights = self.classifier.get_weights()
-            # 复制旧参数
             # weight
             new_weights[0][0 : old_weights[0].shape[0], 0 : old_weights[0].shape[1]] = (
                 old_weights[0]
@@ -371,7 +370,6 @@ class FedCiMatch:
             g = self.classifier(g, training=True)
             og = self.best_old_model[0](x, training=False)
             og = self.best_old_model[1](og, training=False)
-            # logging.info(f"og shape: {og.shape} g shape: {g.shape}")
             sigmoid_og = tf.nn.sigmoid(og)
             sigmoid_g = tf.nn.sigmoid(g)
             softmax_og = tf.nn.softmax(og)
@@ -383,12 +381,8 @@ class FedCiMatch:
             # distil_target[:, : og.shape[1]].assign(og)
             # q_i = q[step]
             # are_equal = tf.reduce_all(tf.equal(q_i, g))
-            # logging.info(
-            #     f"q_i shape: {q_i.shape} g shape: {g.shape}  are equal: {are_equal.numpy()}"
-            # )
             BCELoss = keras.losses.BinaryCrossentropy()
             # test_distill_loss = BCELoss(og, g[:, : og.shape[1]])
-            # logging.info(f"test loss {kl_loss.numpy()}")
             loss = []
             for y in self.learned_classes:
                 if y not in self.current_classes:

@@ -15,11 +15,7 @@
 import tensorflow as tf
 import keras
 
-# import keras
-# from keras import layers, Sequential
 
-
-# 卷积块
 # Input--conv2D--BN--ReLU--conv2D--BN--ReLU--Output
 #      \                              /
 #       ------------------------------
@@ -59,7 +55,7 @@ class BasicBlock(keras.layers.Layer):
         return output
 
 
-# 残差神经网络
+# restnet
 class ResNet(keras.Model):
     def __init__(self, layer_dims):  # [2, 2, 2, 2]
         super(ResNet, self).__init__()
@@ -130,7 +126,7 @@ class LeNet(keras.Model):
             ),
             bias_initializer=keras.initializers.RandomUniform(minval=-0.5, maxval=0.5),
         )
-        
+
         self.pool1 = keras.layers.MaxPool2D(pool_size=2, strides=2)
         self.conv2 = keras.layers.Conv2D(
             16,

@@ -89,7 +89,6 @@ class FedCiMatch:
             )
             new_weights = new_classifier.get_weights()
             old_weights = self.classifier.get_weights()
-            # 复制旧参数
             # weight
             new_weights[0][0 : old_weights[0].shape[0], 0 : old_weights[0].shape[1]] = (
                 old_weights[0]
@@ -114,23 +113,13 @@ class FedCiMatch:
                 input_shape=(None, self.feature_extractor.layers[-2].output_shape[-1])
             )
 
-        # logging.info(f"finish ! initialize classifier {self.classifier.summary()}")
 
     def get_weights(self):
-        # weights = []
-        # fe_weights = self.feature_extractor.get_weights()
-        # self.fe_weights_length = len(fe_weights)
-        # clf_weights = self.classifier.get_weights()
-        # weights.extend(fe_weights)
-        # weights.extend(clf_weights)
         return self.feature_extractor.get_weights()
 
     def set_weights(self, weights):
-        # fe_weights = weights[: self.fe_weights_length]
-        # clf_weights = weights[self.fe_weights_length :]
         self.feature_extractor.set_weights(weights)
         self.global_model.set_weights(weights)
-        # self.classifier.set_weights(clf_weights)
 
     def get_data_size(self):
         data_size = len(self.labeled_train_set[0]) + len(self.unlabeled_train_set[0])
@@ -144,7 +133,6 @@ class FedCiMatch:
         return x
 
     def _build_class_mapping(self):
-        """构造本地类别映射表"""
         y_train = self.labeled_train_set[1]
         y = np.unique(y_train)
         logging.info(f'build class mapping, y is {y}')  
@@ -226,7 +214,6 @@ class FedCiMatch:
             prob = tf.nn.softmax(logits, axis=1)
             pred = tf.argmax(prob, axis=1)
             pred = tf.cast(pred, dtype=tf.int32)
-            # logging.info(f'pred is {pred.shape} and y is {y.shape}')
             pred = tf.reshape(pred, y.shape)
             correct = tf.cast(tf.equal(pred, y), dtype=tf.int32)
             correct = tf.reduce_sum(correct)

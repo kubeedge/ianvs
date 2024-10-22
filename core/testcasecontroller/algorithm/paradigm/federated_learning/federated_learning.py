@@ -77,7 +77,6 @@ class FederatedLearning(ParadigmBase):
             self.build_paradigm_job(ParadigmType.FEDERATED_LEARNING.value)
             for i in range(self.clients_number)
         ]
-        LOGGER.info(f"init client {self.clients[0] == self.clients[1]}")
 
     def run(self):
         """
@@ -90,7 +89,6 @@ class FederatedLearning(ParadigmBase):
             information needed to compute system metrics.
         """
         # init client wait for connection
-        # self.init_client()
         self.init_client()
         dataset_files = self.get_all_train_data()
         train_dataset_file, _ = dataset_files[0]

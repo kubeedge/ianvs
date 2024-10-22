@@ -18,7 +18,6 @@ import keras
 import tensorflow as tf
 from sedna.common.class_factory import ClassType, ClassFactory
 from model import resnet10, lenet5
-from network import NetWork, incremental_learning
 from GLFC import GLFC_Client
 import logging
 
@@ -38,10 +37,6 @@ class BaseModel:
         self.memory_size = kwargs.get("memory_size", 2000)
         self.encode_model = lenet5(32, 100)
         self.encode_model.call(keras.Input(shape=(32, 32, 3)))
-        # print(self.encode_model.get_weights())
-        print(self.encode_model.summary())
-        # keras.initializers.glorot_uniform()
-        # self.fe = self.build_feature_extractor()
         self.num_classes = 10  # the number of class for the first task
         self.GLFC_Client = GLFC_Client(
             self.num_classes,
@@ -84,8 +79,6 @@ class BaseModel:
 
         self.GLFC_Client.train(round)
         proto_grad = self.GLFC_Client.proto_grad()
-        print(type(proto_grad))
-        # self.GLFC_Client.evaluate()
         return {
             "num_samples": self.GLFC_Client.get_data_size(),
             "proto_grad": proto_grad,
@@ -94,7 +87,6 @@ class BaseModel:
 
     def helper_function(self, helper_info, **kwargs):
         self.best_old_model = helper_info["best_old_model"]
-        print(self.best_old_model)
         if self.best_old_model[1] != None:
             self.GLFC_Client.old_model = self.best_old_model[1]
         else:

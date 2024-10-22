@@ -119,11 +119,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         train_dataset_len = len(train_datasets)
         for i in range(train_dataset_len):
             train_dataset_dict = {}
-            LOGGER.info(
-                f"train_datasets[i][0]: {train_datasets[i][0].shape}, {len(train_datasets[i])}"
-            )
             label_data_number = int(label_ratio * len(train_datasets[i][0]))
-            LOGGER.info(f"label_data_number: {label_data_number}")
             # split dataset into label and unlabel data
             train_dataset_dict["label_x"] = train_datasets[i][0][:label_data_number]
             train_dataset_dict["label_y"] = train_datasets[i][1][:label_data_number]

@@ -1,9 +1,6 @@
 import tensorflow as tf
 import keras
-# import keras
-# from keras import layers, Sequential
 
-# 卷积块
 # Input--conv2D--BN--ReLU--conv2D--BN--ReLU--Output
 #      \                              /
 #       ------------------------------

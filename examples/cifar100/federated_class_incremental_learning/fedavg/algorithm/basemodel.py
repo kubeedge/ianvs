@@ -139,14 +139,11 @@ class BaseModel:
         total_num = 0
         total_correct = 0
         data = self.data_process(data)
-        # print(f"in evalute data: {data}")
         for i, (x, y) in enumerate(data):
             logits = self.model(x, training=False)
-            # prob = tf.nn.softmax(logits, axis=1)
             pred = tf.argmax(logits, axis=1)
             pred = tf.cast(pred, dtype=tf.int32)
             pred = tf.reshape(pred, y.shape)
-            # print(pred.shape, y.shape)
             correct = tf.cast(tf.equal(pred, y), dtype=tf.int32)
             correct = tf.reduce_sum(correct)
             total_num += x.shape[0]

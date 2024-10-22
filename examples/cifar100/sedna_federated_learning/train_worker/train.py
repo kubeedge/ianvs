@@ -17,7 +17,8 @@ from sedna.datasources import TxtDataParse
 import numpy as np
 from basemodel import Estimator
 
-def read_data_from_file_to_npy( files):
+
+def read_data_from_file_to_npy(files):
     """
     read data from file to numpy array
 
@@ -47,19 +48,17 @@ def read_data_from_file_to_npy( files):
     print(x_train.shape, y_train.shape)
     return x_train, y_train
 
+
 def main():
-    train_file = '/home/wyd/ianvs/project/data/cifar100/cifar100_train.txt'
-    train_data = TxtDataParse(data_type='train')
+    train_file = "/home/wyd/ianvs/project/data/cifar100/cifar100_train.txt"
+    train_data = TxtDataParse(data_type="train")
     train_data.parse(train_file)
     train_data = read_data_from_file_to_npy(train_data)
     epochs = 3
     batch_size = 128
-    fl_job = FederatedLearning(
-        estimator=Estimator(),
-        aggregation='FedAvg'
-    )
+    fl_job = FederatedLearning(estimator=Estimator(), aggregation="FedAvg")
     fl_job.train(train_data=train_data, epochs=epochs, batch_size=batch_size)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

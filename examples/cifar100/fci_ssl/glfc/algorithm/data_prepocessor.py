@@ -28,7 +28,6 @@ class Dataset_Preprocessor:
         self.strong_augment_helper = strong_augment_helper
         self.mean = 0.0
         self.std = 1.0
-        # 数据集统计特征
         if dataset_name == "cifar100":
             self.mean = np.array((0.5071, 0.4867, 0.4408), np.float32).reshape(1, 1, -1)
             self.std = np.array((0.2675, 0.2565, 0.2761), np.float32).reshape(1, 1, -1)

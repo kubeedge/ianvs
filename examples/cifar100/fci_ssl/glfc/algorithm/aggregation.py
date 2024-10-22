@@ -17,14 +17,9 @@ from copy import deepcopy
 from typing import List
 
 import numpy as np
-import tensorflow as tf
-from keras import Sequential
-from keras.src.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
 from sedna.algorithms.aggregation.aggregation import BaseAggregation
 from sedna.common.class_factory import ClassType, ClassFactory
 from proxy_server import ProxyServer
-from model import resnet10, lenet5
-from network import NetWork, incremental_learning
 
 
 @ClassFactory.register(ClassType.FL_AGG, "FedAvg")
@@ -56,7 +51,6 @@ class FedAvg(BaseAggregation, abc.ABC):
         if not len(clients):
             return self.weights
         self.total_size = sum([c.num_samples for c in clients])
-        # print(next(iter(clients)).weights)
         old_weight = [np.zeros(np.array(c).shape) for c in next(iter(clients)).weights]
         updates = []
         for inx, row in enumerate(old_weight):
@@ -72,13 +66,10 @@ class FedAvg(BaseAggregation, abc.ABC):
     def helper_function(self, train_infos, **kwargs):
         proto_grad = []
         task_id = -1
-        # print(train_infos)
         for key, value in train_infos.items():
             if "proto_grad" == key and value is not None:
-                # print(info)
                 for grad_i in value:
                     proto_grad.append(grad_i)
-                # proto_grad.append(info['proto_grad'])
             if "task_id" == key:
                 task_id = max(value, task_id)
         self.proxy_server.dataload(proto_grad)

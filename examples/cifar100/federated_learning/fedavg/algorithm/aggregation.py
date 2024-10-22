@@ -17,9 +17,6 @@ from copy import deepcopy
 from typing import List
 
 import numpy as np
-import tensorflow as tf
-from keras import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
 from sedna.algorithms.aggregation.aggregation import BaseAggregation
 from sedna.common.class_factory import ClassType, ClassFactory
 
@@ -28,7 +25,6 @@ from sedna.common.class_factory import ClassType, ClassFactory
 class FedAvg(BaseAggregation, abc.ABC):
     def __init__(self):
         super(FedAvg, self).__init__()
-
 
     def aggregate(self, clients):
         """
@@ -45,19 +41,16 @@ class FedAvg(BaseAggregation, abc.ABC):
             final weights use to update model layer
         """
 
-
         print("aggregation....")
         if not len(clients):
             return self.weights
         self.total_size = sum([c.num_samples for c in clients])
         # print(next(iter(clients)).weights)
-        old_weight = [np.zeros(np.array(c).shape) for c in
-                      next(iter(clients)).weights]
+        old_weight = [np.zeros(np.array(c).shape) for c in next(iter(clients)).weights]
         updates = []
         for inx, row in enumerate(old_weight):
             for c in clients:
-                row += (np.array(c.weights[inx]) * c.num_samples
-                        / self.total_size)
+                row += np.array(c.weights[inx]) * c.num_samples / self.total_size
             updates.append(row.tolist())
         self.weights = deepcopy(updates)
         print("finish aggregation....")
