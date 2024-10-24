@@ -62,7 +62,7 @@ class TestEnv:
             if k == str.lower(Dataset.__name__):
                 self.dataset = Dataset(v)
             elif k == 'use_gpu':
-                self.use_gpu = bool(v)  
+                self.use_gpu = bool(v)
             else:
                 if k in self.__dict__:
                     self.__dict__[k] = v
