@@ -57,9 +57,8 @@ class JointInference(ParadigmBase):
         )
 
     def set_config(self):
-        shot_nums = self.kwargs.get("shot_nums", 0)
 
-        inference_output_dir = os.path.join(os.path.dirname(self.workspace), f"{shot_nums}-shot/")
+        inference_output_dir = os.path.dirname(self.workspace)
         os.environ["RESULT_SAVED_URL"] = inference_output_dir
         os.makedirs(inference_output_dir, exist_ok=True)
 
@@ -67,8 +66,7 @@ class JointInference(ParadigmBase):
 
         self.inference_dataset = self.dataset.load_data(
             self.dataset.test_data_info, 
-            "inference", 
-            shot_nums = self.kwargs.get("shot_nums", 0)
+            "inference"
         )
 
         dataset_processor = self.module_instances.get("dataset_processor", None)

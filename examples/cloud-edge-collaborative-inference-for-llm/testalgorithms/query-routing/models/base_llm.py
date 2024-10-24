@@ -44,22 +44,19 @@ class BaseLLM:
         elif isinstance(data, dict):
 
             gold = data.get("gold", None)
-            messages = data.get("messages")
+            query = data.get("query")
 
-            if messages[0]['role'] == "system":
-                system_prompt = messages[0]["content"]
-            else:
-                system_prompt = None
-
+            messages = self.get_message_chain(query)
             question = messages[-1]["content"]
 
             if self.use_cache:
-                response = self._try_cache(question, system_prompt)
+                response = self._try_cache(question)
                 if response is not None:
                     return response
-                
+
             if not self.model_loaded:
                 self.load(self.model_name)
+                self.model_loaded = True
 
             response = self._infer(messages)
 
@@ -68,9 +65,8 @@ class BaseLLM:
             response["prediction"] = prediction
 
             if self.use_cache:
-                self._update_cache(question, system_prompt, response, prediction, gold)
+                self._update_cache(question, response, prediction, gold)
 
-            # sys.exit(0)
             return response
 
         else:
@@ -96,16 +92,6 @@ class BaseLLM:
             raise ValueError(f"Missing Key 'question' in data, data should have format like {expected_format}")
         if "prompts" not in data:
             raise ValueError(f"Missing Key 'prompts' in data, data should have format like {expected_format}")
-
-    def parse_input(self,data):
-        self.validate_input(data)
-        # data should have format like:
-        # {"question":"Lorem", "prompt": {infer_system_prompt:"Lorem"}}
-        question = data.get("question")
-        prompt_dict = data.get("prompts")
-        system_prompt = prompt_dict.get("infer_system_prompt", "")
-
-        return question, system_prompt
 
     def _infer(self, messages):
         raise NotImplementedError
@@ -145,30 +131,29 @@ class BaseLLM:
                 for cache in self.cache_models:
                     if cache["config"] == self.config:
                         self.cache = cache
-                        self.cache_hash = {(item["question"], item["system_prompt"]):item['response'] for item in cache["result"]}
+                        self.cache_hash = {item["query"]:item['response'] for item in cache["result"]}
         self.is_cache_loaded = True
 
-    def _try_cache(self, question, system_prompt):
+    def _try_cache(self, question):
 
         if not self.is_cache_loaded:
             self._load_cache()
 
-        return self.cache_hash.get((question, system_prompt), None)
+        return self.cache_hash.get(question, None)
 
-    def _update_cache(self, question, system_prompt, response, prediction, gold):
+    def _update_cache(self, question, response, prediction, gold):
 
         if not self.is_cache_loaded:
             self._load_cache()
 
         new_item = {
-            "question": question,
-            "system_prompt": system_prompt,
+            "query": question,
             "response": response,
             "prediction": prediction,
             "gold": gold
         }
 
-        self.cache_hash[(question, system_prompt)] = response
+        self.cache_hash[question] = response
 
         if self.cache is not None:
             self.cache["result"].append(new_item)
