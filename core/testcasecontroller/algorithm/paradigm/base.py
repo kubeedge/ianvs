@@ -101,8 +101,9 @@ class ParadigmBase:
 
         if paradigm_type == ParadigmType.LIFELONG_LEARNING.value:
             return LifelongLearning(
-                estimator=self.module_instances.get(
+                seen_estimator=self.module_instances.get(
                     ModuleType.BASEMODEL.value),
+                unseen_estimator=None,
                 task_definition=self.module_instances.get(
                     ModuleType.TASK_DEFINITION.value),
                 task_relationship_discovery=self.module_instances.get(

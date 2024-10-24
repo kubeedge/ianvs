@@ -50,6 +50,7 @@ class JointInference(ParadigmBase):
 
     def __init__(self, workspace, **kwargs):
         ParadigmBase.__init__(self, workspace, **kwargs)
+        self.inference_dataset = None
         self.kwargs = kwargs
         self.hard_example_mining_mode = kwargs.get(
             "hard_example_mining_mode",
@@ -57,6 +58,11 @@ class JointInference(ParadigmBase):
         )
 
     def set_config(self):
+        """Configure output_dir, dataset, modules
+
+        Raises:
+            KeyError: Required Modules are not fully loaded.
+        """
 
         inference_output_dir = os.path.dirname(self.workspace)
         os.environ["RESULT_SAVED_URL"] = inference_output_dir
@@ -65,7 +71,7 @@ class JointInference(ParadigmBase):
         LOGGER.info("Loading dataset")
 
         self.inference_dataset = self.dataset.load_data(
-            self.dataset.test_data_info, 
+            self.dataset.test_data_info,
             "inference"
         )
 
@@ -77,12 +83,13 @@ class JointInference(ParadigmBase):
         required_modules = {"edgemodel", "cloudmodel", "hard_example_mining"}
 
         if not required_modules.issubset(set(self.module_instances.keys())):
-            raise ValueError(
+            raise KeyError(
                 f"Required modules: {required_modules}, "
                 f"but got: {self.module_instances.keys()}"
             )
-        
-        # if hard example mining is OracleRouter, add the edgemodel and cloudmodel object to its kwargs so that it can use them.
+
+        # if hard example mining is OracleRouter,
+        # add the edgemodel and cloudmodel object to its kwargs so that it can use them.
         mining = self.module_instances["hard_example_mining"]
         param = mining.get("param")
         if mining.get("method", None) == "OracleRouter":
@@ -116,12 +123,13 @@ class JointInference(ParadigmBase):
         for module in self.module_instances.values():
             if hasattr(module, "cleanup"):
                 module.cleanup()
-    
-        # Since the hard example mining module is instantiated within the job, special handling is required.
+
+        # Since the hard example mining module is instantiated within the job,
+        # special call is required.
         mining_instance = job.hard_example_mining_algorithm
         if hasattr(mining_instance, "cleanup"):
             mining_instance.cleanup()
-        
+
         del job
 
     def _inference(self, job):
@@ -132,7 +140,7 @@ class JointInference(ParadigmBase):
         LOGGER.info("Inference Start")
 
         pbar = tqdm(
-            self.inference_dataset.x, 
+            self.inference_dataset.x,
             total=len(self.inference_dataset.x),
             ncols=100
         )

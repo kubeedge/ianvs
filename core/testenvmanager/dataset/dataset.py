@@ -29,7 +29,7 @@ from sedna.datasources import (
 from core.common import utils
 from core.common.constant import DatasetFormat
 
-
+# pylint: disable=too-many-instance-attributes
 class Dataset:
     """
     Data:
@@ -420,7 +420,8 @@ class Dataset:
         return data_files
 
     @classmethod
-    def load_data(cls, file: str, data_type: str, label=None, use_raw=False, feature_process=None, **kwargs):
+    def load_data(cls, file: str, data_type: str, label=None,
+                  use_raw=False, feature_process=None, **kwargs):
         """
         load data
 
