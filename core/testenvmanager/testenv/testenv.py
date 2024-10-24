@@ -61,8 +61,7 @@ class TestEnv:
             if k == str.lower(Dataset.__name__):
                 self.dataset = Dataset(v)
             else:
-                if k in self.__dict__:
-                    self.__dict__[k] = v
+                self.__dict__[k] = v
 
         self._check_fields()
 

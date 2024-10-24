@@ -25,6 +25,8 @@ class DatasetFormat(Enum):
     CSV = "csv"
     TXT = "txt"
     JSON = "json"
+    JSONL = "jsonl"
+    JSONFORLLM = "jsonforllm"
 
 
 class ParadigmType(Enum):
@@ -35,6 +37,7 @@ class ParadigmType(Enum):
     INCREMENTAL_LEARNING = "incrementallearning"
     MULTIEDGE_INFERENCE = "multiedgeinference"
     LIFELONG_LEARNING = "lifelonglearning"
+    JOINT_INFERENCE = "jointinference"
 
 
 class ModuleType(Enum):
@@ -42,6 +45,13 @@ class ModuleType(Enum):
     Algorithm module type.
     """
     BASEMODEL = "basemodel"
+
+    # JOINT INFERENCE
+    EDGEMODEL = "edgemodel"
+    CLOUDMODEL = "cloudmodel"
+
+    # Dataset Preprocessor
+    DATA_PROCESSOR = "dataset_processor"
 
     # HEM
     HARD_EXAMPLE_MINING = "hard_example_mining"

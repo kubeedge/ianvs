@@ -18,7 +18,7 @@ import os
 
 from sedna.core.incremental_learning import IncrementalLearning
 from sedna.core.lifelong_learning import LifelongLearning
-
+from sedna.core.joint_inference import JointInference
 from core.common.constant import ModuleType, ParadigmType
 
 
@@ -101,8 +101,9 @@ class ParadigmBase:
 
         if paradigm_type == ParadigmType.LIFELONG_LEARNING.value:
             return LifelongLearning(
-                estimator=self.module_instances.get(
+                seen_estimator=self.module_instances.get(
                     ModuleType.BASEMODEL.value),
+                unseen_estimator=None,
                 task_definition=self.module_instances.get(
                     ModuleType.TASK_DEFINITION.value),
                 task_relationship_discovery=self.module_instances.get(
@@ -125,5 +126,16 @@ class ParadigmBase:
         # pylint: disable=E1101
         if paradigm_type == ParadigmType.MULTIEDGE_INFERENCE.value:
             return self.modules_funcs.get(ModuleType.BASEMODEL.value)()
+
+        if paradigm_type == ParadigmType.JOINT_INFERENCE.value:
+            return JointInference(
+                estimator=self.module_instances.get(
+                    ModuleType.EDGEMODEL.value),
+                cloud=self.module_instances.get(
+                    ModuleType.CLOUDMODEL.value),
+                hard_example_mining=self.module_instances.get(
+                    ModuleType.HARD_EXAMPLE_MINING.value),
+                LCReporter_enable=False
+            )
 
         return None
