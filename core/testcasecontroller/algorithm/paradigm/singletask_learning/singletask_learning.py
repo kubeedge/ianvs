@@ -75,16 +75,16 @@ class SingleTaskLearning(ParadigmBase):
             trained_model = self.initial_model
 
         if self.mode == 'with_compression':
-            trained_model = self._compress(job, trained_model)
-        
+            trained_model = self._compress(trained_model)
+
         inference_result = self._inference(job, trained_model)
 
         return inference_result, self.system_metric_info
 
 
-    def _compress(self, job, trained_model):
+    def _compress(self, trained_model):
         if not os.path.exists(trained_model):
-            print(f"model path not found: {model_path}")
+            print(f"model path not found: {trained_model}")
             return None
 
         if self.llama_quantize_path is None or not os.path.exists(self.llama_quantize_path):
@@ -96,7 +96,7 @@ class SingleTaskLearning(ParadigmBase):
             return None
 
         compressed_model = trained_model.replace('.gguf', f'_{self.quantization_type}.gguf')
-        
+
         command = [
             self.llama_quantize_path,
             trained_model,
@@ -106,7 +106,7 @@ class SingleTaskLearning(ParadigmBase):
 
         try:
             subprocess.run(command, check=True)
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError as _:
             return trained_model
 
         return compressed_model
