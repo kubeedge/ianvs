@@ -124,6 +124,6 @@ class ParadigmBase:
             )
         # pylint: disable=E1101
         if paradigm_type == ParadigmType.MULTIEDGE_INFERENCE.value:
-            return self.modules_funcs.get(ModuleType.BASEMODEL.value)()
+            return self.module_instances.get(ModuleType.BASEMODEL.value)
 
         return None
