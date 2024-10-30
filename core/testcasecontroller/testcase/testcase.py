@@ -66,7 +66,6 @@ class TestCase:
             test_env_config = {}
             # pylint: disable=C0103
             for k, v in self.test_env.__dict__.items():
-                print(k,v)
                 test_env_config[k] = v
 
             self.output_dir = self._get_output_dir(workspace)

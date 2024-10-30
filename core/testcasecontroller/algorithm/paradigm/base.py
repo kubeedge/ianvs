@@ -18,8 +18,8 @@ import os
 
 from sedna.core.incremental_learning import IncrementalLearning
 from sedna.core.lifelong_learning import LifelongLearning
+
 from core.common.constant import ModuleType, ParadigmType
-from .sedna_federated_learning import FederatedLearning
 
 
 class ParadigmBase:
@@ -97,51 +97,33 @@ class ParadigmBase:
             return IncrementalLearning(
                 estimator=self.module_instances.get(ModuleType.BASEMODEL.value),
                 hard_example_mining=self.module_instances.get(
-                    ModuleType.HARD_EXAMPLE_MINING.value
-                ),
-            )
+                    ModuleType.HARD_EXAMPLE_MINING.value))
 
         if paradigm_type == ParadigmType.LIFELONG_LEARNING.value:
             return LifelongLearning(
-                estimator=self.module_instances.get(ModuleType.BASEMODEL.value),
+                estimator=self.module_instances.get(
+                    ModuleType.BASEMODEL.value),
                 task_definition=self.module_instances.get(
-                    ModuleType.TASK_DEFINITION.value
-                ),
+                    ModuleType.TASK_DEFINITION.value),
                 task_relationship_discovery=self.module_instances.get(
-                    ModuleType.TASK_RELATIONSHIP_DISCOVERY.value
-                ),
+                    ModuleType.TASK_RELATIONSHIP_DISCOVERY.value),
                 task_allocation=self.module_instances.get(
-                    ModuleType.TASK_ALLOCATION.value
-                ),
+                    ModuleType.TASK_ALLOCATION.value),
                 task_remodeling=self.module_instances.get(
-                    ModuleType.TASK_REMODELING.value
-                ),
+                    ModuleType.TASK_REMODELING.value),
                 inference_integrate=self.module_instances.get(
-                    ModuleType.INFERENCE_INTEGRATE.value
-                ),
+                    ModuleType.INFERENCE_INTEGRATE.value),
                 task_update_decision=self.module_instances.get(
-                    ModuleType.TASK_UPDATE_DECISION.value
-                ),
+                    ModuleType.TASK_UPDATE_DECISION.value),
                 unseen_task_allocation=self.module_instances.get(
-                    ModuleType.UNSEEN_TASK_ALLOCATION.value
-                ),
+                    ModuleType.UNSEEN_TASK_ALLOCATION.value),
                 unseen_sample_recognition=self.module_instances.get(
-                    ModuleType.UNSEEN_SAMPLE_RECOGNITION.value
-                ),
+                    ModuleType.UNSEEN_SAMPLE_RECOGNITION.value),
                 unseen_sample_re_recognition=self.module_instances.get(
-                    ModuleType.UNSEEN_SAMPLE_RE_RECOGNITION.value
-                ),
+                    ModuleType.UNSEEN_SAMPLE_RE_RECOGNITION.value)
             )
         # pylint: disable=E1101
         if paradigm_type == ParadigmType.MULTIEDGE_INFERENCE.value:
             return self.module_instances.get(ModuleType.BASEMODEL.value)
-
-        if paradigm_type in [
-            ParadigmType.FEDERATED_LEARNING.value,
-            ParadigmType.FEDERATED_CLASS_INCREMENTAL_LEARNING.value,
-        ]:
-            return FederatedLearning(
-                estimator=self.module_instances.get(ModuleType.BASEMODEL.value)
-            )
 
         return None
