@@ -16,6 +16,10 @@
 
 import os
 
+# pylint: disable=E0401
+import onnx
+
+from core.common.log import LOGGER
 from core.common.constant import ParadigmType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 
@@ -63,8 +67,15 @@ class MultiedgeInference(ParadigmBase):
         """
 
         job = self.build_paradigm_job(ParadigmType.MULTIEDGE_INFERENCE.value)
-
-        inference_result = self._inference(job, self.initial_model)
+        if not job.__dict__.get('model_parallel'):
+            inference_result = self._inference(job, self.initial_model)
+        else:
+            if 'partition' in dir(job):
+                models_dir, map_info = job.partition(self.initial_model)
+            else:
+                models_dir, map_info = self._partition(job.__dict__.get('partition_point_list'),
+                                    self.initial_model, os.path.dirname(self.initial_model))
+            inference_result = self._inference_mp(job, models_dir, map_info)
 
         return inference_result, self.system_metric_info
 
@@ -77,3 +88,26 @@ class MultiedgeInference(ParadigmBase):
         job.load(trained_model)
         infer_res = job.predict(inference_dataset.x, train_dataset=train_dataset)
         return infer_res
+
+    def _inference_mp(self, job, models_dir, map_info):
+        inference_dataset = self.dataset.load_data(self.dataset.test_url, "inference")
+        inference_output_dir = os.path.join(self.workspace, "output/inference/")
+        os.environ["RESULT_SAVED_URL"] = inference_output_dir
+        job.load(models_dir, map_info)
+        infer_res = job.predict(inference_dataset.x)
+        return infer_res
+
+    # pylint: disable=W0718, C0103
+    def _partition(self, partition_point_list, initial_model_path, sub_model_dir):
+        map_info = dict({})
+        for idx, point in enumerate(partition_point_list):
+            input_names = point['input_names']
+            output_names = point['output_names']
+            sub_model_path = sub_model_dir + '/' + 'sub_model_' + str(idx+1) + '.onnx'
+            try:
+                onnx.utils.extract_model(initial_model_path,
+                                         sub_model_path, input_names, output_names)
+            except Exception as e:
+                LOGGER.info(str(e))
+            map_info[sub_model_path.split('/')[-1]] = point['device_name']
+        return sub_model_dir, map_info
