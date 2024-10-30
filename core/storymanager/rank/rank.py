@@ -35,12 +35,15 @@ class Rank:
 
     def __init__(self, config):
         self.sort_by: list = []
-        self.visualization: dict = {"mode": "selected_only", "method": "print_table"}
+        self.visualization: dict = {
+            "mode": "selected_only",
+            "method": "print_table"
+        }
         self.selected_dataitem: dict = {
             "paradigms": ["all"],
             "modules": ["all"],
             "hyperparameters": ["all"],
-            "metrics": ["all"],
+            "metrics": ["all"]
         }
         self.save_mode: str = "selected_and_all"
 
@@ -59,21 +62,15 @@ class Rank:
 
     def _check_fields(self):
         if not self.sort_by and not isinstance(self.sort_by, list):
-            raise ValueError(
-                f"rank's sort_by({self.sort_by}) must be provided and be list type."
-            )
+            raise ValueError(f"rank's sort_by({self.sort_by}) must be provided and be list type.")
 
         if not self.visualization and not isinstance(self.visualization, dict):
-            raise ValueError(
-                f"rank's visualization({self.visualization}) "
-                f"must be provided and be dict type."
-            )
+            raise ValueError(f"rank's visualization({self.visualization}) "
+                             f"must be provided and be dict type.")
 
         if not self.selected_dataitem and not isinstance(self.selected_dataitem, dict):
-            raise ValueError(
-                f"rank's selected_dataitem({self.selected_dataitem}) "
-                f"must be provided and be dict type."
-            )
+            raise ValueError(f"rank's selected_dataitem({self.selected_dataitem}) "
+                             f"must be provided and be dict type.")
 
         if not self.selected_dataitem.get("paradigms"):
             raise ValueError("not found paradigms of selected_dataitem in rank.")
@@ -85,10 +82,8 @@ class Rank:
             raise ValueError("not found metrics of selected_dataitem in rank.")
 
         if not self.save_mode and not isinstance(self.save_mode, list):
-            raise ValueError(
-                f"rank's save_mode({self.save_mode}) "
-                f"must be provided and be list type."
-            )
+            raise ValueError(f"rank's save_mode({self.save_mode}) "
+                             f"must be provided and be list type.")
 
     @classmethod
     def _get_all_metric_names(cls, test_results) -> list:
@@ -138,7 +133,7 @@ class Rank:
 
             if metric_name not in all_metric_names:
                 continue
-            print(metric_name)
+
             sort_metric_list.append(metric_name)
             is_ascend_list.append(ele.get(metric_name) == "ascend")
 
@@ -203,15 +198,7 @@ class Rank:
         if metric_names == ["all"]:
             metric_names = self._get_all_metric_names(test_results)
 
-        header = [
-            "algorithm",
-            *metric_names,
-            "paradigm",
-            *module_types,
-            *hps_names,
-            "time",
-            "url",
-        ]
+        header = ["algorithm", *metric_names, "paradigm", *module_types, *hps_names, "time", "url"]
 
         all_df = copy.deepcopy(self.all_df)
         selected_df = pd.DataFrame(all_df, columns=header)
@@ -233,16 +220,14 @@ class Rank:
         for test_case in test_cases:
             out_put = test_case.output_dir
             test_result = test_results[test_case.id][0]
-            matrix = test_result.get("Matrix")
-            # print(out_put)
+            matrix = test_result.get('Matrix')
+            #print(out_put)
             for key in matrix.keys():
                 draw_heatmap_picture(out_put, key, matrix[key])
 
     def _prepare(self, test_cases, test_results, output_dir):
         all_metric_names = self._get_all_metric_names(test_results)
-        print(f"in_prepare all_metric_names: {all_metric_names}")
         all_hps_names = self._get_all_hps_names(test_cases)
-        print(f"in_prepare all_hps_names: {all_hps_names}")
         all_module_types = self._get_all_module_types(test_cases)
         self.all_df_header = [
             "algorithm", *all_metric_names,
@@ -300,5 +285,4 @@ class Rank:
             except Exception as err:
                 raise RuntimeError(
                     f"process visualization(method={method}) of "
-                    f"rank file({self.selected_rank_file}) failed, error: {err}."
-                ) from err
+                    f"rank file({self.selected_rank_file}) failed, error: {err}.") from err
