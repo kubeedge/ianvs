@@ -39,8 +39,7 @@ def samples_transfer_ratio_func(system_metric_info: dict):
 
     """
 
-    info = system_metric_info.get(
-        SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
+    info = system_metric_info.get(SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
     inference_num = 0
     transfer_num = 0
     for inference_data, transfer_data in info:
@@ -53,8 +52,7 @@ def compute(key, matrix):
     """
     Compute BWT and FWT scores for a given matrix.
     """
-    print(
-        f"compute function: key={key}, matrix={matrix}, type(matrix)={type(matrix)}")
+    print(f"compute function: key={key}, matrix={matrix}, type(matrix)={type(matrix)}")
 
     length = len(matrix)
     accuracy = 0.0
@@ -63,7 +61,7 @@ def compute(key, matrix):
     flag = True
 
     for row in matrix:
-        if not isinstance(row, list) or len(row) != length-1:
+        if not isinstance(row, list) or len(row) != length - 1:
             flag = False
             break
 
@@ -72,30 +70,29 @@ def compute(key, matrix):
         fwt_score = np.nan
         return bwt_score, fwt_score
 
-    for i in range(length-1):
-        for j in range(length-1):
-            if 'accuracy' in matrix[i+1][j] and 'accuracy' in matrix[i][j]:
-                accuracy += matrix[i+1][j]['accuracy']
-                bwt_score += matrix[i+1][j]['accuracy'] - \
-                    matrix[i][j]['accuracy']
+    for i in range(length - 1):
+        for j in range(length - 1):
+            if "accuracy" in matrix[i + 1][j] and "accuracy" in matrix[i][j]:
+                accuracy += matrix[i + 1][j]["accuracy"]
+                bwt_score += matrix[i + 1][j]["accuracy"] - matrix[i][j]["accuracy"]
 
-    for i in range(0, length-1):
-        if 'accuracy' in matrix[i][i] and 'accuracy' in matrix[0][i]:
-            fwt_score += matrix[i][i]['accuracy'] - matrix[0][i]['accuracy']
+    for i in range(0, length - 1):
+        if "accuracy" in matrix[i][i] and "accuracy" in matrix[0][i]:
+            fwt_score += matrix[i][i]["accuracy"] - matrix[0][i]["accuracy"]
 
-    accuracy = accuracy / ((length-1) * (length-1))
-    bwt_score = bwt_score / ((length-1) * (length-1))
-    fwt_score = fwt_score / (length-1)
+    accuracy = accuracy / ((length - 1) * (length - 1))
+    bwt_score = bwt_score / ((length - 1) * (length - 1))
+    fwt_score = fwt_score / (length - 1)
 
     print(f"{key} BWT_score: {bwt_score}")
     print(f"{key} FWT_score: {fwt_score}")
 
     my_matrix = []
-    for i in range(length-1):
+    for i in range(length - 1):
         my_matrix.append([])
-        for j in range(length-1):
-            if 'accuracy' in matrix[i+1][j]:
-                my_matrix[i].append(matrix[i+1][j]['accuracy'])
+        for j in range(length - 1):
+            if "accuracy" in matrix[i + 1][j]:
+                my_matrix[i].append(matrix[i + 1][j]["accuracy"])
 
     return my_matrix, bwt_score, fwt_score
 
@@ -141,7 +138,16 @@ def task_avg_acc_func(system_metric_info: dict):
     compute task average accuracy
     """
     info = system_metric_info.get(SystemMetricType.TASK_AVG_ACC.value)
-    return info["accuracy"]
+    return round(info["accuracy"], 3)
+
+
+def forget_rate_func(system_metric_info: dict):
+    """
+    compute task forget rate
+    """
+    info = system_metric_info.get(SystemMetricType.FORGET_RATE.value)
+    forget_rate = np.mean(info)
+    return round(forget_rate, 3)
 
 
 def get_metric_func(metric_dict: dict):
@@ -166,10 +172,12 @@ def get_metric_func(metric_dict: dict):
         try:
             load_module(url)
             metric_func = ClassFactory.get_cls(
-                type_name=ClassType.GENERAL, t_cls_name=name)
+                type_name=ClassType.GENERAL, t_cls_name=name
+            )
             return name, metric_func
         except Exception as err:
             raise RuntimeError(
-                f"get metric func(url={url}) failed, error: {err}.") from err
+                f"get metric func(url={url}) failed, error: {err}."
+            ) from err
 
     return name, getattr(sys.modules[__name__], str.lower(name) + "_func")
