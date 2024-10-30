@@ -26,6 +26,7 @@ class DatasetFormat(Enum):
     CSV = "csv"
     TXT = "txt"
     JSON = "json"
+    JSONL = "jsonl"
 
 
 class ParadigmType(Enum):
