@@ -1,0 +1,16 @@
+algorithm:
+  paradigm_type: "singletasklearning"
+  # initial_model_url: "./models/530_exp3_2.pth"
+
+  modules:
+    - type: "basemodel"
+      name: "LLM_agent"
+      url: "./examples/LLM-Agent-Benchmark/singletask_learning_bench/testalgorithms/basemodel.py"
+
+      hyperparameters:
+        - config:
+            values:
+              - "./examples/LLM-Agent-Benchmark/config/config.json"
+        - train_config:
+            values:
+              - "./examples/LLM-Agent-Benchmark/config/train_config.json"
