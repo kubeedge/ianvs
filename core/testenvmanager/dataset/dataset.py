@@ -16,20 +16,20 @@
 
 import os
 import tempfile
+
 import pandas as pd
-# pylint: disable=no-name-in-module
-# pylint: disable=too-many-instance-attributes
 from sedna.datasources import (
     CSVDataParse,
     TxtDataParse,
     JSONDataParse,
     JsonlDataParse,
-    JSONMetaDataParse,
+    JSONMetaDataParse
 )
+
 from core.common import utils
 from core.common.constant import DatasetFormat
 
-
+# pylint: disable=too-many-instance-attributes
 class Dataset:
     """
     Data:
@@ -139,10 +139,12 @@ class Dataset:
 
     def _process_data_info_file(self, file_url):
         file_format = utils.get_file_format(file_url)
-        if file_format == DatasetFormat.JSON.value:
+        if file_format == DatasetFormat.JSONFORLLM.value:
             return file_url
-
-        return None
+        raise ValueError(
+            f"The Data Info File must be named as `data_info.json`, "
+            f"but the current file is {file_url}."
+        )
 
     def process_dataset(self):
         """
@@ -542,9 +544,8 @@ class Dataset:
         return data_files
 
     @classmethod
-    def load_data(
-        cls, file: str, data_type: str, label=None, use_raw=False, feature_process=None
-    ):
+    def load_data(cls, file: str, data_type: str, label=None,
+                  use_raw=False, feature_process=None, **kwargs):
         """
         load data
 
@@ -567,11 +568,6 @@ class Dataset:
             e.g.: TxtDataParse, CSVDataParse.
 
         """
-        if file.split('/')[-1] == "metadata.json":
-            data = JSONMetaDataParse(data_type=data_type, func=feature_process)
-            data.parse(file)
-            return data
-
         data_format = utils.get_file_format(file)
 
         data = None
@@ -590,5 +586,9 @@ class Dataset:
         if data_format == DatasetFormat.JSONL.value:
             data = JsonlDataParse(data_type=data_type, func=feature_process)
             data.parse(file)
+
+        if data_format == DatasetFormat.JSONFORLLM.value:
+            data = JSONMetaDataParse(data_type=data_type, func=feature_process)
+            data.parse(file, **kwargs)
 
         return data

@@ -18,6 +18,7 @@ import os
 
 from sedna.core.incremental_learning import IncrementalLearning
 from sedna.core.lifelong_learning import LifelongLearning
+from sedna.core.joint_inference import JointInference
 from core.common.constant import ModuleType, ParadigmType
 from .sedna_federated_learning import FederatedLearning
 
@@ -76,6 +77,7 @@ class ParadigmBase:
             module_instances.update({module_type: func})
         return module_instances
 
+    # pylint: disable=too-many-return-statements
     def build_paradigm_job(self, paradigm_type):
         """
         build paradigm job instance according to paradigm type.
@@ -103,7 +105,10 @@ class ParadigmBase:
 
         if paradigm_type == ParadigmType.LIFELONG_LEARNING.value:
             return LifelongLearning(
-                estimator=self.module_instances.get(ModuleType.BASEMODEL.value),
+                seen_estimator=self.module_instances.get(
+                    ModuleType.BASEMODEL.value
+                ),
+                unseen_estimator=None,
                 task_definition=self.module_instances.get(
                     ModuleType.TASK_DEFINITION.value
                 ),
@@ -142,6 +147,17 @@ class ParadigmBase:
         ]:
             return FederatedLearning(
                 estimator=self.module_instances.get(ModuleType.BASEMODEL.value)
+            )
+
+        if paradigm_type == ParadigmType.JOINT_INFERENCE.value:
+            return JointInference(
+                estimator=self.module_instances.get(
+                    ModuleType.EDGEMODEL.value),
+                cloud=self.module_instances.get(
+                    ModuleType.CLOUDMODEL.value),
+                hard_example_mining=self.module_instances.get(
+                    ModuleType.HARD_EXAMPLE_MINING.value),
+                LCReporter_enable=False
             )
 
         return None

@@ -23,7 +23,7 @@ from prettytable import from_csv
 def print_table(rank_file):
     """ print rank of the test"""
     with open(rank_file, "r", encoding="utf-8") as file:
-        table = from_csv(file)
+        table = from_csv(file, delimiter=",")
         print(table)
 
 def draw_heatmap_picture(output, title, matrix):
@@ -40,7 +40,6 @@ def draw_heatmap_picture(output, title, matrix):
     plt.title(title, fontsize=15)
     plt.colorbar(format='%.2f')
     output_dir = os.path.join(output, f"output/{title}-heatmap.png")
-    #print(output_dir)
     plt.savefig(output_dir)
     plt.show()
 

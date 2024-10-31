@@ -25,7 +25,8 @@ from core.testcasecontroller.algorithm.paradigm import (
     MultiedgeInference,
     LifelongLearning,
     FederatedLearning,
-    FederatedClassIncrementalLearning
+    FederatedClassIncrementalLearning,
+    JointInference
 )
 from core.testcasecontroller.generation_assistant import get_full_combinations
 
@@ -122,6 +123,9 @@ class Algorithm:
 
         if self.paradigm_type == ParadigmType.FEDERATED_CLASS_INCREMENTAL_LEARNING.value:
             return FederatedClassIncrementalLearning(workspace, **config)
+
+        if self.paradigm_type == ParadigmType.JOINT_INFERENCE.value:
+            return JointInference(workspace, **config)
 
         return None
 
