@@ -13,7 +13,7 @@ benchmarkingjob:
     # test type; string type;
     # currently the option of value is "algorithms",the others will be added in succession.
     type: "algorithms"
-    # test algorithm configuration files; list type;
+    # test algorithm configuration files; list types;
     algorithms:
       # algorithm name; string type;
       - name: "rfnet_singletask_learning"
