@@ -75,7 +75,7 @@ Ianvs serves as a hub for collaboration and innovation in AI-driven robotics. Th
 The **Cloud-Robotics Dataset** delivers data tailored for single task learning in semantic segmentation. By providing pixel-level semantic labels for images, this dataset enhances a robot’s ability to interpret and respond to its surroundings.  
 
 ### **Key Features**  
-- **Real-World Data**: 2600 labeled images captured by robotic dogs in Huawei’s Shenzhen Industrial Park.  
+- **Real-World Data**
 - **Focused Application**: Designed for robotics tasks like navigation, delivery, and inspection in both indoor and outdoor environments.  
 - **Robustness**: Includes challenging conditions such as reflections, glare, and motion blur to improve model resilience.  
 
