@@ -70,12 +70,19 @@ Ianvs serves as a hub for collaboration and innovation in AI-driven robotics. Th
 
 ---
 
+### **5. Expands Benchmarking Capabilities**
+- **Task-Specific Benchmarks:** Introduces precise, tailored benchmarks for robotics applications, such as semantic segmentation, enhancing Ianvs’ ability to evaluate AI models for specialized tasks.
+- **Real-World Testing Scenarios:** The dataset includes challenging industrial environments, such as glare, motion blur, and uneven lighting, pushing models to perform under realistic conditions.
+- **Advanced Metrics:** Supports detailed evaluation with metrics like Pixel Accuracy (PA) and Mean Intersection over Union (mIoU), providing a higher standard for testing.
+
+---
+
 ## **About the Cloud-Robotics Dataset**  
 
 The **Cloud-Robotics Dataset** delivers data tailored for single task learning in semantic segmentation. By providing pixel-level semantic labels for images, this dataset enhances a robot’s ability to interpret and respond to its surroundings.  
 
 ### **Key Features**  
-- **Real-World Data**
+- **Real-World Data**: 2600 labeled images captured by robotic dogs in Huawei’s Shenzhen Industrial Park.  
 - **Focused Application**: Designed for robotics tasks like navigation, delivery, and inspection in both indoor and outdoor environments.  
 - **Robustness**: Includes challenging conditions such as reflections, glare, and motion blur to improve model resilience.  
 
@@ -160,6 +167,76 @@ Dataset/
 │       ├── test
 │       └── val
 ```
+
+---
+
+### **Benchmark Suite for Semantic Segmentation Using Proposed Metrics**
+
+The benchmark suite will evaluate the performance of semantic segmentation models using the following components:
+
+---
+
+### **1. Dataset Preparation**
+- **Input**: Segmentation datasets .
+- **Preprocessing**: Resize, normalize, and convert ground truth masks to appropriate class indices.
+
+---
+
+### **2. Model Evaluation Framework**
+- **Evaluation Metrics**:  
+  - **Pixel Accuracy (PA)**: Measures overall pixel classification accuracy.  
+  - **Class Pixel Accuracy (CPA)**: Evaluates per-class accuracy to identify poorly performing classes.  
+  - **Mean Intersection over Union (mIoU)**: Quantifies segmentation overlap, ensuring a balanced evaluation.  
+  - **Frequency Weighted IoU (FWIoU)**: Accounts for class imbalance by weighting IoU by class frequency.  
+
+---
+
+### **3. Code Structure**
+- **Benchmark Script**:  
+  A Python script to calculate metrics and generate reports:
+  
+  ```python
+  from tqdm import tqdm
+  from RFNet.utils.metrics import Evaluator
+  from RFNet.dataloaders import make_data_loader
+
+  def evaluate_model(model, data_loader, num_classes):
+      evaluator = Evaluator(num_classes)
+      for i, (sample, _) in enumerate(tqdm(data_loader)):
+          image, target = sample['image'], sample['label']
+          if torch.cuda.is_available():
+              image, target = image.cuda(), target.cuda()
+          target = target.cpu().numpy()
+
+          # Obtain predictions
+          predictions = model(image).argmax(dim=1).cpu().numpy()
+
+          # Evaluate batch
+          evaluator.add_batch(target, predictions)
+
+      # Compute metrics
+      results = {
+          "Pixel Accuracy": evaluator.Pixel_Accuracy(),
+          "Class Pixel Accuracy": evaluator.Pixel_Accuracy_Class(),
+          "Mean IoU": evaluator.Mean_Intersection_over_Union(),
+          "Frequency Weighted IoU": evaluator.Frequency_Weighted_Intersection_over_Union(),
+      }
+      return results
+  ```
+
+---
+
+### **5. Integration with KubeEdge Ianvs**
+- **TestEnvManager**: Incorporate the benchmark suite as an evaluation framework for semantic segmentation models.  
+- **TestCaseController**: Integrate models and metrics, enabling automated testing for robotic AI applications.  
+- **Metrics Location**: All evaluation metrics, including **Pixel Accuracy (PA)**, **Class Pixel Accuracy (CPA)**, **Mean Intersection over Union (mIoU)**, and **Frequency Weighted IoU (FWIoU)**, are implemented in the `accuracy.py` file in the benchmark section github.com/aryan0931/testenv/accuracy.py.
+
+---
+
+### **6. Example Pipeline**
+1. **Input**: Model predictions and ground truth labels.  
+2. **Processing**: Compute PA, CPA, mIoU, and FWIoU using the evaluator.  
+3. **Output**: Performance metrics in a structured format (e.g., table, JSON).  
 
 ---
 
