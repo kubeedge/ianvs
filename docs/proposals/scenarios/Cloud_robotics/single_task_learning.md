@@ -226,17 +226,26 @@ The benchmark suite will evaluate the performance of semantic segmentation model
 
 ---
 
-### **5. Integration with KubeEdge Ianvs**
-- **TestEnvManager**: Incorporate the benchmark suite as an evaluation framework for semantic segmentation models.  
-- **TestCaseController**: Integrate models and metrics, enabling automated testing for robotic AI applications.  
-- **Metrics Location**: All evaluation metrics, including **Pixel Accuracy (PA)**, **Class Pixel Accuracy (CPA)**, **Mean Intersection over Union (mIoU)**, and **Frequency Weighted IoU (FWIoU)**, are implemented in the `accuracy.py` file in the benchmark section github.com/aryan0931/testenv/accuracy.py.
+### **5. Enhancing KubeEdge Ianvs with this practical example**
+- **TestEnvManager**: This proposal aims to provide an example of semantic segmentation models without altering the core testEnvManager or testCaseController. It preserves the framework's integrity while showcasing its applicability to advanced use cases.
+- **TestCaseController**: Will integrate models and metrics, enabling automated testing for robotic AI applications.
 
----
+**examples/Cloud-Robotics Strcture:**
 
-### **6. Example Pipeline**
-1. **Input**: Model predictions and ground truth labels.  
-2. **Processing**: Compute PA, CPA, mIoU, and FWIoU using the evaluator.  
-3. **Output**: Performance metrics in a structured format (e.g., table, JSON).  
+```
+Cloud-Robotics
+├── README.md                        # Main documentation for the project
+└── SingleTask_Learning_Bench
+    ├── benchmarking_job.yaml        # Configuration file for benchmarking jobs
+    ├── test_algorithms              # Directory for algorithm definitions
+    │   ├── base_model.py            # Base class for all test algorithms
+    │   ├── algorithm.yaml           # Algorithm-specific configurations
+    └── test_env                     # Environment setup and evaluation metrics
+        ├── accuracy.py              # Implementation of accuracy-related metrics
+        └── test_env.yaml            # Configuration file for the test environment
+``` 
+
+The **README.md** at the root level will provide an overview of the entire project, including its purpose, structure, and setup instructions.
 
 ---
 
