@@ -5,7 +5,7 @@ algorithm:
   #   2> "incrementallearning"
   paradigm_type: "singletasklearning"
   # the url address of initial model; string type; optional;
-  initial_model_url: "/ianvs/initial_model/model.zip"
+  initial_model_url: "./initial_model/model.zip"
 
   # algorithm module configuration in the paradigm; list type;
   modules:
@@ -17,7 +17,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "FPN"
       # the url address of python module; string type;
-      url: "./examples/pcb-aoi/singletask_learning_bench/testalgorithms/fpn/basemodel.py"
+      url: "./examples/pcb-aoi/singletask_learning_bench/fault_detection/testalgorithms/fpn/basemodel.py"
 
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
