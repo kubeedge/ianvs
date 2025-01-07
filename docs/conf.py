@@ -1,7 +1,7 @@
 # Configuration file for the Sphinx documentation builder.
-# This script is only used for Ianvs documents maintainer,
+# This script is only used for Ianvs documents maintainers,
 # who can use this script to configure the page display effect.
-# It can be ignored for Ianvs User and Developer.
+# It can be ignored for Ianvs Users and Developers.
 #
 # This file only contains a selection of the most common options. For a full
 # list see the documentation:
@@ -19,12 +19,16 @@ import shutil
 import subprocess
 import sys
 
-import sphinx_rtd_theme
+
 
 try:
     import m2r2
 except ModuleNotFoundError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "m2r2"])
+try:
+    import sphinx_rtd_theme
+except ModuleNotFoundError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "sphinx_rtd_theme"])
 _base_path = os.path.abspath('..')
 BASE_URL = 'https://github.com/kubeedge/ianvs/'
 
@@ -63,6 +67,7 @@ release = 'v0.1'
 # ones.
 extensions = [
     "m2r2",
+    'sphinx_rtd_theme',
     "sphinx.ext.autodoc",
     "sphinx.ext.todo",
     "sphinx.ext.coverage",
@@ -91,7 +96,7 @@ pygments_style = 'sphinx'
 html_static_path = ['_static']
 
 # -- Options for HTML output -------------------------------------------------
-
+import sphinx_rtd_theme
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
