@@ -17,3 +17,5 @@ from .incremental_learning import IncrementalLearning
 from .singletask_learning import SingleTaskLearning
 from .multiedge_inference import MultiedgeInference
 from .lifelong_learning import LifelongLearning
+from .federated_learning import FederatedLearning, FederatedClassIncrementalLearning
+from .joint_inference import JointInference

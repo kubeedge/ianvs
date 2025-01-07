@@ -1,0 +1,20 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_url: "./examples/LLM-Agent-Benchmark/dataset/activity_classification.json"
+    # the url address of test dataset index; string type;
+    test_url: "./examples/LLM-Agent-Benchmark/dataset/activity_classification.json"
+    # model eval configuration of incremental learning;
+
+  metrics:
+      # metric name; string type;
+    - name: "rouge1"
+      # the url address of python file
+      url: "./examples/LLM-Agent-Benchmark/singletask_learning_bench/testenv/rouge.py"
+    - name: "rouge2"
+      # the url address of python file
+      url: "./examples/LLM-Agent-Benchmark/singletask_learning_bench/testenv/rouge.py"
+    - name: "rougeL"
+      # the url address of python file
+      url: "./examples/LLM-Agent-Benchmark/singletask_learning_bench/testenv/rouge.py"

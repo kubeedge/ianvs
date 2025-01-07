@@ -1,0 +1,11 @@
+{
+    "tokenizer_dir": "./examples/LLM-Agent-Benchmark/pretrains/Langboat/bloom-1b4-zh",
+    "auth_token": "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",
+    "data_dir" :"./examples/LLM-Agent-Benchmark/dataset/activity_classification.json",
+    "token_factor": 32,
+    "half_model": true,
+    "token_padding": "right",
+    "trust_remote": true,
+    "device": "auto",
+    "output_dir": "./checkpoint"
+  }

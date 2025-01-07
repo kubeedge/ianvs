@@ -24,6 +24,9 @@ from core.testcasecontroller.algorithm.paradigm import (
     IncrementalLearning,
     MultiedgeInference,
     LifelongLearning,
+    FederatedLearning,
+    FederatedClassIncrementalLearning,
+    JointInference
 )
 from core.testcasecontroller.generation_assistant import get_full_combinations
 
@@ -64,12 +67,24 @@ class Algorithm:
             "train_ratio": 0.8,
             "splitting_method": "default"
         }
+        self.fl_data_setting: dict = {
+            "train_ratio": 1.0,
+            "splitting_method": "default",
+            "data_partition": "iid",
+            'non_iid_ratio': 0.6,
+            "label_data_ratio": 1.0
+        }
+
         self.initial_model_url: str = ""
         self.modules: list = []
         self.modules_list = None
+        self.mode: str = ""
+        self.quantization_type: str = ""
+        self.llama_quantize_path: str = ""
         self._parse_config(config)
         self._load_third_party_packages()
 
+    # pylint: disable=R0911
     def paradigm(self, workspace: str, **kwargs):
         """
         get test process of AI algorithm paradigm.
@@ -91,7 +106,6 @@ class Algorithm:
         # pylint: disable=C0103
         for k, v in self.__dict__.items():
             config.update({k: v})
-
         if self.paradigm_type == ParadigmType.SINGLE_TASK_LEARNING.value:
             return SingleTaskLearning(workspace, **config)
 
@@ -103,6 +117,15 @@ class Algorithm:
 
         if self.paradigm_type == ParadigmType.LIFELONG_LEARNING.value:
             return LifelongLearning(workspace, **config)
+
+        if self.paradigm_type == ParadigmType.FEDERATED_LEARNING.value:
+            return FederatedLearning(workspace, **config)
+
+        if self.paradigm_type == ParadigmType.FEDERATED_CLASS_INCREMENTAL_LEARNING.value:
+            return FederatedClassIncrementalLearning(workspace, **config)
+
+        if self.paradigm_type == ParadigmType.JOINT_INFERENCE.value:
+            return JointInference(workspace, **config)
 
         return None
 
