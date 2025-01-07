@@ -4,7 +4,6 @@ approvers:
   - sig-ai-tech-leads
   
 reviewers:
+  - hsj576
   - MooreZheng
-  - jaypume
-  - luosiqi
   - sig-ai-project-maintainers
