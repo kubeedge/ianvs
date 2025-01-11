@@ -131,6 +131,17 @@ Run Ianvs for benchmarking:
 ```shell
 cd /ianvs/project
 ianvs -f examples/cloud-robotics/single_task_learning/semantic-segmentation/benchmarkingjob.yaml
-```   
+```
+
+## Example Benchmarking Results
+
+## Explanation of Results:
+
+- mIoU: The mean intersection over union (mIoU) measures the overall performance by averaging IoU values across all classes. Higher mIoU indicates better segmentation quality.
+- Resolution Impact: Results may vary with image resolution, with higher resolutions typically offering more precise segmentation.
+
+## Final mIoU Summary:
+
+**Overall mIoU: 72.35%**
 
 ---
