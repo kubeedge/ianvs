@@ -24,19 +24,15 @@ Before using Ianvs, you might want to have the device ready:
 - Internet connection for GitHub and pip, etc
 - Python 3.6+ installed
   
-In this example, we are using the Linux platform with Python 3.6.9. If you are using Windows, most steps should still apply but a few commands and package requirements might be different.
+In this example, we are using the Linux platform with **Python 3.6.9**. If you are using Windows, most steps should still apply but a few commands and package requirements might be different.
 
 ## Step 1. Ianvs Preparation
 
-First, we download the code of Ianvs. Assuming that we are using `/ianvs` as workspace, Ianvs can be cloned with `Git`
-as:
+First, we download the code of Ianvs. Assuming that we are using the `home` directory as the workspace, Ianvs can be cloned with Git as:
 
 ``` shell
-mkdir /ianvs
-cd /ianvs #One might use another path preferred
+cd ~
 
-mkdir project
-cd project
 git clone https://github.com/kubeedge/ianvs.git   
 ```
 
@@ -47,9 +43,10 @@ sudo apt-get update
 sudo apt-get install libgl1-mesa-glx -y
 python -m pip install --upgrade pip
 
-cd ianvs 
+cd ~/ianvs 
 python -m pip install ./examples/resources/third_party/*
 python -m pip install -r requirements.txt
+python -m pip install -r ./examples/pcb-aoi/requirements.txt
 ```
 
 We are now ready to install Ianvs.
@@ -65,7 +62,7 @@ If you want to use a separate space to do work, you may select the following met
 python -m pip install --pre envd
 envd bootstrap
 
-cd /ianvs/project/ianvs
+cd ~/ianvs
 envd build build.envd
 envd up
 ```
@@ -84,7 +81,7 @@ this document, we are using [the PCB-AoI Public Dataset] put on Kaggle. The data
 See [Details of PCB-AoI dataset] for more information.
 
 ``` shell
-cd /ianvs #One might use another path preferred
+cd ~/ianvs #One might use another path preferred
 mkdir dataset   
 cd dataset
 wget https://kubeedge.obs.cn-north-1.myhuaweicloud.com:443/ianvs/pcb-aoi/dataset.zip
@@ -94,24 +91,24 @@ unzip dataset.zip
 The URL address of this dataset then should be filled in the configuration file ``testenv.yaml``. In this quick start,
 we have done that for you and the interested readers can refer to [testenv.yaml](https://ianvs.readthedocs.io/en/latest/guides/how-to-test-algorithms.html#step-1-test-environment-preparation) for more details.
 
-<!-- Please put the downloaded dataset on the above dataset path, e.g., `/ianvs/dataset`. One can transfer the dataset to the path, e.g., on a remote Linux system using [XFTP].  -->
+<!-- Please put the downloaded dataset on the above dataset path, e.g., `~/ianvs/dataset`. One can transfer the dataset to the path, e.g., on a remote Linux system using [XFTP].  -->
 
 Then we may Develop the targeted algorithm as usual. In this quick start, Ianvs has prepared an initial model for
 benchmarking. One can find the model at [FPN-model].
 
 ``` shell
-cd /ianvs #One might use another path preferred
+cd ~/ianvs #One might use another path preferred
 mkdir initial_model  
 cd initial_model
 wget https://kubeedge.obs.cn-north-1.myhuaweicloud.com:443/ianvs/pcb-aoi/model.zip
 ```
 
-<!-- Please put the downloaded model on the above model path, e.g., `/ianvs/initial_model`. One can transfer the model to the path, e.g., on remote a Linux system using [XFTP].  -->
+<!-- Please put the downloaded model on the above model path, e.g., `~/ianvs/initial_model`. One can transfer the model to the path, e.g., on remote a Linux system using [XFTP].  -->
 
 Related algorithm is also ready as a wheel in this quick start.
 
 ``` shell
-cd /ianvs/project/ianvs/
+cd ~/ianvs/
 python -m pip install examples/resources/algorithms/FPN_TensorFlow-0.1-py3-none-any.whl
 ```
 
@@ -123,20 +120,24 @@ start, we have done that for you and the interested readers can refer to the [al
 We are now ready to run the ianvs for benchmarking on the PCB-AoI dataset.
 
 ``` shell
-ianvs -f ./examples/pcb-aoi/singletask_learning_bench/benchmarkingjob.yaml
+ianvs -f ./examples/pcb-aoi/singletask_learning_bench/fault_detection/benchmarkingjob.yaml
 ```
 
 Finally, the user can check the result of benchmarking on the console and also in the output path(
-e.g. `/ianvs/singletask_learning_bench/workspace`) defined in the benchmarking config file (
+e.g. `~/ianvs/workspace/singletask_learning_bench`) defined in the benchmarking config file (
 e.g. `benchmarkingjob.yaml`). In this quick start, we have done all configurations for you and the interested readers
 can refer to [benchmarkingJob.yaml](https://ianvs.readthedocs.io/en/latest/guides/how-to-test-algorithms.html#step-1-test-environment-preparation) for more details.
 
 The final output might look like this:
 
-|rank  |algorithm                |f1_score  |paradigm            |basemodel  |learning_rate  |momentum  |time                     |url                                                                                                                             |
-|:----:|:-----------------------:|:--------:|:------------------:|:---------:|:-------------:|:--------:|:------------------------|:-------------------------------------------------------------------------------------------------------------------------------|
-|1     |fpn_singletask_learning  | 0.8396   |singletasklearning  | FPN       | 0.1           | 0.5      | 2022-07-07 20:33:53     |/ianvs/pcb-aoi/singletask_learning_bench/workspace/benchmarkingjob/fpn_singletask_learning/49eb5ffd-fdf0-11ec-8d5d-fa163eaa99d5 |
-|2     |fpn_singletask_learning  | 0.8353   |singletasklearning  | FPN       | 0.1           | 0.95     | 2022-07-07 20:31:08     |/ianvs/pcb-aoi/singletask_learning_bench/workspace/benchmarkingjob/fpn_singletask_learning/49eb5ffc-fdf0-11ec-8d5d-fa163eaa99d5 |
+```bash
++------+-------------------------+----------+--------------------+-----------+--------------------+-------------------------+---------------------+------------------------------------------------------------------------------------------+
+| rank |        algorithm        | f1_score |      paradigm      | basemodel | basemodel-momentum | basemodel-learning_rate |         time        |                                           url                                            |
++------+-------------------------+----------+--------------------+-----------+--------------------+-------------------------+---------------------+------------------------------------------------------------------------------------------+
+|  1   | fpn_singletask_learning |  0.8527  | singletasklearning |    FPN    |        0.5         |           0.1           | 2025-01-06 14:30:30 | ./workspace/benchmarkingjob/fpn_singletask_learning/3a76bc25-cc0b-11ef-9f00-65cc74a7c013 |
+|  2   | fpn_singletask_learning |  0.844   | singletasklearning |    FPN    |        0.95        |           0.1           | 2025-01-06 14:25:18 | ./workspace/benchmarkingjob/fpn_singletask_learning/3a76bc24-cc0b-11ef-9f00-65cc74a7c013 |
++------+-------------------------+----------+--------------------+-----------+--------------------+-------------------------+---------------------+------------------------------------------------------------------------------------------+
+```
 
 This ends the quick start experiment.
 

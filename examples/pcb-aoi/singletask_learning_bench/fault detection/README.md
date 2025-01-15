@@ -1,0 +1,1 @@
+- To execute the `examples/pcb-aoi/singletask_learning_bench/fault_detection` example, refer to the [Ianvs Quick Start Guide](https://ianvs.readthedocs.io/en/latest/guides/quick-start.html).
