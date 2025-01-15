@@ -22,7 +22,7 @@ benchmarkingjob:
       - name: "query-routing"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml;
-        url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml"
+        url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting_spec.yaml"
 
   # the configuration of ranking leaderboard
   rank:

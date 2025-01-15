@@ -2,9 +2,9 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_data: "./dataset/mmlu-5-shot/train_data/data.json"
+    train_data: "./dataset/mmlu-0shot-cot/train_data/data.json"
     # the url address of test dataset index; string type;
-    test_data_info: "./dataset/mmlu-5-shot/test_data/metadata.json"
+    test_data_info: "./dataset/mmlu-0shot-cot/test_data/metadata.json"
 
   # metrics configuration for test case's evaluation; list type;
   metrics:
