@@ -30,7 +30,7 @@ Additionally, Speculative Decoding $^{[3]}$ is another promising strategy to fur
 
 The overall design is shown in the figure below.
 
-![image-20240926143857223](./assets/image-20241128535482354.png)
+![image-20240926143857223](./assets/image-20250115535482354.png)
 
 When Ianvs starts the benchmarking job, the Test Env Manager will first pass the data of the user-specified Dataset to the Test Case Controller for Joint Inference one by one.
 
