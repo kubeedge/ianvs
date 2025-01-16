@@ -107,7 +107,10 @@ class EagleSpecDecModel(BaseLLM):
         
         internal_token_latency = sum(internal_token_latency) / completion_tokens
         
-        throughput = 1 / internal_token_latency
+        if internal_token_latency != 0:
+            throughput = 1 / internal_token_latency
+        else:
+            throughput = 0
         
         return self._format_response(
             text,
