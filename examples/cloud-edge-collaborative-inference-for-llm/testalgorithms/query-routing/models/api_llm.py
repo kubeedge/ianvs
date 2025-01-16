@@ -17,6 +17,7 @@ import time
 
 from openai import OpenAI
 from models.base_llm import BaseLLM
+from retry import retry
 
 class APIBasedLLM(BaseLLM):
     def __init__(self, **kwargs) -> None:
@@ -43,6 +44,7 @@ class APIBasedLLM(BaseLLM):
 
         self.model = model
 
+    @retry(tries=3, delay=4, max_delay=10)
     def _infer(self, messages):
         """Call the OpenAI API to get the response
 
