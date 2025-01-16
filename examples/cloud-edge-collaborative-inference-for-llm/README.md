@@ -21,19 +21,16 @@ Thus, smaller models on edge should collaborate with larger models on cloud to a
 
 ### Possible Collaborative Inference Strategy 
 
-There are several cloud-edge collaborative inference strategy, including:
+There are several cloud-edge collaborative inference strategy, one of which is Query Routing $^{[1, 2]}$, which routes query to smaller-scale model on edge or larger-scale model on cloud based on its difficulty.
 
-- Query Routing $^{[1, 2]}$ : route query to smaller-scale model on edge or larger-scale model on cloud based on its difficulty.
-- Speculative Decoding $^{[3]}$ : smaller-scale models predicting future multiple words quickly during decoding followed by parallel validation via larger-scale models; if validation fails then re-generation by larger-scale occurs.
-- Other possible ways. 
+Additionally, Speculative Decoding $^{[3]}$ is another promising strategy to further improve the performance of collaborative inference, where smaller-scale models predicting future multiple words quickly during decoding followed by parallel validation via larger-scale models; if validation fails then re-generation by larger-scale occurs.
 
-This example currently supports convenient benchmark testing for Query-Routing strategy. 
 
 ### Details of Design
 
 The overall design is shown in the figure below.
 
-![image-20240926143857223](./assets/image-20240926143857223.png)
+![image-20240926143857223](./assets/image-20241128535482354.png)
 
 When Ianvs starts the benchmarking job, the Test Env Manager will first pass the data of the user-specified Dataset to the Test Case Controller for Joint Inference one by one.
 
@@ -93,7 +90,9 @@ python setup.py install
 
 ### Dataset Configuration
 
-1. Download `mmlu-5-shot` from [Ianvs-MMLU-5-shot](https://huggingface.co/datasets/FuryMartin/Ianvs-MMLU-5-shot), which is a transformed MMLU-5-shot dataset formatted to fit Ianvs's requirements.
+Here, we provide `MMLU-5-shot` dataset and `GPQA-diamond` dataset for testing. The following is the instruction for dataset preparation for `MMLU-5-shot`, `GPQA-diamond` follows the same progress.
+
+1. Download `mmlu-5-shot` from [Ianvs-MMLU-5-shot](https://huggingface.co/datasets/FuryMartin/Ianvs-MMLU-5-shot), (or [Ianvs-GPQA-diamond](https://huggingface.co/datasets/FuryMartin/Ianvs-GPQA-diamond)) which is a transformed MMLU-5-shot dataset formatted to fit Ianvs's requirements.
 
 2. Create a `dataset` folder in the root directory of Ianvs and move `mmlu-5-shot` into the `dataset` folder.
 
@@ -179,9 +178,11 @@ In the configuration file, there are two models available for configuration: `Ed
 
 #### EdgeModel Configuration
 
-The `EdgeModel` is the model that will be deployed on your local machine, supporting `huggingface` and `vllm` as serving backends.
+The `EdgeModel` is designed to be deployed on your local machine, offering support for multiple serving backends including `huggingface`, `vllm`, `EAGLE`, and `LADE`. Additionally, it provides the flexibility to integrate with API-based model services.
 
-For `EdgeModel`, the open parameters are:
+The `CloudModel` represents the model on cloud. For extensibility, it supports both API-based models (which call LLM API via OpenAI API format) and local inference using backends like `huggingface`, `vllm`, `EAGLE`, and `LADE`. For API-based models, you need to set your `OPENAI_BASE_URL` and `OPENAI_API_KEY` in the environment variables yourself, for example:
+
+For both `EdgeModel` and `CloudModel`, the open parameters are:
 
 | Parameter Name         | Type  | Description                                                  | Defalut                  |
 | ---------------------- | ----- | ------------------------------------------------------------ | ------------------------ |
@@ -194,24 +195,12 @@ For `EdgeModel`, the open parameters are:
 | tensor_parallel_size   | int   | The size of tensor parallelism (Used for vLLM)               | 1                        |
 | gpu_memory_utilization | float | The percentage of GPU memory utilization (Used for vLLM)     | 0.9                      |
 
-#### CloudModel Configuration
-
-The `CloudModel` represents the model on cloud, it will call LLM API via OpenAI API format. You need to set your OPENAI_BASE_URL and OPENAI_API_KEY in the environment variables yourself, for example.
+If you want to call API-based models, you need to set your `OPENAI_BASE_URL` and `OPENAI_API_KEY` in the environment variables yourself, for example:
 
 ```bash
 export OPENAI_BASE_URL="https://api.openai.com/v1"
 export OPENAI_API_KEY=sk_xxxxxxxx
 ```
-
-For `CloudModel`, the open parameters are:
-
-| Parameter Name     | Type | Description                                                  | Defalut     |
-| ------------------ | ---- | ------------------------------------------------------------ | ----------- |
-| model              | str  | model name                                                   | gpt-4o-mini |
-| temperature        | float  | What sampling temperature to use, between 0 and 2            | 0.8         |
-| top_p              | float  | nucleus sampling parameter                                   | 0.8         |
-| max_tokens         | int  | The maximum number of tokens that can be generated in the chat completion | 512         |
-| repetition_penalty | float  | The parameter for repetition penalty                         | 1.05        |
 
 #### Router Configuration
 
@@ -274,7 +263,7 @@ Change the Router type to `EdgeOnly`, `CloudOnly`, `OracleRouter` (or another ro
 
 The recommend testing order is `EdgeOnly`, `CloudOnly`, `OracleRouter`, `BERTRouter`, `RandomRouter`.
 
-By changing different models and Router parameters, you may see output like:
+By changing different models and Router parameters, you may see output like the following table tested on `MMLU-5-shot` dataset:
 
 ```bash
 +------+---------------+----------+------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+----------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
@@ -293,6 +282,21 @@ By changing different models and Router parameters, you may see output like:
 Ianvs will output a `rank.csv` and `selected_rank.csv` in `ianvs/workspace`, which will record the test results of each test.
 
 You can modify the relevant model parameters in `examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml`, conduct multiple tests, and compare the results of different configurations.
+
+
+Since MMLU-5-shot has a large amount of data, we recommend using the GPQA dataset to test the latency and throughput performance under different inference frameworks and Oracle Router. Below are the test results for two inference frameworks `vllm` and `EAGLE` under Oracle Router:
+
+```bash
++------+---------------+----------+------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
+| rank |   algorithm   | Accuracy | Edge Ratio | Time to First Token | Throughput | Internal Token Latency | Cloud Prompt Tokens | Cloud Completion Tokens | Edge Prompt Tokens | Edge Completion Tokens |    paradigm    | hard_example_mining |    edgemodel-model     | edgemodel-backend | cloudmodel-model |         time        |                                         url                                         |
++------+---------------+----------+------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
+|  1   | query-routing |  54.04   |   78.79    |        0.278        |    47.1    |         0.021          |        12081        |          20383          |       43636        |         64042          | jointinference |     OracleRouter    | Qwen/Qwen2-7B-Instruct |        vllm       |   gpt-4o-mini    | 2025-01-16 16:27:00 | ./workspace-gpqa/benchmarkingjob/query-routing/a5477f86-d3e3-11ef-aa28-0242ac110008 |
+|  2   | query-routing |  39.39   |    0.0     |        1.388        |   57.48    |         0.017          |        52553        |          100395         |         0          |           0            | jointinference |      CloudOnly      | Qwen/Qwen2-7B-Instruct |        vllm       |   gpt-4o-mini    | 2025-01-16 16:13:12 | ./workspace-gpqa/benchmarkingjob/query-routing/e204bac6-d3dc-11ef-8dfe-0242ac110008 |
+|  3   | query-routing |  32.83   |   100.0    |        0.059        |   44.95    |         0.022          |          0          |            0            |       56550        |         80731          | jointinference |       EdgeOnly      | Qwen/Qwen2-7B-Instruct |        vllm       |   gpt-4o-mini    | 2025-01-16 13:12:20 | ./workspace-gpqa/benchmarkingjob/query-routing/fdda7ce2-d3c1-11ef-8ea0-0242ac110008 |
+|  4   | query-routing |  28.28   |   100.0    |        0.137        |   66.12    |         0.015          |          0          |            0            |       56550        |         67426          | jointinference |       EdgeOnly      | Qwen/Qwen2-7B-Instruct |    EagleSpecDec   |   gpt-4o-mini    | 2025-01-16 12:43:05 | ./workspace-gpqa/benchmarkingjob/query-routing/fdda7aa8-d3c1-11ef-8ea0-0242ac110008 |
++------+---------------+----------+------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
+```
+
 
 ## Discussion
 
@@ -324,7 +328,7 @@ Besides, Speculative Decoding is another promising cloud-edge collaborative infe
 Thus, the future tasks of this example include:
 
 - Build a more comprehensive dataset for better router evaluation
-- Implement a Speculative Decoding example
+- Try to consider a native Speculative Decoding in cloud-edge collaborative inference scenario.
 
 
 
