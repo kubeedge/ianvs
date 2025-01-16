@@ -3,7 +3,7 @@ benchmarkingjob:
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
   # "~/" cannot be identified, so must be relative path or absoulute path
-  workspace: "./workspace-mmlu"
+  workspace: "./workspace-gpqa"
 
   hard_example_mining_mode: "mining-then-inference"
 
@@ -22,7 +22,7 @@ benchmarkingjob:
       - name: "query-routing"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml;
-        url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml"
+        url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting_spec.yaml"
 
   # the configuration of ranking leaderboard
   rank:
