@@ -78,9 +78,13 @@ class BaseModel:
                 self.trainer.args, train_data=train_data, valid_data=valid_data, **kwargs)
 
         # Define lr scheduler
-        self.trainer.scheduler = LR_Scheduler(self.trainer.args.lr_scheduler, self.trainer.args.lr,
-                                              self.trainer.args.epochs, len(self.trainer.train_loader))
-        print("Total epoches:", self.trainer.args.epochs)
+        self.trainer.scheduler = LR_Scheduler(
+            self.trainer.args.lr_scheduler,
+            self.trainer.args.lr,
+            self.trainer.args.epochs,
+            len(self.trainer.train_loader)
+        )
+        logger.info(f"Total epochs: {self.trainer.args.epochs}")
 
         for epoch in range(self.trainer.args.start_epoch, self.trainer.args.epochs):
             if epoch == 0 and self.trainer.val_loader:
@@ -90,7 +94,6 @@ class BaseModel:
             if self.trainer.args.no_val and \
                     (epoch % self.trainer.args.eval_interval == (self.trainer.args.eval_interval - 1)
                      or epoch == self.trainer.args.epochs - 1):
-                # save checkpoint when it meets eval_interval or the training finished
                 is_best = False
                 self.checkpoint_path = self.trainer.saver.save_checkpoint({
                     'epoch': epoch + 1,
@@ -99,14 +102,6 @@ class BaseModel:
                     'best_pred': self.trainer.best_pred,
                 }, is_best)
 
-            # if not self.trainer.args.no_val and \
-            #         epoch % self.train_args.eval_interval == (self.train_args.eval_interval - 1) \
-            #         and self.trainer.val_loader:
-            #     self.trainer.validation(epoch)
-            # self.checkpoint_path = os.path.join(self.temp_dir, '{}_'.format(
-            #                 cfgs.DATASET_NAME) + str(_global_step) + "_" + str(time.time()) + '_model.ckpt')
-            #             saver.save(sess, self.checkpoint_path)
-            #             print('Weights have been saved to {}.'.format(self.checkpoint_path))
 
         self.trainer.writer.close()
 
@@ -145,16 +140,19 @@ class BaseModel:
             data, batch_size=self.validator.args.test_batch_size, shuffle=False, pin_memory=True)
         return self.validator.validate()
 
-    def load(self, model_url):
-        model_url = '/home/wxc/dev/ianvs/models/model_best_mapi_only.pth'
+    def load(self, model_url=None):
+        if model_url is None:
+            model_url = '/home/wxc/dev/ianvs/models/model_best_mapi_only.pth'
         if FileOps.exists(model_url):
             self.validator.new_state_dict = torch.load(
                 model_url, map_location=torch.device("cpu"))
         else:
-            raise Exception("model url does not exist.")
+            raise Exception(f"Model URL does not exist: {model_url}")
         self.validator.model = load_my_state_dict(
-            self.validator.model, self.validator.new_state_dict['state_dict'])
+             self.validator.model, self.validator.new_state_dict['state_dict'])
+    
         return model_url
+
 
     def _preprocess(self, image_urls):
         transformed_images = []
