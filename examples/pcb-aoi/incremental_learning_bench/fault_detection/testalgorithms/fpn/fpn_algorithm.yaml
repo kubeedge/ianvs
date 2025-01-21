@@ -13,7 +13,7 @@ algorithm:
     #   1> "default": the dataset is evenly divided based train_ratio;
     splitting_method: "default"
   # the url address of initial model for model pre-training; string url;
-  initial_model_url: "/ianvs/initial_model/model.zip"
+  initial_model_url: "./initial_model/model.zip"
 
   # algorithm module configuration in the paradigm; list type;
   modules:
@@ -25,7 +25,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "FPN"
       # the url address of python module; string type;
-      url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/basemodel.py"
+      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/basemodel.py"
 
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
@@ -44,7 +44,7 @@ algorithm:
       # name of python module; string type;
       name: "IBT"
       # the url address of python module; string type;
-      url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/hard_example_mining.py"
+      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/hard_example_mining.py"
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
         # name of the hyperparameter; string type;
