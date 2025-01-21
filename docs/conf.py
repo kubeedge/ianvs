@@ -29,6 +29,11 @@ try:
     import sphinx_rtd_theme
 except ModuleNotFoundError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "sphinx_rtd_theme"])
+try:
+    import sphinx_autobuild
+except ModuleNotFoundError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "sphinx-autobuild"])
+
 _base_path = os.path.abspath('..')
 BASE_URL = 'https://github.com/kubeedge/ianvs/'
 
