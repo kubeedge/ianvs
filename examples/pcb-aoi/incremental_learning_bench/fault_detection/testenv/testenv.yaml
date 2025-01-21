@@ -2,9 +2,9 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_url: "/ianvs/dataset/train_data/index.txt"
+    train_index: "./dataset/train_data/index.txt"
     # the url address of test dataset index; string type;
-    test_url: "/ianvs/dataset/test_data/index.txt"
+    test_index: "./dataset/test_data/index.txt"
 
   # model eval configuration of incremental learning;
   model_eval:
@@ -13,7 +13,7 @@ testenv:
       # metric name; string type;
       name: "f1_score"
       # the url address of python file
-      url: "./examples/pcb-aoi/incremental_learning_bench/testenv/f1_score.py"
+      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/f1_score.py"
 
     # condition of triggering inference model to update
     # threshold of the condition; types are float/int
@@ -27,7 +27,7 @@ testenv:
       # metric name; string type;
     - name: "f1_score"
       # the url address of python file
-      url: "./examples/pcb-aoi/incremental_learning_bench/testenv/f1_score.py"
+      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/f1_score.py"
     - name: "samples_transfer_ratio"
 
   # incremental rounds setting of incremental learning; int type; default value is 2;
