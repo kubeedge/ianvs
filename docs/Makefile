@@ -30,4 +30,7 @@ api:
 html:
 	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
+livehtml:
+	sphinx-autobuild $(SOURCEDIR) $(BUILDDIR)/html
+	
 all: clean api html
