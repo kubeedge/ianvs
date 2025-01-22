@@ -29,3 +29,17 @@ Ianvs is the first open-source site for that dataset.
 ## 4. Release PCB-AoI benchmark cases based on the two new paradigms.
    a) Release PCB-AoI benchmark cases based on single-task learning, including leaderboards and test reports.
    b) Release PCB-AoI benchmark cases based on incremental learning, including leaderboards and test reports.
+
+# Ianvs v0.2.0 release
+
+This version of Ianvs supports the following functions of unstructured lifelong learning:
+
+## 1. Support lifelong learning throughout the entire lifecycle, including task definition, task assignment, unknown task recognition, and unknown task handling, among other modules, with each module being decoupled.
+   - Support unknown task recognition and provide corresponding usage examples based on semantic segmentation tasks in [this example](https://github.com/kubeedge/ianvs/tree/main/examples/robot-cityscapes-synthia/lifelong_learning_bench/semantic-segmentation).
+   - Support multi-task joint inference and provide corresponding usage examples based on object detection tasks in [this example](https://github.com/kubeedge/ianvs/tree/main/examples/MOT17/multiedge_inference_bench/pedestrian_tracking).
+## 2. Provide classic lifelong learning testing metrics, and support for visualizing test results.
+   - Support lifelong learning system metrics such as BWT and FWT.
+   - Support visualization of lifelong learning results.
+## 3. Provide real-world datasets and rich examples for lifelong learning testing, to better evaluate the effectiveness of lifelong learning algorithms in real environments.
+   - Provide cloud-robotics datasets in [this website](https://kubeedge-ianvs.github.io/).
+   - Provide cloud-robotics semantic segmentation examples in [this example](https://github.com/kubeedge/ianvs/tree/main/examples/robot/lifelong_learning_bench).
