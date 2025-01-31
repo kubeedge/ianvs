@@ -67,29 +67,46 @@ algorithm:
       url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/cloud_model.py"
 
       hyperparameters:
-        # name of the hyperparameter; string type;
+      # name of the hyperparameter; string type;
         - model:
             values:
               - "gpt-4o-mini"
+        - backend:
+            # backend; string type;
+            # currently the options of value are as follows:
+            #  1> "huggingface": transformers backend;
+            #  2> "vllm": vLLM backend;
+            #  3> "api": OpenAI API backend;
+            #  4> "EagleSpecDec": EAGLE Speculative Decoding framework;
+            #  5> "LadeSepcDec": Lookahead Decoding framework;
+            values:
+              # - "EagleSpecDec"
+              - "api"
         - temperature:
+            # What sampling temperature to use, between 0 and 2; float type;
+            # For reproducable results, the temperature should be set to 0;
             values:
-              - 0
+              - 0.9
         - top_p:
+            # nucleus sampling parameter; float type;
             values:
-              - 0.8
+              - 0.9
         -  max_tokens:
+            # The maximum number of tokens that can be generated in the chat completion; int type;
             values:
               - 1024
         -  repetition_penalty:
+            # The parameter for repetition penalty; float type;
             values:
               - 1.05
         -  use_cache:
+            # Whether to use reponse cache; boolean type;
             values:
               - true
 
     - type: "hard_example_mining"
       # name of Router module; string type;
       # BERTRouter, EdgeOnly, CloudOnly, RandomRouter, OracleRouter
-      name: "OracleRouter"
+      name: "CloudOnly"
       # the url address of python module; string type;
       url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/hard_sample_mining.py"
