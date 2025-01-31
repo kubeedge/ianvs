@@ -36,6 +36,7 @@ class CloudModel:
         self.model_name = kwargs.get("model", None)
         self.backend = kwargs.get("backend", "huggingface")
         self._set_config()
+        self.load()
 
     def _set_config(self):
         """Set the model path in our environment variables due to Sedna’s [check](https://github.com/kubeedge/sedna/blob/ac623ab32dc37caa04b9e8480dbe1a8c41c4a6c2/lib/sedna/core/base.py#L132).
