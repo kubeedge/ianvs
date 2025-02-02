@@ -27,9 +27,9 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_url: "/ianvs/dataset/train_data/index.txt"
+    train_index: "./dataset/train_data/index.txt"
     # the url address of test dataset index; string type;
-    test_url: "/ianvs/dataset/test_data/index.txt"
+    test_index: "./dataset/test_data/index.txt"
 
   # model eval configuration of incremental learning;
   model_eval:
@@ -38,7 +38,7 @@ testenv:
       # metric name; string type;
       name: "f1_score"
       # the url address of python file
-      url: "./examples/pcb-aoi/incremental_learning_bench/testenv/f1_score.py"
+      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/f1_score.py"
 
     # condition of triggering inference model to update
     # threshold of the condition; types are float/int
@@ -52,7 +52,7 @@ testenv:
       # metric name; string type;
     - name: "f1_score"
       # the url address of python file
-      url: "./examples/pcb-aoi/incremental_learning_bench/testenv/f1_score.py"
+      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/f1_score.py"
     - name: "samples_transfer_ratio"
 
   # incremental rounds setting for incremental learning paradigm.; int type; default value is 2;
@@ -63,7 +63,7 @@ The URL address of this test environment, i.e., testenv.yaml, then should be fil
 
 ``` yaml
 # benchmarkingJob.yaml
-  testenv: "./examples/pcb-aoi/benchmarkingjob/testenv/testenv.yaml"
+  testenv: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/testenv.yaml"
 ```
 
 ## Step 2. Test Case Preparation
@@ -252,7 +252,7 @@ algorithm:
     #   1> "default": the dataset is evenly divided based train_ratio;
     splitting_method: "default"
   # the url address of initial model for model pre-training; string url;
-  initial_model_url: "/ianvs/initial_model/model.zip"
+  initial_model_url: "./initial_model/model.zip"
 
   # algorithm module configuration in the paradigm; list type;
   modules:
@@ -264,7 +264,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "FPN"
       # the url address of python module; string type;
-      url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/basemodel.py"
+      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/basemodel.py"
 
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
@@ -283,7 +283,7 @@ algorithm:
       # name of python module; string type;
       name: "IBT"
       # the url address of python module; string type;
-      url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/hard_example_mining.py"
+      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/hard_example_mining.py"
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
         # name of the hyperparameter; string type;
@@ -311,7 +311,7 @@ The URL address of this algorithm then should be filled in the configuration fil
       - name: "fpn_incremental_learning"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
-        url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/fpn_algorithm.yaml"
+        url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/fpn_algorithm.yaml"
 ```
 
 or
@@ -328,7 +328,7 @@ or
       - name: "fpn_singletask_learning"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml;
-        url: "./examples/pcb-aoi/singletask_learning_bench/testalgorithms/fpn/fpn_algorithm.yaml"
+        url: "./examples/pcb-aoi/singletask_learning_bench/fault_detection/testalgorithms/fpn/fpn_algorithm.yaml"
 ```
 
 ## Step 3. ianvs Configuration
@@ -339,20 +339,21 @@ First, the user can configure the workspace to reserve the output of tests.
 
 ``` yaml
 # benchmarkingJob.yaml
-  workspace: "/ianvs/pcb-aoi/workspace/"
+  workspace: "./workspace/incremental_learning_bench"
 ```
 
 Then, the user fill in the test environment and algorithm configured in previous steps. 
 
 ``` yaml
 # benchmarkingJob.yaml
-  testenv: ".examples/pcb-aoi/benchmarkingjob/testenv/testenv.yaml"
+  testenv: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/testenv.yaml"
 ```
 
 ``` yaml
+# benchmarkingJob.yaml
   algorithms:
     - name: "fpn_incremental_learning"
-      url: "./examples/pcb-aoi/benchmarkingjob/testalgorithms/fpn_incremental_learning/fpn_algorithm.yaml"
+      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/fpn_algorithm.yaml"
 ```
 
 As the final leaderboard, the user can configure how to rank the leaderboard with the specific metric and order.

@@ -30,16 +30,16 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_url: "/ianvs/dataset/train_data/index.txt"
+    train_index: "./dataset/train_data/index.txt"
     # the url address of test dataset index; string type;
-    test_url: "/ianvs/dataset/test_data/index.txt"
+    test_index: "./dataset/test_data/index.txt"
 
   # metrics configuration for test case's evaluation; list type;
   metrics:
     # metric name; string type;
     - name: "f1_score"
       # the url address of python file
-      url: "./examples/pcb-aoi/singletask_learning_bench/testenv/f1_score.py"
+      url: "./examples/pcb-aoi/singletask_learning_bench/fault_detection/testenv/f1_score.py"
 ```
 
 Key settings of the algorithm to single learning are as follows:
@@ -53,7 +53,7 @@ algorithm:
   #   2> "incrementallearning"
   paradigm_type: "singletasklearning"
   # the url address of initial model; string type; optional;
-  initial_model_url: "/ianvs/initial_model/model.zip"
+  initial_model_url: "./initial_model/model.zip"
 
   # algorithm module configuration in the paradigm; list type;
   modules:
@@ -65,7 +65,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "FPN"
       # the url address of python module; string type;
-      url: "./examples/pcb-aoi/singletask_learning_bench/testalgorithms/fpn/basemodel.py"
+      url: "./examples/pcb-aoi/singletask_learning_bench/fault_detection/testalgorithms/fpn/basemodel.py"
 
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
@@ -81,7 +81,7 @@ algorithm:
             # the url addresses of hyperparameters configuration files; list type;
             # type of the value is string;
             values:
-              - "./examples/pcb-aoi/singletask_learning_bench/testalgorithms/fpn/fpn_hyperparameter.yaml"
+              - "./examples/pcb-aoi/singletask_learning_bench/fault_detection/testalgorithms/fpn/fpn_hyperparameter.yaml"
 
 ```
 
