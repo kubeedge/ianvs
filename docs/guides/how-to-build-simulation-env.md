@@ -38,11 +38,11 @@ benchmarkingjob:
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
   # default value: "./workspace"
-  workspace: "/ianvs/incremental_learning_bench/workspace"
+  workspace: "./workspace/incremental_learning_bench"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/pcb-aoi/incremental_learning_bench/testenv/testenv.yaml"
+  testenv: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/testenv.yaml"
   # the configuration of test object
   test_object:
     ...

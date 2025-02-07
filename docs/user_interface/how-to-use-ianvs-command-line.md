@@ -36,15 +36,19 @@ Command line: `ianvs -f [BENCHMARKING_CONFIG_FILE]`
 For example:
 
 ```yaml
-ianvs -f examples/pcb-aoi/singletask_learning_bench/benchmarkingjob.yaml
+ianvs -f examples/pcb-aoi/singletask_learning_bench/fault_detection/benchmarkingjob.yaml
 ```
 
 The final output might look like:
 
-|rank  |algorithm                |f1_score  |paradigm            |basemodel  |learning_rate  |momentum  |time                     |url                                                                                                                             |
-|:----:|:-----------------------:|:--------:|:------------------:|:---------:|:-------------:|:--------:|:------------------------|:-------------------------------------------------------------------------------------------------------------------------------|
-|1     |fpn_singletask_learning  | 0.8396   |singletasklearning  | FPN       | 0.1           | 0.5      | 2022-07-07 20:33:53     |/ianvs/pcb-aoi/singletask_learning_bench/workspace/benchmarkingjob/fpn_singletask_learning/49eb5ffd-fdf0-11ec-8d5d-fa163eaa99d5 |
-|2     |fpn_singletask_learning  | 0.8353   |singletasklearning  | FPN       | 0.1           | 0.95     | 2022-07-07 20:31:08     |/ianvs/pcb-aoi/singletask_learning_bench/workspace/benchmarkingjob/fpn_singletask_learning/49eb5ffc-fdf0-11ec-8d5d-fa163eaa99d5 |
+```bash
++------+-------------------------+----------+--------------------+-----------+--------------------+-------------------------+---------------------+------------------------------------------------------------------------------------------+
+| rank |        algorithm        | f1_score |      paradigm      | basemodel | basemodel-momentum | basemodel-learning_rate |         time        |                                           url                                            |
++------+-------------------------+----------+--------------------+-----------+--------------------+-------------------------+---------------------+------------------------------------------------------------------------------------------+
+|  1   | fpn_singletask_learning |  0.8527  | singletasklearning |    FPN    |        0.5         |           0.1           | 2025-01-06 14:30:30 | ./workspace/benchmarkingjob/fpn_singletask_learning/3a76bc25-cc0b-11ef-9f00-65cc74a7c013 |
+|  2   | fpn_singletask_learning |  0.844   | singletasklearning |    FPN    |        0.95        |           0.1           | 2025-01-06 14:25:18 | ./workspace/benchmarkingjob/fpn_singletask_learning/3a76bc24-cc0b-11ef-9f00-65cc74a7c013 |
++------+-------------------------+----------+--------------------+-----------+--------------------+-------------------------+---------------------+------------------------------------------------------------------------------------------+
+```
 
 Refer to [details of example].
 

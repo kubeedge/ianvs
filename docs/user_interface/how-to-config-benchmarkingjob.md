@@ -20,11 +20,11 @@ benchmarkingjob:
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
   # default value: "./workspace"
-  workspace: "/ianvs/incremental_learning_bench/workspace"
+  workspace: "./workspace/incremental_learning_bench"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/pcb-aoi/incremental_learning_bench/testenv/testenv.yaml"
+  testenv: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/testenv.yaml"
   # the configuration of test object
   test_object:
     ...
@@ -69,7 +69,7 @@ algorithms:
   - name: "fpn_incremental_learning"
   # the url address of test algorithm configuration file; string type;
   # the file format supports yaml/yml
-  url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/fpn_algorithm.yaml"
+  url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/fpn_algorithm.yaml"
 ```
 
 ### The configuration of rank
@@ -166,11 +166,11 @@ benchmarkingjob:
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
   # default value: "./workspace"
-  workspace: "/ianvs/incremental_learning_bench/workspace"
+  workspace: "./workspace/incremental_learning_bench"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/pcb-aoi/incremental_learning_bench/testenv/testenv.yaml"
+  testenv: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -183,7 +183,7 @@ benchmarkingjob:
       - name: "fpn_incremental_learning"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
-        url: "./examples/pcb-aoi/incremental_learning_bench/testalgorithms/fpn/fpn_algorithm.yaml"
+        url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/fpn_algorithm.yaml"
 
   # the configuration of ranking leaderboard
   rank:
