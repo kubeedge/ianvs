@@ -41,7 +41,6 @@ class EagleSpecDecModel(BaseLLM):
         # breakpoint()
         self.model = EaModel.from_pretrained(
             base_model_path=self.config.get("model", None),
-
             ea_model_path=self.config.get("draft_model", None),
             torch_dtype=torch.bfloat16,
             low_cpu_mem_usage=True,
