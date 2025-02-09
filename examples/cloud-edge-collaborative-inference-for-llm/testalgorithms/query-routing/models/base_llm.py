@@ -147,7 +147,7 @@ class BaseLLM:
         else:
             raise ValueError(f"DataType {type(data)} is not supported, it must be `dict`")
 
-    def get_message_chain(self, question, system = None):
+    def get_message_chain(self, question, system = "You are a helpful assistant."):
         """Get the OpenAI Chat style message chain
 
         Parameters
