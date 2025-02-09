@@ -30,7 +30,7 @@ Additionally, Speculative Decoding $^{[3]}$ is another promising strategy to fur
 
 The overall design is shown in the figure below.
 
-![image-20240926143857223](./assets/image-20250115535482354.png)
+![Architecture](./assets/Architecture.png)
 
 When Ianvs starts the benchmarking job, the Test Env Manager will first pass the data of the user-specified Dataset to the Test Case Controller for Joint Inference one by one.
 
@@ -85,6 +85,8 @@ pip install -r requirements.txt
 # Install ianvs
 python setup.py install
 ```
+
+If you want to use speculative decoding models like [EAGLE](https://github.com/SafeAILab/EAGLE), refer to the original repository for setup instructions.
 
 ## Step 2. Dataset and Model Preparation
 
@@ -144,8 +146,6 @@ Here is an example:
 }
 ```
 
-
-
 ### Metric Configuration
 
 *Note: If you just want to run this example quickly, you can skip this step.*
@@ -153,7 +153,7 @@ Here is an example:
 We have designed multiple metrics for edge-cloud collaborative inference, including:
 
 | Metric                  | Description                                             | Unit    |
-| :---------------------- | :------------------------------------------------------ | ------- |
+|  :---: | :---: | :---: |
 | Accuracy                | Accuracy on the test Dataset                            | -       |
 | Edge Ratio            | proportion of queries router to edge                    | -       |
 | Time to First Token     | Time taken to generate the first token                  | s       |
@@ -178,14 +178,12 @@ In the configuration file, there are two models available for configuration: `Ed
 
 #### EdgeModel Configuration
 
-The `EdgeModel` is designed to be deployed on your local machine, offering support for multiple serving backends including `huggingface`, `vllm`, `EAGLE`, and `LADE`. Additionally, it provides the flexibility to integrate with API-based model services.
+The `EdgeModel` is designed to be deployed on your local machine, offering support for multiple serving backends including `huggingface`, `vllm`, `EagleSpecDec`. Additionally, it provides the flexibility to integrate with API-based model services.
 
-The `CloudModel` represents the model on cloud. For extensibility, it supports both API-based models (which call LLM API via OpenAI API format) and local inference using backends like `huggingface`, `vllm`, `EAGLE`, and `LADE`. For API-based models, you need to set your `OPENAI_BASE_URL` and `OPENAI_API_KEY` in the environment variables yourself, for example:
-
-For both `EdgeModel` and `CloudModel`, the open parameters are:
+For both `EdgeModel`, the arguments are:
 
 | Parameter Name         | Type  | Description                                                  | Defalut                  |
-| ---------------------- | ----- | ------------------------------------------------------------ | ------------------------ |
+| :---: | :-----: | :---: | :---:|
 | model                  | str   | model name                                                   | Qwen/Qwen2-1.5B-Instruct |
 | backend                | str   | model serving framework                                      | huggingface              |
 | temperature            | float | What sampling temperature to use, between 0 and 2            | 0.8                      |
@@ -194,13 +192,28 @@ For both `EdgeModel` and `CloudModel`, the open parameters are:
 | repetition_penalty     | float | The parameter for repetition penalty                         | 1.05                     |
 | tensor_parallel_size   | int   | The size of tensor parallelism (Used for vLLM)               | 1                        |
 | gpu_memory_utilization | float | The percentage of GPU memory utilization (Used for vLLM)     | 0.9                      |
+| draft_model | str | The draft model used for Speculative Decoding | - |
 
-If you want to call API-based models, you need to set your `OPENAI_BASE_URL` and `OPENAI_API_KEY` in the environment variables yourself, for example:
+#### CloudModel Configuration
+
+
+The `CloudModel` represents the model on cloud, it will call LLM API via OpenAI API format. You need to set your OPENAI_BASE_URL and OPENAI_API_KEY in the environment variables yourself, for example.
 
 ```bash
 export OPENAI_BASE_URL="https://api.openai.com/v1"
 export OPENAI_API_KEY=sk_xxxxxxxx
 ```
+
+For `CloudModel`, the open parameters are:
+
+| Parameter Name     | Type | Description                                                  | Defalut     |
+| :---: | :---: | :---: | :---: |
+| model              | str  | model name                                                   | gpt-4o-mini |
+| temperature        | float  | What sampling temperature to use, between 0 and 2            | 0.8         |
+| top_p              | float  | nucleus sampling parameter                                   | 0.8         |
+| max_tokens         | int  | The maximum number of tokens that can be generated in the chat completion | 512         |
+| repetition_penalty | float  | The parameter for repetition penalty                         | 1.05        |
+
 
 #### Router Configuration
 
@@ -209,7 +222,7 @@ Router is a component that routes the query to the edge or cloud model. The rout
 Currently, supported routers include:
 
 | Router Type  | Description                                                  | Parameters       |
-| ------------ | ------------------------------------------------------------ | ---------------- |
+|  :---: | :---: | :---: |
 | EdgeOnly     | Route all queries to the edge model.                         | -                |
 | CloudOnly    | Route all queries to the cloud model.                        | -                |
 | OracleRouter | Optimal Router         |         |
@@ -226,7 +239,7 @@ The Data Processor allows you to custom your own data format after the dataset l
 Currently, supported routers include:
 
 | Data Processor  | Description                                                  | Parameters       |
-| ------------ | ------------------------------------------------------------ | ---------------- |
+|  :---: | :---: | :---: |
 | OracleRouterDatasetProcessor     |  Expose `gold` label to OracleRouter                      |   -         |
 
 ## Step 3. Run Ianvs
@@ -283,18 +296,18 @@ Ianvs will output a `rank.csv` and `selected_rank.csv` in `ianvs/workspace`, whi
 
 You can modify the relevant model parameters in `examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml`, conduct multiple tests, and compare the results of different configurations.
 
-
 Since MMLU-5-shot has a large amount of data, we recommend using the GPQA dataset to test the latency and throughput performance under different inference frameworks and Oracle Router. Below are the test results for two inference frameworks `vllm` and `EAGLE` under Oracle Router:
 
 ```bash
-+------+---------------+----------+------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
-| rank |   algorithm   | Accuracy | Edge Ratio | Time to First Token | Throughput | Internal Token Latency | Cloud Prompt Tokens | Cloud Completion Tokens | Edge Prompt Tokens | Edge Completion Tokens |    paradigm    | hard_example_mining |    edgemodel-model     | edgemodel-backend | cloudmodel-model |         time        |                                         url                                         |
-+------+---------------+----------+------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
-|  1   | query-routing |  54.04   |   78.79    |        0.278        |    47.1    |         0.021          |        12081        |          20383          |       43636        |         64042          | jointinference |     OracleRouter    | Qwen/Qwen2-7B-Instruct |        vllm       |   gpt-4o-mini    | 2025-01-16 16:27:00 | ./workspace-gpqa/benchmarkingjob/query-routing/a5477f86-d3e3-11ef-aa28-0242ac110008 |
-|  2   | query-routing |  39.39   |    0.0     |        1.388        |   57.48    |         0.017          |        52553        |          100395         |         0          |           0            | jointinference |      CloudOnly      | Qwen/Qwen2-7B-Instruct |        vllm       |   gpt-4o-mini    | 2025-01-16 16:13:12 | ./workspace-gpqa/benchmarkingjob/query-routing/e204bac6-d3dc-11ef-8dfe-0242ac110008 |
-|  3   | query-routing |  32.83   |   100.0    |        0.059        |   44.95    |         0.022          |          0          |            0            |       56550        |         80731          | jointinference |       EdgeOnly      | Qwen/Qwen2-7B-Instruct |        vllm       |   gpt-4o-mini    | 2025-01-16 13:12:20 | ./workspace-gpqa/benchmarkingjob/query-routing/fdda7ce2-d3c1-11ef-8ea0-0242ac110008 |
-|  4   | query-routing |  28.28   |   100.0    |        0.137        |   66.12    |         0.015          |          0          |            0            |       56550        |         67426          | jointinference |       EdgeOnly      | Qwen/Qwen2-7B-Instruct |    EagleSpecDec   |   gpt-4o-mini    | 2025-01-16 12:43:05 | ./workspace-gpqa/benchmarkingjob/query-routing/fdda7aa8-d3c1-11ef-8ea0-0242ac110008 |
-+------+---------------+----------+------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
++------+---------------+----------+------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+---------------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
+| rank |   algorithm   | Accuracy | Edge Ratio | Time to First Token | Throughput | Internal Token Latency | Cloud Prompt Tokens | Cloud Completion Tokens | Edge Prompt Tokens | Edge Completion Tokens |    paradigm    | hard_example_mining |         edgemodel-model         | edgemodel-backend | cloudmodel-model |         time        |                                         url                                         |
++------+---------------+----------+------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+---------------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
+|  1   | query-routing |  54.55   |   72.73    |         0.27        |   49.94    |          0.02          |        16777        |          30824          |       42823        |         66112          | jointinference |     OracleRouter    | NousResearch/Llama-2-7b-chat-hf |        vllm       |   gpt-4o-mini    | 2025-02-09 14:26:46 | ./workspace-gpqa/benchmarkingjob/query-routing/d393d334-e6ae-11ef-8ed1-0242ac110002 |
+|  2   | query-routing |  53.54   |   74.24    |        0.301        |   89.44    |         0.011          |        16010        |          27859          |       43731        |         68341          | jointinference |     OracleRouter    | NousResearch/Llama-2-7b-chat-hf |    EagleSpecDec   |   gpt-4o-mini    | 2025-02-09 14:26:46 | ./workspace-gpqa/benchmarkingjob/query-routing/d393d0e6-e6ae-11ef-8ed1-0242ac110002 |
+|  3   | query-routing |  40.91   |    0.0     |        0.762        |   62.57    |         0.016          |        52553        |          109922         |         0          |           0            | jointinference |      CloudOnly      | NousResearch/Llama-2-7b-chat-hf |        vllm       |   gpt-4o-mini    | 2025-02-09 14:26:33 | ./workspace-gpqa/benchmarkingjob/query-routing/cb8bae14-e6ae-11ef-bc17-0242ac110002 |
+|  4   | query-routing |  27.78   |   100.0    |        0.121        |   110.61   |         0.009          |          0          |            0            |       62378        |         92109          | jointinference |       EdgeOnly      | NousResearch/Llama-2-7b-chat-hf |    EagleSpecDec   |   gpt-4o-mini    | 2025-02-09 14:26:16 | ./workspace-gpqa/benchmarkingjob/query-routing/c1afaa30-e6ae-11ef-8c1d-0242ac110002 |
+|  5   | query-routing |  27.27   |   100.0    |         0.06        |   46.95    |         0.021          |          0          |            0            |       62378        |         92068          | jointinference |       EdgeOnly      | NousResearch/Llama-2-7b-chat-hf |        vllm       |   gpt-4o-mini    | 2025-02-09 14:26:16 | ./workspace-gpqa/benchmarkingjob/query-routing/c1afac74-e6ae-11ef-8c1d-0242ac110002 |
++------+---------------+----------+------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+---------------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
 ```
 
 

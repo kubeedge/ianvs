@@ -18,7 +18,7 @@ import os
 
 from core.common.log import LOGGER
 from sedna.common.class_factory import ClassType, ClassFactory
-from models import APIBasedLLM, HuggingfaceLLM, VllmLLM, EagleSpecDecModel, LadeSpecDecLLM
+from models import APIBasedLLM
 
 os.environ['BACKEND_TYPE'] = 'TORCH'
 
@@ -32,41 +32,18 @@ class CloudModel:
         """Initialize the CloudModel.  See `APIBasedLLM` for details about `kwargs`.
         """
         LOGGER.info(kwargs)
-        self.kwargs = kwargs
-        self.model_name = kwargs.get("model", None)
-        self.backend = kwargs.get("backend", "huggingface")
-        self._set_config()
-        self.load()
+        self.model = APIBasedLLM(**kwargs)
+        self.load(kwargs.get("model", "gpt-4o-mini"))
 
-    def _set_config(self):
-        """Set the model path in our environment variables due to Sedna’s [check](https://github.com/kubeedge/sedna/blob/ac623ab32dc37caa04b9e8480dbe1a8c41c4a6c2/lib/sedna/core/base.py#L132).
+    def load(self, model):
+        """Set the model.
+
+        Parameters
+        ----------
+        model : str
+            Existing model from your OpenAI provider. Example: `gpt-4o-mini`
         """
-        pass
-        #
-        # os.environ["model_path"] = self.model_name
-
-    def load(self, **kwargs):
-        """Set the model backend to be used. Will be called by Sedna's JointInference interface.
-
-        Raises
-        ------
-        Exception
-            When the backend is not supported.
-        """
-        if self.backend == "huggingface":
-            self.model = HuggingfaceLLM(**self.kwargs)
-        elif self.backend == "vllm":
-            self.model = VllmLLM(**self.kwargs)
-        elif self.backend == "api":
-            self.model = APIBasedLLM(**self.kwargs)
-        elif self.backend == "EagleSpecDec":
-            self.model = EagleSpecDecModel(**self.kwargs)
-        elif self.backend == "LadeSpecDec":
-            self.model = LadeSpecDecLLM(**self.kwargs)
-        else:
-            raise Exception(f"Backend {self.backend} is not supported. Please use 'huggingface', 'vllm', or `api` ")
-        
-        self.model._load(self.kwargs.get("model", None))
+        self.model._load(model = model)
 
     def inference(self, data, **kwargs):
         """Inference the model with the given data.
