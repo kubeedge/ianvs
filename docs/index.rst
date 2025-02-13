@@ -90,7 +90,7 @@ Start your journey on Ianvs with the following links:
     guides/how-to-contribute-test-environments
     guides/how-to-contribute-algorithms
     guides/how-to-contribute-leaderboards-or-test-reports
-
+    guides/how-to-contribute-documentation
 
 .. toctree::
     :maxdepth: 1
