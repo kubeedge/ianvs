@@ -73,9 +73,6 @@ class HuggingfaceLLM(BaseLLM):
         most_recent_timestamp = st
 
         # messages = self.get_message_chain(question, system_prompt)
-
-        streamer = TextIteratorStreamer(self.tokenizer)
-
         text = self.tokenizer.apply_chat_template(
             messages,
             tokenize=False,
@@ -131,3 +128,8 @@ class HuggingfaceLLM(BaseLLM):
         )
 
         return response
+
+if __name__ == "__main__":
+    model = HuggingfaceLLM()
+    model._load("Qwen/Qwen2-7B-Instruct")
+    print(model._infer("Hello, how are you?"))
