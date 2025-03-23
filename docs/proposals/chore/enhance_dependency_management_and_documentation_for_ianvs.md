@@ -12,7 +12,8 @@
     - [2. Updating the Documentation for Old Examples](#2-updating-the-documentation-for-old-examples)
       - [Completed Updates](#completed-updates)
       - [Next Steps](#next-steps)
-    - [3. Developing CI-CD pipelines](#3-developing-ci-cd-pipelines)
+    - [3. Update Ianvs Quick Start Guide on the web doc](#3-update-ianvs-quick-start-guide-on-the-web-doc)
+    - [4. Developing CI-CD pipelines](#4-developing-ci-cd-pipelines)
   - [Roadmap](#roadmap)
     - [March](#march)
     - [April](#april)
@@ -72,10 +73,72 @@ Inference for LLM" example. This would ensure a seamless and consistent environm
 
 - To ensure backward compatibility, a GitHub Actions workflow should be added to automatically set up and test the example. This workflow will be triggered on every push and pull request to the repository. By doing so, it will verify that new changes do not introduce dependency conflicts and that the example continues to function correctly after each update.
 
-3. Expanding Cloud Model Support with Free API Integration
+3. Add `api_provider`, `api_base_url` and `api_key_env` Parameters to cloudmodel in [test_queryrouting.yaml](https://github.com/kubeedge/ianvs/blob/main/examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml) file.
 
-- Currently, the cloud model is limited to GPT-4o-mini, which is a paid option. To expand support, we can integrate additional models using free APIs, such as the [Groq API](https://console.groq.com/docs/models). A new parameter can be added to [test_queryrouting.yaml](https://github.com/kubeedge/ianvs/blob/main/examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml) to specify whether to use GPT-4o-mini or alternative models via Groq, providing greater flexibility and cost-effective options.
-- To benchmark different models on my custom dataset, I used the Groq API. The updated versions of api_llm.py and cloud_mode.py can be found [here](https://gist.github.com/AryanNanda17/0df5e3d6c6705f4a53b40b2c02c662ff).
+
+- I propose adding two new hyperparameters, `api_provider` and `api_base_url`, under the cloudmodel section of the `test_queryrouting.yaml configuration` file. The updated section would look like this:
+
+```yml
+- type: "cloudmodel"
+  name: "CloudModel"
+  url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/cloud_model.py"
+  hyperparameters:
+    - api_provider:  # New parameter: Specifies the API provider
+        values:
+          - "openai"  # Default value; can be changed to "groq" or others
+    - api_base_url:  # New parameter: Base URL for the provider's API
+        values:
+          - "https://api.openai.com/v1"  # Default; can be changed to "https://api.groq.com/openai/v1"
+    - api_key_env:   # Optional addition: Clarifies the API key source
+        values:
+          - "OPENAI_API_KEY"  # Default; can be changed to "GROQ_API_KEY"
+    - model:
+        values:
+          - "gpt-4o-mini"  # Default; can be changed to provider-specific models
+    - temperature:
+        values:
+          - 0
+    - top_p:
+        values:
+          - 0.8
+    - max_tokens:
+        values:
+          - 512
+    - repetition_penalty:
+        values:
+          - 1.05
+    - use_cache:
+        values:
+          - true
+```
+
+These new parameters are needed because currently in [api_llm.py](https://github.com/kubeedge/ianvs/blob/d209bdeca69078073a2481306918bf3f14669f48/examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/models/api_llm.py#L27), the `api_key` and `base_url` are hardcoded to `OPENAI_API_KEY` and `OPENAI_BASE_URL`. 
+
+With the new parameters we can update the `__init__` method in `api_llm.py` to 
+```python
+def __init__(self, **kwargs) -> None:
+        """Initialize the APIBasedLLM class with flexible provider details."""
+        BaseLLM.__init__(self, **kwargs)
+
+        # Get API details from kwargs (from YAML) or environment variables
+        api_key_env = kwargs.get("api_key_env", "OPENAI_API_KEY")  # Default to OPENAI_API_KEY
+        api_key = os.environ.get(api_key_env)  # Fetch key from specified env var
+        if not api_key:
+            raise ValueError(f"API key not found in environment variable: {api_key_env}")
+
+        base_url = kwargs.get("api_base_url", os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1"))
+        
+        self.client = OpenAI(
+            api_key=api_key,
+            base_url=base_url
+        )
+```
+
+The current `cloudmodel` configuration assumes the use of OpenAI’s API (e.g., `gpt-4o-mini`) by relying on environment variables like `OPENAI_API_KEY` and `OPENAI_BASE_URL` in `api_llm.py`. While the system is already compatible with any OpenAI API-compliant model, explicitly adding `api_provider` and `api_base_url` as configurable parameters in the `test_queryrouting.yaml` file would significantly enhance its flexibility and usability. Here’s why:
+
+- **Broader Model Support**: By parameterizing the API provider and its base URL, users can seamlessly switch between different OpenAI API-compatible providers—such as Groq, Together AI, or others—without modifying the underlying Python code. For example, integrating Groq’s free API (e.g., `https://api.groq.com/openai/v1` with models like `llama3-8b-8192`) becomes a simple config change.
+- **Cost-Effectiveness**: OpenAI models like `gpt-4o-mini` are paid, whereas alternatives like Groq offer free tiers with high-performance models (e.g., Llama 3.1, Mixtral). Adding these parameters enables users to leverage cost-effective or free options without altering the system’s architecture, aligning with the goal of expanding cloud model support economically.
+- **User Convenience**: Currently, switching providers requires setting environment variables or hardcoding changes in `api_llm.py`. With `api_provider` and `api_base_url` in the `test_queryrouting.yaml`, users can define everything in one place—provider, endpoint, and model—making the system more intuitive and reducing setup friction. For instance, a user could specify:
 
 4. Updating the Threshold for Random Routing
 
@@ -106,24 +169,121 @@ There are multiple dependency conflicts and path errors in different examples th
 
 #### Next Steps 
 I will be verifying the setup and updating the documentation for the following examples next:
-- [examples/llm_simple_qa](https://github.com/kubeedge/ianvs/tree/82606430abd8828749d7d7725d7f38e92d0c2310/examples/llm_simple_qa)
+- [examples/llm_simple_qa](https://github.com/kubeedge/ianvs/tree/82606430abd8828749d7d7725d7f38e92d0c2310/examples/llm_simple_qa).
 - [examples/robot/lifelong_learning_bench](https://github.com/kubeedge/ianvs/tree/82606430abd8828749d7d7725d7f38e92d0c2310/examples/robot/lifelong_learning_bench). 
 
-### 3. Developing CI-CD pipelines
+### 3. Update Ianvs Quick Start Guide on the [web doc](https://ianvs.readthedocs.io/en/latest/)
+
+- Currently, the ianvs [quick start guide](https://ianvs.readthedocs.io/en/latest/guides/quick-start.html) uses the example of `PCB-AOI` as a quick start example. The PCB-AOI is no longer suitable as a quick start example. We need to replace the `PCB-AOI` related content with `cloud-edge-collaborative-inference-for-LLM`.
+- In order to ensure consistency, we also need to replace the [how-to-test-algorithms](https://ianvs.readthedocs.io/en/latest/guides/how-to-test-algorithms.html#step-1-test-environment-preparation), [how-to-config-algorithm](https://ianvs.readthedocs.io/en/latest/user_interface/how-to-config-algorithm.html), [how-to-config-testenv](https://ianvs.readthedocs.io/en/latest/user_interface/how-to-config-testenv.html), [how-to-config-benchmarkingjob](https://ianvs.readthedocs.io/en/latest/user_interface/how-to-config-benchmarkingjob.html) and [how-to-use-ianvs-command-line](https://ianvs.readthedocs.io/en/latest/user_interface/how-to-use-ianvs-command-line.html) pages. Currently, all these pages use the setup of `pcb-aoi` as an example for explanation, so we will replace the explanation with "cloud-edge-collaborative-inference-for-llm" as well.
+- We will include a leaderboard for the "cloud-edge-collaborative-inference-for-LLM" example, similar to [this](https://ianvs.readthedocs.io/en/latest/leaderboards/leaderboard-in-semantic-segmentation-of-Cloud-Robotics/leaderboard-of-SAM-based-Edge-Cloud-Collaboration.html), along with a test report like [this](https://ianvs.readthedocs.io/en/latest/proposals/test-reports/testing-single-task-learning-in-industrial-defect-detection-with-pcb-aoi.html).
+- We will also add the query routing algorithms we are using in `cloud-edge-collaborative-inference-for-LLM` under the Algorithms section, similar to [this](https://ianvs.readthedocs.io/en/latest/proposals/algorithms/single-task-learning/fpn.html).
+
+### 4. Developing CI-CD pipelines
 
 In order to ensure backward compatibility I will work on developing GitHub Actions workflows to automatically set up and test the examples. This workflow will be triggered on every push and pull request to the repository. By doing so, it will verify that new changes do not introduce dependency conflicts and that the example continues to function correctly after each update.
+
+- Each workflow automates the testing of a specific Ianvs example (e.g., PCB-AoI defect detection, LLM cloud-edge inference) by:
+
+1. Setting up the environment (Python, dependencies, system packages).
+2. Preparing required datasets and models.
+3. Running the benchmarking job.
+4. Validating outputs (e.g., rank.csv or similar metrics).
+5. Uploading artifacts for debugging.
+
+- Naming Convention
+-> Pattern: test-<example-name>.yml
+-> `<example-name>` is a short, unique identifier for the example (e.g., pcb-aoi, llm-cloud-edge).
+-> Prefix `test`- indicates it’s a testing workflow, consistent across examples.
+-> Location: All files go in`~/ianvs/.github/workflows/`.
+- Examples:
+  - test-pcb-aoi.yml (for the PCB-AoI defect detection example).
+  - test-llm-cloud-edge.yml (for the LLM cloud-edge collaborative inference example).
+  - test-other-example.yml (for other examples).
+
+- Examples:
+-> PCB-AoI Defect Detection example
+
+GitHub Actions workflow for the `pcb-aoi` example. The following file, named `test-pcb-aoi.yml`, will be placed in the `.github/workflows/` folder.
+```yml
+name: CI-CD Pipeline for Ianvs PCB-AoI Example
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  test-pcb-aoi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.6"
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-glx unzip wget
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+      - name: Install Ianvs dependencies
+        run: |
+          python -m pip install ./examples/resources/third_party/*
+          python -m pip install -r requirements.txt
+          python -m pip install -r ./examples/pcb-aoi/requirements.txt
+      - name: Install Ianvs
+        run: python setup.py install
+      - name: Prepare dataset
+        run: |
+          mkdir -p dataset
+          wget -O dataset/dataset.zip "https://kubeedge.obs.cn-north-1.myhuaweicloud.com:443/ianvs/pcb-aoi/dataset.zip"
+          unzip dataset/dataset.zip -d dataset/
+          ls -lh dataset/
+      - name: Prepare initial model
+        run: |
+          mkdir -p initial_model
+          wget -O initial_model/model.zip "https://kubeedge.obs.cn-north-1.myhuaweicloud.com:443/ianvs/pcb-aoi/model.zip"
+          unzip initial_model/model.zip -d initial_model/
+          ls -lh initial_model/
+      - name: Install FPN algorithm wheel
+        run: python -m pip install examples/resources/algorithms/FPN_TensorFlow-0.1-py3-none-any.whl
+      - name: Run Ianvs benchmarking
+        run: |
+          ianvs -f ./examples/pcb-aoi/singletask_learning_bench/fault_detection/benchmarkingjob.yaml
+      - name: Validate results
+        run: |
+          if [ ! -f "workspace/singletask_learning_bench/benchmarkingjob/fpn_singletask_learning/rank.csv" ]; then
+            echo "Error: rank.csv not generated!"
+            exit 1
+          fi
+          grep "f1_score" workspace/singletask_learning_bench/benchmarkingjob/fpn_singletask_learning/rank.csv || echo "Warning: No f1_score metric found"
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: |
+            workspace/singletask_learning_bench/benchmarkingjob/
+            *.log
+```
+
+Similarily other workflows will be added based on their running instructions. 
+
 
 ## Roadmap
 
 ### March 
 - Submit a proposal explaining what new changes will be introduced in detail.
-- Start working on refining the [cloud-edge-collaborative-inference-for-llm](https://github.com/kubeedge/ianvs/tree/82606430abd8828749d7d7725d7f38e92d0c2310/examples/cloud-edge-collaborative-inference-for-llm) example to fully demonstrate the usage of ianvs
+- Start working on refining the [cloud-edge-collaborative-inference-for-llm](https://github.com/kubeedge/ianvs/tree/82606430abd8828749d7d7725d7f38e92d0c2310/examples/cloud-edge-collaborative-inference-for-llm) example to fully demonstrate the usage of ianvs.
 
 ### April 
-- Completing refinement of [examples/cloud-edge-collaborative-inference-for-llm](https://github.com/kubeedge/ianvs/tree/82606430abd8828749d7d7725d7f38e92d0c2310/examples/cloud-edge-collaborative-inference-for-llm) by mid term evaluation 
+- Completing refinement of [examples/cloud-edge-collaborative-inference-for-llm](https://github.com/kubeedge/ianvs/tree/82606430abd8828749d7d7725d7f38e92d0c2310/examples/cloud-edge-collaborative-inference-for-llm) by mid term evaluation.
+- Update Ianvs Quick Start Guide on the [web doc](https://ianvs.readthedocs.io/en/latest/).
 - Start working on testing the other examples and finding errors in it. 
-- Developing CI pipelines for few main examples. 
 
 ### May
+- Developing CI pipelines for the examples. 
 - Correcting all the errors present in old examples.
-- Developing CI pipelines for the remaining examples. 
