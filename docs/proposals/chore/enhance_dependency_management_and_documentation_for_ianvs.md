@@ -192,17 +192,21 @@ In order to ensure backward compatibility I will work on developing GitHub Actio
 5. Uploading artifacts for debugging.
 
 - Naming Convention
--> Pattern: test-<example-name>.yml
+
+-> Pattern: test-example-name.yml
+
 -> `<example-name>` is a short, unique identifier for the example (e.g., pcb-aoi, llm-cloud-edge).
+
 -> Prefix `test`- indicates it’s a testing workflow, consistent across examples.
+
 -> Location: All files go in`~/ianvs/.github/workflows/`.
+
 - Examples:
   - test-pcb-aoi.yml (for the PCB-AoI defect detection example).
   - test-llm-cloud-edge.yml (for the LLM cloud-edge collaborative inference example).
   - test-other-example.yml (for other examples).
 
 - Examples:
--> PCB-AoI Defect Detection example
 
 GitHub Actions workflow for the `pcb-aoi` example. The following file, named `test-pcb-aoi.yml`, will be placed in the `.github/workflows/` folder.
 ```yml
@@ -269,9 +273,14 @@ jobs:
             workspace/singletask_learning_bench/benchmarkingjob/
             *.log
 ```
+The above file: setup the environment, prepare dataset and models, runs the benchmarking job, validates the output and then uploads the artifacts for debugging. 
 
-Similarily other workflows will be added based on their running instructions. 
+Similarily, workflows for other old examples will be added based on their running instructions. 
 
+Hence, in summary, the goal of developing CI-CD pipelines will be to ensure that:
+
+- For any new submission (pull requests or merges), all historical (existing) examples remain executable.
+- For newly submitted examples, there will be a template that contributors adding new examples can refer to it and create the CI-CD workflow for their specific example themselves. This new template "How to Add CI-CD" will placed in [CONTRIBUTION section](https://github.com/kubeedge/ianvs/tree/main/docs/guides) of [ianvs web doc site](https://ianvs.readthedocs.io/en/latest/guides/how-to-contribute-test-environments.html).  
 
 ## Roadmap
 
