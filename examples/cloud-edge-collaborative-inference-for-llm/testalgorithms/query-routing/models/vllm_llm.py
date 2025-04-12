@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import os
-
+import torch  
 from vllm import LLM, SamplingParams
 from vllm.distributed.parallel_state import destroy_model_parallel, destroy_distributed_environment
 from models.base_llm import BaseLLM
@@ -22,7 +22,7 @@ os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 os.environ["VLLM_LOGGING_LEVEL"] = "ERROR"
 
-device = "cuda"
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class VllmLLM(BaseLLM):
     def __init__(self, **kwargs) -> None:
@@ -77,12 +77,15 @@ class VllmLLM(BaseLLM):
         """Warm up the Model for more accurate performance metrics
         """
 
-        self.model.chat(
-            [{"role": "user", "content": "Hello"}],
-            self.sampling_params,
-            use_tqdm=False
-        )
-
+        try:
+            self.model.chat(
+                [{"role": "user", "content": "Hello"}],
+                self.sampling_params,
+                use_tqdm=False
+            )
+        except Exception as e:
+            raise RuntimeError(f"Warmup failed: {e}")
+        
     def _infer(self, messages):
         """Call the vLLM Offline Inference API to get the response
 
@@ -133,8 +136,10 @@ class VllmLLM(BaseLLM):
     def cleanup(self):
         """Release the model from GPU
         """
-        destroy_model_parallel()
-        destroy_distributed_environment()
-
-        if hasattr(self, "model"):
-            del self.model.llm_engine.model_executor
+        try:
+            destroy_model_parallel()
+            destroy_distributed_environment()
+            if hasattr(self, "model"):
+                del self.model.llm_engine.model_executor
+        except Exception as e:
+            raise RuntimeError(f"Cleanup failed: {e}")

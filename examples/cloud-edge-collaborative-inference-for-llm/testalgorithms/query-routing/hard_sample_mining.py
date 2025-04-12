@@ -15,6 +15,7 @@
 """Hard Example Mining Algorithms"""
 
 import abc
+import torch
 import random
 from transformers import pipeline
 from sedna.common.class_factory import ClassFactory, ClassType
@@ -22,6 +23,8 @@ from core.common.log import LOGGER
 
 __all__ = ('BERTFilter', 'EdgeOnlyFilter', 'CloudOnlyFilter',
            'RandomRouterFilter', 'OracleRouterFilter')
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class BaseFilter(metaclass=abc.ABCMeta):
     """The base class to define unified interface."""
@@ -73,7 +76,11 @@ class BERTFilter(BaseFilter, abc.ABC):
         self.task = kwargs.get("task", "text-classification")
         self.max_length = kwargs.get("max_length", 512)
 
-        self.classifier = pipeline(self.task, model=self.model, device="cuda")
+        try:
+            self.classifier = pipeline(self.task, model=self.model, device=device)
+        except Exception as e:
+            LOGGER.error(f"Failed to initialize the pipeline: {e}")
+            raise RuntimeError("Pipeline initialization failed. Please check the model and task parameters.")
 
     def _text_classification_postprocess(self, result):
         """Postprocess the text classification result
@@ -183,6 +190,9 @@ class RandomRouterFilter(BaseFilter, abc.ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.threshold = kwargs.get("threshold", 0.5)
+        if not (0 <= self.threshold <= 1):
+            LOGGER.error("Threshold must be between 0 and 1. Defaulting to 0.5.")
+            self.threshold = 0.5
 
     def __call__(self, data=None) -> bool:
         return False if random.random() < self.threshold else True
@@ -200,7 +210,10 @@ class OracleRouterFilter(BaseFilter, abc.ABC):
 
         self.edge_model = kwargs.get("edgemodel")
         self.cloud_model = kwargs.get("cloudmodel")
-
+        if not self.edge_model or not self.cloud_model:
+            LOGGER.error("Both edge and cloud models must be provided.")
+            raise ValueError("Edge and cloud models are required for OracleRouterFilter.")
+        
     def __call__(self, data=None):
         """Route the query to edge or cloud based on the models' prediction.
 
