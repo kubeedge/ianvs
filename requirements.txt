@@ -3,3 +3,4 @@ scikit-learn
 numpy
 pandas
 tqdm
+onnx
