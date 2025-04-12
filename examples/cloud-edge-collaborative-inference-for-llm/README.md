@@ -63,24 +63,25 @@ One machine is all you need, i.e., a laptop or a virtual machine is sufficient a
 ## Step 1. Ianvs Preparation
 
 ```bash
-# Create a new conda environment with Python>=3.8 (venv users can do it in their own way).
-conda create -n ianvs-experiment python=3.8
-
-# Activate our environment
-conda activate ianvs-experiment
 
 # Clone Ianvs Repo
 git clone https://github.com/kubeedge/ianvs.git
 cd ianvs
 
+# Create a new conda environment with Python>=3.8 and rust(venv users can do it in their own way).
+conda create -n ianvs-experiment python=3.8 rust -c conda-forge
+
+# Activate our environment
+conda activate ianvs-experiment
+
 # Install Sedna
 pip install examples/resources/third_party/sedna-0.6.0.1-py3-none-any.whl
 
-# Install dependencies for this example.
-pip install -r examples/cloud-edge-collaborative-inference-for-llm/requirements.txt
-
 # Install dependencies for Ianvs Core.
 pip install -r requirements.txt
+
+# Install dependencies for this example.
+pip install -r examples/cloud-edge-collaborative-inference-for-llm/requirements.txt
 
 # Install ianvs
 python setup.py install
@@ -96,7 +97,20 @@ Here, we provide `MMLU-5-shot` dataset and `GPQA-diamond` dataset for testing. T
 
 1. Download `mmlu-5-shot` from [Ianvs-MMLU-5-shot](https://huggingface.co/datasets/FuryMartin/Ianvs-MMLU-5-shot), (or [Ianvs-GPQA-diamond](https://huggingface.co/datasets/FuryMartin/Ianvs-GPQA-diamond)) which is a transformed MMLU-5-shot dataset formatted to fit Ianvs's requirements.
 
+```bash
+git clone https://huggingface.co/datasets/FuryMartin/Ianvs-MMLU-5-shot
+git lfs install 
+cd Ianvs-MMLU-5-shot
+git lfs pull
+cd ..
+```
+
 2. Create a `dataset` folder in the root directory of Ianvs and move `mmlu-5-shot` into the `dataset` folder.
+
+```bash
+mkdir dataset
+mv Ianvs-MMLU-5-shot/mmlu-5-shot/ dataset/
+```
 
 3. Then, check the path of `train_data` and `test_dat` in 
 `examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml`.
@@ -251,6 +265,10 @@ To enable you directly get the results, here we provide a workspace folder with 
 
 You can download `workspace-mmlu` folder from [Ianvs-MMLU-5-shot](https://huggingface.co/datasets/FuryMartin/Ianvs-MMLU-5-shot) and put it under your `ianvs` folder.
 
+```bash
+mv Ianvs-MMLU-5-shot/workspace-mmlu/ .
+```
+
 ### Run Joint Inference example
 
 Run the following command:
@@ -260,14 +278,30 @@ Run the following command:
 After the process finished, you will see output like this:
 
 ```bash
-[2024-10-28 18:03:37,314] edge_model.py(43) [INFO] - {'model': 'Qwen/Qwen2.5-1.5B-Instruct', 'backend': 'vllm', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'tensor_parallel_size': 4, 'gpu_memory_utilization': 0.9, 'use_cache': True}
-[2024-10-28 18:03:37,314] cloud_model.py(34) [INFO] - {'model': 'gpt-4o-mini', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'use_cache': True}
-[2024-10-28 18:03:37,850] joint_inference.py(73) [INFO] - Loading dataset
-[2024-10-28 18:03:38,703] hard_sample_mining.py(30) [INFO] - USING EdgeOnlyFilter
-[2024-10-28 18:03:38,704] joint_inference.py(162) [INFO] - Inference Start
-100%|██████████████████████████████████| 14042/14042 [00:02<00:00, 6182.92it/s, Edge=14042, Cloud=0]
-[2024-10-28 18:03:40,975] joint_inference.py(186) [INFO] - Inference Finished
-[2024-10-28 18:03:40,976] joint_inference.py(131) [INFO] - Release models
+[2025-04-12 09:20:14,523] edge_model.py(43) [INFO] - {'model': 'Qwen/Qwen2.5-1.5B-Instruct', 'backend': 'vllm', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'tensor_parallel_size': 4, 'gpu_memory_utilization': 0.9, 'use_cache': True}
+[2025-04-12 09:20:14,524] cloud_model.py(34) [INFO] - {'model': 'gpt-4o-mini', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'use_cache': True}
+[2025-04-12 09:20:14,880] joint_inference.py(73) [INFO] - Loading dataset
+[2025-04-12 09:20:15,943] hard_sample_mining.py(30) [INFO] - USING EdgeOnlyFilter
+[2025-04-12 09:20:15,943] joint_inference.py(162) [INFO] - Inference Start
+100%|██████████████████████████████████| 14042/14042 [00:03<00:00, 4418.66it/s, Edge=14042, Cloud=0]
+[2025-04-12 09:20:19,122] joint_inference.py(186) [INFO] - Inference Finished
+[2025-04-12 09:20:19,122] joint_inference.py(131) [INFO] - Release models
+[2025-04-12 09:20:23,844] edge_model.py(43) [INFO] - {'model': 'Qwen/Qwen2.5-3B-Instruct', 'backend': 'vllm', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'tensor_parallel_size': 4, 'gpu_memory_utilization': 0.9, 'use_cache': True}
+[2025-04-12 09:20:23,844] cloud_model.py(34) [INFO] - {'model': 'gpt-4o-mini', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'use_cache': True}
+[2025-04-12 09:20:23,851] joint_inference.py(73) [INFO] - Loading dataset
+[2025-04-12 09:20:24,845] hard_sample_mining.py(30) [INFO] - USING EdgeOnlyFilter
+[2025-04-12 09:20:24,845] joint_inference.py(162) [INFO] - Inference Start
+100%|██████████████████████████████████| 14042/14042 [00:03<00:00, 4413.68it/s, Edge=14042, Cloud=0]
+[2025-04-12 09:20:28,027] joint_inference.py(186) [INFO] - Inference Finished
+[2025-04-12 09:20:28,027] joint_inference.py(131) [INFO] - Release models
+[2025-04-12 09:20:32,741] edge_model.py(43) [INFO] - {'model': 'Qwen/Qwen2.5-7B-Instruct', 'backend': 'vllm', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'tensor_parallel_size': 4, 'gpu_memory_utilization': 0.9, 'use_cache': True}
+[2025-04-12 09:20:32,741] cloud_model.py(34) [INFO] - {'model': 'gpt-4o-mini', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'use_cache': True}
+[2025-04-12 09:20:32,749] joint_inference.py(73) [INFO] - Loading dataset
+[2025-04-12 09:20:33,738] hard_sample_mining.py(30) [INFO] - USING EdgeOnlyFilter
+[2025-04-12 09:20:33,738] joint_inference.py(162) [INFO] - Inference Start
+100%|██████████████████████████████████| 14042/14042 [00:03<00:00, 4456.34it/s, Edge=14042, Cloud=0]
+[2025-04-12 09:20:36,890] joint_inference.py(186) [INFO] - Inference Finished
+[2025-04-12 09:20:36,890] joint_inference.py(131) [INFO] - Release models
 ```
 
 ### Results
