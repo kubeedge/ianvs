@@ -182,7 +182,7 @@ class RandomRouterFilter(BaseFilter, abc.ABC):
     """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.threshold = kwargs.get("threshold", 0)
+        self.threshold = kwargs.get("threshold", 0.5)
 
     def __call__(self, data=None) -> bool:
         return False if random.random() < self.threshold else True
