@@ -1,6 +1,33 @@
-# Quick Start
+# Table of Contents
 
-## Introduction
+- [Details of Cloud Edge Collaborative Inference for LLM](#deatails-of-cloud-edge-collaborative-inference-for-llms)
+  - [Introduction](#introduction)
+  - [Why LLM Need Cloud-Edge Collaborative Inference?](#why-llm-need-cloud-edge-collaborative-inference)
+  - [Possible Collaborative Inference Strategy](#possible-collaborative-inference-strategy)
+  - [Details of Design](#details-of-design)
+- [Quick Start Guide for Benchmarking with Ianvs](#quick-start-guide-for-benchmarking-with-ianvs)
+  - [Docker-Based Setup](#docker-based-setup)
+  - [Detailed Setup Guide](#detailed-setup-guide)
+    - [Required Resources](#required-resources)
+    - [Step 1: Ianvs Preparation](#step-1-ianvs-preparation)
+    - [Step 2: Dataset and Model Preparation](#step-2-dataset-and-model-preparation)
+      - [Dataset Configuration](#dataset-configuration)
+      - [Metric Configuration](#metric-configuration)
+      - [Model Configuration](#model-configuration)
+      - [Router Configuration](#router-configuration)
+      - [Data Processor Configuration](#data-processor-configuration)
+    - [Step 3: Run Ianvs](#step-3-run-ianvs)
+      - [Provided Response Cache](#provided-response-cache)
+      - [Run Joint Inference Example](#run-joint-inference-example)
+    - [Results](#results)
+- [Discussion](#discussion)
+  - [Query Routing's Application Scenario](#query-routings-application-scenario)
+- [Future](#future)
+- [References](#references)
+
+## Deatails of Cloud Edge Collaborative Inference for LLMs
+
+### Introduction
 
 This example aims to implement benchmarks for **LLM in cloud-edge collaborative inference scenario**. 
 
@@ -42,7 +69,52 @@ To save API calls during multi-round testing, this example has designed a result
 
 After all tests are completed, the Test Env Manager will calculate relevant metrics based on selected Metrics and hand over to Story Manager for printing test reports and generating Leader Board.
 
-## Required Resources
+## Quick Start Guide for Benchmarking with Ianvs
+
+- To quickly experience benchmarking with Ianvs, proceed with the [Docker-Based Setup](#docker-based-setup).
+- For a detailed setup process, including creating a custom dataset, refer to the [Detailed Setup Guide](#detailed-setup-guide).
+
+### Docker based setup
+
+The Docker-based setup assumes you have Docker installed on your system and are using an Ubuntu-based Linux distribution.
+
+*If you don't have Docker installed, follow the Docker Engine installation guide [here](https://docs.docker.com/engine/install/ubuntu/).*
+
+1. From the root directory of Ianvs, build the `cloud-edge-collaborative-inference-for-llm` Docker image:
+```bash 
+docker build -t ianvs-experiment-image ./examples/cloud-edge-collaborative-inference-for-llm/
+```
+
+2. Run the image in an interactive shell:
+```bash 
+docker run -it ianvs-experiment-image /bin/bash 
+```
+
+3. Activate the ianvs-experiment Conda environment:
+```bash 
+conda activate ianvs-experiment
+```
+
+4. Set the required environment variables for the API (use either OpenAI or GROQ credentials):
+```bash 
+export OPENAI_BASE_URL="https://api.openai.com/v1"
+export OPENAI_API_KEY=sk_xxxxxxxx
+```
+
+`Alternatively, for GROQ, use GROQ_BASE_URL and GROQ_API_KEY.`
+
+5. Run the Ianvs benchmark:
+```bash 
+ianvs -f examples/cloud-edge-collaborative-inference-for-llm/benchmarkingjob.yaml
+```
+
+*Note: To help you get results quickly, we have provided a workspace folder with cached results for `Qwen/Qwen2.5-1.5B-Instruct`, `Qwen/Qwen2.5-3B-Instruct`,`Qwen/Qwen2.5-7B-Instruct` and `gpt-4o-mini`.*
+
+- If you want to create a custom dataset, proceed to the next section. 
+
+## Detailed Setup Guide
+
+### Required Resources
 
 Before using this example, you need to have the device ready:
 
@@ -60,7 +132,7 @@ One machine is all you need, i.e., a laptop or a virtual machine is sufficient a
 
 - Python 3.8+ environment
 
-## Step 1. Ianvs Preparation
+#### Step 1. Ianvs Preparation
 
 ```bash
 
@@ -89,9 +161,9 @@ python setup.py install
 
 If you want to use speculative decoding models like [EAGLE](https://github.com/SafeAILab/EAGLE), refer to the original repository for setup instructions.
 
-## Step 2. Dataset and Model Preparation
+#### Step 2. Dataset and Model Preparation
 
-### Dataset Configuration
+##### Dataset Configuration
 
 Here, we provide `MMLU-5-shot` dataset and `GPQA-diamond` dataset for testing. The following is the instruction for dataset preparation for `MMLU-5-shot`, `GPQA-diamond` follows the same progress.
 
@@ -112,14 +184,14 @@ mkdir dataset
 mv Ianvs-MMLU-5-shot/mmlu-5-shot/ dataset/
 ```
 
-3. Then, check the path of `train_data` and `test_dat` in 
+3. Then, check the path of `train_data` and `test_data` in 
 `examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml`.
 
     - If you created the `dataset` folder inside `ianvs/` as mentioned earlier, then the relative path is correct and does not need to be modified.
 
     - If your `dataset` is created in a different location, please use an absolute path, and using `~` to represent the home directory is not supported.
 
-#### Dataset Details
+###### Dataset Details
 
 If you want to construct your own dataset, please see the details below and follow the instruction.
 
@@ -160,7 +232,7 @@ Here is an example:
 }
 ```
 
-### Metric Configuration
+##### Metric Configuration
 
 *Note: If you just want to run this example quickly, you can skip this step.*
 
@@ -182,7 +254,7 @@ Each metric is calculated by a module in `examples/cloud-edge-collaborative-infe
 
 You can select multiple metrics in `examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml`.
 
-### Model Configuration
+##### Model Configuration
 
 *Note: If you just want to run this example quickly, you can skip this step.*
 
@@ -190,7 +262,7 @@ The models are configured in `examples/cloud-edge-collaborative-inference-for-ll
 
 In the configuration file, there are two models available for configuration: `EdgeModel` and `CloudModel`.
 
-#### EdgeModel Configuration
+##### EdgeModel Configuration
 
 The `EdgeModel` is designed to be deployed on your local machine, offering support for multiple serving backends including `huggingface`, `vllm`, `EagleSpecDec`. Additionally, it provides the flexibility to integrate with API-based model services.
 
@@ -208,7 +280,7 @@ For both `EdgeModel`, the arguments are:
 | gpu_memory_utilization | float | The percentage of GPU memory utilization (Used for vLLM)     | 0.9                      |
 | draft_model | str | The draft model used for Speculative Decoding | - |
 
-#### CloudModel Configuration
+##### CloudModel Configuration
 
 
 The `CloudModel` represents the model on cloud, it will call LLM API via OpenAI API format. You need to set your OPENAI_BASE_URL and OPENAI_API_KEY in the environment variables yourself, for example.
@@ -217,6 +289,8 @@ The `CloudModel` represents the model on cloud, it will call LLM API via OpenAI 
 export OPENAI_BASE_URL="https://api.openai.com/v1"
 export OPENAI_API_KEY=sk_xxxxxxxx
 ```
+
+`Alternatively, for GROQ, use GROQ_BASE_URL and GROQ_API_KEY.`
 
 For `CloudModel`, the open parameters are:
 
@@ -228,8 +302,7 @@ For `CloudModel`, the open parameters are:
 | max_tokens         | int  | The maximum number of tokens that can be generated in the chat completion | 512         |
 | repetition_penalty | float  | The parameter for repetition penalty                         | 1.05        |
 
-
-#### Router Configuration
+##### Router Configuration
 
 Router is a component that routes the query to the edge or cloud model. The router is configured by `hard_example_mining` in `examples/cloud-edge-collaborative-inference-for-llm/testrouters/query-routing/test_queryrouting.yaml`.
 
@@ -247,7 +320,7 @@ You can modify the `router` parameter in `test_queryrouting.yaml` to select the 
 
 For BERT router, you can use [routellm/bert](https://huggingface.co/routellm/bert) or [routellm/bert_mmlu_augmented](https://huggingface.co/routellm/bert_mmlu_augmented) or your own BERT model/
 
-#### Data Processor Configuration
+##### Data Processor Configuration
 The Data Processor allows you to custom your own data format after the dataset loaded.
 
 Currently, supported routers include:
@@ -256,9 +329,9 @@ Currently, supported routers include:
 |  :---: | :---: | :---: |
 | OracleRouterDatasetProcessor     |  Expose `gold` label to OracleRouter                      |   -         |
 
-## Step 3. Run Ianvs
+#### Step 3. Run Ianvs
 
-### Provided Response Cache
+##### Provided Response Cache
 The testing process may take much time, depending on the number of test cases and the inference speed of the model.
 
 To enable you directly get the results, here we provide a workspace folder with cached results of `Qwen/Qwen2.5-1.5B-Instruct`, `Qwen/Qwen2.5-3B-Instruct`,`Qwen/Qwen2.5-7B-Instruct` and `gpt-4o-mini`.
@@ -269,7 +342,7 @@ You can download `workspace-mmlu` folder from [Ianvs-MMLU-5-shot](https://huggin
 mv Ianvs-MMLU-5-shot/workspace-mmlu/ .
 ```
 
-### Run Joint Inference example
+##### Run Joint Inference example
 
 Run the following command:
 
@@ -365,7 +438,6 @@ You can modify and run `performance-cost-plot.py` to get your Performance-Cost f
 
 Some related research $^{[1]}$ has trained pratical routers that can save up to 40% of GPT-4 API calls while maintaining essentially unchanged accuracy on the test set.
 
-
 ## Future
 
 This example builds an architecture for testing query routing strategies, but the provided dataset has some drawbacks such as being one-sided and singular, making it difficult to reflect effects in real-world scenarios. 
@@ -377,9 +449,7 @@ Thus, the future tasks of this example include:
 - Build a more comprehensive dataset for better router evaluation
 - Try to consider a native Speculative Decoding in cloud-edge collaborative inference scenario.
 
-
-
-**Reference**
+## References
 
 [1] Ding, Dujian, et al. "Hybrid LLM: Cost-efficient and quality-aware query routing." *arXiv preprint arXiv:2404.14618* (2024).
 
