@@ -1,6 +1,6 @@
 # How to config benchmarkingjob
 
-The algorithm developer is able to test his/her own targeted algorithm using the following configuration information.
+Lets take the example of [cloud-edge-collaborative-inference-for-llm](../proposals/scenarios/cloud-edge-collaborative-inference-for-llm/mmlu-5-shot.md) scenario and understand how algorithm developer is able to test his/her own targeted algorithm and configs the benchmarkingjob using the following configuration.
 
 ## The configuration of benchmarkingjob
 
@@ -9,8 +9,8 @@ The algorithm developer is able to test his/her own targeted algorithm using the
 |name|yes|Job name of benchmarking; Type: string|
 |workspace|no|The url address of job workspace that will reserve the output of tests; Type: string; Default value: `./workspace`|
 |testenv|yes|The url address of test environment configuration file; Type: string; Value Constraint: The file format supports yaml/yml.|
-|test_object|yes|[The configuration of test_object](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-benchmarkingjob.md#the-configuration-of-test_object)|
-|rank|yes|[The configuration of ranking leaderboard](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-benchmarkingjob.md#the-configuration-of-rank)|
+|test_object|yes|The configuration of test_object|
+|rank|yes|The configuration of ranking leaderboard|
 
 For example:
 
@@ -20,11 +20,11 @@ benchmarkingjob:
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
   # default value: "./workspace"
-  workspace: "./workspace/incremental_learning_bench"
+  workspace: "./workspace-mmlu"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/testenv.yaml"
+  testenv: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml"
   # the configuration of test object
   test_object:
     ...
@@ -38,7 +38,7 @@ benchmarkingjob:
 | Property | Required | Description |
 |----------|----------|-------------|
 |type|yes|Type of test object; Type: string; Value Constraint: Currently the option of value is "algorithms",the others will be added in succession.|
-|algorithms|no|[Test algorithm configuration](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-benchmarkingjob.md#the-configuration-of-algorithms); Type: list|
+|algorithms|no|Test algorithm configuration; Type: list|
 
 For example:
 
@@ -64,12 +64,12 @@ For example:
 
 ```yaml
 # test algorithm configuration files; list type;
-algorithms:
-  # algorithm name; string type;
-  - name: "fpn_incremental_learning"
-  # the url address of test algorithm configuration file; string type;
-  # the file format supports yaml/yml
-  url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/fpn_algorithm.yaml"
+  algorithms:
+    # algorithm name; string type;
+    - name: "query-routing"
+      # the url address of test algorithm configuration file; string type;
+      # the file format supports yaml/yml;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml"
 ```
 
 ### The configuration of rank
@@ -77,8 +77,8 @@ algorithms:
 | Property | Required | Description |
 |----------|----------|-------------|
 |sort_by|yes|Rank leaderboard with metric of test case's evaluation and order; Type: list; Value Constraint: The sorting priority is based on the sequence of metrics in the list from front to back.|
-|visualization|yes|[The configuration of visualization](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-benchmarkingjob.md#the-configuration-of-visualization)|
-|selected_dataitem|yes|[The configuration of selected_dataitem](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-benchmarkingjob.md#the-configuration-of-selected_dataitem); The user can add his/her interested dataitems in terms of "paradigms", "modules", "hyperparameters" and "metrics", so that the selected columns will be shown.|
+|visualization|yes|The configuration of visualization|
+|selected_dataitem|yes|The configuration of selected_dataitem; The user can add his/her interested dataitems in terms of "paradigms", "modules", "hyperparameters" and "metrics", so that the selected columns will be shown.|
 |save_mode|yes|save mode of selected and all dataitems in workspace `./rank`; Type: string; Value Constraint: Currently the options of value are as follows: 1> "selected_and_all": save selected and all dataitems. 2> "selected_only": save selected dataitems.|
 
 For example:
@@ -88,7 +88,7 @@ For example:
 rank:
   # rank leaderboard with metric of test case's evaluation and order ; list type;
   # the sorting priority is based on the sequence of metrics in the list from front to back;
-  sort_by: [ { "f1_score": "descend" }, { "samples_transfer_ratio": "ascend" } ]
+  sort_by: [ { "Accuracy": "descend" } ]
   # visualization configuration
   visualization:
     ...
@@ -147,30 +147,33 @@ selected_dataitem:
   # currently the options of value are as follows:
   #   1> "all": select all modules in the leaderboard;
   #   2> modules in the leaderboard, e.g., "basemodel"
-  modules: [ "all" ]
+  modules: [ "hard_example_mining" ]
   # currently the options of value are as follows:
   #   1> "all": select all hyperparameters in the leaderboard;
   #   2> hyperparameters in the leaderboard, e.g., "momentum"
-  hyperparameters: [ "all" ]
+  hyperparameters: [ "edgemodel-model", "edgemodel-backend", "cloudmodel-model"]
   # currently the options of value are as follows:
   #   1> "all": select all metrics in the leaderboard;
   #   2> metrics in the leaderboard, e.g., "F1_SCORE"
-  metrics: [ "f1_score", "samples_transfer_ratio" ]
+  metrics: ["Accuracy", "Edge Ratio", "Time to First Token", "Throughput", "Internal Token Latency", "Cloud Prompt Tokens", "Cloud Completion Tokens", "Edge Prompt Tokens", "Edge Completion Tokens"]
 ```
 
 ## Show the example
 
 ```yaml
+# benchmarking.yaml
 benchmarkingjob:
-  # job name of benchmarking; string type;
+  # job name of bechmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  # default value: "./workspace"
-  workspace: "./workspace/incremental_learning_bench"
+  # "~/" cannot be identified, so must be relative path or absoulute path
+  workspace: "./workspace-mmlu"
+
+  hard_example_mining_mode: "mining-then-inference"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/testenv.yaml"
+  testenv: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -180,16 +183,16 @@ benchmarkingjob:
     # test algorithm configuration files; list type;
     algorithms:
       # algorithm name; string type;
-      - name: "fpn_incremental_learning"
+      - name: "query-routing"
         # the url address of test algorithm configuration file; string type;
-        # the file format supports yaml/yml
-        url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/fpn_algorithm.yaml"
+        # the file format supports yaml/yml;
+        url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml"
 
   # the configuration of ranking leaderboard
   rank:
     # rank leaderboard with metric of test case's evaluation and order ; list type;
     # the sorting priority is based on the sequence of metrics in the list from front to back;
-    sort_by: [ { "f1_score": "descend" }, { "samples_transfer_ratio": "ascend" } ]
+    sort_by: [ { "Accuracy": "descend" } ]
 
     # visualization configuration
     visualization:
@@ -213,17 +216,18 @@ benchmarkingjob:
       # currently the options of value are as follows:
       #   1> "all": select all modules in the leaderboard;
       #   2> modules in the leaderboard, e.g., "basemodel"
-      modules: [ "all" ]
+      modules: [ "hard_example_mining" ]
       # currently the options of value are as follows:
       #   1> "all": select all hyperparameters in the leaderboard;
       #   2> hyperparameters in the leaderboard, e.g., "momentum"
-      hyperparameters: [ "all" ]
+      hyperparameters: [ "edgemodel-model", "edgemodel-backend", "cloudmodel-model"]
       # currently the options of value are as follows:
       #   1> "all": select all metrics in the leaderboard;
       #   2> metrics in the leaderboard, e.g., "f1_score"
-      metrics: [ "f1_score", "samples_transfer_ratio" ]
+      # metrics: [ "acc" , "edge-rate", "cloud-prompt", "cloud-completion", "edge-prompt", "edge-completion", "input-throughput", "output-throughput", "latency"]
+      metrics: ["Accuracy", "Edge Ratio", "Time to First Token", "Throughput", "Internal Token Latency", "Cloud Prompt Tokens", "Cloud Completion Tokens", "Edge Prompt Tokens", "Edge Completion Tokens"]
 
-    # save mode of selected and all dataitems in workspace `./rank` ; string type;
+    # model of save selected and all dataitems in workspace; string type;
     # currently the options of value are as follows:
     #  1> "selected_and_all": save selected and all dataitems;
     #  2> "selected_only": save selected dataitems;
