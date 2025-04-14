@@ -5,10 +5,11 @@
   - [Why LLM Need Cloud-Edge Collaborative Inference?](#why-llm-need-cloud-edge-collaborative-inference)
   - [Possible Collaborative Inference Strategy](#possible-collaborative-inference-strategy)
   - [Details of Design](#details-of-design)
-- [Quick Start Guide for Benchmarking with Ianvs](#quick-start-guide-for-benchmarking-with-ianvs)
+- [Quick Start Guide](#quick-start-guide)
+  - [Required Resources](#required-resources)
+  - [Methods for benchmarking with ianvs](#methods-for-benchmarking-with-ianvs)
   - [Docker-Based Setup](#docker-based-setup)
   - [Detailed Setup Guide](#detailed-setup-guide)
-    - [Required Resources](#required-resources)
     - [Step 1: Ianvs Preparation](#step-1-ianvs-preparation)
     - [Step 2: Dataset and Model Preparation](#step-2-dataset-and-model-preparation)
       - [Dataset Configuration](#dataset-configuration)
@@ -69,7 +70,27 @@ To save API calls during multi-round testing, this example has designed a result
 
 After all tests are completed, the Test Env Manager will calculate relevant metrics based on selected Metrics and hand over to Story Manager for printing test reports and generating Leader Board.
 
-## Quick Start Guide for Benchmarking with Ianvs
+## Quick Start Guide 
+
+### Required Resources
+
+Before using this example, you need to have the device ready:
+
+- One machine is all you need, i.e., a laptop or a virtual machine is sufficient and a cluster is not necessary
+
+- 2 CPUs or more
+
+- 1 GPU with at least 6GB of memory, depends on the tested model
+
+- 4GB+ free memory, depends on algorithm and simulation setting
+
+- 10GB+ free disk space (depends on your model size)
+
+- Internet connection for GitHub, PyPI,  HuggingFace, etc
+
+- Python 3.8+ environment
+
+### Methods for Benchmarking with Ianvs
 
 - To quickly experience benchmarking with Ianvs, proceed with the [Docker-Based Setup](#docker-based-setup).
 - For a detailed setup process, including creating a custom dataset, refer to the [Detailed Setup Guide](#detailed-setup-guide).
@@ -112,25 +133,7 @@ ianvs -f examples/cloud-edge-collaborative-inference-for-llm/benchmarkingjob.yam
 
 - If you want to create a custom dataset, proceed to the next section. 
 
-## Detailed Setup Guide
-
-### Required Resources
-
-Before using this example, you need to have the device ready:
-
-One machine is all you need, i.e., a laptop or a virtual machine is sufficient and a cluster is not necessary
-
-- 2 CPUs or more
-
-- 1 GPU with at least 6GB of memory, depends on the tested model
-
-- 4GB+ free memory, depends on algorithm and simulation setting
-
-- 10GB+ free disk space (depends on your model size)
-
-- Internet connection for GitHub, PyPI,  HuggingFace, etc
-
-- Python 3.8+ environment
+### Detailed Setup Guide
 
 #### Step 1. Ianvs Preparation
 
@@ -318,7 +321,7 @@ Currently, supported routers include:
 
 You can modify the `router` parameter in `test_queryrouting.yaml` to select the router you want to use.
 
-For BERT router, you can use [routellm/bert](https://huggingface.co/routellm/bert) or [routellm/bert_mmlu_augmented](https://huggingface.co/routellm/bert_mmlu_augmented) or your own BERT model/
+For BERT router, you can use [routellm/bert](https://huggingface.co/routellm/bert) or [routellm/bert_mmlu_augmented](https://huggingface.co/routellm/bert_mmlu_augmented) or your own BERT model.
 
 ##### Data Processor Configuration
 The Data Processor allows you to custom your own data format after the dataset loaded.
