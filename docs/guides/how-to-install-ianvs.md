@@ -10,7 +10,7 @@ This guide covers how to install Ianvs on a Linux environment.
 - 4GB+ free memory, depends on algorithm and simulation setting
 - 10GB+ free disk space
 - Internet connection for GitHub and pip, etc
-- Python 3.6+ installed
+- Python 3.8 installed
 
 you can check the python version by the following command:
 ```
@@ -18,7 +18,7 @@ python -V
 ```
 after doing that, the output will be like this, which means your version fits the bill.
 ```
-Python 3.6.9
+Python 3.8
 ```
 
 ## Install ianvs on Linux

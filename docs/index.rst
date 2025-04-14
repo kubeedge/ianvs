@@ -48,7 +48,9 @@ Start your journey on Ianvs with the following links:
     :caption: SCENARIOs
     
     Industrial Defect Detection: PCB-AoI <proposals/scenarios/industrial-defect-detection/pcb-aoi>
-
+    Cloud Edge Collaborative inference for LLM: Ianvs-MMLU-5-shot <proposals/scenarios/cloud-edge-collaborative-inference-for-llm/mmlu-5-shot>
+    Cloud Robotics Lifelong Learning <proposals/scenarios/cloud-robotics-lifelong-learning-dataset/cloud-robotics>
+    
 .. toctree::
     :maxdepth: 1
     :titlesonly:
@@ -58,7 +60,8 @@ Start your journey on Ianvs with the following links:
     Single Task Learning: FPN <proposals/algorithms/single-task-learning/fpn>
     Incremental Learning: BasicIL-FPN <proposals/algorithms/incremental-learning/basicIL-fpn>
     Lifelong Learning: RFNet <proposals/algorithms/lifelong-learning/Cloud-Robotic AI Benchmarking for Edge-cloud Collaborative Lifelong Learning>
-    
+    Joint Inference : Query-Routing <proposals/algorithms/joint-inference/query-routing>
+
 .. toctree::
     :maxdepth: 1
     :titlesonly:
@@ -76,10 +79,12 @@ Start your journey on Ianvs with the following links:
     :glob:
     :caption: Stories
 
+    Leaderboard: Joint Inference Learning on Ianvs-MMLU-5-shot <leaderboards/leaderboard-in-cloud-edge-collaborative-inference-for-llm/leaderboard-of-cloud-edge-collaborative-inference-for-llm>
     Leaderboard: Single Task Learning on PCB-AoI <leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning>
     Leaderboard: Incremental Learning on PCB-AoI <leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-incremental-learning>
     Leaderboard: Lifelong Learning on Cloud-Robotics <leaderboards/leaderboard-in-semantic-segmentation-of-Cloud-Robotics/leaderboard-of-lifelong-learning>
     Leaderboard: Edge-Cloud Collaboration on Cloud-Robotics <leaderboards/leaderboard-in-semantic-segmentation-of-Cloud-Robotics/leaderboard-of-SAM-based-Edge-Cloud-Collaboration>
+    Test Report: Joint Inference Learning on Ianvs-MMLU-5-shot <proposals/test-reports/testing-joint-inference-learning-in-cloud-edge-collaborative-inference-for-llm-scenario-with-ianvs-mmlu-5-shot-dataset>
     Test Report: Single Task Learning on PCB-AoI <proposals/test-reports/testing-single-task-learning-in-industrial-defect-detection-with-pcb-aoi>
     Test Report: Incremental Learning on PCB-AoI <proposals/test-reports/testing-incremental-learning-in-industrial-defect-detection-with-pcb-aoi>
 
