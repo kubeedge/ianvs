@@ -1,187 +1,172 @@
 # How to config algorithm
 
-The algorithm developer is able to test his/her own targeted algorithm and configs the algorithm using the following
-configuration.
+Lets take the example of [cloud-edge-collaborative-inference-for-llm](../proposals/scenarios/cloud-edge-collaborative-inference-for-llm/mmlu-5-shot.md) scenario and understand how algorithm developer is able to test his/her own targeted algorithm and configs the algorithm using the following configuration.
 
 ## The configuration of algorithm
 
-| Property | Required | Description |
-|----------|----------|-------------|
-|paradigm_type|yes|Paradigm name; Type: string; Value Constraint: Currently the options of value are as follows: 1> singletasklearning 2> incrementallearning|
-|incremental_learning_data_setting|no|Data setting for incremental learning paradigm.[the configuration of incremental_learning_data_setting](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-algorithm.md#the-configuration-of-incremental_learning_data_setting)|
-|initial_model_url|no|The url address of initial model for model pre-training; Type: string|
-|modules|yes|The algorithm modules for paradigm; Type: list; Value Constraint: the list of [the configuration of module](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-algorithm.md#the-configuration-of-module)|
+### Model Configuration
 
-For example:
+The models are configured in `examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml`.
 
-```yaml
-algorithm:
-  # paradigm type; string type;
-  # currently the options of value are as follows:
-  #   1> "singletasklearning"
-  #   2> "incrementallearning"
-  paradigm_type: "incrementallearning"
-  incremental_learning_data_setting:
-    ...
-  # the url address of initial model for model pre-training; string url;
-  initial_model_url: "./initial_model/model.zip"
+In the configuration file, there are two models available for configuration: `EdgeModel` and `CloudModel`.
 
-  # algorithm module configuration in the paradigm; list type;
-  modules:
-    ...
-```
+#### EdgeModel Configuration
 
-### The configuration of incremental_learning_data_setting
+The `EdgeModel` is the model that will be deployed on your local machine, supporting `huggingface` and `vllm` as serving backends.
 
-| Property | Required | Description |
-|----------|----------|-------------|
-|train_ratio|no|Ratio of training dataset; Type: float; Default value: 0.8; Value Constraint: the value is greater than 0 and less than 1.|
-|splitting_method|no|The method of splitting dataset; Type: string; Default value: default; Value Constraint: Currently the options of value are as follows: 1> default: the dataset is evenly divided based train_ratio.
+For `EdgeModel`, the open parameters are:
 
-For example:
+| Parameter Name         | Type  | Description                                                  | Defalut                  |
+| ---------------------- | ----- | ------------------------------------------------------------ | ------------------------ |
+| model                  | str   | model name                                                   | Qwen/Qwen2-1.5B-Instruct |
+| backend                | str   | model serving framework                                      | huggingface              |
+| temperature            | float | What sampling temperature to use, between 0 and 2            | 0.8                      |
+| top_p                  | float | nucleus sampling parameter                                   | 0.8                      |
+| max_tokens             | int   | The maximum number of tokens that can be generated in the chat completion | 512                      |
+| repetition_penalty     | float | The parameter for repetition penalty                         | 1.05                     |
+| tensor_parallel_size   | int   | The size of tensor parallelism (Used for vLLM)               | 1                        |
+| gpu_memory_utilization | float | The percentage of GPU memory utilization (Used for vLLM)     | 0.9                      |
 
-```yaml
-incremental_learning_data_setting:
-  # ratio of training dataset; float type;
-  # the default value is 0.8.
-  train_ratio: 0.8
-  # the method of splitting dataset; string type; optional;
-  # currently the options of value are as follows:
-  #   1> "default": the dataset is evenly divided based train_ratio;
-  splitting_method: "default"
-```
+#### CloudModel Configuration
 
-### The configuration of module
+The `CloudModel` represents the model on cloud, it will call LLM API via OpenAI API format. 
 
-| Property | Required | Description |
-|----------|----------|-------------|
-|type|yes|Algorithm module type; Type: string; Value Constraint: Currently the options of value are as follows: 1> basemodel: the algorithm module contains important interfaces such as train, eval, predict and more.it's required module. 2> hard_example_mining: the module checks hard example when predict. it's optional module and often used for incremental learning paradigm. |
-|name|yes|Algorithm module name; Type: string; Value Constraint: a python module name|
-|url|yes|The url address of python module file; Type: string |
-|hyperparameters|no|[the configuration of hyperparameters](https://github.com/kubeedge/ianvs/blob/main/docs/user_interface/how-to-config-algorithm.md#the-configuration-of-hyperparameters)|
+For `CloudModel`, the open parameters are:
 
-For example:
+| Parameter Name     | Type | Description                                                  | Defalut     |
+| ------------------ | ---- | ------------------------------------------------------------ | ----------- |
+| model              | str  | model name                                                   | gpt-4o-mini |
+| temperature        | float  | What sampling temperature to use, between 0 and 2            | 0.8         |
+| top_p              | float  | nucleus sampling parameter                                   | 0.8         |
+| max_tokens         | int  | The maximum number of tokens that can be generated in the chat completion | 512         |
+| repetition_penalty | float  | The parameter for repetition penalty                         | 1.05        |
 
-```yaml
-# algorithm module configuration in the paradigm; list type;
-modules:
-  # type of algorithm module; string type;
-  # currently the options of value are as follows:
-  #   1> "basemodel": contains important interfaces such as train、 eval、 predict and more; required module;
-  - type: "basemodel"
-    # name of python module; string type;
-    # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
-    name: "FPN"
-    # the url address of python module; string type;
-    url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/basemodel.py"
+#### Router Configuration
 
-    # hyperparameters configuration for the python module; list type;
-    hyperparameters:
-      ...
-    #  2> "hard_example_mining": check hard example when predict ; optional module;
-  - type: "hard_example_mining"
-    # name of python module; string type;
-    name: "IBT"
-    # the url address of python module; string type;
-    url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/hard_example_mining.py"
-    # hyperparameters configuration for the python module; list type;
-    hyperparameters:
-      ...
-```
+Router is a component that routes the query to the edge or cloud model. The router is configured by `hard_example_mining` in `examples/cloud-edge-collaborative-inference-for-llm/testrouters/query-routing/test_queryrouting.yaml`.
 
-### The configuration of hyperparameters
+Currently, supported routers include:
 
-The following is an example of hyperparameters configuration:
+| Router Type  | Description                                                  | Parameters       |
+| ------------ | ------------------------------------------------------------ | ---------------- |
+| EdgeOnly     | Route all queries to the edge model.                         | -                |
+| CloudOnly    | Route all queries to the cloud model.                        | -                |
+| OracleRouter | Optimal Router         |         |
+| BERTRouter   | Use a BERT classifier to route the query to the edge or cloud model. | model, threshold |
+| RandomRouter | Route the query to the edge or cloud model randomly.         | threshold        |
 
-```yaml
-# hyperparameters configuration for the python module; list type;
-hyperparameters:
-  # name of the hyperparameter; string type;
-  - momentum:
-    # values of the hyperparameter; list type;
-    # types of the value are string/int/float/boolean/list/dictionary
-      values:
-        - 0.95
-        - 0.5
-  - learning_rate:
-      values:
-        - 0.1
-        - 0.2
-```
+You can modify the `router` parameter in `test_queryrouting.yaml` to select the router you want to use.
 
-Ianvs will test for all the hyperparameter combination, that means it will run all the following 4 test:
+For BERT router, you can use [routellm/bert](https://huggingface.co/routellm/bert) or [routellm/bert_mmlu_augmented](https://huggingface.co/routellm/bert_mmlu_augmented) or your own BERT model.
 
-| Num  | learning_rate | momentum |
-|------|---------------|----------|
-| 1    | 0.1           | 0.95     |
-| 2    | 0.1           | 0.5      |
-| 3    | 0.2           | 0.95     |
-| 4    | 0.2           | 0.5      |
+#### Data Processor Configuration
+The Data Processor allows you to customize your own data format after the dataset gets loaded.
 
-Currently, Ianvs is not restricted to validity of the hyperparameter combination. That might lead to some invalid
-parameter combination, and it is controlled by the user himself. In the further version of Ianvs, it will support
-excluding invalid parameter combinations to improve efficiency.
+Currently, supported routers include:
+
+| Data Processor  | Description                                                  | Parameters       |
+| ------------ | ------------------------------------------------------------ | ---------------- |
+| OracleRouterDatasetProcessor     |  Expose `gold` label to OracleRouter                      |   -         |
 
 ## Show example
 
 ```yaml
-# fpn_algorithm.yaml
+# test_queryrouting.yaml
 algorithm:
-  # paradigm type; string type;
-  # currently the options of value are as follows:
-  #   1> "singletasklearning"
-  #   2> "incrementallearning"
-  paradigm_type: "incrementallearning"
-  incremental_learning_data_setting:
-    # ratio of training dataset; float type;
-    # the default value is 0.8.
-    train_ratio: 0.8
-    # the method of splitting dataset; string type; optional;
-    # currently the options of value are as follows:
-    #   1> "default": the dataset is evenly divided based train_ratio;
-    splitting_method: "default"
-  # the url address of initial model for model pre-training; string url;
-  initial_model_url: "./initial_model/model.zip"
+  # paradigm name; string type;
+  paradigm_type: "jointinference"
 
   # algorithm module configuration in the paradigm; list type;
   modules:
-    # type of algorithm module; string type;
-    # currently the options of value are as follows:
-    #   1> "basemodel": contains important interfaces such as train、 eval、 predict and more; required module;
-    - type: "basemodel"
-      # name of python module; string type;
-      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
-      name: "FPN"
-      # the url address of python module; string type;
-      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/basemodel.py"
+    # kind of algorithm module; string type;
+    - type: "dataset_processor"
+      # name of custom dataset processor; string type;
+      name: "OracleRouterDatasetProcessor"
+      # the url address of custom dataset processor; string type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/data_processor.py"
 
-      # hyperparameters configuration for the python module; list type;
+    - type: "edgemodel"
+      # name of edge model module; string type;
+      name: "EdgeModel"
+      # the url address of edge model module; string type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/edge_model.py"
+
       hyperparameters:
-        # name of the hyperparameter; string type;
-        - momentum:
-            # values of the hyperparameter; list type;
-            # types of the value are string/int/float/boolean/list/dictionary
+      # name of the hyperparameter; string type;
+        - model:
             values:
-              - 0.95
-              - 0.5
-        - learning_rate:
+              - "Qwen/Qwen2.5-1.5B-Instruct"
+              - "Qwen/Qwen2.5-3B-Instruct"
+              - "Qwen/Qwen2.5-7B-Instruct"
+        - backend:
+            # backend; string type;
+            # currently the options of value are as follows:
+            #  1> "huggingface": transformers backend;
+            #  2> "vllm": vLLM backend;
+            #  3> "api": OpenAI API backend;
             values:
-              - 0.1
-      #  2> "hard_example_mining": check hard example when predict ; optional module;
-    - type: "hard_example_mining"
+              - "vllm"
+        - temperature:
+            # What sampling temperature to use, between 0 and 2; float type;
+            # For reproducable results, the temperature should be set to 0;
+            values:
+              - 0
+        - top_p:
+            # nucleus sampling parameter; float type;
+            values:
+              - 0.8
+        -  max_tokens:
+            # The maximum number of tokens that can be generated in the chat completion; int type;
+            values:
+              - 512
+        -  repetition_penalty:
+            # The parameter for repetition penalty; float type;
+            values:
+              - 1.05
+        -  tensor_parallel_size:
+            # The size of tensor parallelism (Used for vLLM)
+            values:
+              - 4
+        -  gpu_memory_utilization:
+            # The percentage of GPU memory utilization (Used for vLLM)
+            values:
+              - 0.9
+        -  use_cache:
+            # Whether to use reponse cache; boolean type;
+            values:
+              - true
+
+    - type: "cloudmodel"
       # name of python module; string type;
-      name: "IBT"
+      name: "CloudModel"
       # the url address of python module; string type;
-      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testalgorithms/fpn/hard_example_mining.py"
-      # hyperparameters configuration for the python module; list type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/cloud_model.py"
+
       hyperparameters:
         # name of the hyperparameter; string type;
-        # threshold of image; value is [0, 1]
-        - threshold_img:
+        - model:
             values:
-              - 0.9
-        # predict box of image; value is [0, 1]
-        - threshold_box:
+              - "gpt-4o-mini"
+        - temperature:
             values:
-              - 0.9
+              - 0
+        - top_p:
+            values:
+              - 0.8
+        -  max_tokens:
+            values:
+              - 512
+        -  repetition_penalty:
+            values:
+              - 1.05
+        -  use_cache:
+            values:
+              - true
+
+    - type: "hard_example_mining"
+      # name of Router module; string type;
+      # BERTRouter, EdgeOnly, CloudOnly, RandomRouter, OracleRouter
+      name: "EdgeOnly"
+      # the url address of python module; string type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/hard_sample_mining.py"
 ```

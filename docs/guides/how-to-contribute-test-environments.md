@@ -20,36 +20,40 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_index: "./dataset/train_data/index.txt"
+    train_data: "./dataset/mmlu-5-shot/train_data/data.json"
     # the url address of test dataset index; string type;
-    test_index: "./dataset/test_data/index.txt"
-
-  # model eval configuration of incremental learning;
-  model_eval:
-    # metric used for model evaluation
-    model_metric:
-      # metric name; string type;
-      name: "f1_score"
-      # the url address of python file
-      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/f1_score.py"
-
-    # condition of triggering inference model to update
-    # threshold of the condition; types are float/int
-    threshold: 0.01
-    # operator of the condition; string type;
-    # values are ">=", ">", "<=", "<" and "=";
-    operator: ">="
+    test_data_info: "./dataset/mmlu-5-shot/test_data/metadata.json"
 
   # metrics configuration for test case's evaluation; list type;
   metrics:
       # metric name; string type;
-    - name: "f1_score"
+    - name: "Accuracy"
       # the url address of python file
-      url: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/f1_score.py"
-    - name: "samples_transfer_ratio"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/accuracy.py"
 
-  # incremental rounds setting for incremental learning paradigm.; int type; default value is 2;
-  incremental_rounds: 2
+    - name: "Edge Ratio"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/edge_ratio.py"
+
+    - name: "Cloud Prompt Tokens"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/cloud_prompt_tokens.py"
+
+    - name: "Cloud Completion Tokens"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/cloud_completion_tokens.py"
+
+    - name: "Edge Prompt Tokens"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/edge_prompt_tokens.py"
+
+    - name: "Edge Completion Tokens"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/edge_completion_tokens.py"
+
+    - name: "Time to First Token"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/time_to_first_token.py"
+
+    - name: "Throughput"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/throughput.py"
+
+    - name: "Internal Token Latency"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/internal_token_latency.py"
 ```
 
 It can be found that for a test, we need to set up the three fields:
@@ -62,11 +66,12 @@ That means, if you want to test on a different dataset, different model, or diff
 
 ## Add a new test environment
 
-Please refer to the examples directory, [pcb-aoi](https://github.com/kubeedge/ianvs/tree/main/examples/pcb-aoi) is a scenario for testing.
+Please refer to the examples directory, [cloud-edge-collaborative-inference-for-llm](https://github.com/kubeedge/ianvs/tree/main/examples/cloud-edge-collaborative-inference-for-llm) is a scenario for testing.
 We can regard it as a subject for a student that needs to take an exam, the test env is like an examination paper,
 and the test job is like the student.
 
-For a subject `pcb-aoi`, a new examination paper could be added to the subdirectory, on the same level as a `benchmarking job`.
+For a subject `cloud-edge-collaborative-inference-for-llm`, a new examination paper could be added to the subdirectory, on the same level as a `benchmarking job`.
+
 The detailed steps could be the following:
 
 1. Copy `benchmarking job` and name `benchmarking job_2` or any other intuitive name.

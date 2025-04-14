@@ -4,7 +4,7 @@ This document introduces how to build a edge-cloud AI simulation environment(e.g
 
 ## Introduction to `simulation controller`
 
-the `simulation controller` is the core module of system simulation. The simulation controller has been supplemented, which build and deploy local edge-cloud simulation environment with K8s.
+The `simulation controller` is the core module of system simulation. The simulation controller has been supplemented, which build and deploy local edge-cloud simulation environment with K8s.
 
 ![](https://github.com/kubeedge/ianvs/blob/main/docs/proposals/simulation/images/simulation_controller.jpg?raw=true)
 
@@ -36,16 +36,19 @@ Typically, the config file `benchmarkingJob.yaml` is as follows, which represent
 benchmarkingjob:
   # job name of benchmarking; string type;
   name: "benchmarkingjob"
+  
   # the url address of job workspace that will reserve the output of tests; string type;
   # default value: "./workspace"
-  workspace: "./workspace/incremental_learning_bench"
+  workspace: "./workspace-mmlu"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/pcb-aoi/incremental_learning_bench/fault_detection/testenv/testenv.yaml"
+  testenv: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml"
+  
   # the configuration of test object
   test_object:
     ...
+
   # the configuration of ranking leaderboard
   rank:
     ...
