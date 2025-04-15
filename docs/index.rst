@@ -59,7 +59,8 @@ Start your journey on Ianvs with the following links:
     Single Task Learning: FPN <proposals/algorithms/single-task-learning/fpn>
     Incremental Learning: BasicIL-FPN <proposals/algorithms/incremental-learning/basicIL-fpn>
     Lifelong Learning: RFNet <proposals/algorithms/lifelong-learning/Cloud-Robotic AI Benchmarking for Edge-cloud Collaborative Lifelong Learning>
-    
+    Joint Inference : Query-Routing <proposals/algorithms/joint-inference/query-routing>
+
 .. toctree::
     :maxdepth: 1
     :titlesonly:
