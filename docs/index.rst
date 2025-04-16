@@ -78,6 +78,7 @@ Start your journey on Ianvs with the following links:
     :glob:
     :caption: Stories
 
+    Leaderboard: Joint Inference Learning on Ianvs-MMLU-5-shot <leaderboards/leaderboard-in-cloud-edge-collaborative-inference-for-llm/leaderboard-of-cloud-edge-collaborative-inference-for-llm>
     Leaderboard: Single Task Learning on PCB-AoI <leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning>
     Leaderboard: Incremental Learning on PCB-AoI <leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-incremental-learning>
     Leaderboard: Lifelong Learning on Cloud-Robotics <leaderboards/leaderboard-in-semantic-segmentation-of-Cloud-Robotics/leaderboard-of-lifelong-learning>
