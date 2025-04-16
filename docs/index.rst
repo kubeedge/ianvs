@@ -83,9 +83,9 @@ Start your journey on Ianvs with the following links:
     Leaderboard: Incremental Learning on PCB-AoI <leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-incremental-learning>
     Leaderboard: Lifelong Learning on Cloud-Robotics <leaderboards/leaderboard-in-semantic-segmentation-of-Cloud-Robotics/leaderboard-of-lifelong-learning>
     Leaderboard: Edge-Cloud Collaboration on Cloud-Robotics <leaderboards/leaderboard-in-semantic-segmentation-of-Cloud-Robotics/leaderboard-of-SAM-based-Edge-Cloud-Collaboration>
+    Test Report: Joint Inference Learning on Ianvs-MMLU-5-shot <proposals/test-reports/testing-joint-inference-learning-in-cloud-edge-collaborative-inference-for-llm-scenario-with-ianvs-mmlu-5-shot-dataset>
     Test Report: Single Task Learning on PCB-AoI <proposals/test-reports/testing-single-task-learning-in-industrial-defect-detection-with-pcb-aoi>
     Test Report: Incremental Learning on PCB-AoI <proposals/test-reports/testing-incremental-learning-in-industrial-defect-detection-with-pcb-aoi>
-    Test Report: Joint Inference Learning on Ianvs-MMLU-5-shot <proposals/test-reports/testing-joint-inference-learning-in-cloud-edge-collaborative-inference-for-llm-scenario-with-ianvs-mmlu-5-shot-dataset>
 
 .. toctree::
     :maxdepth: 1
