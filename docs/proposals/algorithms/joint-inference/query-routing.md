@@ -149,22 +149,28 @@ __all__ = ('BERTFilter', 'EdgeOnlyFilter', 'CloudOnlyFilter',
 
 @ClassFactory.register(ClassType.HEM, alias="BERTRouter")
 class BERTFilter(BaseFilter, abc.ABC):
-    """BERTRouter Logic here"""
+    """BERTRouter Logic"""
+    ...
 
 @ClassFactory.register(ClassType.HEM, alias="EdgeOnly")
 class EdgeOnlyFilter(BaseFilter, abc.ABC):
-    """EdgeOnly Router Logic here"""
+    """EdgeOnly Router Logic"""
+    ...
 
 @ClassFactory.register(ClassType.HEM, alias="CloudOnly")
 class CloudOnlyFilter(BaseFilter, abc.ABC):
-    """CloudOnly Router Logic here"""
+    """CloudOnly Router Logic"""
+    ...
 
 @ClassFactory.register(ClassType.HEM, alias="RandomRouter")
 class RandomRouterFilter(BaseFilter, abc.ABC):
-    """RandomRouter Router Logic here"""
+    """RandomRouter Router Logic"""
+    ...
 
 @ClassFactory.register(ClassType.HEM, alias="OracleRouter")
-  """"OracleRouter Logic here"""
+class OracleRouterFilter(BaseFilter, abc.ABC):
+  """"OracleRouter Logic"""
+    ...
 ```
 
 After registration, you only need to change the name of the STL and parameters in the yaml file, and then the corresponding class will be automatically called according to the name.

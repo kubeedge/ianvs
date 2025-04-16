@@ -57,6 +57,7 @@ Currently, Ianvs is using the `class_factory.py` defined in KubeEdge SIG AI ([so
 
 As the first example, we describe how to test an algorithm `Query-Routing` for HEM (Hard Example Mining) module in Joint Inference Learning with cloud-edge-collaborative-inference-for-llm scenario.
 For this new algorithm in `ClassType.HEM`, the code in the algorithm file is as follows:
+
 ```python
 from sedna.common.class_factory import ClassFactory, ClassType
 
@@ -84,6 +85,7 @@ class RandomRouterFilter(BaseFilter, abc.ABC):
     ...
 
 @ClassFactory.register(ClassType.HEM, alias="OracleRouter")
+class OracleRouterFilter(BaseFilter, abc.ABC):
   """"OracleRouter Logic"""
     ...
 ```
