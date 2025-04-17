@@ -18,7 +18,7 @@ import os
 
 from core.common.log import LOGGER
 from sedna.common.class_factory import ClassType, ClassFactory
-from models import HuggingfaceLLM, APIBasedLLM, VllmLLM
+from models import HuggingfaceLLM, APIBasedLLM, VllmLLM, EagleSpecDecModel, LadeSpecDecLLM
 
 os.environ['BACKEND_TYPE'] = 'TORCH'
 
@@ -66,6 +66,10 @@ class EdgeModel:
             self.model = VllmLLM(**self.kwargs)
         elif self.backend == "api":
             self.model = APIBasedLLM(**self.kwargs)
+        elif self.backend == "EagleSpecDec":
+            self.model = EagleSpecDecModel(**self.kwargs)
+        elif self.backend == "LadeSpecDec":
+            self.model = LadeSpecDecLLM(**self.kwargs)
         else:
             raise Exception(f"Backend {self.backend} is not supported. Please use 'huggingface', 'vllm', or `api` ")
 

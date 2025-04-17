@@ -3,7 +3,7 @@ benchmarkingjob:
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
   # "~/" cannot be identified, so must be relative path or absoulute path
-  workspace: "./workspace-mmlu"
+  workspace: "./workspace-gpqa"
 
   hard_example_mining_mode: "mining-then-inference"
 
