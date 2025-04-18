@@ -16,6 +16,7 @@ import os
 import time
 
 from openai import OpenAI
+from groq import Groq
 from models.base_llm import BaseLLM
 from retry import retry
 
@@ -24,14 +25,31 @@ class APIBasedLLM(BaseLLM):
         """ Initialize the APIBasedLLM class
         """
         BaseLLM.__init__(self, **kwargs)
+        
+        self.provider = kwargs.get("api_provider", "openai").lower()
+        self.api_key_env = kwargs.get("api_key_env", "OPENAI_API_KEY")
+        self.api_base_url = kwargs.get("api_base_url", "OPENAI_BASE_URL")
+        
+        api_key = os.environ.get(self.api_key_env)
+        base_url = os.environ.get(self.api_base_url)
 
-        api_key=os.environ.get("OPENAI_API_KEY")
-        base_url=os.environ.get("OPENAI_BASE_URL")
-
-        self.client = OpenAI(
-            api_key=api_key,
-            base_url=base_url
-        )
+        if not api_key:
+            raise ValueError(f"API key not found in environment variable: {self.api_key_env}")
+        if not base_url: 
+            raise ValueError(f"Base URL not found in environment variable: {self.api_base_url}")
+        
+        if self.provider == "groq":
+            try:
+                self.client = Groq(api_key=api_key, base_url=base_url)
+            except Exception as e:
+                raise RuntimeError(f"Failed to initialize Groq client: {e}")
+        elif self.provider == "openai":
+            try:
+                self.client = OpenAI(api_key=api_key, base_url=base_url)
+            except Exception as e:
+                raise RuntimeError(f"Failed to initialize OpenAI client: {e}")
+        else:
+            raise ValueError(f"Unsupported provider: {self.provider}")
 
     def _load(self, model):
         """Set the model to be used.
@@ -67,35 +85,61 @@ class APIBasedLLM(BaseLLM):
         st = time.perf_counter()
         most_recent_timestamp = st
         generated_text = ""
-
-        stream = self.client.chat.completions.create(
-            messages = messages,
-            model=self.model,
-            temperature=self.temperature,
-            max_tokens=self.max_tokens,
-            top_p=self.top_p,
-            frequency_penalty=self.repetition_penalty,
-            stream=True,
-            stream_options={"include_usage":True}
-        )
-
-        for chunk in stream:
-            timestamp = time.perf_counter()
-            if time_to_first_token == 0.0:
-                time_to_first_token = time.perf_counter() - st
+        try:
+            if self.provider == "openai":
+                stream = self.client.chat.completions.create(
+                    messages=messages,
+                    model=self.model,
+                    temperature=self.temperature,
+                    max_tokens=self.max_tokens,
+                    top_p=self.top_p,
+                    frequency_penalty=self.repetition_penalty,
+                    stream=True,
+                    stream_options={"include_usage": True}
+                )
+            elif self.provider == "groq":
+                stream = self.client.chat.completions.create(
+                    messages=messages,
+                    model=self.model,
+                    temperature=self.temperature,
+                    max_tokens=self.max_tokens,
+                    top_p=self.top_p,
+                    frequency_penalty=self.repetition_penalty,
+                    stream=True
+                )
             else:
-                internal_token_latency.append(timestamp - most_recent_timestamp)
-            most_recent_timestamp = timestamp
-            if chunk.choices:
-                generated_text += chunk.choices[0].delta.content or ""
-            if chunk.usage:
-                usage = chunk.usage
+                raise ValueError(f"Unsupported provider: {self.provider}")
 
-        text = generated_text
-        prompt_tokens = usage.prompt_tokens
-        completion_tokens = usage.completion_tokens
-        internal_token_latency = sum(internal_token_latency) / len(internal_token_latency)
-        throughput = 1 / internal_token_latency
+            for chunk in stream:
+                timestamp = time.perf_counter()
+                if time_to_first_token == 0.0:
+                    time_to_first_token = timestamp - st
+                else:
+                    internal_token_latency.append(timestamp - most_recent_timestamp)
+                most_recent_timestamp = timestamp
+
+                if chunk.choices:
+                    generated_text += chunk.choices[0].delta.content or ""
+                if self.provider == "openai" and chunk.usage:
+                    usage = chunk.usage
+
+            text = generated_text
+            if self.provider == "openai":
+                prompt_tokens = usage.prompt_tokens
+                completion_tokens = usage.completion_tokens
+            else:
+                prompt_tokens = len(messages[0]['content'].split())  # Approximate
+                completion_tokens = len(text.split())  # Approximate
+
+            if internal_token_latency:
+                internal_token_latency = sum(internal_token_latency) / len(internal_token_latency)
+                throughput = 1 / internal_token_latency
+            else:
+                internal_token_latency = 0
+                throughput = 0
+
+        except Exception as e:
+            raise RuntimeError(f"Error during API inference: {e}")
 
         response = self._format_response(
             text,

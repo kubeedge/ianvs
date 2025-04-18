@@ -15,13 +15,16 @@
 """Hard Example Mining Algorithms"""
 
 import abc
+import torch
 import random
 from transformers import pipeline
 from sedna.common.class_factory import ClassFactory, ClassType
 from core.common.log import LOGGER
 
 __all__ = ('BERTFilter', 'EdgeOnlyFilter', 'CloudOnlyFilter',
-           'RandomRouterFilter', 'OracleRouterFilter')
+           'RandomRouterFilter', 'OracleRouterFilter', 'ResourceSensitiveRouterFilter')
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class BaseFilter(metaclass=abc.ABCMeta):
     """The base class to define unified interface."""
@@ -73,7 +76,11 @@ class BERTFilter(BaseFilter, abc.ABC):
         self.task = kwargs.get("task", "text-classification")
         self.max_length = kwargs.get("max_length", 512)
 
-        self.classifier = pipeline(self.task, model=self.model, device="cuda")
+        try:
+            self.classifier = pipeline(self.task, model=self.model, device=device)
+        except Exception as e:
+            LOGGER.error(f"Failed to initialize the pipeline: {e}")
+            raise RuntimeError("Pipeline initialization failed. Please check the model and task parameters.")
 
     def _text_classification_postprocess(self, result):
         """Postprocess the text classification result
@@ -182,7 +189,10 @@ class RandomRouterFilter(BaseFilter, abc.ABC):
     """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.threshold = kwargs.get("threshold", 0)
+        self.threshold = kwargs.get("threshold", 0.5)
+        if not (0 <= self.threshold <= 1):
+            LOGGER.error("Threshold must be between 0 and 1. Defaulting to 0.5.")
+            self.threshold = 0.5
 
     def __call__(self, data=None) -> bool:
         return False if random.random() < self.threshold else True
@@ -200,7 +210,10 @@ class OracleRouterFilter(BaseFilter, abc.ABC):
 
         self.edge_model = kwargs.get("edgemodel")
         self.cloud_model = kwargs.get("cloudmodel")
-
+        if not self.edge_model or not self.cloud_model:
+            LOGGER.error("Both edge and cloud models must be provided.")
+            raise ValueError("Edge and cloud models are required for OracleRouterFilter.")
+        
     def __call__(self, data=None):
         """Route the query to edge or cloud based on the models' prediction.
 
@@ -251,3 +264,51 @@ class OracleRouterFilter(BaseFilter, abc.ABC):
             f"Cloud Better: {self.cloud_better}"
         ]
         LOGGER.info("".join(message))
+
+@ClassFactory.register(ClassType.HEM, alias="ResourceSensitiveRouter")
+class ResourceSensitiveRouterFilter(BaseFilter, abc.ABC):
+    """
+    A resource-aware router that adapts routing based on real-time edge device constraints.
+    Routes to cloud if edge device is under resource pressure; otherwise, processes locally.
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        # Thresholds can be adjusted based on empirical device behavior
+        self.temperature_threshold = kwargs.get("temperature_threshold", 75)  # in °C
+        self.battery_threshold = kwargs.get("battery_threshold", 20)          # in %
+        self.cpu_threshold = kwargs.get("cpu_threshold", 85)                  # in %
+        self.memory_threshold = kwargs.get("memory_threshold", 85)            # in %
+
+        # These can be real checks in production; here we simulate/mock for demonstration
+        self.resource_monitor = kwargs.get("resource_monitor", self.mock_resource_monitor)
+
+    def __call__(self, data=None) -> bool:
+        """
+        Route based on resource constraints.
+        Returns True for hard sample (go to cloud), False for easy sample (stay on edge).
+        """
+        resources = self.resource_monitor()
+
+        is_overloaded = (
+            resources["temperature"] > self.temperature_threshold or
+            resources["battery"] < self.battery_threshold or
+            resources["cpu"] > self.cpu_threshold or
+            resources["memory"] > self.memory_threshold
+        )
+
+        if is_overloaded:
+            LOGGER.info("Routing to cloud due to resource constraints.")
+        else:
+            LOGGER.info("Sufficient edge resources, processing locally.")
+
+        return is_overloaded  # True means cloud (hard), False means edge (easy)
+
+    def mock_resource_monitor(self):
+        """Mock resource monitor that simulates device conditions."""
+        return {
+            "temperature": random.uniform(40, 140),
+            "battery": random.uniform(5, 100),
+            "cpu": random.uniform(10, 100),
+            "memory": random.uniform(10, 100)
+        }
