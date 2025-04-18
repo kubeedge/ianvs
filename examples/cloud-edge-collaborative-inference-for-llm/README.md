@@ -102,6 +102,9 @@ The Docker-based setup assumes you have Docker installed on your system and are 
 *If you don't have Docker installed, follow the Docker Engine installation guide [here](https://docs.docker.com/engine/install/ubuntu/).*
 
 1. From the root directory of Ianvs, build the `cloud-edge-collaborative-inference-for-llm` Docker image:
+
+**Note**: If you have already build the image, then move on to the second step directly. 
+
 ```bash 
 docker build -t ianvs-experiment-image ./examples/cloud-edge-collaborative-inference-for-llm/
 ```

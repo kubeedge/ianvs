@@ -3,6 +3,5 @@ transformers
 openai
 accelerate
 datamodel_code_generator
-onnx
 git-lfs
 groq
