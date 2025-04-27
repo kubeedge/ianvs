@@ -49,7 +49,8 @@ Start your journey on Ianvs with the following links:
     
     Industrial Defect Detection: PCB-AoI <proposals/scenarios/industrial-defect-detection/pcb-aoi>
     Cloud Edge Collaborative inference for LLM: Ianvs-MMLU-5-shot <proposals/scenarios/cloud-edge-collaborative-inference-for-llm/mmlu-5-shot>
-
+    Cloud Robotics Lifelong Learning <proposals/scenarios/cloud-robotics-lifelong-learning-dataset/cloud-robotics>
+    
 .. toctree::
     :maxdepth: 1
     :titlesonly:
