@@ -31,9 +31,18 @@ class CloudModel:
     def __init__(self, **kwargs):
         """Initialize the CloudModel.  See `APIBasedLLM` for details about `kwargs`.
         """
-        LOGGER.info(kwargs)
-        self.model = APIBasedLLM(**kwargs)
-        self.load(kwargs.get("model", "gpt-4o-mini"))
+        LOGGER.info("Initializing CloudModel with kwargs: %s", kwargs)
+        try:
+            self.model = APIBasedLLM(**kwargs)
+        except Exception as e:
+            LOGGER.error("Failed to initialize APIBasedLLM: %s", str(e))
+            raise RuntimeError("Could not initialize APIBasedLLM. Check your credentials or configuration.") from e
+        model_name = kwargs.get("model", "").strip()
+        if not model_name:
+            LOGGER.warning("No 'model' specified in kwargs. Falling back to default 'gpt-4o-mini'.")
+            model_name = "gpt-4o-mini"
+        
+        self.load(model_name)
 
     def load(self, model):
         """Set the model.
@@ -43,7 +52,15 @@ class CloudModel:
         model : str
             Existing model from your OpenAI provider. Example: `gpt-4o-mini`
         """
-        self.model._load(model = model)
+        if not model or not isinstance(model, str):
+            raise ValueError("Model name must be a non-empty string.")
+        
+        try:
+            self.model._load(model=model)
+            LOGGER.info("Model '%s' loaded successfully.", model)
+        except Exception as e:
+            LOGGER.error("Error loading model '%s': %s", model, str(e))
+            raise RuntimeError(f"Failed to load model '{model}'.") from e
 
     def inference(self, data, **kwargs):
         """Inference the model with the given data.
@@ -60,12 +77,21 @@ class CloudModel:
         dict
             Formatted Response. See `model._format_response()` for more details.
         """
+        if not isinstance(data, dict):
+            raise ValueError("Input data for inference must be a dictionary.")
 
-        return self.model.inference(data)
+        try:
+            return self.model.inference(data)
+        except Exception as e:
+            LOGGER.error("Inference failed: %s", str(e))
+            raise RuntimeError("Inference failed. Check input data format and model readiness.") from e
 
     def cleanup(self):
         """Save the cache and cleanup the model.
         """
-
-        self.model.save_cache()
-        self.model.cleanup()
+        try:
+            self.model.save_cache()
+            self.model.cleanup()
+            LOGGER.info("Cleanup completed successfully.")
+        except Exception as e:
+            LOGGER.warning("Cleanup encountered an issue: %s", str(e))
