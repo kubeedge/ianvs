@@ -11,62 +11,35 @@
    - Type 2: 只用和被测边缘节点相关的数据作为 RAG 知识库
    - Type 3: 使用所有边缘节点数据作为 RAG 知识库
    - Type 4: 使用所有和被测边缘节点不相关的数据作为 RAG 知识库
-4. 提供详细的评估指标：
-   - 准确率
-   - RAG 效果评估
 
-## 目录结构
-
-```
-government_rag/
-├── singletask_learning_bench/
-│   └── objective/
-│       ├── benchmarkingjob.yaml
-│       ├── testalgorithms/
-│       │   └── government_rag_algorithm.py
-│       └── testenv/
-│           └── metrics/
-│               ├── accuracy.py
-│               └── rag_effectiveness.py
-└── README.md
-```
 
 ## 使用方法
 
 1. 准备数据：
-   - 将 `all_questions.jsonl` 放在 `testenv/dataset/test/` 目录下
-   - 将知识库文件放在 `testenv/dataset/knowledge_base/` 目录下
-
-2. 安装依赖：
-   ```bash
-   pip install langchain faiss-cpu transformers torch
+   
+   把数据放到 `dataset/gov_rag` 目录下，目录结构如下：
+   ```
+   .
+   ├── data.jsonl
+   ├── dataset
+   │   ├── 上海市
+   │   │   ├── 上海市数据交易场所管理实施暂行办法.docx
+   │   │   ├── 立足数字经济新赛道推动数据要素产业创新发展行动方案.docx
+   ...
+   │   └── 黑龙江省
+   │       ├── 黑龙江省促进大数据发展应用条例.docx
+   │       ├── 黑龙江省促进大数据发展应用条例.txt
+   │       └── 黑龙江省.docx
+   └── metadata.json
+   ```
+   数据示例：
+   ```json
+   {"query": "在上海市关于数据资产管理的通知中，哪种方式被提倡以促进数据资产的合规高效流通？{\"A\": \"完全依靠政府监管\", \"B\": \"市场主导与政府引导相结合\", \"C\": \"企业自主开发\", \"D\": \"无条件的数据共享\"}\n请直接回答 A/B/C/D，不要解释。", "response": "B", "level_1_dim": "single-modal", "level_2_dim": "text", "level_3_dim": "government", "level_4_dim": "上海市"}
    ```
 
-3. 运行测试：
+
+
+2. 运行测试：
    ```bash
    ianvs -f examples/government_rag/singletask_learning_bench/benchmarkingjob.yaml
    ```
-
-## 配置说明
-
-在 `benchmarkingjob.yaml` 中，您可以配置：
-
-1. 算法参数：
-   - 模型选择
-   - 向量数据库参数
-   - RAG 检索参数
-
-2. 数据集路径：
-   - 测试数据路径
-   - 知识库路径
-
-3. 评估指标：
-   - 准确率
-   - RAG 效果评估
-
-## 注意事项
-
-1. 确保有足够的内存来加载和处理文档
-2. 建议使用 GPU 来加速模型推理
-3. 知识库文档的质量会直接影响 RAG 的效果
-4. 不同地区的政策差异需要考虑在评估中 
