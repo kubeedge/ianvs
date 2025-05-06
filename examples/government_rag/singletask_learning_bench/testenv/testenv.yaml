@@ -1,0 +1,20 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_data: "/home/icyfeather/Projects/ianvs/dataset/gov_rag/example.jsonl"
+    # the url address of test dataset index; string type;
+    test_data_info: "/home/icyfeather/Projects/ianvs/dataset/gov_rag/metadata.json"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "acc_model"
+      # the url address of python file
+      url: "./examples/government_rag/singletask_learning_bench/testenv/acc.py"
+    - name: "acc_global"
+      url: "./examples/government_rag/singletask_learning_bench/testenv/acc.py"
+    - name: "acc_local"
+      url: "./examples/government_rag/singletask_learning_bench/testenv/acc.py"
+    - name: "acc_other"
+      url: "./examples/government_rag/singletask_learning_bench/testenv/acc.py"
