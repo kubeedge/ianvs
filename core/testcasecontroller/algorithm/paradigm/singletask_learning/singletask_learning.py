@@ -111,7 +111,9 @@ class SingleTaskLearning(ParadigmBase):
         return compressed_model
     
     def _preprocess(self, job):
-        job.preprocess()
+        if job.preprocess() is None:
+            return None
+        return job.preprocess()
 
     def _train(self, job, initial_model):
         train_output_dir = os.path.join(self.workspace, "output/train/")
