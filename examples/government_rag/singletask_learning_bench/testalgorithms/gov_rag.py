@@ -8,11 +8,12 @@ from langchain.chains import RetrievalQA
 from langchain_community.llms import HuggingFacePipeline
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from tqdm import tqdm
 
 class GovernmentRAG:
     def __init__(
         self,
-        base_path: str = "/home/icyfeather/Projects/ianvs/dataset/gov_rag",
+        base_path: str = "/path/ianvs/dataset/gov_rag",
         provinces: Optional[Union[str, List[str]]] = None,
         model_name: str = "BAAI/bge-large-zh-v1.5",
         device: str = "cuda" if torch.cuda.is_available() else "cpu",
@@ -83,7 +84,7 @@ class GovernmentRAG:
     
     def _initialize_knowledge_base(self):
         """Initialize the knowledge base by loading and processing documents."""
-        # 检查是否存在持久化的向量数据库
+
         if os.path.exists(self.persist_directory):
             print(f"Loading existing vector database from {self.persist_directory}")
             self.vector_store = Chroma(
@@ -94,8 +95,9 @@ class GovernmentRAG:
 
         all_documents = []
         
-        # Load documents from each selected province
-        for province in self.provinces:
+        # Load documents from each selected province with progress bar
+        print("Loading documents from provinces...")
+        for province in tqdm(self.provinces, desc="Processing provinces"):
             province_path = os.path.join(self.base_path, "dataset", province)
             if os.path.exists(province_path):
                 documents = self._load_documents(province_path)
@@ -104,7 +106,8 @@ class GovernmentRAG:
         if not all_documents:
             raise ValueError("No documents found in the specified provinces")
         
-        # Split documents into chunks
+        # Split documents into chunks with progress bar
+        print("Splitting documents into chunks...")
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,
             chunk_overlap=200
@@ -112,12 +115,13 @@ class GovernmentRAG:
         splits = text_splitter.split_documents(all_documents)
         
         # Create vector store with persistence
+        print("Creating vector store...")
         self.vector_store = Chroma.from_documents(
             documents=splits,
             embedding=self.embeddings,
             persist_directory=self.persist_directory
         )
-        # 持久化向量数据库
+
         self.vector_store.persist()
         print(f"Vector database saved to {self.persist_directory}")
     

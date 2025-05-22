@@ -57,7 +57,7 @@ benchmarkingjob:
       # currently the options of value are as follows:
       #   1> "all": select all metrics in the leaderboard;
       #   2> metrics in the leaderboard, e.g., "f1_score"
-      metrics: [ "acc" ]
+      metrics: [ "acc_model", "acc_global", "acc_local", "acc_other" ]
 
     # model of save selected and all dataitems in workspace; string type;
     # currently the options of value are as follows:

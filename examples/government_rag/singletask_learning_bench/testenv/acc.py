@@ -29,14 +29,8 @@ def get_last_letter(input_string):
 
 @ClassFactory.register(ClassType.GENERAL, alias="acc_model")
 def acc_model(y_true, y_pred):
-    # print(y_true)
-    # print(y_pred)
-    # y_pred 是这种格式：response + "||" + data.y[i] + "||" + data.level_4[i] + "||" + "[model]"
-    # 需要从 y_pred 中提取出 response
-    # Store the original data
     original_preds = y_pred.copy()
 
-    # Split the data
     y_pred = [pred.split("||")[0] for pred in original_preds]
     y_true = [pred.split("||")[1] for pred in original_preds]
     y_location = [pred.split("||")[2] for pred in original_preds]
@@ -52,11 +46,9 @@ def acc_model(y_true, y_pred):
             real_y_true.append(y_true[i])
             real_locations.append(y_location[i])
 
-    # 计算全局准确率
     same_elements = [get_last_letter(real_y_pred[i]) == real_y_true[i] for i in range(len(real_y_pred))]
     global_acc = sum(same_elements) / len(same_elements)
 
-    # 计算每个省份的准确率
     province_acc = {}
     for i in range(len(real_y_pred)):
         province = real_locations[i]
@@ -67,7 +59,6 @@ def acc_model(y_true, y_pred):
         if real_y_pred[i] == real_y_true[i]:
             province_acc[province]["correct"] += 1
 
-    # 计算每个省份的准确率并打印结果
     print("\n=== 准确率统计 ===")
     print(f"全局准确率: {global_acc:.4f}")
     print("\n各省份准确率:")
@@ -75,7 +66,6 @@ def acc_model(y_true, y_pred):
         acc = stats["correct"] / stats["total"]
         print(f"{province}: {acc:.4f} ({stats['correct']}/{stats['total']})")
 
-    # 保存结果到文件
     import json
     from datetime import datetime
     
@@ -100,14 +90,8 @@ def acc_model(y_true, y_pred):
 
 @ClassFactory.register(ClassType.GENERAL, alias="acc_global")
 def acc_global(y_true, y_pred):
-    # print(y_true)
-    # print(y_pred)
-    # y_pred 是这种格式：response + "||" + data.y[i] + "||" + data.level_4[i] + "||" + "[model]"
-    # 需要从 y_pred 中提取出 response
-    # Store the original data
     original_preds = y_pred.copy()
 
-    # Split the data
     y_pred = [pred.split("||")[0] for pred in original_preds]
     y_true = [pred.split("||")[1] for pred in original_preds]
     y_location = [pred.split("||")[2] for pred in original_preds]
@@ -123,11 +107,9 @@ def acc_global(y_true, y_pred):
             real_y_true.append(y_true[i])
             real_locations.append(y_location[i])
 
-    # 计算全局准确率
     same_elements = [get_last_letter(real_y_pred[i]) == real_y_true[i] for i in range(len(real_y_pred))]
     global_acc = sum(same_elements) / len(same_elements)
 
-    # 计算每个省份的准确率
     province_acc = {}
     for i in range(len(real_y_pred)):
         province = real_locations[i]
@@ -138,7 +120,6 @@ def acc_global(y_true, y_pred):
         if real_y_pred[i] == real_y_true[i]:
             province_acc[province]["correct"] += 1
 
-    # 计算每个省份的准确率并打印结果
     print("\n=== 准确率统计 ===")
     print(f"全局准确率: {global_acc:.4f}")
     print("\n各省份准确率:")
@@ -146,7 +127,6 @@ def acc_global(y_true, y_pred):
         acc = stats["correct"] / stats["total"]
         print(f"{province}: {acc:.4f} ({stats['correct']}/{stats['total']})")
 
-    # 保存结果到文件
     import json
     from datetime import datetime
     
@@ -171,14 +151,8 @@ def acc_global(y_true, y_pred):
 
 @ClassFactory.register(ClassType.GENERAL, alias="acc_local")
 def acc_local(y_true, y_pred):
-    # print(y_true)
-    # print(y_pred)
-    # y_pred 是这种格式：response + "||" + data.y[i] + "||" + data.level_4[i] + "||" + "[model]"
-    # 需要从 y_pred 中提取出 response
-    # Store the original data
     original_preds = y_pred.copy()
 
-    # Split the data
     y_pred = [pred.split("||")[0] for pred in original_preds]
     y_true = [pred.split("||")[1] for pred in original_preds]
     y_location = [pred.split("||")[2] for pred in original_preds]
@@ -194,11 +168,9 @@ def acc_local(y_true, y_pred):
             real_y_true.append(y_true[i])
             real_locations.append(y_location[i])
 
-    # 计算全局准确率
     same_elements = [get_last_letter(real_y_pred[i]) == real_y_true[i] for i in range(len(real_y_pred))]
     global_acc = sum(same_elements) / len(same_elements)
 
-    # 计算每个省份的准确率
     province_acc = {}
     for i in range(len(real_y_pred)):
         province = real_locations[i]
@@ -209,7 +181,6 @@ def acc_local(y_true, y_pred):
         if real_y_pred[i] == real_y_true[i]:
             province_acc[province]["correct"] += 1
 
-    # 计算每个省份的准确率并打印结果
     print("\n=== 准确率统计 ===")
     print(f"全局准确率: {global_acc:.4f}")
     print("\n各省份准确率:")
@@ -217,7 +188,6 @@ def acc_local(y_true, y_pred):
         acc = stats["correct"] / stats["total"]
         print(f"{province}: {acc:.4f} ({stats['correct']}/{stats['total']})")
 
-    # 保存结果到文件
     import json
     from datetime import datetime
     
@@ -242,14 +212,8 @@ def acc_local(y_true, y_pred):
 
 @ClassFactory.register(ClassType.GENERAL, alias="acc_other")
 def acc_other(y_true, y_pred):
-    # print(y_true)
-    # print(y_pred)
-    # y_pred 是这种格式：response + "||" + data.y[i] + "||" + data.level_4[i] + "||" + "[model]"
-    # 需要从 y_pred 中提取出 response
-    # Store the original data
     original_preds = y_pred.copy()
 
-    # Split the data
     y_pred = [pred.split("||")[0] for pred in original_preds]
     y_true = [pred.split("||")[1] for pred in original_preds]
     y_location = [pred.split("||")[2] for pred in original_preds]
@@ -265,11 +229,9 @@ def acc_other(y_true, y_pred):
             real_y_true.append(y_true[i])
             real_locations.append(y_location[i])
 
-    # 计算全局准确率
     same_elements = [get_last_letter(real_y_pred[i]) == real_y_true[i] for i in range(len(real_y_pred))]
     global_acc = sum(same_elements) / len(same_elements)
 
-    # 计算每个省份的准确率
     province_acc = {}
     for i in range(len(real_y_pred)):
         province = real_locations[i]
@@ -280,7 +242,6 @@ def acc_other(y_true, y_pred):
         if real_y_pred[i] == real_y_true[i]:
             province_acc[province]["correct"] += 1
 
-    # 计算每个省份的准确率并打印结果
     print("\n=== 准确率统计 ===")
     print(f"全局准确率: {global_acc:.4f}")
     print("\n各省份准确率:")
@@ -288,7 +249,6 @@ def acc_other(y_true, y_pred):
         acc = stats["correct"] / stats["total"]
         print(f"{province}: {acc:.4f} ({stats['correct']}/{stats['total']})")
 
-    # 保存结果到文件
     import json
     from datetime import datetime
     

@@ -109,7 +109,7 @@ class SingleTaskLearning(ParadigmBase):
             return trained_model
 
         return compressed_model
-    
+
     def _preprocess(self, job):
         if job.preprocess() is None:
             return None

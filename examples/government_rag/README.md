@@ -1,45 +1,78 @@
-# Government RAG 示例
+# Government RAG Example
 
-这个示例展示了如何在政务领域使用检索增强生成（RAG）技术来提升大语言模型的性能。
+This example demonstrates how to use Retrieval-Augmented Generation (RAG) technology in the government domain to enhance the performance of large language models.
 
-## 特点
+## Features
 
-1. 支持多种文档格式（txt, docx）
-2. 使用 LangChain 进行文档处理和检索
-3. 实现了四种测试模式：
-   - Type 1: 无 RAG 模式
-   - Type 2: 只用和被测边缘节点相关的数据作为 RAG 知识库
-   - Type 3: 使用所有边缘节点数据作为 RAG 知识库
-   - Type 4: 使用所有和被测边缘节点不相关的数据作为 RAG 知识库
+1. Supports multiple document formats (txt, docx)
+2. Uses LangChain for document processing and retrieval
+3. Implements four test modes:
+   - Type 1: No RAG mode
+   - Type 2: Uses only data related to the tested edge node as the RAG knowledge base
+   - Type 3: Uses data from all edge nodes as the RAG knowledge base
+   - Type 4: Uses data unrelated to the tested edge node as the RAG knowledge base
 
+## Usage
 
-## 使用方法
+1. Prepare data:
 
-1. 准备数据：
-   
-   把数据放到 `dataset/gov_rag` 目录下，目录结构如下：
+   Place the data in the `dataset/gov_rag` directory with the following structure:
    ```
    .
    ├── data.jsonl
    ├── dataset
-   │   ├── 上海市
-   │   │   ├── 上海市数据交易场所管理实施暂行办法.docx
-   │   │   ├── 立足数字经济新赛道推动数据要素产业创新发展行动方案.docx
+   │   ├── Shanghai
+   │   │   ├── Shanghai Data Trading Venue Management Implementation Measures.docx
+   │   │   ├── Action Plan for Promoting Innovation and Development of the Data Elements Industry Based on the New Digital Economy Track.docx
    ...
-   │   └── 黑龙江省
-   │       ├── 黑龙江省促进大数据发展应用条例.docx
-   │       ├── 黑龙江省促进大数据发展应用条例.txt
-   │       └── 黑龙江省.docx
+   │   └── Heilongjiang
+   │       ├── Heilongjiang Province Big Data Development and Application Promotion Regulations.docx
+   │       ├── Heilongjiang Province Big Data Development and Application Promotion Regulations.txt
+   │       └── Heilongjiang Province.docx
    └── metadata.json
    ```
-   数据示例：
+   Data example:
    ```json
-   {"query": "在上海市关于数据资产管理的通知中，哪种方式被提倡以促进数据资产的合规高效流通？{\"A\": \"完全依靠政府监管\", \"B\": \"市场主导与政府引导相结合\", \"C\": \"企业自主开发\", \"D\": \"无条件的数据共享\"}\n请直接回答 A/B/C/D，不要解释。", "response": "B", "level_1_dim": "single-modal", "level_2_dim": "text", "level_3_dim": "government", "level_4_dim": "上海市"}
+   {"query": "In Shanghai's notice on data asset management, which approach is advocated to promote the compliant and efficient circulation of data assets?{\"A\": \"Rely entirely on government regulation\", \"B\": \"Combination of market leadership and government guidance\", \"C\": \"Enterprise-independent development\", \"D\": \"Unconditional data sharing\"}\nPlease answer directly with A/B/C/D, no explanation.", "response": "B", "level_1_dim": "single-modal", "level_2_dim": "text", "level_3_dim": "government", "level_4_dim": "Shanghai"}
    ```
 
-
-
-2. 运行测试：
+2. Run the test:
    ```bash
    ianvs -f examples/government_rag/singletask_learning_bench/benchmarkingjob.yaml
    ```
+
+## Test Results
+
+Four models were selected for testing: Deepseek, LLaMA3-8B, ernie_speed, and ernie-tiny-8k. These models are representative, including strong language models, lightweight models, and models with varying amounts of Chinese corpus.
+
+Test results are as follows:
+
+| Model         | Experiment | Global Accuracy | Shanghai | Yunnan | National | Beijing | Nanjing | Jilin | Sichuan | Tianjin | Anhui | Shandong | Shanxi | Guangdong | Guangxi | Jiangsu | Jiangxi | Hebei | Henan | Zhejiang | Hainan | Hubei | Hunan | Gansu | Fujian | Guizhou | Liaoning | Chongqing | Shaanxi | Heilongjiang |
+|---------------|------------|-----------------|----------|--------|----------|---------|---------|-------|---------|---------|-------|----------|--------|-----------|---------|---------|---------|-------|-------|----------|--------|-------|-------|-------|--------|---------|----------|-----------|---------|--------------|
+| Deepseek      | MODEL      | 0.855357143     | 0.9      | 0.9    | 1        | 0.75    | 0.85    | 0.9   | 0.75    | 0.7     | 0.75  | 0.9      | 0.8    | 0.95      | 0.95    | 0.85    | 0.9     | 0.75  | 0.95  | 0.8      | 0.85   | 0.9   | 0.8   | 0.7   | 0.9    | 0.8     | 1        | 0.95      | 0.75    | 0.95         |
+| Deepseek      | GLOBAL     | 0.891071429     | 0.9      | 0.9    | 0.95     | 0.9     | 0.95    | 0.85  | 0.85    | 0.75    | 0.85  | 0.95     | 0.8    | 0.95      | 0.95    | 0.85    | 0.85    | 0.85  | 1     | 0.95     | 0.95   | 0.95  | 0.8   | 0.8   | 0.9    | 0.8     | 1        | 0.95      | 0.8     | 0.95         |
+| Deepseek      | LOCAL      | 0.891071429     | 0.9      | 0.95   | 0.95     | 0.9     | 0.95    | 0.85  | 0.85    | 0.75    | 0.9   | 0.95     | 0.75   | 0.95      | 0.95    | 0.85    | 0.85    | 0.85  | 1     | 0.95     | 0.9    | 0.95  | 0.8   | 0.75  | 0.9    | 0.8     | 1        | 0.95      | 0.85    | 0.95         |
+| Deepseek      | OTHER      | 0.889285714     | 0.9      | 0.9    | 0.95     | 0.9     | 0.9     | 0.85  | 0.85    | 0.75    | 0.9   | 0.95     | 0.75   | 0.95      | 0.95    | 0.85    | 0.85    | 0.8   | 1     | 0.95     | 0.95   | 0.95  | 0.8   | 0.8   | 0.9    | 0.8     | 1        | 0.95      | 0.85    | 0.95         |
+| llama3-8b     | MODEL      | 0.664285714     | 0.8      | 0.6    | 0.7      | 0.7     | 0.8     | 0.7   | 0.4     | 0.5     | 0.6   | 0.9      | 0.7    | 0.8       | 0.9     | 0.7     | 0.5     | 0.4   | 0.7   | 0.7      | 0.4    | 0.6   | 0.7   | 0.4   | 0.6    | 0.7     | 0.8      | 0.7       | 0.7     | 0.9          |
+| llama3-8b     | GLOBAL     | 0.782142857     | 0.9      | 0.7    | 0.65     | 0.8     | 0.85    | 0.75  | 0.55    | 0.55    | 0.85  | 0.9      | 0.8    | 0.9       | 0.8     | 0.8     | 0.5     | 0.8   | 0.8   | 0.9      | 0.7    | 0.8   | 0.7   | 0.7   | 1      | 0.8     | 1        | 0.9       | 0.7     | 0.8          |
+| llama3-8b     | LOCAL      | 0.801785714     | 0.9      | 0.7    | 0.65     | 0.85    | 0.85    | 0.75  | 0.45    | 0.75    | 0.8   | 0.95     | 0.85   | 0.85      | 0.7     | 0.85    | 0.6     | 0.85  | 0.7   | 0.85     | 0.7    | 0.95  | 0.7   | 0.75  | 1      | 0.85    | 1        | 0.9       | 0.75    | 0.95         |
+| llama3-8b     | OTHER      | 0.775           | 0.9      | 0.7    | 0.6      | 0.8     | 0.8     | 0.8   | 0.5     | 0.7     | 0.8   | 0.9      | 0.7    | 1         | 0.7     | 0.8     | 0.6     | 0.8   | 0.7   | 0.9      | 0.7    | 0.9   | 0.7   | 0.6   | 0.9    | 0.7     | 1        | 0.9       | 0.7     | 0.9          |
+| ernie-tiny-8k | MODEL      | 0.319642857     | 0.6      | 0.1    | 0.3      | 0.1     | 0.1     | 0.2   | 0.2     | 0.2     | 0.2   | 0.7      | 0.2    | 0.4       | 0.3     | 0.5     | 0.1     | 0.3   | 0.5   | 0.8      | 0.2    | 0.2   | 0.2   | 0.35  | 0.3    | 0.3     | 0.1      | 0.2       | 0.8     | 0.5          |
+| ernie-tiny-8k | GLOBAL     | 0.285714286     | 0.3      | 0      | 0.3      | 0.2     | 0.1     | 0.25  | 0.1     | 0.2     | 0.1   | 0.4      | 0.2    | 0.4       | 0.2     | 0.7     | 0.15    | 0.2   | 0.5   | 0.8      | 0.2    | 0.2   | 0.1   | 0.3   | 0.2    | 0.3     | 0.1      | 0.3       | 0.7     | 0.5          |
+| ernie-tiny-8k | LOCAL      | 0.301785714     | 0.2      | 0.1    | 0.15     | 0.1     | 0.1     | 0.25  | 0.15    | 0.25    | 0.15  | 0.4      | 0.25   | 0.5       | 0.25    | 0.75    | 0.15    | 0.2   | 0.55  | 0.8      | 0.15   | 0.25  | 0.25  | 0.3   | 0.25   | 0.35    | 0.1      | 0.3       | 0.7     | 0.5          |
+| ernie-tiny-8k | OTHER      | 0.2875          | 0.3      | 0.1    | 0.2      | 0.2     | 0.1     | 0.2   | 0.1     | 0.2     | 0.1   | 0.4      | 0.2    | 0.3       | 0.2     | 0.7     | 0.1     | 0.2   | 0.5   | 0.8      | 0.2    | 0.2   | 0.2   | 0.35  | 0.2    | 0.3     | 0.1      | 0.4       | 0.7     | 0.5          |
+| ernie_speed   | MODEL      | 0.705357143     | 0.9      | 0.5    | 0.8      | 0.3     | 0.8     | 0.7   | 0.6     | 0.6     | 0.6   | 0.9      | 0.7    | 1         | 0.9     | 0.8     | 0.9     | 0.4   | 0.75  | 0.7      | 0.3    | 0.7   | 0.7   | 0.5   | 0.4    | 0.8     | 0.8      | 0.9       | 0.8     | 1            |
+| ernie_speed   | GLOBAL     | 0.776785714     | 1        | 0.6    | 0.8      | 0.75    | 0.8     | 0.9   | 0.7     | 0.65    | 0.8   | 0.8      | 0.8    | 0.8       | 0.7     | 0.9     | 0.7     | 0.6   | 0.7   | 0.8      | 0.7    | 0.95  | 0.6   | 0.7   | 0.8    | 0.8     | 1        | 0.9       | 0.5     | 1            |
+| ernie_speed   | LOCAL      | 0.785714286     | 0.9      | 0.6    | 0.8      | 0.65    | 0.8     | 0.95  | 0.8     | 0.65    | 0.8   | 0.8      | 0.9    | 1         | 0.75    | 0.9     | 0.8     | 0.6   | 0.75  | 0.8      | 0.75   | 0.95  | 0.6   | 0.6   | 0.6    | 0.85    | 1        | 0.9       | 0.5     | 1            |
+| ernie_speed   | OTHER      | 0.769642857     | 0.9      | 0.5    | 0.7      | 0.7     | 0.9     | 0.9   | 0.8     | 0.6     | 0.8   | 0.8      | 0.9    | 0.85      | 0.7     | 0.9     | 0.6     | 0.6   | 0.8   | 0.7      | 0.6    | 0.9   | 0.7   | 0.8   | 0.6    | 0.8     | 1        | 0.9       | 0.6     | 1            |
+
+The visualization of the average scores for each edge node is as follows:
+
+![](./assets/model_accuracy_radar.png)
+
+![](./assets/Deepseek_radar_plot.png)
+![](./assets/llama3-8b_radar_plot.png)
+![](./assets/ernie_speed_radar_plot.png)
+![](./assets/ernie-tiny-8k_radar_plot.png)
+
+It can be observed that, overall, Deepseek performs the best, followed by LLaMA3-8B and ernie_speed with similar performance, while ernie-tiny-8k performs the worst. Additionally, when the model itself is already strong (Deepseek), the effect of RAG is relatively weaker. When the model’s performance is moderate, RAG has a more significant impact. For models with poor performance, the effect of RAG is unstable. The general trend is Local RAG > Global RAG > Model > Other RAG. However, there are exceptions where using Other RAG can outperform the Model, indicating that policy documents from different edge nodes may have some correlation, leading to some performance gains. However, these gains are not consistent and can sometimes have a negative impact due to differences in policies across edge nodes.
