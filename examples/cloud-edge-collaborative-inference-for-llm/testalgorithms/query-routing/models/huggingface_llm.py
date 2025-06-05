@@ -14,12 +14,13 @@
 
 import os
 import time
+import torch
 from threading import Thread
-
+from core.common.log import LOGGER
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 from models.base_llm import BaseLLM
 
-device = "cuda"
+device = "cuda" if torch.cuda.is_available() else "cpu"
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 
 class HuggingfaceLLM(BaseLLM):
@@ -41,16 +42,19 @@ class HuggingfaceLLM(BaseLLM):
         model : str
             Hugging Face style model name. Example: `Qwen/Qwen2.5-0.5B-Instruct`
         """
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model,
-            torch_dtype="auto",
-            device_map="auto",
-            trust_remote_code=True
-        )
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            model,
-            trust_remote_code=True
-        )
+        try:
+            self.model = AutoModelForCausalLM.from_pretrained(
+                model,
+                torch_dtype="auto",
+                device_map="auto",
+                trust_remote_code=True
+            )
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                model,
+                trust_remote_code=True
+            )
+        except Exception as e:
+            raise RuntimeError(f"Failed to load model '{model}': {e}")
 
     def _infer(self, messages):
         """Call the transformers inference API to get the response
@@ -72,46 +76,50 @@ class HuggingfaceLLM(BaseLLM):
         st = time.perf_counter()
         most_recent_timestamp = st
 
-        # messages = self.get_message_chain(question, system_prompt)
-        text = self.tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True
-        )
+        try:
+            # messages = self.get_message_chain(question, system_prompt
+            text = self.tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True
+            )
 
-        model_inputs = self.tokenizer([text], return_tensors="pt").to(device)
+            model_inputs = self.tokenizer([text], return_tensors="pt").to(device)
 
-        streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
+            streamer = TextIteratorStreamer(self.tokenizer, skip_prompt=True)
 
-        generation_kwargs = dict(
-            model_inputs,
-            streamer=streamer,
-            max_new_tokens=self.max_tokens,
-            temperature=self.temperature,
-            top_p=self.top_p,
-            repetition_penalty=self.repetition_penalty,
-        )
+            generation_kwargs = dict(
+                model_inputs,
+                streamer=streamer,
+                max_new_tokens=self.max_tokens,
+                temperature=self.temperature,
+                top_p=self.top_p,
+                repetition_penalty=self.repetition_penalty,
+            )
 
-        thread = Thread(
-            target=self.model.generate,
-            kwargs=generation_kwargs
-        )
+            thread = Thread(
+                target=self.model.generate,
+                kwargs=generation_kwargs
+            )
 
-        thread.start()
-        time_to_first_token = 0
-        internal_token_latency = []
-        generated_text = ""
-        completion_tokens = 0
+            thread.start()
+            time_to_first_token = 0
+            internal_token_latency = []
+            generated_text = ""
+            completion_tokens = 0
 
-        for chunk in streamer:
-            timestamp = time.perf_counter()
-            if time_to_first_token == 0:
-                time_to_first_token = time.perf_counter() - st
-            else:
-                internal_token_latency.append(timestamp - most_recent_timestamp)
-            most_recent_timestamp = timestamp
-            generated_text += chunk
-            completion_tokens += 1
+            for chunk in streamer:
+                timestamp = time.perf_counter()
+                if time_to_first_token == 0:
+                    time_to_first_token = time.perf_counter() - st
+                else:
+                    internal_token_latency.append(timestamp - most_recent_timestamp)
+                most_recent_timestamp = timestamp
+                generated_text += chunk
+                completion_tokens += 1
+
+        except Exception as e:
+            raise RuntimeError(f"Inference failed: {e}")
 
         text = generated_text.replace("<|im_end|>", "")
         prompt_tokens = len(model_inputs.input_ids[0])
@@ -132,4 +140,4 @@ class HuggingfaceLLM(BaseLLM):
 if __name__ == "__main__":
     model = HuggingfaceLLM()
     model._load("Qwen/Qwen2-7B-Instruct")
-    print(model._infer("Hello, how are you?"))
+    LOGGER.info(model._infer("Hello, how are you?"))

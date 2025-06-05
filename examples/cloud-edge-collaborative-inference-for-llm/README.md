@@ -1,6 +1,34 @@
-# Quick Start
+# Table of Contents
 
-## Introduction
+- [Details of Cloud Edge Collaborative Inference for LLM](#deatails-of-cloud-edge-collaborative-inference-for-llms)
+  - [Introduction](#introduction)
+  - [Why LLM Need Cloud-Edge Collaborative Inference?](#why-llm-need-cloud-edge-collaborative-inference)
+  - [Possible Collaborative Inference Strategy](#possible-collaborative-inference-strategy)
+  - [Details of Design](#details-of-design)
+- [Quick Start Guide](#quick-start-guide)
+  - [Required Resources](#required-resources)
+  - [Methods for benchmarking with ianvs](#methods-for-benchmarking-with-ianvs)
+  - [Docker-Based Setup](#docker-based-setup)
+  - [Detailed Setup Guide](#detailed-setup-guide)
+    - [Step 1: Ianvs Preparation](#step-1-ianvs-preparation)
+    - [Step 2: Dataset and Model Preparation](#step-2-dataset-and-model-preparation)
+      - [Dataset Configuration](#dataset-configuration)
+      - [Metric Configuration](#metric-configuration)
+      - [Model Configuration](#model-configuration)
+      - [Router Configuration](#router-configuration)
+      - [Data Processor Configuration](#data-processor-configuration)
+    - [Step 3: Run Ianvs](#step-3-run-ianvs)
+      - [Provided Response Cache](#provided-response-cache)
+      - [Run Joint Inference Example](#run-joint-inference-example)
+    - [Results](#results)
+- [Discussion](#discussion)
+  - [Query Routing's Application Scenario](#query-routings-application-scenario)
+- [Future](#future)
+- [References](#references)
+
+## Deatails of Cloud Edge Collaborative Inference for LLMs
+
+### Introduction
 
 This example aims to implement benchmarks for **LLM in cloud-edge collaborative inference scenario**. 
 
@@ -42,11 +70,13 @@ To save API calls during multi-round testing, this example has designed a result
 
 After all tests are completed, the Test Env Manager will calculate relevant metrics based on selected Metrics and hand over to Story Manager for printing test reports and generating Leader Board.
 
-## Required Resources
+## Quick Start Guide 
+
+### Required Resources
 
 Before using this example, you need to have the device ready:
 
-One machine is all you need, i.e., a laptop or a virtual machine is sufficient and a cluster is not necessary
+- One machine is all you need, i.e., a laptop or a virtual machine is sufficient and a cluster is not necessary
 
 - 2 CPUs or more
 
@@ -60,27 +90,88 @@ One machine is all you need, i.e., a laptop or a virtual machine is sufficient a
 
 - Python 3.8+ environment
 
-## Step 1. Ianvs Preparation
+### Methods for Benchmarking with Ianvs
+
+- To quickly experience benchmarking with Ianvs, proceed with the [Docker-Based Setup](#docker-based-setup).
+- For a detailed setup process, including creating a custom dataset, refer to the [Detailed Setup Guide](#detailed-setup-guide).
+
+### Docker based setup
+
+The Docker-based setup assumes you have Docker installed on your system and are using an Ubuntu-based Linux distribution.
+
+**Note**: 
+- If you don't have Docker installed, follow the Docker Engine installation guide [here](https://docs.docker.com/engine/install/ubuntu/). 
+- To enable Docker to download datasets from Kaggle within your docker container, you need to configure the Kaggle CLI authentication token. Please follow the [official Kaggle API documentation](https://www.kaggle.com/docs/api#:~:text=is%20%24PYTHON_HOME/Scripts.-,Authentication,-In%20order%20to) to download your `kaggle.json` token. Once downloaded, move the file to the `~/ianvs/examples/cloud-edge-collaborative-inference-for-llm/` directory after doing step 1(cloning the ianvs repo):
 
 ```bash
-# Create a new conda environment with Python>=3.8 (venv users can do it in their own way).
-conda create -n ianvs-experiment python=3.8
+mv /path/to/kaggle.json ~/ianvs/examples/cloud-edge-collaborative-inference-for-llm/
+```
 
-# Activate our environment
+1. Clone Ianvs Repo
+```
+git clone https://github.com/kubeedge/ianvs.git
+cd ianvs
+```
+
+2. From the root directory of Ianvs, build the `cloud-edge-collaborative-inference-for-llm` Docker image:
+
+**Note**: If you have already build the image, then move on to the second step directly. 
+
+```bash 
+docker build -t ianvs-experiment-image ./examples/cloud-edge-collaborative-inference-for-llm/
+```
+
+3. Run the image in an interactive shell:
+```bash 
+docker run -it ianvs-experiment-image /bin/bash 
+```
+
+4. Activate the ianvs-experiment Conda environment:
+```bash 
 conda activate ianvs-experiment
+```
+
+5. Set the required environment variables for the API (use either OpenAI or GROQ credentials):
+```bash 
+export OPENAI_BASE_URL="https://api.openai.com/v1"
+export OPENAI_API_KEY=sk_xxxxxxxx
+```
+
+`Alternatively, for GROQ, use GROQ_BASE_URL and GROQ_API_KEY.`
+
+6. Run the Ianvs benchmark:
+```bash 
+ianvs -f examples/cloud-edge-collaborative-inference-for-llm/benchmarkingjob.yaml
+```
+
+*Note: To help you get results quickly, we have provided a workspace folder with cached results for `Qwen/Qwen2.5-1.5B-Instruct`, `Qwen/Qwen2.5-3B-Instruct`,`Qwen/Qwen2.5-7B-Instruct` and `gpt-4o-mini`.*
+
+- If you want to create a custom dataset, proceed to the next section. 
+
+### Detailed Setup Guide
+
+#### Step 1. Ianvs Preparation
+
+```bash
 
 # Clone Ianvs Repo
 git clone https://github.com/kubeedge/ianvs.git
 cd ianvs
 
+# Create a new conda environment with Python>=3.8 and rust(venv users can do it in their own way).
+conda create -n ianvs-experiment python=3.8 rust -c conda-forge
+
+# Activate our environment
+conda activate ianvs-experiment
+
 # Install Sedna
 pip install examples/resources/third_party/sedna-0.6.0.1-py3-none-any.whl
 
-# Install dependencies for this example.
-pip install -r examples/cloud-edge-collaborative-inference-for-llm/requirements.txt
-
 # Install dependencies for Ianvs Core.
 pip install -r requirements.txt
+
+# Install dependencies for this example.
+pip install -r examples/cloud-edge-collaborative-inference-for-llm/requirements.txt
 
 # Install ianvs
 python setup.py install
@@ -88,24 +179,28 @@ python setup.py install
 
 If you want to use speculative decoding models like [EAGLE](https://github.com/SafeAILab/EAGLE), refer to the original repository for setup instructions.
 
-## Step 2. Dataset and Model Preparation
+#### Step 2. Dataset and Model Preparation
 
-### Dataset Configuration
+##### Dataset Configuration
 
-Here, we provide `MMLU-5-shot` dataset and `GPQA-diamond` dataset for testing. The following is the instruction for dataset preparation for `MMLU-5-shot`, `GPQA-diamond` follows the same progress.
+Here, we provide `MMLU-5-shot` dataset and `GPQA-diamond` dataset for testing. The following  instruction for dataset preparation for `MMLU-5-shot`, `GPQA-diamond` follows the same progress.
 
-1. Download `mmlu-5-shot` from [Ianvs-MMLU-5-shot](https://huggingface.co/datasets/FuryMartin/Ianvs-MMLU-5-shot), (or [Ianvs-GPQA-diamond](https://huggingface.co/datasets/FuryMartin/Ianvs-GPQA-diamond)) which is a transformed MMLU-5-shot dataset formatted to fit Ianvs's requirements.
+1. Download `mmlu-5-shot` in the root directory of ianvs from [Ianvs-MMLU-5-shot](https://www.kaggle.com/datasets/kubeedgeianvs/ianvs-mmlu-5shot), which is a transformed MMLU-5-shot dataset formatted to fit Ianvs's requirements.
+**Note**: To enable Docker to download datasets from Kaggle within your docker container, you need to configure the Kaggle CLI authentication token. Please follow the [official Kaggle API documentation](https://www.kaggle.com/docs/api#:~:text=is%20%24PYTHON_HOME/Scripts.-,Authentication,-In%20order%20to) to download your `kaggle.json` token. 
+```bash
+kaggle datasets download -d kubeedgeianvs/ianvs-mmlu-5shot
+unzip -o ianvs-mmlu-5shot.zip
+rm -rf ianvs-mmlu-5shot.zip
+```
 
-2. Create a `dataset` folder in the root directory of Ianvs and move `mmlu-5-shot` into the `dataset` folder.
-
-3. Then, check the path of `train_data` and `test_dat` in 
+2. Then, check the path of `train_data` and `test_data` in 
 `examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml`.
 
     - If you created the `dataset` folder inside `ianvs/` as mentioned earlier, then the relative path is correct and does not need to be modified.
 
     - If your `dataset` is created in a different location, please use an absolute path, and using `~` to represent the home directory is not supported.
 
-#### Dataset Details
+###### Dataset Details
 
 If you want to construct your own dataset, please see the details below and follow the instruction.
 
@@ -146,7 +241,7 @@ Here is an example:
 }
 ```
 
-### Metric Configuration
+##### Metric Configuration
 
 *Note: If you just want to run this example quickly, you can skip this step.*
 
@@ -168,7 +263,7 @@ Each metric is calculated by a module in `examples/cloud-edge-collaborative-infe
 
 You can select multiple metrics in `examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml`.
 
-### Model Configuration
+##### Model Configuration
 
 *Note: If you just want to run this example quickly, you can skip this step.*
 
@@ -176,7 +271,7 @@ The models are configured in `examples/cloud-edge-collaborative-inference-for-ll
 
 In the configuration file, there are two models available for configuration: `EdgeModel` and `CloudModel`.
 
-#### EdgeModel Configuration
+##### EdgeModel Configuration
 
 The `EdgeModel` is designed to be deployed on your local machine, offering support for multiple serving backends including `huggingface`, `vllm`, `EagleSpecDec`. Additionally, it provides the flexibility to integrate with API-based model services.
 
@@ -194,7 +289,7 @@ For both `EdgeModel`, the arguments are:
 | gpu_memory_utilization | float | The percentage of GPU memory utilization (Used for vLLM)     | 0.9                      |
 | draft_model | str | The draft model used for Speculative Decoding | - |
 
-#### CloudModel Configuration
+##### CloudModel Configuration
 
 
 The `CloudModel` represents the model on cloud, it will call LLM API via OpenAI API format. You need to set your OPENAI_BASE_URL and OPENAI_API_KEY in the environment variables yourself, for example.
@@ -203,6 +298,8 @@ The `CloudModel` represents the model on cloud, it will call LLM API via OpenAI 
 export OPENAI_BASE_URL="https://api.openai.com/v1"
 export OPENAI_API_KEY=sk_xxxxxxxx
 ```
+
+`Alternatively, for GROQ, use GROQ_BASE_URL and GROQ_API_KEY.`
 
 For `CloudModel`, the open parameters are:
 
@@ -214,8 +311,7 @@ For `CloudModel`, the open parameters are:
 | max_tokens         | int  | The maximum number of tokens that can be generated in the chat completion | 512         |
 | repetition_penalty | float  | The parameter for repetition penalty                         | 1.05        |
 
-
-#### Router Configuration
+##### Router Configuration
 
 Router is a component that routes the query to the edge or cloud model. The router is configured by `hard_example_mining` in `examples/cloud-edge-collaborative-inference-for-llm/testrouters/query-routing/test_queryrouting.yaml`.
 
@@ -231,9 +327,9 @@ Currently, supported routers include:
 
 You can modify the `router` parameter in `test_queryrouting.yaml` to select the router you want to use.
 
-For BERT router, you can use [routellm/bert](https://huggingface.co/routellm/bert) or [routellm/bert_mmlu_augmented](https://huggingface.co/routellm/bert_mmlu_augmented) or your own BERT model/
+For BERT router, you can use [routellm/bert](https://huggingface.co/routellm/bert) or [routellm/bert_mmlu_augmented](https://huggingface.co/routellm/bert_mmlu_augmented) or your own BERT model.
 
-#### Data Processor Configuration
+##### Data Processor Configuration
 The Data Processor allows you to custom your own data format after the dataset loaded.
 
 Currently, supported routers include:
@@ -242,16 +338,17 @@ Currently, supported routers include:
 |  :---: | :---: | :---: |
 | OracleRouterDatasetProcessor     |  Expose `gold` label to OracleRouter                      |   -         |
 
-## Step 3. Run Ianvs
+#### Step 3. Run Ianvs
 
-### Provided Response Cache
+##### Provided Response Cache
 The testing process may take much time, depending on the number of test cases and the inference speed of the model.
 
 To enable you directly get the results, here we provide a workspace folder with cached results of `Qwen/Qwen2.5-1.5B-Instruct`, `Qwen/Qwen2.5-3B-Instruct`,`Qwen/Qwen2.5-7B-Instruct` and `gpt-4o-mini`.
 
-You can download `workspace-mmlu` folder from [Ianvs-MMLU-5-shot](https://huggingface.co/datasets/FuryMartin/Ianvs-MMLU-5-shot) and put it under your `ianvs` folder.
+You can download `workspace-mmlu` folder from [Ianvs-MMLU-5-shot](https://www.kaggle.com/datasets/kubeedgeianvs/ianvs-mmlu-5shot) and put it under your `ianvs` folder.
+- Since we have already downloaded the `Ianvs-MMLU-5-shot` folder. There is no need to do this again.
 
-### Run Joint Inference example
+##### Run Joint Inference example
 
 Run the following command:
 
@@ -260,14 +357,30 @@ Run the following command:
 After the process finished, you will see output like this:
 
 ```bash
-[2024-10-28 18:03:37,314] edge_model.py(43) [INFO] - {'model': 'Qwen/Qwen2.5-1.5B-Instruct', 'backend': 'vllm', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'tensor_parallel_size': 4, 'gpu_memory_utilization': 0.9, 'use_cache': True}
-[2024-10-28 18:03:37,314] cloud_model.py(34) [INFO] - {'model': 'gpt-4o-mini', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'use_cache': True}
-[2024-10-28 18:03:37,850] joint_inference.py(73) [INFO] - Loading dataset
-[2024-10-28 18:03:38,703] hard_sample_mining.py(30) [INFO] - USING EdgeOnlyFilter
-[2024-10-28 18:03:38,704] joint_inference.py(162) [INFO] - Inference Start
-100%|██████████████████████████████████| 14042/14042 [00:02<00:00, 6182.92it/s, Edge=14042, Cloud=0]
-[2024-10-28 18:03:40,975] joint_inference.py(186) [INFO] - Inference Finished
-[2024-10-28 18:03:40,976] joint_inference.py(131) [INFO] - Release models
+[2025-04-12 09:20:14,523] edge_model.py(43) [INFO] - {'model': 'Qwen/Qwen2.5-1.5B-Instruct', 'backend': 'vllm', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'tensor_parallel_size': 4, 'gpu_memory_utilization': 0.9, 'use_cache': True}
+[2025-04-12 09:20:14,524] cloud_model.py(34) [INFO] - {'model': 'gpt-4o-mini', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'use_cache': True}
+[2025-04-12 09:20:14,880] joint_inference.py(73) [INFO] - Loading dataset
+[2025-04-12 09:20:15,943] hard_sample_mining.py(30) [INFO] - USING EdgeOnlyFilter
+[2025-04-12 09:20:15,943] joint_inference.py(162) [INFO] - Inference Start
+100%|██████████████████████████████████| 14042/14042 [00:03<00:00, 4418.66it/s, Edge=14042, Cloud=0]
+[2025-04-12 09:20:19,122] joint_inference.py(186) [INFO] - Inference Finished
+[2025-04-12 09:20:19,122] joint_inference.py(131) [INFO] - Release models
+[2025-04-12 09:20:23,844] edge_model.py(43) [INFO] - {'model': 'Qwen/Qwen2.5-3B-Instruct', 'backend': 'vllm', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'tensor_parallel_size': 4, 'gpu_memory_utilization': 0.9, 'use_cache': True}
+[2025-04-12 09:20:23,844] cloud_model.py(34) [INFO] - {'model': 'gpt-4o-mini', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'use_cache': True}
+[2025-04-12 09:20:23,851] joint_inference.py(73) [INFO] - Loading dataset
+[2025-04-12 09:20:24,845] hard_sample_mining.py(30) [INFO] - USING EdgeOnlyFilter
+[2025-04-12 09:20:24,845] joint_inference.py(162) [INFO] - Inference Start
+100%|██████████████████████████████████| 14042/14042 [00:03<00:00, 4413.68it/s, Edge=14042, Cloud=0]
+[2025-04-12 09:20:28,027] joint_inference.py(186) [INFO] - Inference Finished
+[2025-04-12 09:20:28,027] joint_inference.py(131) [INFO] - Release models
+[2025-04-12 09:20:32,741] edge_model.py(43) [INFO] - {'model': 'Qwen/Qwen2.5-7B-Instruct', 'backend': 'vllm', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'tensor_parallel_size': 4, 'gpu_memory_utilization': 0.9, 'use_cache': True}
+[2025-04-12 09:20:32,741] cloud_model.py(34) [INFO] - {'model': 'gpt-4o-mini', 'temperature': 0, 'top_p': 0.8, 'max_tokens': 512, 'repetition_penalty': 1.05, 'use_cache': True}
+[2025-04-12 09:20:32,749] joint_inference.py(73) [INFO] - Loading dataset
+[2025-04-12 09:20:33,738] hard_sample_mining.py(30) [INFO] - USING EdgeOnlyFilter
+[2025-04-12 09:20:33,738] joint_inference.py(162) [INFO] - Inference Start
+100%|██████████████████████████████████| 14042/14042 [00:03<00:00, 4456.34it/s, Edge=14042, Cloud=0]
+[2025-04-12 09:20:36,890] joint_inference.py(186) [INFO] - Inference Finished
+[2025-04-12 09:20:36,890] joint_inference.py(131) [INFO] - Release models
 ```
 
 ### Results
@@ -331,7 +444,6 @@ You can modify and run `performance-cost-plot.py` to get your Performance-Cost f
 
 Some related research $^{[1]}$ has trained pratical routers that can save up to 40% of GPT-4 API calls while maintaining essentially unchanged accuracy on the test set.
 
-
 ## Future
 
 This example builds an architecture for testing query routing strategies, but the provided dataset has some drawbacks such as being one-sided and singular, making it difficult to reflect effects in real-world scenarios. 
@@ -343,9 +455,7 @@ Thus, the future tasks of this example include:
 - Build a more comprehensive dataset for better router evaluation
 - Try to consider a native Speculative Decoding in cloud-edge collaborative inference scenario.
 
-
-
-**Reference**
+## References
 
 [1] Ding, Dujian, et al. "Hybrid LLM: Cost-efficient and quality-aware query routing." *arXiv preprint arXiv:2404.14618* (2024).
 
