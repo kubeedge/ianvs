@@ -35,5 +35,9 @@ class OracleRouterDatasetProcessor:
         sedna.datasources.BaseDataSource
             Transformed dataset
         """
-        dataset.x = [{"query": x, "gold": y}  for x,y in zip(dataset.x, dataset.y)]
+        try:
+            dataset.x = [{"query": x, "gold": y} for x, y in zip(dataset.x, dataset.y)]
+        except Exception as e:
+            raise RuntimeError("Failed to transform dataset for Oracle Router.") from e
+
         return dataset
