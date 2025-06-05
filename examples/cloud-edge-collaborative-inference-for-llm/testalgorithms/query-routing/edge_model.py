@@ -40,16 +40,20 @@ class EdgeModel:
             - `backend`: str, default "huggingface". The serving framework to be used.
         """
 
-        LOGGER.info(kwargs)
+        LOGGER.info("Initializing EdgeModel with kwargs: %s", kwargs)
         self.kwargs = kwargs
         self.model_name = kwargs.get("model", None)
         self.backend = kwargs.get("backend", "huggingface")
+        if self.backend not in ["huggingface", "vllm", "api"]:
+            raise ValueError(
+                f"Unsupported backend: {self.backend}. Supported options are: 'huggingface', 'vllm', 'api'."
+            )
         self._set_config()
 
     def _set_config(self):
         """Set the model path in our environment variables due to Sedna’s [check](https://github.com/kubeedge/sedna/blob/ac623ab32dc37caa04b9e8480dbe1a8c41c4a6c2/lib/sedna/core/base.py#L132).
         """
-        #
+        
         os.environ["model_path"] = self.model_name
 
     def load(self, **kwargs):
@@ -60,18 +64,20 @@ class EdgeModel:
         Exception
             When the backend is not supported.
         """
-        if self.backend == "huggingface":
-            self.model = HuggingfaceLLM(**self.kwargs)
-        elif self.backend == "vllm":
-            self.model = VllmLLM(**self.kwargs)
-        elif self.backend == "api":
-            self.model = APIBasedLLM(**self.kwargs)
-        elif self.backend == "EagleSpecDec":
-            self.model = EagleSpecDecModel(**self.kwargs)
-        elif self.backend == "LadeSpecDec":
-            self.model = LadeSpecDecLLM(**self.kwargs)
-        else:
-            raise Exception(f"Backend {self.backend} is not supported. Please use 'huggingface', 'vllm', or `api` ")
+        try:
+            if self.backend == "huggingface":
+                self.model = HuggingfaceLLM(**self.kwargs)
+            elif self.backend == "vllm":
+                self.model = VllmLLM(**self.kwargs)
+            elif self.backend == "api":
+                self.model = APIBasedLLM(**self.kwargs)
+            elif self.backend == "EagleSpecDec":
+                self.model = EagleSpecDecModel(**self.kwargs)
+            elif self.backend == "LadeSpecDec":
+                self.model = LadeSpecDecLLM(**self.kwargs)
+        except Exception as e:
+            LOGGER.error(f"Failed to initialize model backend `{self.backend}`: {str(e)}")
+            raise RuntimeError(f"Model loading failed for backend `{self.backend}`.") from e
 
     def predict(self, data,  **kwargs):
         """Inference the model with the given data.
@@ -89,13 +95,18 @@ class EdgeModel:
             Formatted Response. See `model._format_response()` for more details.
         """
 
-        answer = self.model.inference(data)
-
-        return answer
-
+        try:
+            return self.model.inference(data)
+        except Exception as e:
+            LOGGER.error(f"Inference failed: {e}")
+            raise RuntimeError("Inference failed due to an internal error.") from e
+    
     def cleanup(self):
         """Save the cache and cleanup the model.
         """
 
-        self.model.save_cache()
-        self.model.cleanup()
+        try:
+            self.model.save_cache()
+            self.model.cleanup()
+        except Exception as e:
+            LOGGER.warning(f"Cleanup failed: {e}")
