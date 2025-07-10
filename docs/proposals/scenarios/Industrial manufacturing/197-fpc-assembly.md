@@ -10,8 +10,10 @@ It is noteworthy that the current industrial demand for embodied intelligent ser
 
 ## **Goals**
 
-1. Introduce industrial datasets in the field of embodied intelligence, classify and reorganize the existing datasets according to four categories of standardized tasks: perception (such as multi view surface quality inspection), movement (such as material box handling, stacking, disassembling and stacking), operation (such as precision assembly, precision insertion, multi process flexible assembly, multi category flexible assembly, reel transfer, equipment in box packaging, mixed goods sorting), composition (such as electronic equipment flexibility test, power patrol inspection), and output the dataset Research Report.  
+1. Introduce industrial datasets in the field of embodied intelligence, classify and reorganize the existing datasets according to four categories of standardized tasks: perception (such as multi view surface quality inspection), movement (such as material box handling, stacking, disassembling and stacking), operation (such as precision assembly, precision insertion, multi process flexible assembly, multi category flexible assembly, reel transfer, equipment in box packaging, mixed goods sorting), composition (such as electronic equipment flexibility test, power patrol inspection), and output the dataset Research Report.
+
 2. Select at least one of the above scenarios in kubeedge ianvs to provide a standardized test suite, including datasets, test environments, and test indicators, and sort out the datasets in a standardized and unified data format.
+
 3. Implement embodied intelligent baseline algorithm based on standardized test suite in kubeedge ianvs.
 
 ## **Design Details**
@@ -128,15 +130,23 @@ url:"./examples/fpc_assembly/singletask_learning_bench/testenv/accuracy.py"
 
 ### **Single Task Learning**
 
-Single task learning is a traditional learning pooling all data together to train a single model. It typically includes a specialist model laser-focused on a single task and requires large amounts of task-specific labeled data, which is not always available on early stage of a distributed synergy AI project.
-As shown in the following figure, the single task learning works as procedures below:
-&emsp;1.Developer implements and deploys the application based on single task learning.
-&emsp;2.The application runs and launches single task learning.
-&emsp;3.The application uploads samples to the cloud.
-&emsp;4.Labeling service labels the uploaded samples.
-&emsp;5.Training learns the samples to generate a new model.
-&emsp;6.The system updates the model on the edge.
-&emsp;7.The model conducts inference given test samples where the inference result is send to the application which ends the process.
+Single task learning is a traditional learning pooling all data together to train a single model. It typically includes a specialist model laser-focused on a single task and requires large amounts of task-specific labeled data, which is not always available on early stage of a distributed synergy AI project.  
+
+As shown in the following figure, the single task learning works as procedures below:  
+
+&emsp;1.Developer implements and deploys the application based on single task learning.  
+
+&emsp;2.The application runs and launches single task learning.  
+
+&emsp;3.The application uploads samples to the cloud.  
+
+&emsp;4.Labeling service labels the uploaded samples.  
+
+&emsp;5.Training learns the samples to generate a new model.  
+
+&emsp;6.The system updates the model on the edge.  
+
+&emsp;7.The model conducts inference given test samples where the inference result is send to the application which ends the process.  
 
 ![Alt text](Single_Task_Learning.png#pic_center)
     
@@ -159,8 +169,7 @@ test_object:
       url: "./examples/fpc_assembly/singletask_learning_bench/testalgorithms/fpn_algorithm.yaml"
 ```
 
-
-### **Road Map**
+## **Road Map**
 
 &emsp;**1.** **From July to Mid-August**, conduct research on the currently available embodied intelligent datasets and output corresponding reports. At the same time, continue to follow up and improve the proposal. Besides, learn to use the pybullet platform, build the scene of fpc_assembly on the pybullet platform.  
 
