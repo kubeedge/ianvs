@@ -135,7 +135,7 @@ As shown in the following figure, the single task learning works as procedures b
 &emsp;6.The system updates the model on the edge.
 &emsp;7.The model conducts inference given test samples where the inference result is send to the application which ends the process.
 
-![Alt text](image-1.png)
+[![Alt text](image-1.png)](https://github.com/CGL-learner/ianvs/blob/main/docs/proposals/scenarios/Industrial%20manufacturing/Single_Task_Learning.png?raw=true)
 
 The specific implementation of fpc_assembly single task learning algorithm in `algorithm.yaml`.
 
