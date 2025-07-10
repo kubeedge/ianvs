@@ -79,10 +79,13 @@ In the simulation verification stage, the PyBullet based physics engine simulati
 
 **Dataset Format:**
 
-&emsp;**· Rgb_image.png:** RGB image from a virtual camera observing the assembly area.
-&emsp;**· Depth.png:** Corresponding depth images from the same camera.
-&emsp;**· Robot_state.json:** Recording the motion state parameters of the robot at a certain moment.
-&emsp;**· Ground_truth.json:** JSON data of the position and orientation of FPC and Motherboard in space.
+&emsp;**· Rgb_image.png:** RGB image from a virtual camera observing the assembly area.  
+
+&emsp;**· Depth.png:** Corresponding depth images from the same camera.  
+
+&emsp;**· Robot_state.json:** Recording the motion state parameters of the robot at a certain moment.  
+
+&emsp;**· Ground_truth.json:** JSON data of the position and orientation of FPC and Motherboard in space.  
 
 The ultimately dataset form:
 ```python
@@ -155,6 +158,7 @@ test_object:
       # the file format supports yaml/yml
       url: "./examples/fpc_assembly/singletask_learning_bench/testalgorithms/fpn_algorithm.yaml"
 ```
+
 
 ### **Road Map**
 
