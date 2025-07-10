@@ -70,13 +70,13 @@ PyBullet is developed based on the well-known open-source physics engine Bullet 
 ![Alt text](pybullet.png#pic_center)
 
 **Scenario:** Accurately assemble flexible printed circuit (FPC) cables onto a smartphone motherboard.
-
+<p align="justify">
 In the field of industrial manufacturing, precision assembly of thin soft components is a highly challenging typical scenario. The significant deformability of these components poses certain obstacles to the automated assembly process - the modeling and control logic of traditional rigid objects is difficult to directly reuse, and targeted algorithms need to be designed based on the dynamic characteristics of flexible bodies. The complexity and engineering value of this type of scenario make it an ideal candidate for a new dataset in the field of embodied intelligence: by constructing a high-quality dataset that includes multi physics field coupling and contact mechanics characteristics, it can effectively promote breakthroughs in key technologies such as robot tactile perception and soft control.
 
 In the simulation verification stage, the PyBullet based physics engine simulation platform provides a low-cost and reproducible solution for obtaining such high-quality datasets. This platform supports flexible body modeling, real-time calculation of contact force, and simulation of sensor data, which can efficiently support algorithm development and strategy optimization, providing important technical support for the intelligent research of thin soft component assembly.
 
 **Data generation strategy:** A simulated robotic arm (such as the UR5 or Panda robot model provided in PyBullet) was used, which was equipped with a simple fixture and simulated force/torque sensors at the wrist or fixture. The virtual RGB-D camera will be placed above the head or at a certain angle to capture the scene. Firstly, establish an industrial scenario - precisely assemble flexible printed circuits (FPCs) onto smartphone motherboards:
-
+</p>
 ![Alt text](fpc_assembly.png#pic_center)
 
 **Dataset Format:**
