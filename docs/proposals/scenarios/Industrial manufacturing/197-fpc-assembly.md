@@ -55,7 +55,9 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 &emsp;**Story Manager:** the output management and presentation of the test case, e.g., leaderboards.  
 
-![Alt text](ianvs.png)#pic_center
+<div style="text-align: center;">
+    ![Alt text](ianvs.png)
+</div>
 
 &emsp;And currently, what I need to set up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
 
@@ -65,7 +67,9 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 PyBullet is developed based on the well-known open-source physics engine Bullet and packaged as a module in Python for robot simulation and learning. PyBullet supports loading various robot description files such as URDF, SDF, MJCF, and provides functions such as forward/reverse kinematics, forward/reverse dynamics, collision detection, and ray intersection query. In addition, many robot routines and practical debugging tools (sliders, buttons, text) are also provided.
 
-![Alt text](pybullet.png)#pic_center
+<div style="text-align: center;">
+    ![Alt text](pybullet.png)
+</div>
 
 **Scenario:** Accurately assemble flexible printed circuit (FPC) cables onto a smartphone motherboard.
 
@@ -75,7 +79,9 @@ In the simulation verification stage, the PyBullet based physics engine simulati
 
 **Data generation strategy:** A simulated robotic arm (such as the UR5 or Panda robot model provided in PyBullet) was used, which was equipped with a simple fixture and simulated force/torque sensors at the wrist or fixture. The virtual RGB-D camera will be placed above the head or at a certain angle to capture the scene. Firstly, establish an industrial scenario - precisely assemble flexible printed circuits (FPCs) onto smartphone motherboards:
 
-![Alt text](fpc_assembly.png)#pic_center
+<div style="text-align: center;">
+    ![Alt text](fpc_assembly.png)
+</div>
 
 **Dataset Format:**
 
@@ -135,7 +141,9 @@ As shown in the following figure, the single task learning works as procedures b
 &emsp;6.The system updates the model on the edge.
 &emsp;7.The model conducts inference given test samples where the inference result is send to the application which ends the process.
 
-![Alt text](Single_Task_Learning.png)#pic_center
+<div style="text-align: center;">
+    ![Alt text](Single_Task_Learning.png)
+</div>
 
 The specific implementation of fpc_assembly single task learning algorithm in `algorithm.yaml`.
 
