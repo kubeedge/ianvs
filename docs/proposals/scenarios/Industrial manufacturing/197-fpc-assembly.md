@@ -1,4 +1,4 @@
-# **Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdg**
+ # **Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdg**
 
 Under the background of accelerated evolution of intelligent industrial manufacturing, industrial robots, flexible production lines and intelligent testing equipment continue to be innovated iteratively. With its efficient data processing and real-time response ability, **cloud edge collaboration technology** has become the core technology engine to drive the application of **embodied intelligent** systems in complex industrial scenes.  
 
@@ -39,7 +39,7 @@ It is noteworthy that the current industrial demand for embodied intelligent ser
 | Gear Inspection Dataset (GID) | Perception | GID contains grayscale images of industrial gears with defect labels. This dataset supports object detection and semantic segmentation tasks in industrial machine vision applications. It is particularly useful for training models aimed at real-time evaluation of gear quality, such as during online inspections on automotive or mechanical assembly lines. The focusing range of gears makes them an ideal choice for researching specific part defect detection in high-precision environments. | [Link](https://drive.google.com/file/d/1CZo-Ab5BXkTjV-b1-NIFzYMjfJQMl4nG/view?usp=share_link) |
 | Real-IAD: Real-world Multi-View Industrial Anomaly Detection Dataset | Perception | Real IAD is a comprehensive benchmark designed to evaluate anomaly detection systems in real-world industrial environments. It includes 150000 high-resolution images of 30 different types of components, each taken from five different viewpoints. This dataset covers eight common types of defects, including cracks, dents, contamination, and misalignment. The design of Real IAD considers unsupervised anomaly detection, reflecting the challenges of high-throughput production lines where anomalies are rare but crucial for accurate identification. It supports research on anomaly localization, detection robustness, and multi view detection strategies, particularly suitable for quality assurance pipelines. | [Link](https://realiad4ad.github.io/Real-IAD/) |
 | ISP-AD: Industrial Screen Printing Anomaly Detection Dataset | Perception | ISP-AD is a domain specific dataset for anomaly detection in screen printing processes. It includes examples of synthetic and real-world defects such as ink stains, missing prints, ghosting, and registration errors. The structure of this dataset supports classification and pixel segmentation, making it suitable for various industrial defect detection pipelines. Its main application scenarios include automatic visual inspection in the production of printed electronic products, labels, and packaging, ensuring consistent printing quality is crucial for product performance and brand. | [Link](https://paperswithcode.com/dataset/isp-ad) |
-| MVTEC AD | Perception | The MVTec dataset contains 5354 high-resolution color images of different targets and texture types. It contains normal (i.e. defect free) images for training and abnormal images for testing. There are 70 different types of defects in anomalies, such as scratches, dents, contamination, and various structural changes. | [Link]( https:/www.mvtec.com/company/research/datasets/mvtec-ad) |
+| MVTEC AD | Perception | The MVTec dataset contains 5354 high-resolution color images of different targets and texture types. It contains normal (i.e. defect free) images for training and abnormal images for testing. There are 70 different types of defects in anomalies, such as scratches, dents, contamination, and various structural changes. | [Link]( https://www.mvtec.com/company/research/datasets/mvtec-ad) |
 | KolektorSDD (Kolektor Surface-Defect Dataset) | Perception | This dataset is constructed from images of defective production projects provided and annotated by Kolektor Group doo. These images were captured in a controlled industrial environment in real cases. This dataset consists of 399 images, ranging in size from 500 x to 1250 px. | [Link](https://opendatalab.org.cn/OpenDataLab/KolektorSDD) |
 | RoboMIND | Composite | This dataset contains 107000 real-world demonstration trajectories involving 96 unique objects across 479 different tasks.The RoboMIND dataset collects operational data from various robot platforms, including 52926 Franka Emika Panda single arm robot trajectories, 19152 "Tiangong" humanoid robot trajectories, 10629 AgileX Cobot Magic V2.0 dual arm robot trajectories, and 25170 UR-5e single arm robot trajectory data. | [Link](https://data.flopsera.com/data-detail/21181956226031626?type=open) |
 
@@ -114,18 +114,20 @@ fpc_assembly
 ```
 
 For the dataset, its URL address should be written out in the configuration file `testenv.yaml`:
-```python
+``
 testenv:
 # dataset configuration
 dataset:
-# the url address of train dataset index; string type;train data:"./dataset/fpc_assembly/train data/data.json"# the url address of test dataset index; string type;test data info:"./dataset/fpc_assembly/test data/metadata.json"
-# metrics configuration for test case's evaluation; list type;metrics:
-# metric name; string type;
-name:"Accuracy"-
-# the url address of python file
-url:"./examples/fpc_assembly/singletask_learning_bench/testenv/accuracy.py"
-# other metrics
-...
+&emsp;# the url address of train dataset index; string type;
+&emsp;train data:"./dataset/fpc_assembly/train data/data.json"# the url address of test dataset index; string type;test data info:"./dataset/fpc_assembly/test data/metadata.json"
+&emsp;# metrics configuration for test case's evaluation; list type;
+metrics:
+&emsp;# metric name; string type;
+&emsp;name:"Accuracy"-
+&emsp;# the url address of python file
+&emsp;url:"./examples/fpc_assembly/singletask_learning_bench/testenv/accuracy.py"
+&emsp;# other metrics
+&emsp;...
 ```
 
 ### **Single Task Learning**
