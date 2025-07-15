@@ -60,7 +60,7 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 And currently, what I need to set up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
 
-### FPC dataset
+### Component insertion dataset
 
 **Pybullet**
 
@@ -68,39 +68,61 @@ PyBullet is developed based on the well-known open-source physics engine Bullet 
 
 ![Alt text](pybullet.png)
 
-**Scenario:** Accurately assemble flexible printed circuit (FPC) cables onto a smartphone motherboard.
+**Scenario:** Precision Insertion of Cylindrical Components into Industrial Containers.
 
-In the field of industrial manufacturing, precision assembly of thin soft components is a highly challenging typical scenario. The significant deformability of these components poses certain obstacles to the automated assembly process - the modeling and control logic of traditional rigid objects is difficult to directly reuse, and targeted algorithms need to be designed based on the dynamic characteristics of flexible bodies. The complexity and engineering value of this type of scenario make it an ideal candidate for a new dataset in the field of embodied intelligence: by constructing a high-quality dataset that includes multi physics field coupling and contact mechanics characteristics, it can effectively promote breakthroughs in key technologies such as robot tactile perception and soft control.
+In the field of industrial manufacturing, precision assembly of cylindrical components into specialized containers represents a critical technical challenge. The requirement for micron-level positional accuracy during insertion poses significant obstacles to automated assembly processes - traditional control algorithms for simple pick-and-place operations are inadequate for these high-precision applications, necessitating specialized solutions based on advanced dynamics and contact mechanics. The technical complexity and economic value of this application domain make it an ideal candidate for a new generation of embodied intelligence datasets: by constructing high-fidelity datasets incorporating multi-physics interactions and contact dynamics, we can effectively drive breakthroughs in key technologies such as robotic force control, visual servoing, and adaptive insertion strategies.
 
-In the simulation verification stage, the PyBullet based physics engine simulation platform provides a low-cost and reproducible solution for obtaining such high-quality datasets. This platform supports flexible body modeling, real-time calculation of contact force, and simulation of sensor data, which can efficiently support algorithm development and strategy optimization, providing important technical support for the intelligent research of thin soft component assembly.
+In the simulation verification stage, our PyBullet-based physics engine platform provides a cost-effective and reproducible solution for generating such high-value datasets. This platform supports precise rigid-body dynamics modeling, real-time contact force calculation, and sensor data simulation, enabling efficient development and optimization of industrial-grade insertion algorithms. The simulation accurately captures the critical physical phenomena of:
 
-**Data generation strategy:** A simulated robotic arm (such as the UR5 or Panda robot model provided in PyBullet) was used, which was equipped with a simple fixture and simulated force/torque sensors at the wrist or fixture. The virtual RGB-D camera will be placed above the head or at a certain angle to capture the scene. Firstly, establish an industrial scenario - precisely assemble flexible printed circuits (FPCs) onto smartphone motherboards:
+&emsp;· Chamfer-guided alignment during initial contact
 
-![Alt text](fpc_assembly.png)
+&emsp;· Frictional resistance during insertion
 
-**Dataset Format:**
+&emsp;· Tolerance stack-up effects
 
-&emsp;**· Rgb_image.png:** RGB image from a virtual camera observing the assembly area.  
+&emsp;· Deformation at interference fits
 
-&emsp;**· Depth.png:** Corresponding depth images from the same camera.  
+This technical foundation provides essential support for intelligent research into precision component insertion systems, bridging the gap between simulation and real-world industrial applications in electronics assembly, automotive manufacturing, and precision engineering.
 
-&emsp;**· Robot_state.json:** Recording the motion state parameters of the robot at a certain moment.  
+**The overall process of dataset generation**
+Use the pandas robotic arm model provided by Pybullet, while **fixing the camera at the end effector of the robotic arm**. The arm is equipped with a simple fixture and a simulated force/torque sensor at the wrist or fixture.  
 
-&emsp;**· Ground_truth.json:** JSON data of the position and orientation of FPC and Motherboard in space.  
+Firstly, design corresponding cylindrical components and industrial containers that can hold cylindrical components. View the URDF results on this website ([Link](https://danidask.github.io/urdf_editor/frontend/)):
+
+![Alt text](cylinder.png)
+
+![Alt text](container.png)
+
+Secondly, establish an industrial scenario - precisely insert cylindrical components into industrial containers:
+
+**Dataset generation process**
+
+![Alt text](<Dataset_generation_process.png>)
+
+**Robot arm control sequence**
+
+![Alt text](<Robot_arm_control.png>)
+
+**Data capture**
+
+![Alt text](<Data_capture.png>)
+
+
+![Alt text](Component insertion.png)
 
 The ultimate dataset form:
 ```yaml
-precision_soft_assembly_dataset/
+Component_insertion_dataset/
 ├─ test_data/
-|  ├─ data.jsonl    # Contains queries, expected responses, task metadata
+|  ├─ data.json    # Contains queries, expected responses, task metadata
 |  └─ metadata.json # Task dimensions and description
 └─ train_data/
 |   └─ data.json     # (Optional) Left empty for testing purpose
 ```
 
-**Directory Structure: (examples/fpc_assembly)**
+**Directory Structure: (examples/Component insertion)**
 ```yaml
-fpc_assembly
+Component insertion
 └── singletask_learning_bench
     ├── benchmarkingjob.yaml
     ├── testalgorithms
@@ -118,15 +140,15 @@ testenv:
  # dataset configuration
  dataset:
      # the url address of train dataset index; string type;
-     train data:"./dataset/fpc_assembly/train data/data.json"
+     train data:"./dataset/Component insertion/train data/data.json"
      # the url address of test dataset index; string type;
-     test data info:"./dataset/fpc_assembly/test data/metadata.json"
+     test data info:"./dataset/Component insertion/test data/metadata.json"
  # metrics configuration for test case's evaluation; list type;
  metrics:
      # metric name; string type;
      - name:"Accuracy"
       # the url address of python file
-      url:"./examples/fpc_assembly/singletask_learning_bench/testenv/accuracy.py"
+      url:"./examples/Component insertion/singletask_learning_bench/testenv/accuracy.py"
     # other metrics
     ...
 ```
@@ -153,7 +175,7 @@ As shown in the following figure, the single task learning works as procedures b
 
 ![Alt text](Single_Task_Learning.png)
     
-The specific implementation of fpc_assembly single task learning algorithm in `algorithm.yaml`.
+The specific implementation of Component insertion single task learning algorithm in `algorithm.yaml`.
 
 The URL address of the algorithm is filled in the configuration file `benchmarkingjob.yaml` (an example is as follows).
 
@@ -169,13 +191,16 @@ test_object:
     - name: "fpn_singletask_learning"
       # the url address of test algorithm configuration file; string type;
       # the file format supports yaml/yml
-      url: "./examples/fpc_assembly/singletask_learning_bench/testalgorithms/fpn_algorithm.yaml"
+      url: "./examples/Component insertion/singletask_learning_bench/testalgorithms/fpn_algorithm.yaml"
 ```
 
 ## **Road Map**
 
-**1.** **From July to Mid-August**, conduct research on the currently available embodied intelligent datasets and output corresponding reports. At the same time, continue to follow up and improve the proposal. Besides, learn to use the pybullet platform, build the scene of fpc_assembly on the pybullet platform.  
+**1.** **From July to Mid-August**, conduct research on the currently available embodied intelligent datasets and output corresponding reports. At the same time, continue to follow up and improve the proposal. Besides, learn to use the pybullet platform, build the scene of Component insertion on the pybullet platform.  
 
 **2.** **From Mid-August to Mid-September**, obtain the corresponding dataset. The test environment and test indicators were built in kubeedge ianvs, and the datasets were sorted out in a standardized and unified data format. At the same time, the specific intelligent baseline algorithm was implemented in kubeedge ianvs based on the standardized test suite.  
 
 **3.** **From Mid-September to End of September**, summarize the previous two stages, think about what can be further improved or supplemented, and output the corresponding documents. If time and energy allow, consider carrying out standardized test suite in agibot world and Genie SIM, a smart metadata simulation platform, including indicators and examples.
+
+## Reference
+Thank you very much xxx for being here Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge, I was deeply inspired by the contribution of fpc_assembly work on issue # 197.
