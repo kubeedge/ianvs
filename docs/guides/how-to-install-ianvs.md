@@ -44,14 +44,16 @@ git clone https://github.com/kubeedge/ianvs.git
 ```
 sudo apt-get update
 
-# Install OpenGL/GLX library for GUI support (required for OpenCV and visualization tools).
-# The package name 'libgl1-mesa-glx' was changed to 'libglx-mesa0' in Ubuntu 24.04.
-# The following script will install the correct package for your Ubuntu version.
-if apt-cache show libglx-mesa0 >/dev/null 2>&1; then
-    sudo apt-get install -y libglx-mesa0
-else
-    sudo apt-get install -y libgl1-mesa-glx
-fi
+# Install OpenGL/GLX library for GUI support (required for OpenCV and visualization tools)
+# For Ubuntu 20.04 and earlier versions:
+sudo apt-get install libgl1-mesa-glx -y
+
+# For Ubuntu 24.04 and later versions (libgl1-mesa-glx has been renamed):
+sudo apt-get install libglx-mesa0 -y
+
+# Note: If you're unsure about your Ubuntu version, you can check it with:
+# lsb_release -a
+# Then use the appropriate command above
 
 python -m pip install --upgrade pip
 
