@@ -1,4 +1,4 @@
- # **Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge**
+ # Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge
 
 Under the background of accelerated evolution of intelligent industrial manufacturing, industrial robots, flexible production lines and intelligent testing equipment continue to be innovated iteratively. With its efficient data processing and real-time response ability, **cloud edge collaboration technology** has become the core technology engine to drive the application of **embodied intelligence** systems in complex industrial scenes.  
 
@@ -46,15 +46,15 @@ It is noteworthy that the current industrial demand for embodied intelligent ser
 
 The architectures and related concepts are shown in the below figure. The ianvs is designed to run within a single node. Critical components include  
 
-&emsp;**Test Environment Manager:** the CRUD of test environments serving for global usage.  
++ - **Test Environment Manager:** the CRUD of test environments serving for global usage.  
 
-&emsp;**Test Case Controller:** control the runtime behavior of test cases like instance generation and vanish.  
++ - **Test Case Controller:** control the runtime behavior of test cases like instance generation and vanish.  
 
-&emsp;&emsp;**Generation Assistant:** assist users to generate test cases based on certain rules or constraints, e.g., the range of parameters.  
++   - **Generation Assistant:** assist users to generate test cases based on certain rules or constraints, e.g., the range of parameters.  
 
-&emsp;&emsp;**Simulation Controller:** control the simulation process of edge-cloud synergy AI, including the instance generation and vanishment of simulation containers.  
++   - **Simulation Controller:** control the simulation process of edge-cloud synergy AI, including the instance generation and vanishment of simulation containers.  
 
-&emsp;**Story Manager:** the output management and presentation of the test case, e.g., leaderboards.  
++ - **Story Manager:** the output management and presentation of the test case, e.g., leaderboards.  
 
 ![Alt text](ianvs.png)
 
@@ -78,7 +78,7 @@ In the field of injection mold manufacturing, the pre assembly of mold inserts i
 
 &emsp;Error prevention design: distinguish 4 symmetrical workstations to avoid incorrect installation.  
 
-Traditional manual installation has the problem of inaccurate positioning leading to mold edge flying. The simulation system based on PyBullet can improve installation efficiency and reduce mold scrap rate through collision dynamics optimization.  
+Traditional manual installation has the problem of inaccurate positioning leading to mold flashing. The simulation system based on PyBullet can improve installation efficiency and reduce mold scrap rate through collision dynamics optimization.  
 
 This design can be effectively used for:  
 
@@ -93,7 +93,7 @@ This design can be effectively used for:
 Through the PyBullet physics engine, it is possible to accurately simulate the contact mechanics behavior during the installation process of mold inserts, providing a reliable digital twin platform for actual production lines.
 
 **The overall process of dataset generation**
-Use the pandas robotic arm model provided by Pybullet, while **fixing the camera at the end effector of the robotic arm**. The arm is equipped with a simple fixture and a simulated force/torque sensor at the wrist or fixture.  
+Use the Panda robotic arm model provided by Pybullet, while **fixing the camera at the end effector of the robotic arm**. The arm is equipped with a simple fixture and a simulated force/torque sensor at the wrist or fixture.  
 
 Firstly, design corresponding cylindrical guide sleeve and Mold substrate that can hold cylindrical components. View the URDF results on this website ([Link](https://danidask.github.io/urdf_editor/frontend/)):
 
@@ -145,17 +145,17 @@ testenv:
  # dataset configuration
  dataset:
      # the url address of train dataset index; string type;
-     train data:"./dataset/Pre-assembly of Injection Mold Inserts/train data/data.json"
+     train_data:"./dataset/Pre-assembly of Injection Mold Inserts/train_data/data.json"
      # the url address of test dataset index; string type;
-     test data info:"./dataset/Pre-assembly of Injection Mold Inserts/test data/metadata.json"
+     test_data_info:"./dataset/Pre-assembly of Injection Mold Inserts/test_data/metadata.json"
  # metrics configuration for test case's evaluation; list type;
  metrics:
      # metric name; string type;
-     - name:"Accuracy"
-      # the url address of python file
-      url:"./examples/Pre-assembly of Injection Mold Inserts/singletask_learning_bench/testenv/accuracy.py"
+     - name: "Accuracy"
+       # the url address of python file
+       url: "./examples/Pre-assembly of Injection Mold Inserts/singletask_learning_bench/testenv/accuracy.py"
     # other metrics
-    ...
+    # ...
 ```
 
 ### **Single Task Learning**
