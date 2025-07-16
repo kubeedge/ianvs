@@ -87,23 +87,23 @@ Use the pandas robotic arm model provided by Pybullet, while **fixing the camera
 
 Firstly, design corresponding cylindrical guide sleeve and Mold substrate that can hold cylindrical components. View the URDF results on this website ([Link](https://danidask.github.io/urdf_editor/frontend/)):
 
-![Alt text](image-2.png)
+![Alt text](cylinder.png)
 
-![Alt text](image-3.png)
+![Alt text](container.png)
 
 Secondly, establish an industrial scenario - Pre-assembly of Injection Mold Inserts:
 
 **Dataset generation process**
 
-![Alt text](<Untitled diagram _ Mermaid Chart-2025-07-15-112241.png>)
+![Alt text](<Dataset_generation_process.png>)
 
 **Robot arm control sequence**
 
-![Alt text](<Untitled diagram _ Mermaid Chart-2025-07-15-114101.png>)
+![Alt text](<Robot_arm_control.png>)
 
 **Data capture**
 
-![Alt text](<Untitled diagram _ Mermaid Chart-2025-07-15-114536.png>)
+![Alt text](<Data_capture.png>)
 
 The ultimate dataset form:
 ```yaml
