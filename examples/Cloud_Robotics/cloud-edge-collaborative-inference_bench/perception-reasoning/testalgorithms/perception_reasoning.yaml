@@ -1,0 +1,51 @@
+algorithm:
+  # paradigm name; string type;
+  paradigm_type: "jointinference"
+
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # kind of algorithm module; string type;
+
+    # - type: "dataset_processor"
+      # name of custom dataset processor; string type;
+      # name: "OracleRouterDatasetProcessor"
+      # the url address of custom dataset processor; string type;
+      # url: "./examples/cloud-edge-collaborative-inference/testalgorithms/data_processor.py"
+
+    
+    - type: "edgemodel"
+      # name of edge model module; string type;
+      name: "EdgeModel"
+      # the url address of edge model module; string type;
+      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testalgorithms/edge_model.py"
+
+      hyperparameters:
+      # name of the hyperparameter; string type;
+        - model_identity:
+            values:
+              - "nvidia/segformer-b0-finetuned-cityscapes-1024-1024"
+
+       
+    - type: "cloudmodel"
+      # name of python module; string type;
+      name: "CloudModel"
+      # the url address of python module; string type;
+      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testalgorithms/cloud_model.py"
+
+      hyperparameters:
+        # name of the hyperparameter; string type;
+
+        - model_name:
+            values:
+              - "qwen-vl-max"
+        - command_text:
+            values:
+              - "Please identify if the image contains any of the following categories: person, rider, car, truck, bus, train, motorcycle, bicycle. If any of these categories are present, please output the category names and remind to pay attention to safety; if none of these categories are present, please respond that the image does not contain any of the above categories and suggest improving the edge model's recognition accuracy."
+  
+
+    - type: "hard_example_mining"
+      # name of Router module; string type;
+      # BERTRouter, EdgeOnly, CloudOnly, RandomRouter, OracleRouter
+      name: "EdgeCloudDispatcher"
+      # the url address of python module; string type;
+      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testalgorithms/cloud_edge_dispacher.py"

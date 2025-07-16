@@ -1,0 +1,16 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_index: "./dataset/Cloud-Robotics/2048x1024/train-index.txt"
+    # the url address of test dataset index; string type;
+    test_index: "./dataset/Cloud-Robotics/2048x1024/test-index.txt"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "PA"
+      # the url address of python file
+      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testenv/acc.py"
+
+
