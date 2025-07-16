@@ -60,7 +60,7 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 And currently, what I need to set up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
 
-### Component insertion dataset
+### Pre-assembly of Injection Mold Inserts dataset
 
 **Pybullet**
 
@@ -68,51 +68,46 @@ PyBullet is developed based on the well-known open-source physics engine Bullet 
 
 ![Alt text](pybullet.png)
 
-**Scenario:** Precision Insertion of Cylindrical Components into Industrial Containers.
+**Industrial Scenario:** Pre-assembly of Injection Mold Inserts
 
-In the field of industrial manufacturing, precision assembly of cylindrical components into specialized containers represents a critical technical challenge. The requirement for micron-level positional accuracy during insertion poses significant obstacles to automated assembly processes - traditional control algorithms for simple pick-and-place operations are inadequate for these high-precision applications, necessitating specialized solutions based on advanced dynamics and contact mechanics. The technical complexity and economic value of this application domain make it an ideal candidate for a new generation of embodied intelligence datasets: by constructing high-fidelity datasets incorporating multi-physics interactions and contact dynamics, we can effectively drive breakthroughs in key technologies such as robotic force control, visual servoing, and adaptive insertion strategies.
-
-In the simulation verification stage, our PyBullet-based physics engine platform provides a cost-effective and reproducible solution for generating such high-value datasets. This platform supports precise rigid-body dynamics modeling, real-time contact force calculation, and sensor data simulation, enabling efficient development and optimization of industrial-grade insertion algorithms. The simulation accurately captures the critical physical phenomena of:
-
-&emsp;· Chamfer-guided alignment during initial contact
-
-&emsp;· Frictional resistance during insertion
-
-&emsp;· Tolerance stack-up effects
-
-&emsp;· Deformation at interference fits
-
-This technical foundation provides essential support for intelligent research into precision component insertion systems, bridging the gap between simulation and real-world industrial applications in electronics assembly, automotive manufacturing, and precision engineering.
+In the field of injection mold manufacturing, the pre assembly of mold inserts is a key process to ensure mass production efficiency. This scenario requires installing a cylindrical guide sleeve (diameter 40 ± 0.1mm, height 100mm) into the mold substrate (slot diameter 44mm, depth 50mm) to achieve:
+&emsp;Quick positioning: achieve quick installation within 5 seconds through gap fit (H8/d9)
+&emsp;Thermal expansion compensation: Reserve 0.4mm radial clearance to cope with thermal deformation at 150 ℃ working condition
+&emsp;Error prevention design: distinguish 4 symmetrical workstations to avoid incorrect installation
+Traditional manual installation has the problem of inaccurate positioning leading to mold edge flying. The simulation system based on PyBullet can improve installation efficiency and reduce mold scrap rate through collision dynamics optimization.
+This design can be effectively used for:
+&emsp;1. Robot installation path planning
+&emsp;2. Tolerance fitting simulation verification
+&emsp;3. Research on thermal deformation compensation
+&emsp;4. Development of rapid changeover system
+Through the PyBullet physics engine, it is possible to accurately simulate the contact mechanics behavior during the installation process of mold inserts, providing a reliable digital twin platform for actual production lines.
 
 **The overall process of dataset generation**
 Use the pandas robotic arm model provided by Pybullet, while **fixing the camera at the end effector of the robotic arm**. The arm is equipped with a simple fixture and a simulated force/torque sensor at the wrist or fixture.  
 
-Firstly, design corresponding cylindrical components and industrial containers that can hold cylindrical components. View the URDF results on this website ([Link](https://danidask.github.io/urdf_editor/frontend/)):
+Firstly, design corresponding cylindrical guide sleeve and Mold substrate that can hold cylindrical components. View the URDF results on this website ([Link](https://danidask.github.io/urdf_editor/frontend/)):
 
-![Alt text](cylinder.png)
+![Alt text](image-2.png)
 
-![Alt text](container.png)
+![Alt text](image-3.png)
 
-Secondly, establish an industrial scenario - precisely insert cylindrical components into industrial containers:
+Secondly, establish an industrial scenario - Pre-assembly of Injection Mold Inserts:
 
 **Dataset generation process**
 
-![Alt text](<Dataset_generation_process.png>)
+![Alt text](<Untitled diagram _ Mermaid Chart-2025-07-15-112241.png>)
 
 **Robot arm control sequence**
 
-![Alt text](<Robot_arm_control.png>)
+![Alt text](<Untitled diagram _ Mermaid Chart-2025-07-15-114101.png>)
 
 **Data capture**
 
-![Alt text](<Data_capture.png>)
-
-
-![Alt text](Component insertion.png)
+![Alt text](<Untitled diagram _ Mermaid Chart-2025-07-15-114536.png>)
 
 The ultimate dataset form:
 ```yaml
-Component_insertion_dataset/
+mold_Inserts_dataset/
 ├─ test_data/
 |  ├─ data.json    # Contains queries, expected responses, task metadata
 |  └─ metadata.json # Task dimensions and description
@@ -120,9 +115,9 @@ Component_insertion_dataset/
 |   └─ data.json     # (Optional) Left empty for testing purpose
 ```
 
-**Directory Structure: (examples/Component insertion)**
+**Directory Structure: (examples/Pre-assembly of Injection Mold Inserts)**
 ```yaml
-Component insertion
+Pre-assembly of Injection Mold Inserts
 └── singletask_learning_bench
     ├── benchmarkingjob.yaml
     ├── testalgorithms
@@ -140,15 +135,15 @@ testenv:
  # dataset configuration
  dataset:
      # the url address of train dataset index; string type;
-     train data:"./dataset/Component insertion/train data/data.json"
+     train data:"./dataset/Pre-assembly of Injection Mold Inserts/train data/data.json"
      # the url address of test dataset index; string type;
-     test data info:"./dataset/Component insertion/test data/metadata.json"
+     test data info:"./dataset/Pre-assembly of Injection Mold Inserts/test data/metadata.json"
  # metrics configuration for test case's evaluation; list type;
  metrics:
      # metric name; string type;
      - name:"Accuracy"
       # the url address of python file
-      url:"./examples/Component insertion/singletask_learning_bench/testenv/accuracy.py"
+      url:"./examples/Pre-assembly of Injection Mold Inserts/singletask_learning_bench/testenv/accuracy.py"
     # other metrics
     ...
 ```
@@ -175,7 +170,7 @@ As shown in the following figure, the single task learning works as procedures b
 
 ![Alt text](Single_Task_Learning.png)
     
-The specific implementation of Component insertion single task learning algorithm in `algorithm.yaml`.
+The specific implementation of Pre-assembly of Injection Mold Inserts single task learning algorithm in `algorithm.yaml`.
 
 The URL address of the algorithm is filled in the configuration file `benchmarkingjob.yaml` (an example is as follows).
 
@@ -191,16 +186,13 @@ test_object:
     - name: "fpn_singletask_learning"
       # the url address of test algorithm configuration file; string type;
       # the file format supports yaml/yml
-      url: "./examples/Component insertion/singletask_learning_bench/testalgorithms/fpn_algorithm.yaml"
+      url: "./examples/Pre-assembly of Injection Mold Inserts/singletask_learning_bench/testalgorithms/fpn_algorithm.yaml"
 ```
 
 ## **Road Map**
 
-**1.** **From July to Mid-August**, conduct research on the currently available embodied intelligent datasets and output corresponding reports. At the same time, continue to follow up and improve the proposal. Besides, learn to use the pybullet platform, build the scene of Component insertion on the pybullet platform.  
+**1.** **From July to Mid-August**, conduct research on the currently available embodied intelligent datasets and output corresponding reports. At the same time, continue to follow up and improve the proposal. Besides, learn to use the pybullet platform, build the scene of Pre-assembly of Injection Mold Inserts on the pybullet platform.  
 
 **2.** **From Mid-August to Mid-September**, obtain the corresponding dataset. The test environment and test indicators were built in kubeedge ianvs, and the datasets were sorted out in a standardized and unified data format. At the same time, the specific intelligent baseline algorithm was implemented in kubeedge ianvs based on the standardized test suite.  
 
 **3.** **From Mid-September to End of September**, summarize the previous two stages, think about what can be further improved or supplemented, and output the corresponding documents. If time and energy allow, consider carrying out standardized test suite in agibot world and Genie SIM, a smart metadata simulation platform, including indicators and examples.
-
-## Reference
-Thank you very much xxx for being here Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge, I was deeply inspired by the contribution of fpc_assembly work on issue # 197.
