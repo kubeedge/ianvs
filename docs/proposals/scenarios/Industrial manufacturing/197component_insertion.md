@@ -70,16 +70,26 @@ PyBullet is developed based on the well-known open-source physics engine Bullet 
 
 **Industrial Scenario:** Pre-assembly of Injection Mold Inserts
 
-In the field of injection mold manufacturing, the pre assembly of mold inserts is a key process to ensure mass production efficiency. This scenario requires installing a cylindrical guide sleeve (diameter 40 ± 0.1mm, height 100mm) into the mold substrate (slot diameter 44mm, depth 50mm) to achieve:
-&emsp;Quick positioning: achieve quick installation within 5 seconds through gap fit (H8/d9)
-&emsp;Thermal expansion compensation: Reserve 0.4mm radial clearance to cope with thermal deformation at 150 ℃ working condition
-&emsp;Error prevention design: distinguish 4 symmetrical workstations to avoid incorrect installation
-Traditional manual installation has the problem of inaccurate positioning leading to mold edge flying. The simulation system based on PyBullet can improve installation efficiency and reduce mold scrap rate through collision dynamics optimization.
-This design can be effectively used for:
-&emsp;1. Robot installation path planning
-&emsp;2. Tolerance fitting simulation verification
-&emsp;3. Research on thermal deformation compensation
-&emsp;4. Development of rapid changeover system
+In the field of injection mold manufacturing, the pre assembly of mold inserts is a key process to ensure mass production efficiency. This scenario requires installing a cylindrical guide sleeve (diameter 40 ± 0.1mm, height 100mm) into the mold substrate (slot diameter 44mm, depth 50mm) to achieve:  
+
+&emsp;Quick positioning: achieve quick installation within 5 seconds through gap fit (H8/d9). 
+
+&emsp;Thermal expansion compensation: Reserve 0.4mm radial clearance to cope with thermal deformation at 150 ℃ working condition.  
+
+&emsp;Error prevention design: distinguish 4 symmetrical workstations to avoid incorrect installation.  
+
+Traditional manual installation has the problem of inaccurate positioning leading to mold edge flying. The simulation system based on PyBullet can improve installation efficiency and reduce mold scrap rate through collision dynamics optimization.  
+
+This design can be effectively used for:  
+
+&emsp;1. Robot installation path planning.  
+
+&emsp;2. Tolerance fitting simulation verification.  
+
+&emsp;3. Research on thermal deformation compensation.  
+
+&emsp;4. Development of rapid changeover system.  
+
 Through the PyBullet physics engine, it is possible to accurately simulate the contact mechanics behavior during the installation process of mold inserts, providing a reliable digital twin platform for actual production lines.
 
 **The overall process of dataset generation**
