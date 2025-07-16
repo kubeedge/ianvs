@@ -112,7 +112,7 @@ mold_Inserts_dataset/
 |  ├─ data.json    # Contains queries, expected responses, task metadata
 |  └─ metadata.json # Task dimensions and description
 └─ train_data/
-|   └─ data.json     # (Optional) Left empty for testing purpose
+|   └─ data.json    
 ```
 
 **Directory Structure: (examples/Pre-assembly of Injection Mold Inserts)**
@@ -196,3 +196,6 @@ test_object:
 **2.** **From Mid-August to Mid-September**, obtain the corresponding dataset. The test environment and test indicators were built in kubeedge ianvs, and the datasets were sorted out in a standardized and unified data format. At the same time, the specific intelligent baseline algorithm was implemented in kubeedge ianvs based on the standardized test suite.  
 
 **3.** **From Mid-September to End of September**, summarize the previous two stages, think about what can be further improved or supplemented, and output the corresponding documents. If time and energy allow, consider carrying out standardized test suite in agibot world and Genie SIM, a smart metadata simulation platform, including indicators and examples.
+
+## **Acknowledge**
+This project refers to **Ronak Raj's FPC_Assembly work** shared in Issue #197 of the *Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge ianvs* project. We sincerely thank **Ronak Raj** for his generous sharing.
