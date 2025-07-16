@@ -68,7 +68,7 @@ PyBullet is developed based on the well-known open-source physics engine Bullet 
 
 ![Alt text](pybullet.png)
 
-**Industrial Scenario:** Pre-assembly of Injection Mold Inserts
+**Industrial Scenario: Pre-assembly of Injection Mold Inserts**
 
 In the field of injection mold manufacturing, the pre assembly of mold inserts is a key process to ensure mass production efficiency. This scenario requires installing a cylindrical guide sleeve (diameter 40 ± 0.1mm, height 100mm) into the mold substrate (slot diameter 44mm, depth 50mm) to achieve:  
 
@@ -208,4 +208,4 @@ test_object:
 **3.** **From Mid-September to End of September**, summarize the previous two stages, think about what can be further improved or supplemented, and output the corresponding documents. If time and energy allow, consider carrying out standardized test suite in agibot world and Genie SIM, a smart metadata simulation platform, including indicators and examples.
 
 ## **Acknowledge**
-This project refers to **Ronak Raj's FPC_Assembly work** shared in Issue #197 of the *Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge ianvs* project. We sincerely thank **Ronak Raj** for his generous sharing.
+This project refers to **Ronak Raj's FPC_Assembly work** shared in Issue #197 of the *Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge ianvs* project. I sincerely thank **Ronak Raj** for his generous sharing.
