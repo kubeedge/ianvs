@@ -46,15 +46,15 @@ It is noteworthy that the current industrial demand for embodied intelligent ser
 
 The architectures and related concepts are shown in the below figure. The ianvs is designed to run within a single node. Critical components include  
 
-+ - **Test Environment Manager:** the CRUD of test environments serving for global usage.  
++  **Test Environment Manager:** the CRUD of test environments serving for global usage.  
 
-+ - **Test Case Controller:** control the runtime behavior of test cases like instance generation and vanish.  
++  **Test Case Controller:** control the runtime behavior of test cases like instance generation and vanish.  
 
-+   - **Generation Assistant:** assist users to generate test cases based on certain rules or constraints, e.g., the range of parameters.  
++    **Generation Assistant:** assist users to generate test cases based on certain rules or constraints, e.g., the range of parameters.  
 
-+   - **Simulation Controller:** control the simulation process of edge-cloud synergy AI, including the instance generation and vanishment of simulation containers.  
++    **Simulation Controller:** control the simulation process of edge-cloud synergy AI, including the instance generation and vanishment of simulation containers.  
 
-+ - **Story Manager:** the output management and presentation of the test case, e.g., leaderboards.  
++  **Story Manager:** the output management and presentation of the test case, e.g., leaderboards.  
 
 ![Alt text](ianvs.png)
 
