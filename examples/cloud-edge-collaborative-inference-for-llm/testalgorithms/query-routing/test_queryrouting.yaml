@@ -70,9 +70,18 @@ algorithm:
 
       hyperparameters:
         # name of the hyperparameter; string type;
+        - api_provider:
+            values:
+              - "openai" 
         - model:
             values:
               - "gpt-4o-mini"
+        - api_key_env:
+            values:
+              - "OPENAI_API_KEY"
+        - api_base_url:
+            values:
+              - "OPENAI_BASE_URL"
         - temperature:
             values:
               - 0.9
