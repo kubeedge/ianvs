@@ -18,18 +18,18 @@ However, existing FL paradigms are not directly suitable for LLMs due to challen
 
 ## 2 Proposals
 
-We propose to develop a new paradigm federatedllmfinetune in Ianvs, extending from the base federatedlearning paradigm. The scope of this project includes:
+We propose to develop a new paradigm **federated_llm_learning** in Ianvs, extending from the base federatedlearning paradigm. The scope of this project includes:
 
 - Define a new one node Federated llm learning paradigm base on Ianvs.
 
   - Sedna is a distributed synergy AI framework, which support plenty of distributed algorithm including federated learning.
   - Ianvs is a distributed synergy AI benchmarking, many benchmarking example can be found in ianvs. However, Ianvs did not support federated llm fine-tuning paradigm. Our project will fill this gap in the Ianvs project.
   
-- Apply the most popular federated llm learning algorithm for the users.
+- Apply the most popular federated llm finetuning algorithm for the users.
 
   - A combination of semi-supervised learning and federated class incremental learning.
 
-- Conduct a series of federated class incremental learning benchmarking 
+- Conduct a series of federated llm learning benchmarking 
 
   - We will conduct a series of benchmarking with some different measure metrics, such as ROUGH-1, ROUGH-2, ROUGH-L, BLEU-4, etc.
 
@@ -80,7 +80,7 @@ To support user-defined fl methods, we can modify the following enumeration defi
 * In `core/common/constant.py`, extend `ParadigmType` to include `"federated learning"`.
 * Also, extend `ModuleType` to include a new `Aggregation` enum type.
 
-Building on the above paradigm, we can extend Ianvs to support tasks such as **federated llm pedt**. The following is a typical **sequence diagram** of the benchmarking system under such paradigms:
+Building on the above paradigm, we can extend Ianvs to support tasks such as **federated llm peft**. The following is a typical **task queue diagram** of the benchmarking system under such paradigms:
 
 <img src="img/time.png" alt="image-time"  />
 
@@ -110,11 +110,11 @@ The overall architecture is shown as follow:
 
 <img src="img/fedllm_pa.png" alt="image-fedllm-pa"  />
 
-For implementation detail of federated llm peft, we plan to add a module name `federated seq learning` base on federeated learning under `core/testcasecontroller/algorithm/paradigm`, and `federated_seq_learning.py` serves as the entry point for the whole learning process
+For implementation detail of federated llm peft, we plan to add a module name `federated_llm_learning` base on federeated learning under `core/testcasecontroller/algorithm/paradigm`, and `federated_llm_learning.py` serves as the entry point for the whole learning process
 
 We propose a new algorithmic paradigm: Federated LLM Fine-tuning. Due to the computational constraints of LLM training in single-node testing environments, we are unable to adopt the original multithreaded method used in traditional `federated learning` paradigms. Such methods often lead to GPU out-of-memory (OOM) issues.
 
-To address this, we execute each local client's PEFT fine-tuning task sequentially, which makes it easier to utilize multi-GPU capabilities on a single node through task scheduling.
+To address this issue, we enqueue all clients' PEFT fine‑tuning tasks and launch one worker thread per GPU; each thread sequentially pulls tasks from the queue and executes them, thereby using task scheduling to efficiently exploit multi‑GPU resources on a single node.
 
 This paradigm still starts both the server and clients on a single node, and then proceeds with federated LLM fine-tuning. The entire process is clear and well-structured, as illustrated below:
 
