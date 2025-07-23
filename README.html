@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>README</title>
+    <style>
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #2c3e50;
+            margin-top: 1.5em;
+        }
+        code { 
+            background-color: #f8f9fa; 
+            padding: 2px 6px; 
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9em;
+        }
+        pre { 
+            background-color: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 5px; 
+            overflow-x: auto;
+            border-left: 4px solid #007acc;
+        }
+        blockquote {
+            border-left: 4px solid #ddd;
+            margin: 0;
+            padding-left: 1em;
+            color: #666;
+        }
+        a { color: #007acc; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1em 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<h1 id="ianvs">Ianvs</h1>
+<p><a href="https://github.com/kubeedge/ianvs/actions/workflows/main-doc.yaml"><img alt="CI" src="https://github.com/kubeedge/ianvs/actions/workflows/main-doc.yaml/badge.svg?branch=main" /></a>
+<a href="https://app.fossa.com/projects/custom%2B32178%2Fgithub.com%2Fkubeedge%2Fianvs?ref=badge_shield"><img alt="LICENSE SCAN" src="https://app.fossa.com/api/projects/custom%2B32178%2Fgithub.com%2Fkubeedge%2Fianvs.svg?type=shield" /></a>
+<a href="/LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/kubeedge-sedna/ianvs.svg" /></a></p>
+<p>Ianvs is a distributed synergy AI benchmarking project incubated in KubeEdge SIG AI. Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. More detailedly, Ianvs prepares not only test cases with datasets and corresponding algorithms, but also benchmarking tools including simulation and hyper-parameter searching. Ianvs also reveals best practices for developers and end users with presentation tools including leaderboards and test reports.</p>
+<h2 id="scope">Scope</h2>
+<p>The distributed synergy AI benchmarking Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development.</p>
+<p>The scope of Ianvs includes</p>
+<ul>
+<li>Providing end-to-end benchmark toolkits across devices, edge nodes, and cloud nodes based on typical distributed-synergy AI paradigms and applications.</li>
+<li>Tools to manage test environment. For example, it would be necessary to support the CRUD (Create, Read, Update, and Delete) actions in test environments. Elements of such test environments include algorithm-wise and system-wise configuration.</li>
+<li>Tools to control test cases. Typical examples include paradigm templates, simulation tools, and hyper-parameter-based assistant tools.</li>
+<li>Tools to manage benchmark presentation, e.g., leaderboard and test report generation.</li>
+<li>Cooperation with other organizations or communities, e.g., in KubeEdge SIG AI, to establish comprehensive benchmarks and developed related applications, which can include but are not limited to</li>
+<li>Dataset collection, re-organization, and publication</li>
+<li>Formalized specifications, e.g., standards</li>
+<li>Holding competitions or coding events, e.g., open source promotion plan</li>
+<li>Maintaining solution leaderboards or certifications for commercial usage</li>
+</ul>
+<h2 id="architecture">Architecture</h2>
+<p>The architectures and related concepts are shown in the below figure. The ianvs is designed to run <strong>within a single node</strong>. Critical components include</p>
+<ul>
+<li>Test Environment Manager: the CRUD of test environments serving for global usage</li>
+<li>Test Case Controller: control the runtime behavior of test cases like instance generation and vanish</li>
+<li>Generation Assistant: assist users to generate test cases based on certain rules or constraints, e.g., the range of parameters</li>
+<li>Simulation Controller: control the simulation process of edge-cloud synergy AI, including the instance generation and vanishment of simulation containers</li>
+<li>Story Manager: the output management and presentation of the test case, e.g., leaderboards</li>
+</ul>
+<p><img alt="" src="docs/guides/images/ianvs_arch.png" /></p>
+<p>More details on Ianvs components:</p>
+<ol>
+<li>Test-Environment Manager supports the CRUD of Test environments, which basically includes</li>
+<li>Algorithm-wise configuration<ul>
+<li>Public datasets</li>
+<li>Pre-processing algorithms</li>
+<li>Feature engineering algorithms</li>
+<li>Post-processing algorithms like metric computation</li>
+</ul>
+</li>
+<li>System-wise configuration<ul>
+<li>Overall architecture</li>
+<li>System constraints or budgets</li>
+<li>End-to-end cross-node</li>
+<li>Per node</li>
+</ul>
+</li>
+<li>Test-case Controller, which includes but is not limited to the following components</li>
+<li>Templates of common distributed-synergy-AI paradigms, which can help the developer to prepare their test case without too much effort. Such paradigms include edge-cloud synergy joint inference, incremental learning, federated learning, and lifelong learning.</li>
+<li>Simulation tools. Develop simulated test environments for test cases</li>
+<li>Other tools to assist test-case generation. For instance, prepare test cases based on a given range of hyper-parameters.</li>
+<li>Story Manager, which includes but is not limited to the following components</li>
+<li>Leaderboard generation</li>
+<li>Test report generation</li>
+</ol>
+<h2 id="guides">Guides</h2>
+<h3 id="documents">Documents</h3>
+<p>Documentation is located on <a href="https://ianvs.readthedocs.io/">readthedoc.io</a>. The documents include the quick start, guides, dataset descriptions, algorithms, user interfaces, stories, and roadmap.</p>
+<h3 id="installation">Installation</h3>
+<p>Follow the <a href="docs/guides/how-to-install-ianvs.md">Ianvs installation document</a> to install Ianvs.</p>
+<h3 id="examples">Examples</h3>
+<ul>
+<li>
+<p>Scenario PCB-AoI：<a href="docs/proposals/scenarios/industrial-defect-detection/pcb-aoi.md">Industrial Defect Detection on the PCB-AoI Dataset</a>.</p>
+</li>
+<li>
+<p>Example PCB-AoI-1：<a href="docs/proposals/test-reports/testing-single-task-learning-in-industrial-defect-detection-with-pcb-aoi.md">Testing single task learning in industrial defect detection</a>.</p>
+</li>
+<li>
+<p>Example PCB-AoI-2：<a href="docs/proposals/test-reports/testing-incremental-learning-in-industrial-defect-detection-with-pcb-aoi.md">Testing incremental learning in industrial defect detection</a>.</p>
+</li>
+<li>
+<p>Scenario Cityscapes-Synthia: <a href="docs/proposals/algorithms/lifelong-learning/Additional-documentation/curb_detetion_datasets.md">Curb Detetion on Cityscapes-Synthia Dataset</a></p>
+</li>
+<li>
+<p>Example Cityscapes-Synthia-1: <a href="examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/README.md">Lifelong learning in semantic segmentation</a></p>
+</li>
+<li>
+<p>Example Cityscapes-Synthia-2: <a href="examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/README.md">Lifelong learning in curb detetion</a></p>
+</li>
+<li>
+<p>Example Cityscapes-Synthia-3: <a href="examples/cityscapes-synthia/scene-based-unknown-task-recognition/curb-detection/README.md">Scene based unknown task recognition in curb detetion</a></p>
+</li>
+<li>
+<p>Example Cityscapes-Synthia-4: <a href="examples/cityscapes/lifelong_learning_bench/unseen_task_processing-GANwithSelfTaughtLearning/README.md">Integrating GAN and Self-taught Learning into Ianvs Lifelong Learning</a></p>
+</li>
+<li>
+<p>Scenario Cloud-Robotics: <a href="docs/proposals/scenarios/Cloud-Robotics/Cloud-Robotics_zh.md">Semantic Segmentation on Cloud-Robotics Dataset</a></p>
+</li>
+<li>
+<p>Example Cloud-Robotics-1: <a href="examples/robot/lifelong_learning_bench/semantic-segmentation/README.md">Lifelong learning in semantic segmentation</a></p>
+</li>
+<li>
+<p>Example Cloud-Robotics-2: <a href="examples/robot-cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/README.md">Class increment learning in semantic segmentation</a></p>
+</li>
+<li>
+<p>Example Cloud-Robotics-3: <a href="examples/robot/lifelong_learning_bench/sam_annotation/tutorial.md">Lifelong learning in sam annotation</a></p>
+</li>
+</ul>
+<h2 id="roadmap">Roadmap</h2>
+<ul>
+<li><a href="docs/roadmap.md">2022 H2 Roadmap</a></li>
+</ul>
+<h2 id="meeting">Meeting</h2>
+<p>Routine Community Meeting for KubeEdge SIG AI runs weekly:</p>
+<ul>
+<li>Europe Time: <strong>Thursdays at 16:30-17:30 Beijing Time</strong>.
+  (<a href="https://www.thetimezoneconverter.com/?t=16%3A30&amp;tz=GMT%2B8&amp;">Convert to your timezone.</a>)</li>
+</ul>
+<p>Resources:</p>
+<ul>
+<li><a href="https://docs.google.com/document/d/12n3kGUWTkAH4q2Wv5iCVGPTA_KRWav_eakbFrF9iAww/edit">Meeting notes and agenda</a></li>
+<li><a href="https://www.youtube.com/playlist?list=PLQtlO1kVWGXkRGkjSrLGEPJODoPb8s5FM">Meeting recordings</a></li>
+<li><a href="https://zoom.us/j/4167237304">Meeting link</a></li>
+<li><a href="https://calendar.google.com/calendar/u/0/r?cid=Y19nODluOXAwOG05MzFiYWM3NmZsajgwZzEwOEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t">Meeting Calendar</a> | <a href="https://calendar.google.com/calendar/u/0/r?cid=OHJqazhvNTE2dmZ0ZTIxcWlidmxhZTNsajRAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ">Subscribe</a></li>
+</ul>
+<h2 id="contact">Contact</h2>
+<!--
+If you need support, start with the [troubleshooting guide](./docs/troubleshooting.md), and work your way through the process that we've outlined.
+-->
+
+<p>If you have questions, feel free to reach out to us in the following ways:</p>
+<ul>
+<li><a href="https://kubeedge.io/docs/community/slack/">slack channel</a></li>
+</ul>
+<h2 id="contributing">Contributing</h2>
+<p>If you're interested in being a contributor and want to get involved in developing the Ianvs code, please see <a href="CONTRIBUTING.md">CONTRIBUTING</a> for details on submitting patches and the contribution workflow.</p>
+<h2 id="license">License</h2>
+<p>Ianvs is under the Apache 2.0 license. See the <a href="LICENSE">LICENSE</a> file for details.</p>
+</body>
+</html>
