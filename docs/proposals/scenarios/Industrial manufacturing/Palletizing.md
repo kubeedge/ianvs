@@ -1,4 +1,4 @@
- # Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge
+# Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge
 
 Under the background of accelerated evolution of intelligent industrial manufacturing, industrial robots, flexible production lines and intelligent testing equipment continue 
 to be innovated iteratively. With its efficient data processing and real-time response ability, **cloud edge collaboration technology** has become the core technology engine to
@@ -66,21 +66,17 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 And currently, what I need to set up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller 
 
-section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
-
 ### Construction of palletizing scenario
 
 The real industrial scene palletizing video is as follows:
 
-<iframe src="Palletizing_real.mp4" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+[Link](https://easylink.cc/wuyk9c)
 
 The video of simulating industrial palletizing scene in RoboDK is as follows:
 
-<iframe src="Palletizing_simulation.mp4" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+[Link](https://easylink.cc/du8qn)
 
-From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can 
-
-largely restore the real industrial palletizing scene.
+From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can largely restore the real industrial palletizing scene.
 
 **Industrial Scenario: Palletizing**
 
@@ -88,11 +84,11 @@ Palletizing is a key link in the industrial supply chain, connecting production 
 
 Robot simulation of palletizing has significantly improved compared to traditional manual/semi automated methods: 
 
-&emsp;1.Optimizing paths through simulation rehearsals can increase efficiency by 3-5 times and can operate stably for 24 hours; 
+&emsp;**1. Optimizing** paths through simulation rehearsals can increase efficiency by 3-5 times and can operate stably for 24 hours; 
 
-&emsp;2.Stacking accuracy reaches ± 1mm, significantly reducing damage rate; 
+&emsp;**2. Stacking** accuracy reaches ± 1mm, significantly reducing damage rate; 
 
-&emsp;3.Quickly adapt to multiple types of materials, reduce production time by 80%, and better meet the needs of flexible production.
+&emsp;**3. Quickly** adapt to multiple types of materials, reduce production time by 80%, and better meet the needs of flexible production.
 
 This scenario is built based on the RoboDK simulation environment, and an automated palletizing system is constructed that includes dual UR10 collaborative robots, conveyor belts, trays, and multi view virtual cameras. 
 
@@ -104,48 +100,54 @@ The dual UR10 robots (UR10 Base A and UR10 Base B) are responsible for palletizi
 
 ![Alt text](flow_chart.png)
 
+**Installation position of cameras in industrial scenarios**
+
+The three most commonly used camera installations in industrial scenarios are: 
+&emsp;**1. Eye to hand** gantry for high-speed stacking of single depth regular boxes; 
+
+&emsp;**2. Eye in hand** is used for flexible grasping of soft bags/irregular parts; 
+
+&emsp;**3. The hybrid implementation** of large field of view coarse positioning and end precision correction, balancing high speed and accuracy, has been validated on large-scale production lines.
+
+In our palletizing simulation scenario, the camera is a virtually simulated implementation belonging to the **Eye-to-Hand camera** installation scheme. It relies on the absolute pose of the fixed target point `target_conv` in the scene as a static reference frame, and simulates detection by calculating the pose deviation of workpieces relative to this fixed reference frame. Independent of dynamic adjustments to the robot arm's pose for viewing angles, its detection logic is based on static coordinate system transformations, which is equivalent to a physical setup where the camera is fixedly installed (e.g., above the conveyor belt or on a gantry). This configuration achieves high-speed positioning and palletizing of regular boxes, and is widely used in industrial high-speed palletizing scenarios for single-depth regular boxes, meeting accuracy requirements (±1mm) and supporting high-cycle operations (such as 200-300 cycles per hour).
+
+**Algorithm**
+
+|Target/Object | Input Data | Common Industrial Algorithms|
+| ----- | -------------- | --------------------- |
+|Box positioning | 2D RGB/3D point cloud | YOLOv8 seg+3D minimum bounding box|
+|Pose estimation | 3D point cloud | ICP registration/Pose CNN|
+|Grasping point | Box posture+fixture geometry | GrasspNet/torque balance|
+|Joint denoising | Joint angle time series | Kalman filtering|
+|Trajectory optimization | Joint angle | RRT*/TOPP|
+|Abnormal detection | Joint angle+torque | LSTM/One Class SVM|
+
+**YOLOv8-seg+3D minimum bounding box** is used for box positioning, **GraspNet** is used for grasping, **Kalman filter** is used for joint noise, **RRT*** is used for paths, and **LSTM** is used for anomalies.
 
 The ultimate dataset form:
+
 ```yaml
-mold_Inserts_dataset/
-├─ test_data/
-|  ├─ data.json    # Contains queries, expected responses, task metadata
-|  └─ metadata.json # Task dimensions and description
-└─ train_data/
-|   └─ data.json    
+palletizing_dataset/
+├─ camera.png
+└─ robot_motion_information.json/csv
 ```
 
-**Directory Structure: (examples/Pre-assembly of Injection Mold Inserts)**
+Due to RoboDK's output format being more inclined towards "raw data records within the scene", while Ianvs requires "standardized, structured, and correlatable test data", there is a high probability of differences between the two native formats. Therefore, it is necessary to convert or adapt the data format according to Ianvs' specifications to ensure that the data is correctly parsed and used for algorithm testing.
+
+For the motion information of the robot and the image information of the camera obtained later, we can use the algorithm in the above table to further process them.
+
+**Directory Structure: (examples/Palletizing)**
 ```yaml
-Pre-assembly of Injection Mold Inserts
+Palletizing
 └── singletask_learning_bench
     ├── benchmarkingjob.yaml
     ├── testalgorithms
     │   ├── basemodel.py
-    │   ├── fpn_algorithm.yaml
+    │   ├── algorithm.yaml
     │   ├── op_eval.py
     └── testenv
-        ├── acc.py
+        ├── metric.py
         └── testenv.yaml
-```
-
-For the dataset, its URL address should be written out in the configuration file `testenv.yaml`:
-```yaml
-testenv:
- # dataset configuration
- dataset:
-     # the url address of train dataset index; string type;
-     train_data:"./dataset/Pre-assembly of Injection Mold Inserts/train_data/data.json"
-     # the url address of test dataset index; string type;
-     test_data_info:"./dataset/Pre-assembly of Injection Mold Inserts/test_data/metadata.json"
- # metrics configuration for test case's evaluation; list type;
- metrics:
-     # metric name; string type;
-     - name: "Accuracy"
-       # the url address of python file
-       url: "./examples/Pre-assembly of Injection Mold Inserts/singletask_learning_bench/testenv/accuracy.py"
-    # other metrics
-    # ...
 ```
 
 ### **Single Task Learning**
@@ -170,32 +172,21 @@ As shown in the following figure, the single task learning works as procedures b
 
 ![Alt text](Single_Task_Learning.png)
     
-The specific implementation of Pre-assembly of Injection Mold Inserts single task learning algorithm in `algorithm.yaml`.
+The specific implementation of Palletizing single task learning algorithm in `algorithm.yaml`.
 
-The URL address of the algorithm is filled in the configuration file `benchmarkingjob.yaml` (an example is as follows).
-
-```yaml
-# the configuration of test object
-test_object:
-  # test type; string type;
-  # currently the option of value is "algorithms",the others will be added in succession.
-  type: "algorithms"
-  # test algorithm configuration files; list type;
-  algorithms:
-    # algorithm name; string type;
-    - name: "fpn_singletask_learning"
-      # the url address of test algorithm configuration file; string type;
-      # the file format supports yaml/yml
-      url: "./examples/Pre-assembly of Injection Mold Inserts/singletask_learning_bench/testalgorithms/fpn_algorithm.yaml"
-```
+The URL address of the algorithm is filled in the configuration file `benchmarkingjob.yaml` .
 
 ## **Road Map**
 
-**1.** **From July to Mid-August**, conduct research on the currently available embodied intelligent datasets and output corresponding reports. At the same time, continue to follow up and improve the proposal. Besides, learn to use the pybullet platform, build the scene of Pre-assembly of Injection Mold Inserts on the pybullet platform.  
+**1.** **From July to Mid-August**, conduct research on the currently available embodied intelligent datasets and output corresponding reports. At the same time, continue to follow up and improve the proposal. Besides, learn to use the pybullet platform, build the scene of Palletizing on the pybullet platform.  
 
 **2.** **From Mid-August to Mid-September**, obtain the corresponding dataset. The test environment and test indicators were built in kubeedge ianvs, and the datasets were sorted out in a standardized and unified data format. At the same time, the specific intelligent baseline algorithm was implemented in kubeedge ianvs based on the standardized test suite.  
 
 **3.** **From Mid-September to End of September**, summarize the previous two stages, think about what can be further improved or supplemented, and output the corresponding documents. If time and energy allow, consider carrying out standardized test suite in agibot world and Genie SIM, a smart metadata simulation platform, including indicators and examples.
 
-## **Acknowledge**
-This project refers to **Ronak Raj's FPC_Assembly work** shared in Issue #197 of the *Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge ianvs* project. I sincerely thank **Ronak Raj** for his generous sharing.
+## **Reference**
+*1.Shenzhen Hengzhi Image Technology Co., Ltd A fixed bracket for industrial cameras: CN202021042021.7 [P]. January 8, 2021.*
+
+*2.L Wang, H S Min. Dual Quaternion Hand eye Calibration Algorithm Based on LMI Optimization [J]. Machine Tool and Hydraulic, 2021, 49 (21): 8-14. DOI: 10.3969/j.issn.1001-3881.2021.002.*
+
+*3.J C Guo, Z M Zhu, Y F Yu, etc. Research and Application of Laser Structured Light Vision Sensing Technology in Welding Field [J]. China Laser, 2017, 44 (12): 1-10. DOI: 10.3788/CJL201744.1200001.*
