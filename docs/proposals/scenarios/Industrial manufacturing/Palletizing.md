@@ -64,7 +64,7 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 ![Alt text](ianvs.png)
 
-And currently, what I need to set up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller 
+And currently, what I need to set up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
 
 ### Construction of palletizing scenario
 
@@ -76,7 +76,11 @@ The video of simulating industrial palletizing scene in RoboDK is as follows:
 
 [Link](https://easylink.cc/du8qn)
 
-From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can largely restore the real industrial palletizing scene.
+<iframe src="Palletizing_simulation.mp4" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+
+From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can 
+
+largely restore the real industrial palletizing scene.
 
 **Industrial Scenario: Palletizing**
 
