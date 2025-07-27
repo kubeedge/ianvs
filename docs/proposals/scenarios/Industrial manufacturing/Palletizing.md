@@ -62,58 +62,24 @@ And currently, what I need to set up are the dataset in the Test Environment Man
 
 ### Pre-assembly of Injection Mold Inserts dataset
 
-**Pybullet**
-
-PyBullet is developed based on the well-known open-source physics engine Bullet and packaged as a module in Python for robot simulation and learning. PyBullet supports loading various robot description files such as URDF, SDF, MJCF, and provides functions such as forward/reverse kinematics, forward/reverse dynamics, collision detection, and ray intersection query. In addition, many robot routines and practical debugging tools (sliders, buttons, text) are also provided.
-
-![Alt text](pybullet.png)
-
 **Industrial Scenario: Pre-assembly of Injection Mold Inserts**
 
-In the field of injection mold manufacturing, the pre assembly of mold inserts is a key process to ensure mass production efficiency. This scenario requires installing a cylindrical guide sleeve (diameter 40 ± 0.1mm, height 100mm) into the mold substrate (slot diameter 44mm, depth 50mm) to achieve:  
+Palletizing is a key link in the industrial supply chain, connecting production and warehousing transportation. Its efficiency directly affects space utilization, logistics costs, and delivery speed, especially in industries such as food and medicine. Standardizing palletizing is the foundation for ensuring material safety. 
 
-&emsp;Quick positioning: achieve quick installation within 5 seconds through gap fit (H8/d9). 
+Robot simulation of palletizing has significantly improved compared to traditional manual/semi automated methods: 
 
-&emsp;Thermal expansion compensation: Reserve 0.4mm radial clearance to cope with thermal deformation at 150 ℃ working condition.  
+&emsp;1.Optimizing paths through simulation rehearsals can increase efficiency by 3-5 times and can operate stably for 24 hours; 
 
-&emsp;Error prevention design: distinguish 4 symmetrical workstations to avoid incorrect installation.  
+&emsp;2.Stacking accuracy reaches ± 1mm, significantly reducing damage rate; 
 
-Traditional manual installation has the problem of inaccurate positioning leading to mold flashing. The simulation system based on PyBullet can improve installation efficiency and reduce mold scrap rate through collision dynamics optimization.  
+&emsp;3.Quickly adapt to multiple types of materials, reduce production time by 80%, and better meet the needs of flexible production.
 
-This design can be effectively used for:  
+This scenario is built based on the RoboDK simulation environment, and an automated palletizing system is constructed that includes dual UR10 collaborative robots, conveyor belts, trays, and multi view virtual cameras. 
 
-&emsp;1. Robot installation path planning.  
+The dual UR10 robots (UR10 Base A and UR10 Base B) are responsible for palletizing tasks at different workstations, with conveyor belts (defined by motion logic based on frameworks such as ConveyorReference) serving as the workpiece transport carrier, pallets (PalletA and PalletB) used for storing and transferring workpieces, and multiple virtual phase machines (Camera 1-6) simulating visual inspection to achieve perception of workpiece position and posture, supporting precise robot operation.
 
-&emsp;2. Tolerance fitting simulation verification.  
+**The overall process of Palletizing scenario**
 
-&emsp;3. Research on thermal deformation compensation.  
-
-&emsp;4. Development of rapid changeover system.  
-
-Through the PyBullet physics engine, it is possible to accurately simulate the contact mechanics behavior during the installation process of mold inserts, providing a reliable digital twin platform for actual production lines.
-
-**The overall process of dataset generation**
-Use the Panda robotic arm model provided by Pybullet, while **fixing the camera at the end effector of the robotic arm**. The arm is equipped with a simple fixture and a simulated force/torque sensor at the wrist or fixture.  
-
-Firstly, design corresponding cylindrical guide sleeve and Mold substrate that can hold cylindrical components. View the URDF results on this website ([Link](https://danidask.github.io/urdf_editor/frontend/)):
-
-![Alt text](cylinder.png)
-
-![Alt text](container.png)
-
-Secondly, establish an industrial scenario - Pre-assembly of Injection Mold Inserts:
-
-**Dataset generation process**
-
-![Alt text](<Dataset_generation_process.png>)
-
-**Robot arm control sequence**
-
-![Alt text](<Robot_arm_control.png>)
-
-**Data capture**
-
-![Alt text](<Data_capture.png>)
 
 The ultimate dataset form:
 ```yaml
