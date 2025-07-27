@@ -43,10 +43,22 @@ git clone https://github.com/kubeedge/ianvs.git
 ### Install third-party dependencies
 ```
 sudo apt-get update
+
+# Install OpenGL/GLX library for GUI support (required for OpenCV and visualization tools)
+# For Ubuntu 20.04 and earlier versions:
 sudo apt-get install libgl1-mesa-glx -y
+
+# For Ubuntu 24.04 and later versions (libgl1-mesa-glx has been renamed):
+sudo apt-get install libglx-mesa0 -y
+
+# Note: If you're unsure about your Ubuntu version, you can check it with:
+# lsb_release -a
+# Then use the appropriate command above
+
 python -m pip install --upgrade pip
 
-cd ~/ianvs 
+cd ~/ianvs
+
 python -m pip install ./examples/resources/third_party/*
 python -m pip install -r requirements.txt
 ```
