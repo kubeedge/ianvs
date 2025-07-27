@@ -60,9 +60,17 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 And currently, what I need to set up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
 
-### Pre-assembly of Injection Mold Inserts dataset
+### Construction of palletizing scenario
 
-**Industrial Scenario: Pre-assembly of Injection Mold Inserts**
+The real industrial scene palletizing video is as follows:
+<video src="Palletizing_real.mp4" controls="controls" width="500" height="300"></video>
+
+The video of simulating industrial palletizing scene in RoboDK is as follows:
+<video src="Palletizing_simulation.mp4" controls="controls" width="500" height="300"></video>
+
+From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can largely restore the real industrial palletizing scene.
+
+**Industrial Scenario: Palletizing**
 
 Palletizing is a key link in the industrial supply chain, connecting production and warehousing transportation. Its efficiency directly affects space utilization, logistics costs, and delivery speed, especially in industries such as food and medicine. Standardizing palletizing is the foundation for ensuring material safety. 
 
@@ -78,7 +86,11 @@ This scenario is built based on the RoboDK simulation environment, and an automa
 
 The dual UR10 robots (UR10 Base A and UR10 Base B) are responsible for palletizing tasks at different workstations, with conveyor belts (defined by motion logic based on frameworks such as ConveyorReference) serving as the workpiece transport carrier, pallets (PalletA and PalletB) used for storing and transferring workpieces, and multiple virtual phase machines (Camera 1-6) simulating visual inspection to achieve perception of workpiece position and posture, supporting precise robot operation.
 
+![Alt text](palletizing.png)
+
 **The overall process of Palletizing scenario**
+
+![Alt text](flow_chart.png)
 
 
 The ultimate dataset form:
