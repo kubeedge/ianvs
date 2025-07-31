@@ -78,7 +78,6 @@ The video of simulating industrial palletizing scene in RoboDK is as follows:
 
 [Link](https://easylink.cc/du8qn)
 
-<iframe src="Palletizing_simulation.mp4" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 
 From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can 
 
