@@ -1,12 +1,18 @@
 # Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge
 
-Under the background of accelerated evolution of intelligent industrial manufacturing, industrial robots, flexible production lines and intelligent testing equipment continue to be innovated iteratively. With its efficient data processing and real-time response ability, **cloud edge collaboration technology** has become the core technology engine to drive the application of **embodied intelligence** systems in complex industrial scenes.  
+Under the background of accelerated evolution of intelligent industrial manufacturing, industrial robots, flexible production lines and intelligent testing equipment continue 
+to be innovated iteratively. With its efficient data processing and real-time response ability, **cloud edge collaboration technology** has become the core technology engine to
+drive the application of **embodied intelligence** systems in complex industrial scenes.  
 
-Based on the **kubeedge ianvs collaborative AI benchmarking framework**, this project plans to build a complete system including industrial scenario test datasets, simulation test environment and multi-dimensional performance indicators, aiming to build professional and industry-level specific intelligent testing capabilities suitable for the industrial manufacturing field.  
+Based on the **kubeedge ianvs collaborative AI benchmarking framework**, this project plans to build a complete system including industrial scenario test datasets, simulation
+test environment and multi-dimensional performance indicators, aiming to build professional and industry-level specific intelligent testing capabilities suitable for the 
+industrial manufacturing field.  
 
-It is noteworthy that the current industrial demand for embodied intelligent services has developed in depth in the direction of high-precision perception decision-making, dynamic real-time response, cross device collaborative control, etc.   
+It is noteworthy that the current industrial demand for embodied intelligent services has developed in depth in the direction of high-precision perception decision-making, 
+dynamic real-time response, cross device collaborative control, etc.   
 
-**However**, the existing universal embodied intelligence benchmark system is difficult to meet the needs of accurate assessment due to the **lack of targeted consideration of the unique needs of industrial scenarios and equipment characteristics**, which has become a key bottleneck restricting the development of industrial embodied intelligence technology.
+**However**, the existing universal embodied intelligence benchmark system is difficult to meet the needs of accurate assessment due to the **lack of targeted consideration of 
+the unique needs of industrial scenarios and equipment characteristics**, which has become a key bottleneck restricting the development of industrial embodied intelligence technology.
 
 ## **Goals**
 
@@ -58,7 +64,9 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 ![Alt text](ianvs.png)
 
-And currently, what I need to set up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
+And currently, what I need to set up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller 
+
+section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
 
 ### Construction of palletizing scenario
 
@@ -70,7 +78,11 @@ The video of simulating industrial palletizing scene in RoboDK is as follows:
 
 [Link](https://easylink.cc/du8qn)
 
-From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can largely restore the real industrial palletizing scene.
+<iframe src="Palletizing_simulation.mp4" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+
+From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can 
+
+largely restore the real industrial palletizing scene.
 
 **Industrial Scenario: Palletizing**
 
@@ -96,7 +108,8 @@ The dual UR10 robots (UR10 Base A and UR10 Base B) are responsible for palletizi
 
 **Installation position of cameras in industrial scenarios**
 
-The three most commonly used camera installations in industrial scenarios are: 
+The three most commonly used camera installations in industrial scenarios are:
+ 
 &emsp;**1. Eye to hand** gantry for high-speed stacking of single depth regular boxes; 
 
 &emsp;**2. Eye in hand** is used for flexible grasping of soft bags/irregular parts; 
@@ -179,6 +192,7 @@ The URL address of the algorithm is filled in the configuration file `benchmarki
 **3.** **From Mid-September to End of September**, summarize the previous two stages, think about what can be further improved or supplemented, and output the corresponding documents. If time and energy allow, consider carrying out standardized test suite in agibot world and Genie SIM, a smart metadata simulation platform, including indicators and examples.
 
 ## **Reference**
+
 *1.Shenzhen Hengzhi Image Technology Co., Ltd A fixed bracket for industrial cameras: CN202021042021.7 [P]. January 8, 2021.*
 
 *2.L Wang, H S Min. Dual Quaternion Hand eye Calibration Algorithm Based on LMI Optimization [J]. Machine Tool and Hydraulic, 2021, 49 (21): 8-14. DOI: 10.3969/j.issn.1001-3881.2021.002.*
