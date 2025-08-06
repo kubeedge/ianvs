@@ -18,8 +18,18 @@ import pandas as pd
 from pathlib import Path
 from fpdf import FPDF
 from core.common import utils
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler('report_generator.log')
+    ]
+)
 
+logger = logging.getLogger(__name__)
 class PDF(FPDF):
     def __init__(self):
         super().__init__()
@@ -66,6 +76,7 @@ class PDF(FPDF):
         self.image(reid_result["cmc"], 100, 185, 100)
 
     def print_page(self, results):
+        logger.info("Generating PDF page")
         # Generates the report
         self.add_page()
         self.page_body(results)
@@ -88,7 +99,8 @@ def main():
                  tracking_config["benchmarkingjob"]["name"],
                  "rank/all_rank.csv"),
              sep=',')
-        print("Columns are:", tracking_rank.columns)
+        logger.info("Loaded tracking data with %d rows and columns: %s", 
+                   len(tracking_rank), list(tracking_rank.columns))
         tracking_rank["time"] = pd.to_datetime(tracking_rank["time"])
         tracking_result = tracking_rank.sort_values(by="time", ascending=False).iloc[0]
 
@@ -115,7 +127,7 @@ def main():
 
         pdf_filename = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ".pdf"
         pdf.output(Path(output_dir, pdf_filename), "F")
-        print(f"Report generated successfully: {output_dir / pdf_filename}")
+        logger.info("Report generated successfully: %s", output_path)
 
     except Exception as err:
         raise Exception(f"test report generation runs failed, error: {err}.") from err
