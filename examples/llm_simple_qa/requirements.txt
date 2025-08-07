@@ -1,0 +1,8 @@
+sedna
+numpy
+transformers
+mmengine
+opencompass
+torch
+torchvision
+torchaudio
