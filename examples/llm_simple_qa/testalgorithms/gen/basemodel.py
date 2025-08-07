@@ -14,14 +14,13 @@
 
 from __future__ import absolute_import, division, print_function
 
-import sys
 import os
 import tempfile
 import time
 import zipfile
 import logging
 import numpy as np
-sys.path.append(os.path.dirname(__file__))
+
 from sedna.common.config import Context
 from sedna.common.class_factory import ClassType, ClassFactory
 

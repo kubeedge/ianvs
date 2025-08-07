@@ -32,7 +32,7 @@ This example demonstrates how to use the ianvs benchmarking tool to evaluate a b
 
     ```bash
     git clone https://github.com/kubeedge/ianvs.git
-    cd ianvs/examples/llm_simple_qa
+    cd ianvs
     ```
 
 2. **Prepare the Dataset:**
@@ -76,11 +76,8 @@ This example requires a few dependencies. We will also set up the `PYTHONPATH` t
 # Install this example's dependencies
 pip install -r examples/llm_simple_qa/requirements.txt
 
-# Install the OpenCompass dependency
-pip install examples/resources/opencompass-0.2.5-py3-none-any.whl
-
 # Set the PYTHONPATH to include the project's root for metric discovery
-export PYTHONPATH="/mnt/c/Users/ronak/OneDrive/Desktop/ianvs:$PYTHONPATH"
+export PYTHONPATH="${PWD}:$PYTHONPATH"
 ```
 
 ---
@@ -120,7 +117,7 @@ touch examples/llm_simple_qa/dataset/llm_simple_qa/train_data/data.jsonl
 
 3. **Create the test data file:**
 
-Manually create and open a file at `dataset/llm_simple_qa/test_data/data.jsonl` and paste the following:
+`train_data/data.jsonl` will be empty, and the `test_data/data.jsonl` is as follows:
 
 ```json
 {"question": "If Xiao Ming has 5 apples, and he gives 3 to Xiao Hua, how many apples does Xiao Ming have left?\nA. 2\nB. 3\nC. 4\nD. 5", "answer": "A"}
@@ -132,7 +129,7 @@ Manually create and open a file at `dataset/llm_simple_qa/test_data/data.jsonl` 
 {"question": "A class has 24 students, and if each student brings 2 books, how many books are there in total?\nA. 48\nB. 36\nC. 24\nD. 12", "answer": "A"}
 {"question": "Which of the following is the correct multiplication rhyme?\nA. Three threes are seven\nB. Four fours are sixteen\nC. Five fives are twenty-five\nD. Six sixes are thirty-six", "answer": "B"}
 {"question": "If one number is three times another number, and this number is 15, what is the other number?\nA. 5\nB. 10\nC. 15\nD. 45", "answer": "A"}
-{"question": "Which of the following shapes has the longest perimeter?", "answer": "C"}
+{"question": "Which of the following shapes has the longest perimeter?\nA. Square\nB. Rectangle\nC. Circle\nD. Triangle", "answer": "C"}
 ```
 
 ---
@@ -145,7 +142,7 @@ Ensure that `benchmarkingjob.yaml` and `testenv.yaml` are using **relative paths
 
 #### Step 5: Run the Benchmark
 
-From the `examples/llm_simple_qa` directory:
+From the `/ianvs` directory:
 
 ```bash
 ianvs -f examples/llm_simple_qa/benchmarkingjob.yaml
@@ -166,7 +163,7 @@ pip install examples/resources/opencompass-0.2.5-py3-none-any.whl
 #### Run Evaluation
 
 ```bash
-python examples/llm_simple_qa/run_op.py examples/llm/singletask_learning_bench/simple_qa/testalgorithms/gen/op_eval.py
+python run_op.py examples/llm/singletask_learning_bench/simple_qa/testalgorithms/gen/op_eval.py
 ```
 
 ---
@@ -192,9 +189,9 @@ The accuracy score of `0.5` confirms that the framework works correctly. Results
 
 ### Contributing
 
--[Contributing](./CONTRIBUTING.md)
--[Contribution to Documentation](./how-to-cotribute-documentation.md)
+- [Contributing](../../CONTRIBUTING.md)
+- [Contribution to Documentation](../../docs/guides/how-to-contribute-documentation.md)
 
 ### License
 
--[License](./LICENSE)
+- [License](../../LICENSE)
