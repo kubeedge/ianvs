@@ -12,7 +12,8 @@
   - [Step 2: Install Dependencies](#step-2-install-dependencies)  
   - [Step 3: Prepare the Dataset](#step-3-prepare-the-dataset)  
   - [Step 4: Configure the Benchmark](#step-4-configure-the-benchmark)  
-  - [Step 5: Run the Benchmark](#step-5-run-the-benchmark)
+  - [Step 5: Prepare Environment](#step-5-run-the-benchmark)
+  - [Step 6: Run the Benchmark](#step-5-run-the-benchmark)
 - [OpenCompass Evaluation](#opencompass-evaluation)
 - [Results and Discussion](#results-and-discussion)
 - [Contributing](#contributing)
@@ -140,7 +141,15 @@ Ensure that `benchmarkingjob.yaml` and `testenv.yaml` are using **relative paths
 
 ---
 
-#### Step 5: Run the Benchmark
+#### Step 5: Prepare Environment
+
+You need to install the changed-sedna package, which added `JsonlDataParse` in `sedna.datasources`
+Replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `examples/resources/sedna-with-jsonl.zip`
+
+**Note: The pip install sedna version is different from `examples/resources/sedna-with-jsonl.zip`, which do not have jsonl support.This manual replacement is a temporary solution to avoid potential failures.**
+---
+
+#### Step 6: Run the Benchmark
 
 From the `/ianvs` directory:
 
@@ -186,11 +195,6 @@ BaseModel predict
 The accuracy score of `0.5` confirms that the framework works correctly. Results are saved in the `workspace` directory.
 
 ---
-
-### Contributing
-
-- [Contributing](../../CONTRIBUTING.md)
-- [Contribution to Documentation](../../docs/guides/how-to-contribute-documentation.md)
 
 ### License
 
