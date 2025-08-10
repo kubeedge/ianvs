@@ -18,7 +18,7 @@ import base64
 import tempfile
 import warnings
 from io import BytesIO
-
+from logger import logger
 from sedna.datasources import BaseDataSource
 from sedna.core.lifelong_learning import LifelongLearning
 from sedna.common.config import Context
@@ -94,7 +94,7 @@ def predict():
         img_rgb = Image.fromarray(img_rgb)
         sample = {'image': img_rgb, "depth": img_rgb, "label": img_rgb}
         data = preprocess(sample)
-        print("Inference results:", ll_job.inference(data=data))
+        logger.info("Inference results:", ll_job.inference(data=data))
 
 if __name__ == '__main__':
     predict()
