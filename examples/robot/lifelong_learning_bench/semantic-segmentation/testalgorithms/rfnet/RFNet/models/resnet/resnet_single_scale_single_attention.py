@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
 from itertools import chain
 import torch.utils.checkpoint as cp
-
+from logger import logger
 from ..util import _Upsample, SpatialPyramidPooling
 
 __all__ = ['ResNet', 'resnet18']
@@ -342,7 +342,7 @@ class ResNet(nn.Module):
         i = 0
         for skip, up in zip(features[1:], self.upsample):
             i += 1
-            #print(len(self.upsample))
+            #logger.info(len(self.upsample))
             if i < len(self.upsample):
                 x = up(x, skip)
             else:
@@ -361,11 +361,11 @@ class ResNet(nn.Module):
         model_dict = {}
         state_dict = self.state_dict()
         for k, v in pretrain_dict.items():
-            # print('%%%%% ', k)
+            # logger.info('%%%%% ', k)
             if k in state_dict:
                 if k.startswith('conv1'):
                     model_dict[k] = v
-                    # print('##### ', k)
+                    # logger.info('##### ', k)
                     model_dict[k.replace('conv1', 'conv1_d')] = torch.mean(v, 1).data. \
                         view_as(state_dict[k.replace('conv1', 'conv1_d')])
 
@@ -387,5 +387,5 @@ def resnet18(pretrained=True, **kwargs):
     model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
     if pretrained:
         model.load_state_dict(model_zoo.load_url(model_urls['resnet18']), strict=False)
-        print('pretrained dict loaded sucessfully')
+        logger.info('pretrained dict loaded sucessfully')
     return model

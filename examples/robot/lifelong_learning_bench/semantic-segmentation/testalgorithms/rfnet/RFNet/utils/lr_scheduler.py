@@ -9,6 +9,7 @@
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 import math
+from logger import logger
 
 class LR_Scheduler(object):
     """Learning Rate Scheduler
@@ -30,7 +31,7 @@ class LR_Scheduler(object):
     def __init__(self, mode, base_lr, num_epochs, iters_per_epoch=0,
                  lr_step=0, warmup_epochs=0):
         self.mode = mode
-        print('Using {} LR Scheduler!'.format(self.mode))
+        logger.info('Using {} LR Scheduler!'.format(self.mode))
         self.lr = base_lr
         if mode == 'step':
             assert lr_step
@@ -54,7 +55,7 @@ class LR_Scheduler(object):
         if self.warmup_iters > 0 and T < self.warmup_iters:
             lr = lr * 1.0 * T / self.warmup_iters
         if epoch > self.epoch:
-            print('\n=>Epoches %i, learning rate = %.4f, \
+            logger.info('\n=>Epoches %i, learning rate = %.4f, \
                 previous best = %.4f' % (epoch, lr, best_pred))
             self.epoch = epoch
         assert lr >= 0

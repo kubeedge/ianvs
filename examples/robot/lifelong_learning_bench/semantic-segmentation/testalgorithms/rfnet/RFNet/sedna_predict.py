@@ -17,7 +17,7 @@ from io import BytesIO
 from torchvision.transforms import ToPILImage
 from torchvision import transforms
 from torch.utils.data import DataLoader
-
+from logger import logger
 from sedna.datasources import IndexDataParse
 from sedna.core.lifelong_learning import LifelongLearning
 from sedna.common.config import Context
@@ -129,4 +129,4 @@ def predict(ll_job, data=None, validator=None):
 
 if __name__ == '__main__':
     ll_job, validator = init_ll_job()
-    print("Inference result:", predict(ll_job, validator=validator))
+    logger.info("Inference result:", predict(ll_job, validator=validator))

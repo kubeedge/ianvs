@@ -5,7 +5,7 @@ os.environ['BACKEND_TYPE'] = 'PYTORCH'
 # os.environ["MODEL_URLS"] = "./cloud_next_kb/index.pkl"
 # os.environ["operator"] = "<"
 # os.environ["model_threshold"] = "0"
-
+from logger import logger
 from sedna.core.lifelong_learning import LifelongLearning
 from sedna.datasources import IndexDataParse
 from sedna.common.config import Context
@@ -47,4 +47,4 @@ def eval():
 
 
 if __name__ == '__main__':
-    print(eval())
+    logger.info(eval())
