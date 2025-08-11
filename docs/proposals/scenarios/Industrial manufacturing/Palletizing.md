@@ -74,6 +74,7 @@ The real industrial scene palletizing video is as follows:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ![Alt text](<Palletizing_real (2).png>)
 =======
 ![Alt text](<Palletizing_real (2)-1.png>)
@@ -81,6 +82,9 @@ The real industrial scene palletizing video is as follows:
 =======
 ![Alt text](<Palletizing_real (2).png>)
 >>>>>>> cf4c1c7 (修改了palletizing.md)
+=======
+![Alt text](<Palletizing_real (2).png>)
+>>>>>>> 860e6dd (修改了palletizing.md)
 [Link](https://easylink.cc/wuyk9c)
 
 The video of simulating industrial palletizing scene in RoboDK is as follows:
