@@ -29,7 +29,7 @@ the unique needs of industrial scenarios and equipment characteristics**, which 
 | Dataset | Scenarios | Introduction | Link |
 | :-----| :----- | :----- | :----: |
 | Agibot World | Operation/Perception/Composite | The AgiBot World dataset was born from Zhiyuan's self built large-scale data collection factory and application experimental base, with a total space area of over 4000 square meters and containing more than 3000 real objects. On the one hand, it provides a venue for large-scale data training of robots, and on the other hand, it realistically replicates the five core scenarios of home, catering, industry, supermarkets, and office, fully covering the typical application needs of robots in production and life. | [Link](https://huggingface.co/datasets/agibot-world/AgiBotWorld-Alpha) |
-| ARIO (All Robots in One), 2024 | Operation/Locomotion | ARIO is a comprehensive benchmark dataset designed to unify robot data across different implementation examples and task types. It covers over 20 real and simulated robot platforms, including tasks ranging from basic movements to complex tool usage and manipulation. Each robot is equipped with sensors such as RGB cameras, IMUs, and joint encoders, allowing agents to promote and transfer skills between platforms.In industrial environments where multiple robots must collaborate, such as wheeled bases for transporting parts and arms for performing assembly, ARIO's structure reflects the heterogeneity of these systems and the need for unified intelligence among them. | [Link](https://imaei.github.io/project_pages/ario/) |
+| ARIO (All Robots in One), 2024 | Operation/Locomotion | ARIO is a comprehensive benchmark dataset designed to unify robot data across different implementation examples and task types. It covers over 20 real and simulated robot platforms, including tasks ranging from basic movements to complex tool usage and manipulation. Each robot is equipped with sensors such as RGB cameras, IMUs, and joint encoders, allowing agents to promote and transfer skills between platforms. In industrial environments where multiple robots must collaborate, such as wheeled bases for transporting parts and arms for performing assembly, ARIO's structure reflects the heterogeneity of these systems and the need for unified intelligence among them. | [Link](https://imaei.github.io/project_pages/ario/) |
 | Open X-Embodiment, 2023 | Operation/Locomotion | 1 million fragments x 22 types of robots, covering 500+skills (including industrial sorting and assembly). | [Link](https://github.com/google-deepmind/open_x_embodiment) |
 | RH20T-P (Robotic Hands Dataset with Primitive Skills), 2024 | Operation | For industries that focus on micro assembly or small part operations, such as gears, screws, and PCBs, RH20T-P provides valuable data for teaching robots precise and accurate interaction. | [Link](https://sites.google.com/view/rh20t-primitive/main) |
 | ALOHA 2, 2024 | Operation | ALOHA 2 extends the original ALOHA dataset to include more complex dual arm coordination tasks. With improved physical realism and aligned RGB-D visual flow, it simulates tasks such as stacking, folding, and object alignment. This dataset captures the complexity of manual operation, which is crucial in many packaging and palletizing environments. | [Link](https://aloha-2.github.io/) |
@@ -72,10 +72,20 @@ section, use the Single task Learning Paradigm in Algorithm Paradigm to perform 
 
 The real industrial scene palletizing video is as follows:
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+![Alt text](<Palletizing_real (2).png>)
+=======
+![Alt text](<Palletizing_real (2)-1.png>)
+>>>>>>> 50b35d0 (增加了Palletizing_real (2).png)
+=======
+![Alt text](<Palletizing_real (2).png>)
+>>>>>>> cf4c1c7 (修改了palletizing.md)
 [Link](https://easylink.cc/wuyk9c)
 
 The video of simulating industrial palletizing scene in RoboDK is as follows:
 
+![Alt text](Palletizing_sim.png)
 [Link](https://easylink.cc/du8qn)
 
 
@@ -130,12 +140,22 @@ In our palletizing simulation scenario, the camera is a virtually simulated impl
 
 **YOLOv8-seg+3D minimum bounding box** is used for box positioning, **GraspNet** is used for grasping, **Kalman filter** is used for joint noise, **RRT*** is used for paths, and **LSTM** is used for anomalies.
 
+**YOLOv8** is the latest version of the YOLO (You Only Look Once) series object detection algorithm, which has improved both speed and accuracy. YOLOv8 introduces a new network structure and optimization strategy that supports multi-scale feature fusion and more efficient anchor management to improve detection performance. In addition, it enhances the detection capability for small targets and provides more flexible model deployment options, suitable for various real-time object detection scenarios.
+
+In this project, we use YOLOv8 to perform object detection on the images captured by the camera.
+
+![Alt text](YOLOv8.png)
+
+The image captured by the camera is roughly as shown in the following picture:
+
+![Alt text](camera_capture.png)
+
 The ultimate dataset form:
 
 ```yaml
 palletizing_dataset/
 ├─ camera.png
-└─ robot_motion_information.json/csv
+└─ robot_motion_information.json/csv(optional)
 ```
 
 Due to RoboDK's output format being more inclined towards "raw data records within the scene", while Ianvs requires "standardized, structured, and correlatable test data", there is a high probability of differences between the two native formats. Therefore, it is necessary to convert or adapt the data format according to Ianvs' specifications to ensure that the data is correctly parsed and used for algorithm testing.
