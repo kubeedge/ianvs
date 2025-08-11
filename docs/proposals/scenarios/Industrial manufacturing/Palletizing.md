@@ -72,19 +72,9 @@ section, use the Single task Learning Paradigm in Algorithm Paradigm to perform 
 
 The real industrial scene palletizing video is as follows:
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 ![Alt text](<Palletizing_real (2).png>)
-=======
-![Alt text](<Palletizing_real (2)-1.png>)
->>>>>>> 50b35d0 (增加了Palletizing_real (2).png)
-=======
-![Alt text](<Palletizing_real (2).png>)
->>>>>>> cf4c1c7 (修改了palletizing.md)
-=======
-![Alt text](<Palletizing_real (2).png>)
->>>>>>> 860e6dd (修改了palletizing.md)
+
 [Link](https://easylink.cc/wuyk9c)
 
 The video of simulating industrial palletizing scene in RoboDK is as follows:
@@ -150,10 +140,15 @@ In this project, we use YOLOv8 to perform object detection on the images capture
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ![Alt text](YOLOv8.png)
 
 =======
 >>>>>>> 2b21cf7 (修改了palletizing.md,加入了YOLOv8.png,Palletizing_real.png,Palletizing_simulation.png)
+=======
+![Alt text](YOLOv8.png)
+
+>>>>>>> 2b1fdc9 (修改了palletizing.md)
 The image captured by the camera is roughly as shown in the following picture:
 
 ![Alt text](camera_capture.png)
