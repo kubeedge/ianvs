@@ -115,7 +115,7 @@ The three most commonly used camera installations in industrial scenarios are:
 
 &emsp;**3. The hybrid implementation** of large field of view coarse positioning and end precision correction, balancing high speed and accuracy, has been validated on large-scale production lines.
 
-In our palletizing simulation scenario, the camera is a virtually simulated implementation belonging to the **Eye-to-Hand camera** installation scheme. It relies on the absolute pose of the fixed target point `target_conv` in the scene as a static reference frame, and simulates detection by calculating the pose deviation of workpieces relative to this fixed reference frame. Independent of dynamic adjustments to the robot arm's pose for viewing angles, its detection logic is based on static coordinate system transformations, which is equivalent to a physical setup where the camera is fixedly installed (e.g., above the conveyor belt or on a gantry). This configuration achieves high-speed positioning and palletizing of regular boxes, and is widely used in industrial high-speed palletizing scenarios for single-depth regular boxes, meeting accuracy requirements (±1mm) and supporting high-cycle operations (such as 200-300 cycles per hour).
+In our palletizing simulation scenario, the camera is a virtually simulated implementation belonging to the **Eye-in-Hand camera** installation scheme. It relies on the absolute pose of the fixed target point `target_conv` in the scene as a static reference frame, and simulates detection by calculating the pose deviation of workpieces relative to this fixed reference frame. Independent of dynamic adjustments to the robot arm's pose for viewing angles, its detection logic is based on static coordinate system transformations, which is equivalent to a physical setup where the camera is fixedly installed (e.g., above the conveyor belt or on a gantry). This configuration achieves high-speed positioning and palletizing of regular boxes, and is widely used in industrial high-speed palletizing scenarios for single-depth regular boxes, meeting accuracy requirements (±1mm) and supporting high-cycle operations (such as 200-300 cycles per hour).
 
 **Algorithm**
 
@@ -150,7 +150,6 @@ Palletizing
     ├── testalgorithms
     │   ├── basemodel.py
     │   ├── algorithm.yaml
-    │   ├── op_eval.py
     └── testenv
         ├── metric.py
         └── testenv.yaml
