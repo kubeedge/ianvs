@@ -13,7 +13,7 @@
   - [Step 3: Prepare the Dataset](#step-3-prepare-the-dataset)  
   - [Step 4: Configure the Benchmark](#step-4-configure-the-benchmark)  
   - [Step 5: Prepare Environment](#step-5-run-the-benchmark)
-  - [Step 6: Run the Benchmark](#step-5-run-the-benchmark)
+  - [Step 6: Run the Benchmark](#step-6-run-the-benchmark)
 - [OpenCompass Evaluation](#opencompass-evaluation)
 - [Results and Discussion](#results-and-discussion)
 - [Contributing](#contributing)
@@ -50,12 +50,20 @@ This example demonstrates how to use the ianvs benchmarking tool to evaluate a b
 
 ---
 
+
 ### Detailed Setup Guide
+
 
 #### Prerequisites
 
 - Python 3.8+ environment (e.g., using `conda` or `venv`).
-  [Create virtualenv](#create-virtualenv)
+
+```shell
+sudo apt-get install -y virtualenv
+mkdir ~/venv 
+virtualenv -p python3 ~/venv/ianvs
+source ~/venv/ianvs/bin/activate
+```
 ---
 
 #### Step 1: Clone the Repository
@@ -120,7 +128,7 @@ touch examples/llm_simple_qa/dataset/llm_simple_qa/train_data/data.jsonl
 
 `train_data/data.jsonl` will be empty, and the `test_data/data.jsonl` is as follows:
 
-```json
+```jsonl
 {"question": "If Xiao Ming has 5 apples, and he gives 3 to Xiao Hua, how many apples does Xiao Ming have left?\nA. 2\nB. 3\nC. 4\nD. 5", "answer": "A"}
 {"question": "Which of the following numbers is the smallest prime number?\nA. 0\nB. 1\nC. 2\nD. 4", "answer": "C"}
 {"question": "A rectangle has a length of 10 centimeters and a width of 5 centimeters, what is its perimeter in centimeters?\nA. 20 centimeters\nB. 30 centimeters\nC. 40 centimeters\nD. 50 centimeters", "answer": "B"}
@@ -146,7 +154,8 @@ Ensure that `benchmarkingjob.yaml` and `testenv.yaml` are using **relative paths
 You need to install the changed-sedna package, which added `JsonlDataParse` in `sedna.datasources`
 Replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `examples/resources/sedna-with-jsonl.zip`
 
-**Note: The pip install sedna version is different from `examples/resources/sedna-with-jsonl.zip`, which do not have jsonl support.This manual replacement is a temporary solution to avoid potential failures.**
+Note: The pip install sedna version is different from `examples/resources/sedna-with-jsonl.zip`, which do not have jsonl support.This manual replacement is a temporary solution to avoid potential failures.
+
 ---
 
 #### Step 6: Run the Benchmark
@@ -189,7 +198,7 @@ BaseModel predict
 | rank |        algorithm              | acc |      paradigm      | basemodel |         time        |                                            url                                                 |
 +------+-------------------------------+-----+--------------------+-----------+---------------------+------------------------------------------------------------------------------------------------+
 |  1   | simple_qa_singletask_learning | 0.5 | singletasklearning |    gen    | 2025-08-06 11:50:43 | ./workspace/benchmarkingjob/simple_qa_singletask_learning/c1165a5e-72ba-11f0-80d8-00155dc14dbd |
-+------+-------------------------------+-----+--------------------+-----------+------------------------------------------------------------------------------------------------+
++------+-------------------------------+-----+--------------------+-----------+------------------------------------------------------------------------------------------------+-----------------------------------------------------------------
 ```
 
 The accuracy score of `0.5` confirms that the framework works correctly. Results are saved in the `workspace` directory.
