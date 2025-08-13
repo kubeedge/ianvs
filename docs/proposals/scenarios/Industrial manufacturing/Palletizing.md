@@ -183,6 +183,8 @@ Palletizing
         └── testenv.yaml
 ```
 
+In this project, the selected metric is probably accuracy.
+
 ### **Single Task Learning**
 
 Single task learning is a traditional learning pooling all data together to train a single model. It typically includes a specialist model laser-focused on a single task and requires large amounts of task-specific labeled data, which is not always available on early stage of a distributed synergy AI project.  
