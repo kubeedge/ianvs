@@ -138,31 +138,13 @@ In our palletizing simulation scenario, the camera is a virtually simulated impl
 
 In this project, we use YOLOv8 to perform object detection on the images captured by the camera.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 ![Alt text](YOLOv8.png)
 
-=======
->>>>>>> 2b21cf7 (修改了palletizing.md,加入了YOLOv8.png,Palletizing_real.png,Palletizing_simulation.png)
-=======
-![Alt text](YOLOv8.png)
-
->>>>>>> 2b1fdc9 (修改了palletizing.md)
 The image captured by the camera is roughly as shown in the following picture:
 
 ![Alt text](camera_capture.png)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> b964412 (增加了camera_capture.png和修改了palletizing.md)
-=======
->>>>>>> 2b21cf7 (修改了palletizing.md,加入了YOLOv8.png,Palletizing_real.png,Palletizing_simulation.png)
-=======
-=======
->>>>>>> 16c973c (修改了palletizing.md)
 Robot arm joint information and TCP pose information in CSV format:
 ```
 # Robot State @ 2025-08-14 10:49:19
@@ -190,10 +172,6 @@ Robot arm joint information and TCP pose information in CSV format:
 └───────────────────────────────┘
 ```
 
-<<<<<<< HEAD
->>>>>>> 892fb24 (合并修改palletizing.md和yolov8.png)
-=======
->>>>>>> 16c973c (修改了palletizing.md)
 The ultimate dataset form:
 
 ```yaml
