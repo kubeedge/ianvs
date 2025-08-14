@@ -154,10 +154,40 @@ The image captured by the camera is roughly as shown in the following picture:
 ![Alt text](camera_capture.png)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> b964412 (增加了camera_capture.png和修改了palletizing.md)
 =======
 >>>>>>> 2b21cf7 (修改了palletizing.md,加入了YOLOv8.png,Palletizing_real.png,Palletizing_simulation.png)
+=======
+Robot arm joint information and TCP pose information in CSV format:
+```
+# Robot State @ 2025-08-14 10:49:19
+
+┌───────────────────────────────┐
+│ Joints (degrees)              │
+│ ┌─────┬───────┐               │
+│ │ J1  │ -8.247│  Base rotation│
+│ │ J2  │ -99.686│ Shoulder      │
+│ │ J3  │ 80.867 │ Elbow         │
+│ │ J4  │ -71.181│ Wrist 1       │
+│ │ J5  │ -90.0  │ Wrist 2       │
+│ │ J6  │ -8.247 │ Wrist 3       │
+│ └─────┴───────┘               │
+├───────────────────────────────┤
+│ TCP Pose (mm / degrees)       │
+│ ┌───────┬───────────┐         │
+│ │ X     │ 309.964   │ mm      │
+│ │ Y     │ 1839.792  │ mm      │
+│ │ Z     │ 579.970   │ mm      │
+│ │ Rx    │ -180.0    │ deg     │
+│ │ Ry    │ -1.12E-05 │ deg     │
+│ │ Rz    │ -1.00E-05 │ deg     │
+│ └───────┴───────────┘         │
+└───────────────────────────────┘
+```
+
+>>>>>>> 892fb24 (合并修改palletizing.md和yolov8.png)
 The ultimate dataset form:
 
 ```yaml
