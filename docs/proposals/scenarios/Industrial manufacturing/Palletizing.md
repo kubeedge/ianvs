@@ -133,7 +133,7 @@ In our palletizing simulation scenario, the camera is a virtually simulated impl
 In this project, we use YOLOv8 to perform object detection on the images captured by the camera.
 
 
-![Alt text](YOLOv8.png)
+![Alt text](YOLOv8_latest.png)
 
 The image captured by the camera is roughly as shown in the following picture:
 
