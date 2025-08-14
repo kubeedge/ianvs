@@ -64,7 +64,7 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 ![Alt text](ianvs.png)
 
-And currently, what I need to set up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller 
+And currently, The current focus is on setting up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller 
 
 section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
 
@@ -101,7 +101,7 @@ Robot simulation of palletizing has significantly improved compared to tradition
 
 This scenario is built based on the RoboDK simulation environment, and an automated palletizing system is constructed that includes dual UR10 collaborative robots, conveyor belts, trays, and multi view virtual cameras. 
 
-The dual UR10 robots (UR10 Base A and UR10 Base B) are responsible for palletizing tasks at different workstations, with conveyor belts (defined by motion logic based on frameworks such as ConveyorReference) serving as the workpiece transport carrier, pallets (PalletA and PalletB) used for storing and transferring workpieces, and multiple virtual phase machines (Camera 1-6) simulating visual inspection to achieve perception of workpiece position and posture, supporting precise robot operation.
+The dual UR10 robots (UR10 Base A and UR10 Base B) are responsible for palletizing tasks at different workstations, with conveyor belts (defined by motion logic based on frameworks such as ConveyorReference) serving as the workpiece transport carrier, pallets (PalletA and PalletB) used for storing and transferring workpieces, and multiple virtual cameras simulating visual inspection to achieve perception of workpiece position and posture, supporting precise robot operation.
 
 ![Alt text](palletizing.png)
 
@@ -119,7 +119,7 @@ The three most commonly used camera installations in industrial scenarios are:
 
 &emsp;**3. The hybrid implementation** of large field of view coarse positioning and end precision correction, balancing high speed and accuracy, has been validated on large-scale production lines.
 
-In our palletizing simulation scenario, the camera is a virtually simulated implementation belonging to the **Eye-in-Hand camera** installation scheme. It relies on the absolute pose of the fixed target point `target_conv` in the scene as a static reference frame, and simulates detection by calculating the pose deviation of workpieces relative to this fixed reference frame. Independent of dynamic adjustments to the robot arm's pose for viewing angles, its detection logic is based on static coordinate system transformations, which is equivalent to a physical setup where the camera is fixedly installed (e.g., above the conveyor belt or on a gantry). This configuration achieves high-speed positioning and palletizing of regular boxes, and is widely used in industrial high-speed palletizing scenarios for single-depth regular boxes, meeting accuracy requirements (±1mm) and supporting high-cycle operations (such as 200-300 cycles per hour).
+In our palletizing simulation scenario, the camera is a virtually simulated implementation belonging to the **Eye-in-Hand camera** installation scheme—installed on the robot’s end-effector, it moves synchronously with the end-effector during operation. Instead of relying on a fixed static reference frame, its detection logic is dynamically linked to the real-time pose of the end-effector: by continuously acquiring the end-effector’s current pose in the robot base coordinate system, it calculates the pose deviation of workpieces relative to the camera/end-effector coordinate system through real-time coordinate transformations. This dynamic configuration aligns with the physical characteristics of Eye-in-Hand setups, where the camera moves with the end-effector to adapt to varying viewing angles as the robot operates. It achieves high-speed positioning and palletizing of regular boxes, and is widely used in industrial high-speed palletizing scenarios for single-depth regular boxes, meeting accuracy requirements (±1mm) and supporting high-cycle operations (such as 200-300 cycles per hour). 
 
 **Algorithm**
 
@@ -127,7 +127,7 @@ In our palletizing simulation scenario, the camera is a virtually simulated impl
 | ----- | -------------- | --------------------- |
 |Box positioning | 2D RGB/3D point cloud | YOLOv8 seg+3D minimum bounding box|
 |Pose estimation | 3D point cloud | ICP registration/Pose CNN|
-|Grasping point | Box posture+fixture geometry | GrasspNet/torque balance|
+|Grasping point | Box posture+fixture geometry | GraspNet/torque balance|
 |Joint denoising | Joint angle time series | Kalman filtering|
 |Trajectory optimization | Joint angle | RRT*/TOPP|
 |Abnormal detection | Joint angle+torque | LSTM/One Class SVM|
@@ -145,7 +145,7 @@ The image captured by the camera is roughly as shown in the following picture:
 
 ![Alt text](camera_capture.png)
 
-Robot arm joint information and TCP pose information in CSV format:
+Robot arm joint information and TCP pose information in CSV format, here is a test format:
 ```
 # Robot State @ 2025-08-14 10:49:19
 
@@ -217,7 +217,7 @@ As shown in the following figure, the single task learning works as procedures b
 
 &emsp;6.The system updates the model on the edge.  
 
-&emsp;7.The model conducts inference given test samples where the inference result is send to the application which ends the process.  
+&emsp;7.The model conducts inference given test samples where the inference result is sent to the application which ends the process.  
 
 ![Alt text](Single_Task_Learning.png)
     
@@ -227,11 +227,14 @@ The URL address of the algorithm is filled in the configuration file `benchmarki
 
 ## **Road Map**
 
-**1.** **From July to Mid-August**, conduct research on the currently available embodied intelligent datasets and output corresponding reports. At the same time, continue to follow up and improve the proposal. Besides, learn to use the pybullet platform, build the scene of Palletizing on the pybullet platform.  
+**1.** **July to Mid-August**  
+Conduct research on currently available embodied intelligent datasets and produce corresponding reports. Simultaneously, continue to follow up on and refine the proposal. Additionally, learn to use the RoboDK platform and construct a palletizing scene within it.  
 
-**2.** **From Mid-August to Mid-September**, obtain the corresponding dataset. The test environment and test indicators were built in kubeedge ianvs, and the datasets were sorted out in a standardized and unified data format. At the same time, the specific intelligent baseline algorithm was implemented in kubeedge ianvs based on the standardized test suite.  
+**2.** **Mid-August to Mid-September**  
+Acquire the corresponding dataset. Establish the test environment and test indicators in KubeEdge Ianvs, and standardize and unify the dataset into a consistent data format. Concurrently, implement the specific intelligent baseline algorithm in KubeEdge Ianvs based on the standardized test suite.  
 
-**3.** **From Mid-September to End of September**, summarize the previous two stages, think about what can be further improved or supplemented, and output the corresponding documents. If time and energy allow, consider carrying out standardized test suite in agibot world and Genie SIM, a smart metadata simulation platform, including indicators and examples.
+**3.** **Mid-September to End of September**  
+Summarize the outcomes of the previous two stages, analyze areas for further improvement or supplementation, and produce corresponding documentation. If time and resources permit, extend the standardization of the test suite—including indicators and examples—to AgiBot World and Genie SIM, a smart metadata simulation platform.
 
 ## **Reference**
 
