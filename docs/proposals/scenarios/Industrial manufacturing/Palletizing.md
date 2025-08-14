@@ -11,8 +11,7 @@ industrial manufacturing field.
 It is noteworthy that the current industrial demand for embodied intelligent services has developed in depth in the direction of high-precision perception decision-making, 
 dynamic real-time response, cross device collaborative control, etc.   
 
-**However**, the existing universal embodied intelligence benchmark system is difficult to meet the needs of accurate assessment due to the **lack of targeted consideration of 
-the unique needs of industrial scenarios and equipment characteristics**, which has become a key bottleneck restricting the development of industrial embodied intelligence technology.
+**However**, the existing universal embodied intelligence benchmark system is difficult to meet the needs of accurate assessment due to the **lack of targeted consideration of the unique needs of industrial scenarios and equipment characteristics**, which has become a key bottleneck restricting the development of industrial embodied intelligence technology.
 
 ## **Goals**
 
@@ -64,16 +63,13 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 ![Alt text](ianvs.png)
 
-And currently, The current focus is on setting up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller 
-
-section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
+The current focus is on setting up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
 
 ### Construction of palletizing scenario
 
 The real industrial scene palletizing video is as follows:
 
-
-![Alt text](<Palletizing_real (2).png>)
+![Alt text](Palletizing_real.png)
 
 [Link](https://easylink.cc/wuyk9c)
 
@@ -83,9 +79,7 @@ The video of simulating industrial palletizing scene in RoboDK is as follows:
 [Link](https://easylink.cc/du8qn)
 
 
-From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can 
-
-largely restore the real industrial palletizing scene.
+From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can largely restore the real industrial palletizing scene.
 
 **Industrial Scenario: Palletizing**
 
@@ -146,6 +140,7 @@ The image captured by the camera is roughly as shown in the following picture:
 ![Alt text](camera_capture.png)
 
 Robot arm joint information and TCP pose information in CSV format, here is a test format:
+
 ```
 # Robot State @ 2025-08-14 10:49:19
 
