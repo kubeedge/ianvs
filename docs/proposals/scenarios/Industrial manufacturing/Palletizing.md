@@ -5,8 +5,7 @@ to be innovated iteratively. With its efficient data processing and real-time re
 drive the application of **embodied intelligence** systems in complex industrial scenes.  
 
 Based on the **kubeedge ianvs collaborative AI benchmarking framework**, this project plans to build a complete system including industrial scenario test datasets, simulation
-test environment and multi-dimensional performance indicators, aiming to build professional and industry-level specific intelligent testing capabilities suitable for the 
-industrial manufacturing field.  
+test environment and multi-dimensional performance indicators, aiming to build professional and industry-level specific intelligent testing capabilities suitable for the industrial manufacturing field.  
 
 It is noteworthy that the current industrial demand for embodied intelligent services has developed in depth in the direction of high-precision perception decision-making, 
 dynamic real-time response, cross device collaborative control, etc.   
@@ -47,7 +46,7 @@ dynamic real-time response, cross device collaborative control, etc.
 | MVTEC AD | Perception | The MVTec dataset contains 5354 high-resolution color images of different targets and texture types. It contains normal (i.e. defect free) images for training and abnormal images for testing. There are 70 different types of defects in anomalies, such as scratches, dents, contamination, and various structural changes. | [Link]( https://www.mvtec.com/company/research/datasets/mvtec-ad) |
 | RoboMIND | Composite | This dataset contains 107000 real-world demonstration trajectories involving 96 unique objects across 479 different tasks.The RoboMIND dataset collects operational data from various robot platforms, including 52926 Franka Emika Panda single arm robot trajectories, 19152 "Tiangong" humanoid robot trajectories, 10629 AgileX Cobot Magic V2.0 dual arm robot trajectories, and 25170 UR-5e single arm robot trajectory data. | [Link](https://data.flopsera.com/data-detail/21181956226031626?type=open) |
 
-### **ianvs**
+## **ianvs**
 
 The architectures and related concepts are shown in the below figure. The ianvs is designed to run within a single node. Critical components include  
 
@@ -65,23 +64,9 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 The current focus is on setting up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
 
-### Construction of palletizing scenario
+## Construction of palletizing scenario
 
-The real industrial scene palletizing video is as follows:
-
-![Alt text](Palletizing_real.png)
-
-[Link](https://easylink.cc/wuyk9c)
-
-The video of simulating industrial palletizing scene in RoboDK is as follows:
-
-![Alt text](Palletizing_sim.png)
-[Link](https://easylink.cc/du8qn)
-
-
-From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can largely restore the real industrial palletizing scene.
-
-**Industrial Scenario: Palletizing**
+### Industrial Scenario: Palletizing
 
 Palletizing is a key link in the industrial supply chain, connecting production and warehousing transportation. Its efficiency directly affects space utilization, logistics costs, and delivery speed, especially in industries such as food and medicine. Standardizing palletizing is the foundation for ensuring material safety. 
 
@@ -97,9 +82,21 @@ This scenario is built based on the RoboDK simulation environment, and an automa
 
 The dual UR10 robots (UR10 Base A and UR10 Base B) are responsible for palletizing tasks at different workstations, with conveyor belts (defined by motion logic based on frameworks such as ConveyorReference) serving as the workpiece transport carrier, pallets (PalletA and PalletB) used for storing and transferring workpieces, and multiple virtual cameras simulating visual inspection to achieve perception of workpiece position and posture, supporting precise robot operation.
 
-![Alt text](palletizing.png)
+The **real industrial scene palletizing** video is as follows:
 
-**The overall process of Palletizing scenario**
+![Alt text](Palletizing_real.png)
+
+[Link](https://easylink.cc/wuyk9c)
+
+The video of **simulating industrial palletizing scene** in RoboDK is as follows:
+
+![Alt text](Palletizing_sim.png)
+
+[Link](https://easylink.cc/du8qn)
+
+From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can largely restore the real industrial palletizing scene.
+
+### The overall process of Palletizing scenario
 
 ![Alt text](flow_chart.png)
 
@@ -115,7 +112,33 @@ The three most commonly used camera installations in industrial scenarios are:
 
 In our palletizing simulation scenario, the camera is a virtually simulated implementation belonging to the **Eye-in-Hand camera** installation scheme—installed on the robot’s end-effector, it moves synchronously with the end-effector during operation. Instead of relying on a fixed static reference frame, its detection logic is dynamically linked to the real-time pose of the end-effector: by continuously acquiring the end-effector’s current pose in the robot base coordinate system, it calculates the pose deviation of workpieces relative to the camera/end-effector coordinate system through real-time coordinate transformations. This dynamic configuration aligns with the physical characteristics of Eye-in-Hand setups, where the camera moves with the end-effector to adapt to varying viewing angles as the robot operates. It achieves high-speed positioning and palletizing of regular boxes, and is widely used in industrial high-speed palletizing scenarios for single-depth regular boxes, meeting accuracy requirements (±1mm) and supporting high-cycle operations (such as 200-300 cycles per hour). 
 
-**Algorithm**
+## **Single Task Learning**
+
+Single task learning is a traditional learning pooling all data together to train a single model. It typically includes a specialist model laser-focused on a single task and requires large amounts of task-specific labeled data, which is not always available on early stage of a distributed synergy AI project.  
+
+As shown in the following figure, the single task learning works as procedures below:  
+
+&emsp;1.Developer implements and deploys the application based on single task learning.  
+
+&emsp;2.The application runs and launches single task learning.  
+
+&emsp;3.The application uploads samples to the cloud.  
+
+&emsp;4.Labeling service labels the uploaded samples.  
+
+&emsp;5.Training learns the samples to generate a new model.  
+
+&emsp;6.The system updates the model on the edge.  
+
+&emsp;7.The model conducts inference given test samples where the inference result is sent to the application which ends the process.  
+
+![Alt text](Single_Task_Learning.png)
+    
+The specific implementation of Palletizing single task learning algorithm in `algorithm.yaml`.
+
+The URL address of the algorithm is filled in the configuration file `benchmarkingjob.yaml` .
+
+### Algorithm
 
 |Target/Object | Input Data | Common Industrial Algorithms|
 | ----- | -------------- | --------------------- |
@@ -130,14 +153,39 @@ In our palletizing simulation scenario, the camera is a virtually simulated impl
 
 **YOLOv8** is the latest version of the YOLO (You Only Look Once) series object detection algorithm, which has improved both speed and accuracy. YOLOv8 introduces a new network structure and optimization strategy that supports multi-scale feature fusion and more efficient anchor management to improve detection performance. In addition, it enhances the detection capability for small targets and provides more flexible model deployment options, suitable for various real-time object detection scenarios.
 
-In this project, we use YOLOv8 to perform object detection on the images captured by the camera.
-
+In this project, we use YOLOv8 to perform **pure object detection** on the images captured by the camera.
 
 ![Alt text](YOLOv8_latest.png)
+
+## Dataset
+
+Due to RoboDK's output format being more inclined towards "raw data records within the scene", while Ianvs requires "standardized, structured, and correlatable test data", there is a high probability of differences between the two native formats. Therefore, it is necessary to convert or adapt the data format according to Ianvs' specifications to ensure that the data is correctly parsed and used for algorithm testing.
+
+For the motion information of the robot and the image information of the camera obtained later, we can use the algorithm in the above table to further process them.
+
+The ultimate dataset form:
+
+```yaml
+palletizing_dataset/
+├─ 000001/
+│  ├─ rgb.png            # 原图
+│  ├─ depth.tiff         # 32F 深度
+│  ├─ depth_vis.png      # 伪彩色可视化
+│  ├─ joints.csv         # 6 轴关节角
+│  └─ tcp.json           # TCP 位姿 (xyz+quat or xyzrpw)
+├─ 000002/
+│  ├─ ...
+├─ 000003/
+│  ├─ ...
+```
+
+### images part
 
 The image captured by the camera is roughly as shown in the following picture:
 
 ![Alt text](camera_capture.png)
+
+### robot motion information
 
 Robot arm joint information and TCP pose information in CSV format, here is a test format:
 
@@ -167,25 +215,14 @@ Robot arm joint information and TCP pose information in CSV format, here is a te
 └───────────────────────────────┘
 ```
 
-The ultimate dataset form:
+## Directory Structure: (examples/Palletizing)
 
-```yaml
-palletizing_dataset/
-├─ camera.png
-└─ robot_motion_information.json/csv(optional)
-```
-
-Due to RoboDK's output format being more inclined towards "raw data records within the scene", while Ianvs requires "standardized, structured, and correlatable test data", there is a high probability of differences between the two native formats. Therefore, it is necessary to convert or adapt the data format according to Ianvs' specifications to ensure that the data is correctly parsed and used for algorithm testing.
-
-For the motion information of the robot and the image information of the camera obtained later, we can use the algorithm in the above table to further process them.
-
-**Directory Structure: (examples/Palletizing)**
 ```yaml
 Palletizing
 └── singletask_learning_bench
     ├── benchmarkingjob.yaml
     ├── testalgorithms
-    │   ├── basemodel.py
+    │   ├── yolov8.py
     │   ├── algorithm.yaml
     └── testenv
         ├── metric.py
@@ -194,31 +231,6 @@ Palletizing
 
 In this project, the selected metric is probably accuracy.
 
-### **Single Task Learning**
-
-Single task learning is a traditional learning pooling all data together to train a single model. It typically includes a specialist model laser-focused on a single task and requires large amounts of task-specific labeled data, which is not always available on early stage of a distributed synergy AI project.  
-
-As shown in the following figure, the single task learning works as procedures below:  
-
-&emsp;1.Developer implements and deploys the application based on single task learning.  
-
-&emsp;2.The application runs and launches single task learning.  
-
-&emsp;3.The application uploads samples to the cloud.  
-
-&emsp;4.Labeling service labels the uploaded samples.  
-
-&emsp;5.Training learns the samples to generate a new model.  
-
-&emsp;6.The system updates the model on the edge.  
-
-&emsp;7.The model conducts inference given test samples where the inference result is sent to the application which ends the process.  
-
-![Alt text](Single_Task_Learning.png)
-    
-The specific implementation of Palletizing single task learning algorithm in `algorithm.yaml`.
-
-The URL address of the algorithm is filled in the configuration file `benchmarkingjob.yaml` .
 
 ## **Road Map**
 
