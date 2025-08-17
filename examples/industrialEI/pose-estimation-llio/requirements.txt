@@ -1,0 +1,28 @@
+# LLIO Pose Estimation Requirements for Ianvs
+# Dependencies needed to run the pose estimation example successfully
+
+# IMPORTANT: Run with environment variable to fix protobuf issues:
+# export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+# Or use the provided run_ianvs.sh script
+
+# Ianvs core dependencies
+prettytable~=2.5.0
+scikit-learn
+numpy
+pandas
+tqdm
+
+# Scientific computing
+scipy
+
+# Configuration
+pyyaml
+
+# Fix protobuf compatibility issues (required for ianvs)
+protobuf<=3.20.3
+
+# Optional dependencies that improve functionality
+pykitti
+
+# For visualization (optional)
+# matplotlib
