@@ -167,16 +167,25 @@ The ultimate dataset form:
 
 ```yaml
 palletizing_dataset/
-├─ 000001/
-│  ├─ rgb.png            # 原图
-│  ├─ depth.tiff         # 32F 深度
-│  ├─ depth_vis.png      # 伪彩色可视化
-│  ├─ joints.csv         # 6 轴关节角
-│  └─ tcp.json           # TCP 位姿 (xyz+quat or xyzrpw)
-├─ 000002/
+├─ robo_snapshots        # 原图
+│  ├─ 20250814_100620.png
+│  ├─ 20250814_100720.png
 │  ├─ ...
-├─ 000003/
+├─ robo_joints_log       # 6 轴关节角
+│  ├─ 20250814_100620.csv
+│  ├─ 20250814_100720.csv
 │  ├─ ...
+├─ robo_joints_log_json  # TCP 位姿 (xyz+quat or xyzrpw)
+│  ├─ 20250814_100620.json
+│  ├─ 20250814_100720.json
+│  ├─ ...
+├─ robo_depth_images           
+│  ├─ 20250814_100620.tiff         # 32F 深度
+│  ├─ 20250814_100620_vis.png      # 伪彩色可视化
+│  ├─ 20250814_100720.tiff         # 32F 深度
+│  ├─ 20250814_100720_vis.png      # 伪彩色可视化
+│  ├─ ...
+
 ```
 
 ### images part
