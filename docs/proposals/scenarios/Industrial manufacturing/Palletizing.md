@@ -1,14 +1,10 @@
 # Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge
 
-Under the background of accelerated evolution of intelligent industrial manufacturing, industrial robots, flexible production lines and intelligent testing equipment continue 
-to be innovated iteratively. With its efficient data processing and real-time response ability, **cloud edge collaboration technology** has become the core technology engine to
-drive the application of **embodied intelligence** systems in complex industrial scenes.  
+Under the background of accelerated evolution of intelligent industrial manufacturing, industrial robots, flexible production lines and intelligent testing equipment continue to be innovated iteratively. With its efficient data processing and real-time response ability, **cloud edge collaboration technology** has become the core technology engine to drive the application of **embodied intelligence** systems in complex industrial scenes.  
 
-Based on the **kubeedge ianvs collaborative AI benchmarking framework**, this project plans to build a complete system including industrial scenario test datasets, simulation
-test environment and multi-dimensional performance indicators, aiming to build professional and industry-level specific intelligent testing capabilities suitable for the industrial manufacturing field.  
+Based on the **kubeedge ianvs collaborative AI benchmarking framework**, this project plans to build a complete system including industrial scenario test datasets, simulation test environment and multi-dimensional performance indicators, aiming to build professional and industry-level specific intelligent testing capabilities suitable for the industrial manufacturing field.  
 
-It is noteworthy that the current industrial demand for embodied intelligent services has developed in depth in the direction of high-precision perception decision-making, 
-dynamic real-time response, cross device collaborative control, etc.   
+It is noteworthy that the current industrial demand for embodied intelligent services has developed in depth in the direction of **high-precision perception decision-making, dynamic real-time response, cross device collaborative control, etc**.   
 
 **However**, the existing universal embodied intelligence benchmark system is difficult to meet the needs of accurate assessment due to the **lack of targeted consideration of the unique needs of industrial scenarios and equipment characteristics**, which has become a key bottleneck restricting the development of industrial embodied intelligence technology.
 
@@ -22,7 +18,7 @@ dynamic real-time response, cross device collaborative control, etc.
 
 ## **Design Details**
 
-### **Dataset map**
+### **Dataset Map**
 
 | Dataset | Scenarios | Introduction | Link |
 | :-----| :----- | :----- | :----: |
@@ -46,7 +42,7 @@ dynamic real-time response, cross device collaborative control, etc.
 | MVTEC AD | Perception | The MVTec dataset contains 5354 high-resolution color images of different targets and texture types. It contains normal (i.e. defect free) images for training and abnormal images for testing. There are 70 different types of defects in anomalies, such as scratches, dents, contamination, and various structural changes. | [Link]( https://www.mvtec.com/company/research/datasets/mvtec-ad) |
 | RoboMIND | Composite | This dataset contains 107000 real-world demonstration trajectories involving 96 unique objects across 479 different tasks. The RoboMIND dataset collects operational data from various robot platforms, including 52926 Franka Emika Panda single arm robot trajectories, 19152 "Tiangong" humanoid robot trajectories, 10629 AgileX Cobot Magic V2.0 dual arm robot trajectories, and 25170 UR-5e single arm robot trajectory data. | [Link](https://data.flopsera.com/data-detail/21181956226031626?type=open) |
 
-## **ianvs**
+## **Ianvs**
 
 The architectures and related concepts are shown in the below figure. The ianvs is designed to run within a single node. Critical components include  
 
@@ -64,7 +60,7 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 The current focus is on setting up the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
 
-## Construction of palletizing scenario
+## Construction of Palletizing Scenario
 
 ### Industrial Scenario: Palletizing
 
@@ -86,13 +82,11 @@ The **real industrial scene palletizing** video is as follows:
 
 ![Alt text](Palletizing_real.png)
 
-[Link](https://easylink.cc/wuyk9c)
 
 The video of **simulating industrial palletizing scene** in RoboDK is as follows:
 
 ![Alt text](Palletizing_sim.png)
 
-[Link](https://easylink.cc/du8qn)
 
 From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can largely restore the real industrial palletizing scene.
 
@@ -157,7 +151,7 @@ In this project, we use YOLOv8 to perform **pure object detection** on the image
 
 ![Alt text](YOLOv8_latest.png)
 
-## RoboDK_palletizing_dataset
+## RoboDK Palletizing Dataset
 
 Due to RoboDK's output format being more inclined towards "raw data records within the scene", while Ianvs requires "standardized, structured, and correlatable test data", there is a high probability of differences between the two native formats. Therefore, it is necessary to convert or adapt the data format according to Ianvs' specifications to ensure that the data is correctly parsed and used for algorithm testing.
 
@@ -166,7 +160,7 @@ For the motion information of the robot and the image information of the camera 
 The ultimate dataset form:
 
 ```yaml
-RoboDK_palletizing_dataset/
+RoboDK Palletizing Dataset/
 ├─ robo_snapshots        # original images
 │  ├─ 20250814_100620.png
 │  ├─ 20250814_100720.png
@@ -191,13 +185,13 @@ RoboDK_palletizing_dataset/
 In the benchmark of this research plan, only the raw image data from **robo_snapshots** was used, while the rest of the data needs further follow-up research.
 
 
-### images part
+### Images Part
 
 The image captured by the camera is roughly as shown in the following picture:
 
 ![Alt text](camera_capture.png)
 
-### robot motion information
+### Robot Motion Information
 
 Robot arm joint information and TCP pose information in CSV format, here is a test format:
 
