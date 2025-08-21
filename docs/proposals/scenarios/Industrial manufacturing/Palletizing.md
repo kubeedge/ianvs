@@ -90,7 +90,7 @@ The video of **simulating industrial palletizing scene** in RoboDK is as follows
 
 From the comparison of the above two videos, it can be found that there are still shortcomings in the details of simulation compared to real industrial scenes, but it can largely restore the real industrial palletizing scene.
 
-### The overall process of Palletizing scenario
+### The Overall Process of Palletizing Scenario
 
 ![Alt text](flow_chart.png)
 
