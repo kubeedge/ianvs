@@ -9,7 +9,7 @@
 - [Detailed Setup Guide](#detailed-setup-guide)  
   - [Prerequisites](#prerequisites)  
   - [Step 1: Clone the Repository](#step-1-clone-the-repository)  
-  - [Step 2: Install Dependencies](#step-2-install-dependencies)  
+  - [Step 2: Install Ianvs and Dependencies](#step-2-install-dependencies)  
   - [Step 3: Prepare the Dataset](#step-3-prepare-the-dataset)  
   - [Step 4: Configure the Benchmark](#step-4-configure-the-benchmark)  
   - [Step 5: Prepare Environment](#step-5-run-the-benchmark)
@@ -77,15 +77,32 @@ cd ianvs
 
 ---
 
-#### Step 2: Install Dependencies
+#### Step 2: Install Ianvs and Dependencies
 
 This example requires a few dependencies. We will also set up the `PYTHONPATH` to ensure `ianvs` can find the custom metrics and other modules.
 
 ```bash
+
+sudo apt-get update
+sudo apt-get install libgl1-mesa-glx -y
+python -m pip install --upgrade pip
+
+python -m pip install ./examples/resources/third_party/*
+python -m pip install -r requirements.txt
 # Install this example's dependencies
 pip install -r examples/llm_simple_qa/requirements.txt
+```
+
+# We are now ready to install Ianvs.
+
+```bash
+python setup.py install  
+ianvs -v
+```
 
 # Set the PYTHONPATH to include the project's root for metric discovery
+
+```bash
 export PYTHONPATH="${PWD}:$PYTHONPATH"
 ```
 
