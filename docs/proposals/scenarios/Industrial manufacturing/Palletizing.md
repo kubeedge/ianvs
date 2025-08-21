@@ -44,7 +44,7 @@ dynamic real-time response, cross device collaborative control, etc.
 | Real-IAD: Real-world Multi-View Industrial Anomaly Detection Dataset | Perception | Real IAD is a comprehensive benchmark designed to evaluate anomaly detection systems in real-world industrial environments. It includes 150000 high-resolution images of 30 different types of components, each taken from five different viewpoints. This dataset covers eight common types of defects, including cracks, dents, contamination, and misalignment. The design of Real IAD considers unsupervised anomaly detection, reflecting the challenges of high-throughput production lines where anomalies are rare but crucial for accurate identification. It supports research on anomaly localization, detection robustness, and multi view detection strategies, particularly suitable for quality assurance pipelines. | [Link](https://realiad4ad.github.io/Real-IAD/) |
 | ISP-AD: Industrial Screen Printing Anomaly Detection Dataset | Perception | ISP-AD is a domain specific dataset for anomaly detection in screen printing processes. It includes examples of synthetic and real-world defects such as ink stains, missing prints, ghosting, and registration errors. The structure of this dataset supports classification and pixel segmentation, making it suitable for various industrial defect detection pipelines. Its main application scenarios include automatic visual inspection in the production of printed electronic products, labels, and packaging, ensuring consistent printing quality is crucial for product performance and brand. | [Link](https://paperswithcode.com/dataset/isp-ad) |
 | MVTEC AD | Perception | The MVTec dataset contains 5354 high-resolution color images of different targets and texture types. It contains normal (i.e. defect free) images for training and abnormal images for testing. There are 70 different types of defects in anomalies, such as scratches, dents, contamination, and various structural changes. | [Link]( https://www.mvtec.com/company/research/datasets/mvtec-ad) |
-| RoboMIND | Composite | This dataset contains 107000 real-world demonstration trajectories involving 96 unique objects across 479 different tasks.The RoboMIND dataset collects operational data from various robot platforms, including 52926 Franka Emika Panda single arm robot trajectories, 19152 "Tiangong" humanoid robot trajectories, 10629 AgileX Cobot Magic V2.0 dual arm robot trajectories, and 25170 UR-5e single arm robot trajectory data. | [Link](https://data.flopsera.com/data-detail/21181956226031626?type=open) |
+| RoboMIND | Composite | This dataset contains 107000 real-world demonstration trajectories involving 96 unique objects across 479 different tasks. The RoboMIND dataset collects operational data from various robot platforms, including 52926 Franka Emika Panda single arm robot trajectories, 19152 "Tiangong" humanoid robot trajectories, 10629 AgileX Cobot Magic V2.0 dual arm robot trajectories, and 25170 UR-5e single arm robot trajectory data. | [Link](https://data.flopsera.com/data-detail/21181956226031626?type=open) |
 
 ## **ianvs**
 
@@ -62,7 +62,7 @@ The architectures and related concepts are shown in the below figure. The ianvs 
 
 ![Alt text](ianvs.png)
 
-The current focus is on setting up are the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
+The current focus is on setting up the dataset in the Test Environment Manager section and the evaluation metrics section. At the same time, in the Test Case Controller section, use the Single task Learning Paradigm in Algorithm Paradigm to perform corresponding benchmark tests on the uploaded dataset.
 
 ## Construction of palletizing scenario
 
@@ -167,23 +167,23 @@ The ultimate dataset form:
 
 ```yaml
 palletizing_dataset/
-├─ robo_snapshots        # 原图
+├─ robo_snapshots        # original images
 │  ├─ 20250814_100620.png
 │  ├─ 20250814_100720.png
 │  ├─ ...
-├─ robo_joints_log       # 6 轴关节角
+├─ robo_joints_log       # 6-axis joint angles
 │  ├─ 20250814_100620.csv
 │  ├─ 20250814_100720.csv
 │  ├─ ...
-├─ robo_joints_log_json  # TCP 位姿 (xyz+quat or xyzrpw)
+├─ robo_joints_log_json  # TCP pose (xyz+quat or xyzrpw)
 │  ├─ 20250814_100620.json
 │  ├─ 20250814_100720.json
 │  ├─ ...
 ├─ robo_depth_images           
-│  ├─ 20250814_100620.tiff         # 32F 深度
-│  ├─ 20250814_100620_vis.png      # 伪彩色可视化
-│  ├─ 20250814_100720.tiff         # 32F 深度
-│  ├─ 20250814_100720_vis.png      # 伪彩色可视化
+│  ├─ 20250814_100620.tiff         # 32F depth
+│  ├─ 20250814_100620_vis.png      # pseudo-color visualization
+│  ├─ 20250814_100720.tiff         # 32F depth
+│  ├─ 20250814_100720_vis.png      # pseudo-color visualization
 │  ├─ ...
 
 ```
@@ -238,7 +238,7 @@ Palletizing
         └── testenv.yaml
 ```
 
-In this project, the selected metric is probably accuracy.
+In this project, the selected metric is accuracy.
 
 
 ## **Road Map**
