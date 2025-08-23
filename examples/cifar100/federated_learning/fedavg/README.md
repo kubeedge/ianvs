@@ -8,7 +8,7 @@ Ensure you have Python 3.10 or above installed to run this example.
 
 Make sure Ianvs is installed on your system by following the instructions in the root `README.md`. Verify that all required dependencies are installed.
 
-Next, navigate to the `examples/cifar100/federated_learning/fedavg` directory and install the dependencies specific to this example:
+From the root `ianvs` directory, run the following:
 
 ```bash
 # Step 1: Navigate to the root ianvs folder
@@ -23,45 +23,36 @@ source venv/bin/activate
 # Step 4: Install root project dependencies
 pip install -r requirements.txt
 
-# Step 5: Navigate to the CIFAR-100 examples directory
-cd examples/cifar100/federated_learning/fedavg
-
-# Step 6: Install any additional libraries needed for this example
-# If you face dependency conflicts, create a separate virtual environment,
-# install the root requirements, and then example requirements.
-pip install -r requirements.txt
-
+# Step 5: Install any additional libraries needed for this example
+pip install -r examples/cifar100/federated_learning/fedavg/requirements.txt
 ```
 
 ### 2. Configure Example Paths
 
-Locate the config.py file. This file contains all input, output, model, example_name, and YAML file paths. First, set the EXAMPLE_NAME variable to "federated_learning/fedavg". You can then edit any other paths in the configuration if needed.
+Locate the `examples/cifar100/config.py` file. This file contains all input, output, model, example\_name, and YAML file paths. Ensure the `EXAMPLE_NAME` variable is set to `"federated_learning/fedavg"`.
 
-Running `config.py` will automatically update all `*.yaml` files in the subdirectories with the correct local paths for your machine:
+Run the configuration script from the project root:
 
 ```bash
-python config.py
+python examples/cifar100/config.py
 ```
 
-You should see output indicating that the YAML files have been successfully updated.
+This will automatically update all `*.yaml` files in the subdirectories with the correct local paths for your machine. You should see output confirming that the YAML files have been updated.
 
 ### 3. Prepare the CIFAR-100 Dataset
 
-Use the provided utility script to download and process the CIFAR-100 dataset into the format required by Ianvs. This will create a `data/` directory with the prepared dataset:
+Use the provided utility script to download and process the CIFAR-100 dataset into the format required by Ianvs. This will create a `data/` directory under `examples/cifar100`:
 
 ```bash
-python utils.py
+python examples/cifar100/utils.py
 ```
 
 ### 4. Run the Benchmarking Job
 
-You are now ready to run the FedAvg example. Ianvs is typically launched via a main entry point that takes the `benchmarkingjob.yaml` as input.
-
-Assuming the Ianvs runner is in your `PATH` or located at the root of the project, run:
+You are now ready to run the FedAvg example. Ianvs is launched via its main entry point, taking the `benchmarkingjob.yaml` as input. From the project root, run:
 
 ```bash
-# Run the federated learning benchmark
 ianvs -f ./examples/cifar100/federated_learning/fedavg/benchmarkingjob.yaml
 ```
 
-This will start the federated learning process as defined in the configuration files, training the model on the CIFAR-100 dataset and saving the output to `federated_learning/fedavg/output`.
+This will start the federated learning process as defined in the configuration files, training the model on the CIFAR-100 dataset and saving the output to `examples/cifar100/federated_learning/fedavg/output`.
