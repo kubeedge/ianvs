@@ -9,7 +9,7 @@ USER_DEFINED_ABS_PATH = "/home/username/custom_path_here"
 BASE_PATH = USER_DEFINED_ABS_PATH if PATH_MODE == "absolute" else os.path.dirname(os.path.abspath(__file__))
 
 # Replace with your actual example name
-EXAMPLE_NAME = "federated_class_incremental_learning/fedavg"
+EXAMPLE_NAME = "federated_learning/fedavg"
 
 # Input and output directories
 DATA_ROOT = os.path.join(BASE_PATH, "data")

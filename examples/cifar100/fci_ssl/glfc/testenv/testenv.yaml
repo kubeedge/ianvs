@@ -3,9 +3,9 @@ testenv:
   dataset:
     name: 'cifar100'
     # the url address of train dataset index; string type;
-    train_url: "/home/wyd/ianvs/project/data/cifar100/cifar100_train.txt"
+    train_url: "{{TRAIN_INDEX_FILE}}"
     # the url address of test dataset index; string type;
-    test_url: "/home/wyd/ianvs/project/data/cifar100/cifar100_test.txt"
+    test_url: "{{TEST_INDEX_FILE}}"
 
 
   # network eval configuration of incremental learning;
@@ -15,7 +15,7 @@ testenv:
       # metric name; string type;
       name: "accuracy"
       # the url address of python file
-      url: "/home/wyd/ianvs/project/ianvs/examples/cifar100/fci_ssl/glfc/testenv/acc.py"
+      url: "./examples/cifar100/fci_ssl/glfc/testenv/acc.py"
 
   # metrics configuration for test case's evaluation; list type;
   metrics:
