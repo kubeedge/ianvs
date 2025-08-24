@@ -4,7 +4,7 @@ algorithm:
   modules:
     - type: "basemodel"
       name: "llio_fusion"
-      url: "/home/ansh/ianvs/examples/industrialEI/pose-estimation-llio/testalgorithms/llio_fusion/basemodel.py"
+      url: "examples/industrialEI/pose-estimation-llio/testalgorithms/llio_fusion/basemodel.py"
       
       hyperparameters:
         # IMU parameters

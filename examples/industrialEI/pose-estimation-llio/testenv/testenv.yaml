@@ -1,13 +1,13 @@
 testenv:
   dataset:
-    train_index: /home/ansh/ianvs/examples/industrialEI/pose-estimation-llio/data/train_index.txt
-    test_index: /home/ansh/ianvs/examples/industrialEI/pose-estimation-llio/data/test_index.txt
-    calib_dir: /home/ansh/ianvs/examples/industrialEI/pose-estimation-llio/data/2011_09_26/
-    poses_dir: /home/ansh/ianvs/examples/industrialEI/pose-estimation-llio/data/poses/
+    train_index: examples/industrialEI/pose-estimation-llio/data/train_index.txt
+    test_index: examples/industrialEI/pose-estimation-llio/data/test_index.txt
+    calib_dir: examples/industrialEI/pose-estimation-llio/data/2011_09_26/
+    poses_dir: examples/industrialEI/pose-estimation-llio/data/poses/
   metrics:
   - name: position_error
-    url: /home/ansh/ianvs/examples/industrialEI/pose-estimation-llio/testenv/position_error.py
+    url: examples/industrialEI/pose-estimation-llio/testenv/position_error.py
   - name: orientation_error
-    url: /home/ansh/ianvs/examples/industrialEI/pose-estimation-llio/testenv/orientation_error.py
+    url: examples/industrialEI/pose-estimation-llio/testenv/orientation_error.py
   - name: trajectory_consistency
-    url: /home/ansh/ianvs/examples/industrialEI/pose-estimation-llio/testenv/trajectory_consistency.py
+    url: examples/industrialEI/pose-estimation-llio/testenv/trajectory_consistency.py

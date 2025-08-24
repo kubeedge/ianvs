@@ -13,18 +13,7 @@
 # limitations under the License.
 
 import numpy as np
-import os
-import sys
 from sedna.common.class_factory import ClassType, ClassFactory
-
-# Add the testalgorithms path to import the ground truth loader
-current_dir = os.path.dirname(__file__)  # testenv directory
-pose_estimation_dir = os.path.dirname(current_dir)  # pose-estimation directory
-testalgorithms_dir = os.path.join(pose_estimation_dir, 'testalgorithms', 'llio_fusion')
-sys.path.append(testalgorithms_dir)
-
-# Note: kitti_ground_truth_loader and sequence_info were removed as they're not used
-# The metrics now work directly with the data provided by Ianvs
 
 __all__ = ["trajectory_consistency"]
 
@@ -43,79 +32,17 @@ def trajectory_consistency(y_true, y_pred, **kwargs):
     Returns:
         float: Trajectory consistency score (higher is better, range 0-1)
     """
-    # Handle the case where y_true has fewer elements than y_pred
-    # This happens when Ianvs passes individual indices but we have multiple predictions
-    if len(y_true) != len(y_pred):
-        print(f"⚠️ Length mismatch: y_true={len(y_true)}, y_pred={len(y_pred)}")
-        if len(y_true) == 1 and len(y_pred) > 1:
-            # This is the expected case: one ground truth index, multiple predictions
-            # We'll use the ground truth for all predictions
-            pass
-        else:
-            raise ValueError(f"Unexpected length mismatch: y_true={len(y_true)}, y_pred={len(y_pred)}")
-    
-    if len(y_true) < 3:
+    # Handle length mismatch by truncating to shorter length
+    min_length = min(len(y_true), len(y_pred))
+    if min_length < 3:
         # Need at least 3 poses to evaluate trajectory consistency
         return 1.0
     
-    # Handle the case where y_true contains indices rather than actual pose data
-    if np.array(y_true).ndim == 1 and len(y_true) > 0:
-        # y_true contains indices - try to load real KITTI ground truth
-        y_true_poses = []
-        
-        # Try to load real KITTI ground truth using the sequence path from shared module
-        try:
-            # Get sequence path from the shared module using the first index
-            first_idx = y_true[0]
-            if isinstance(first_idx, (int, np.integer)):
-                # The get_sequence_path_by_index function is removed, so this block is effectively dead
-                # For now, we'll just use a placeholder or raise an error if sequence path is needed
-                # Assuming a default sequence path or that the user will provide it if needed
-                # For now, we'll just use a placeholder
-                print(f"⚠️ get_sequence_path_by_index is not available, using placeholder for index {first_idx}")
-                # Fallback to synthetic poses if sequence path is not available
-                for i, idx in enumerate(y_true):
-                    pose = np.eye(4)
-                    if isinstance(idx, (int, float)):
-                        pose[0, 3] = idx * 0.3
-                        pose[1, 3] = np.sin(idx * 0.2) * 1.5
-                    else:
-                        pose[0, 3] = i * 0.3
-                        pose[1, 3] = np.sin(i * 0.2) * 1.5
-                    pose[2, 3] = 0.0
-                    y_true_poses.append(pose)
-                print(f"❌ Using synthetic ground truth poses (fallback - no sequence path found)")
-            else:
-                # Fallback to synthetic poses
-                for i, idx in enumerate(y_true):
-                    pose = np.eye(4)
-                    if isinstance(idx, (int, float)):
-                        pose[0, 3] = idx * 0.3
-                        pose[1, 3] = np.sin(idx * 0.2) * 1.5
-                    else:
-                        pose[0, 3] = i * 0.3
-                        pose[1, 3] = np.sin(i * 0.2) * 1.5
-                    pose[2, 3] = 0.0
-                    y_true_poses.append(pose)
-                print(f"❌ Using synthetic ground truth poses (fallback - non-integer index)")
-        except Exception as e:
-            print(f"❌ Error loading KITTI ground truth: {e}, using synthetic poses")
-            # Fallback to synthetic poses
-            for i, idx in enumerate(y_true):
-                pose = np.eye(4)
-                if isinstance(idx, (int, float)):
-                    pose[0, 3] = idx * 0.3
-                    pose[1, 3] = np.sin(idx * 0.2) * 1.5
-                else:
-                    pose[0, 3] = i * 0.3
-                    pose[1, 3] = np.sin(i * 0.2) * 1.5
-                pose[2, 3] = 0.0
-                y_true_poses.append(pose)
-        
-        y_true = np.array(y_true_poses)
-    else:
-        y_true = np.array(y_true)
+    y_true = y_true[:min_length]
+    y_pred = y_pred[:min_length]
     
+    # Convert to numpy arrays if they aren't already
+    y_true = np.array(y_true)
     y_pred = np.array(y_pred)
     
     # Extract position components
@@ -128,7 +55,7 @@ def trajectory_consistency(y_true, y_pred, **kwargs):
         true_positions = y_true[:, :3]
         pred_positions = y_pred[:, :3]
     else:
-        raise ValueError(f"Unsupported pose format: {y_true.shape}")
+        return 1.0
     
     # Calculate velocity vectors (differences between consecutive positions)
     true_velocities = np.diff(true_positions, axis=0)

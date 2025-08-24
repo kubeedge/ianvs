@@ -23,8 +23,8 @@ benchmarkingjob:
   test_object:
     algorithms:
     - name: llio_fusion
-      url: /home/ansh/ianvs/examples/industrialEI/pose-estimation-llio/testalgorithms/llio_fusion/llio_algorithm.yaml
+      url: examples/industrialEI/pose-estimation-llio/testalgorithms/llio_fusion/llio_algorithm.yaml
     type: algorithms
-  testenv: /home/ansh/ianvs/examples/industrialEI/pose-estimation-llio/testenv/testenv.yaml
-  workspace: ./workspace/llio_pose_estimation_results
-  data_root: /home/ansh/ianvs/examples/industrialEI/pose-estimation-llio/data_restructured
+  testenv: examples/industrialEI/pose-estimation-llio/testenv/testenv.yaml
+  workspace: examples/industrialEI/pose-estimation-llio/workspace/llio_pose_estimation_results
+  data_root: examples/industrialEI/pose-estimation-llio/data_restructured
