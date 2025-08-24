@@ -20,9 +20,3 @@ pyyaml
 
 # Fix protobuf compatibility issues (required for ianvs)
 protobuf<=3.20.3
-
-# Optional dependencies that improve functionality
-pykitti
-
-# For visualization (optional)
-# matplotlib

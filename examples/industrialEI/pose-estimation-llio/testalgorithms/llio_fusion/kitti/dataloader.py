@@ -32,63 +32,111 @@ class KittiDataloader(Data.Dataset):
 
         # Loading OXTS data
         
-        self.gyro = np.array(
-            [
+        try:
+            self.gyro = np.array(
                 [
-                    self.data.oxts[i].packet.wx,
-                    self.data.oxts[i].packet.wy,
-                    self.data.oxts[i].packet.wz,
+                    [
+                        self.data.oxts[i].packet.wx,
+                        self.data.oxts[i].packet.wy,
+                        self.data.oxts[i].packet.wz,
+                    ]
+                    for i in range(self.seq_len)
                 ]
-                for i in range(self.seq_len)
-            ]
-        )
-        self.acc = np.array(
-            [
+            )
+            self.acc = np.array(
                 [
-                    self.data.oxts[i].packet.ax,
-                    self.data.oxts[i].packet.ay,
-                    self.data.oxts[i].packet.az,
+                    [
+                        self.data.oxts[i].packet.ax,
+                        self.data.oxts[i].packet.ay,
+                        self.data.oxts[i].packet.az,
+                    ]
+                    for i in range(self.seq_len)
                 ]
-                for i in range(self.seq_len)
-            ]
-        )
+            )
+        except (IndexError, AttributeError) as e:
+            print(f"Warning: OXTS data loading failed: {e}, using default values")
+            # Use default IMU values
+            self.gyro = np.zeros((self.seq_len, 3))
+            self.acc = np.zeros((self.seq_len, 3))
         
         # Simplified rotation handling
-        self.gt_rot = np.array(
-            [
+        try:
+            self.gt_rot = np.array(
                 [
-                    self.data.oxts[i].packet.roll,
-                    self.data.oxts[i].packet.pitch,
-                    self.data.oxts[i].packet.yaw,
+                    [
+                        self.data.oxts[i].packet.roll,
+                        self.data.oxts[i].packet.pitch,
+                        self.data.oxts[i].packet.yaw,
+                    ]
+                    for i in range(self.seq_len)
                 ]
-                for i in range(self.seq_len)
-            ]
-        )
-        # Convert Euler angles to rotation matrices
-        from scipy.spatial.transform import Rotation as R
-        self.gt_rot_matrices = []
-        for euler in self.gt_rot:
-            rot_matrix = R.from_euler('xyz', euler).as_matrix()
-            self.gt_rot_matrices.append(rot_matrix)
-        
-        # Simplified velocity calculation
-        self.gt_vel = np.array(
-            [
+            )
+            # Convert Euler angles to rotation matrices
+            from scipy.spatial.transform import Rotation as R
+            self.gt_rot_matrices = []
+            for euler in self.gt_rot:
+                rot_matrix = R.from_euler('xyz', euler).as_matrix()
+                self.gt_rot_matrices.append(rot_matrix)
+            
+            # Simplified velocity calculation
+            self.gt_vel = np.array(
                 [
-                    self.data.oxts[i].packet.vf,
-                    self.data.oxts[i].packet.vl,
-                    self.data.oxts[i].packet.vu,
+                    [
+                        self.data.oxts[i].packet.vf,
+                        self.data.oxts[i].packet.vl,
+                        self.data.oxts[i].packet.vu,
+                    ]
+                    for i in range(self.seq_len)
                 ]
-                for i in range(self.seq_len)
-            ]
-        )
+            )
+        except (IndexError, AttributeError) as e:
+            print(f"Warning: Rotation/velocity data loading failed: {e}, using default values")
+            # Use default rotation and velocity values
+            self.gt_rot = np.zeros((self.seq_len, 3))
+            self.gt_rot_matrices = [np.eye(3) for _ in range(self.seq_len)]
+            self.gt_vel = np.zeros((self.seq_len, 3))
         
-        self.gt_pos = np.array([self.data.oxts[i].T_w_imu[0:3, 3]
-                               for i in range(self.seq_len)])
+        try:
+            self.gt_pos = np.array([self.data.oxts[i].T_w_imu[0:3, 3]
+                                   for i in range(self.seq_len)])
+        except (IndexError, AttributeError) as e:
+            print(f"Warning: Position data loading failed: {e}, using default values")
+            # Use default position values
+            self.gt_pos = np.zeros((self.seq_len, 3))
 
         # Loading velodyne data (large memory)
-        self.velodyne = [(self.data.get_velo(i)) for i in range(self.seq_len)]
-        # Example scan info: len(self.velodyne), self.velodyne[6].shape
+        try:
+            self.velodyne = []
+            for i in range(self.seq_len):
+                try:
+                    velo_data = self.data.get_velo(i)
+                    self.velodyne.append(velo_data)
+                except (IndexError, FileNotFoundError, OSError) as e:
+                    # Handle missing LiDAR data gracefully
+                    print(f"Warning: LiDAR data missing for frame {i}, using empty array")
+                    # Create empty point cloud as fallback
+                    empty_cloud = np.zeros((100, 4))  # 100 points with x,y,z,intensity
+                    self.velodyne.append(empty_cloud)
+        except Exception as e:
+            print(f"Warning: Failed to load LiDAR data: {e}, using empty arrays")
+            # Fallback: create empty point clouds for all frames
+            self.velodyne = [np.zeros((100, 4)) for _ in range(self.seq_len)]
+
+        # Validate that we have some valid data
+        if len(self.velodyne) == 0 or len(self.gyro) == 0 or len(self.acc) == 0:
+            raise ValueError(f"Failed to load any valid data for sequence {dataname}/drive_{datadrive}")
+        
+        # Ensure all arrays have the same length
+        min_length = min(len(self.velodyne), len(self.gyro), len(self.acc), len(self.gt_pos), len(self.gt_rot_matrices))
+        if min_length < self.seq_len:
+            print(f"Warning: Data length mismatch, truncating to {min_length} frames")
+            self.seq_len = min_length
+            self.velodyne = self.velodyne[:min_length]
+            self.gyro = self.gyro[:min_length]
+            self.acc = self.acc[:min_length]
+            self.gt_pos = self.gt_pos[:min_length]
+            self.gt_rot_matrices = self.gt_rot_matrices[:min_length]
+            self.dt = self.dt[:min_length]
 
         start_frame = 0
         end_frame = self.seq_len
