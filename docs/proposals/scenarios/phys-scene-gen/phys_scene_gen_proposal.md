@@ -86,7 +86,7 @@ Our system is designed as a clear pipeline, passing data from the high-level pla
 
   The entire process of placing these retrieved objects is actively guided by physics-based constraints to optimize the final layout. The core of this stage is a guided diffusion model, whose architecture is inspired by the PhyScene framework as illustrated in the figure below.
 
-  ![](/images/physcene_arch.png)
+  ![](images/physcene_arch.png)
 
   - **Example Input (Structured Scene Plan from Stage 1):**
 
@@ -147,7 +147,7 @@ These metrics, inspired by the evaluation framework in PhyScene, provide an obje
 
 To realize the goals of this project, we will extend the Ianvs framework by introducing new, specialized modules.
 
-![](/images/ianvs_arch.png)
+![](images/ianvs_arch.png)
 
 - Test Environment Manager (Major Contribution Area): This is where the foundation of our benchmark will be built. In this L1 service, we will add new L3 modules:
 
