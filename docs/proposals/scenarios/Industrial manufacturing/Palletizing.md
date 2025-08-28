@@ -157,7 +157,7 @@ In this project, we use YOLOv8 to perform **pure object detection** on the image
 
 ![Alt text](YOLOv8_latest.png)
 
-## Dataset
+## RoboDK_palletizing_dataset
 
 Due to RoboDK's output format being more inclined towards "raw data records within the scene", while Ianvs requires "standardized, structured, and correlatable test data", there is a high probability of differences between the two native formats. Therefore, it is necessary to convert or adapt the data format according to Ianvs' specifications to ensure that the data is correctly parsed and used for algorithm testing.
 
@@ -166,7 +166,7 @@ For the motion information of the robot and the image information of the camera 
 The ultimate dataset form:
 
 ```yaml
-palletizing_dataset/
+RoboDK_palletizing_dataset/
 ├─ robo_snapshots        # original images
 │  ├─ 20250814_100620.png
 │  ├─ 20250814_100720.png
@@ -187,6 +187,9 @@ palletizing_dataset/
 │  ├─ ...
 
 ```
+
+In the benchmark of this research plan, only the raw image data from **robo_snapshots** was used, while the rest of the data needs further follow-up research.
+
 
 ### images part
 
