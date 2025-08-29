@@ -5,6 +5,7 @@ import copy
 import yaml
 from functools import wraps
 import time
+from core.common.log import LOGGER
 
 MATPLOTLIB_AVAILABLE = False
 OPEN3D_AVAILABLE = False
@@ -17,7 +18,7 @@ def timeit(func):
         result = func(*args, **kwargs)
         end_time = time.perf_counter()
         total_time = end_time - start_time
-        print(
+        LOGGER.info(
             f'Function {func.__name__} consumed {total_time:.4f} seconds')
         return result
     return timeit_wrapper
@@ -34,13 +35,13 @@ def downsample_points(vel, cfg):
     if OPEN3D_AVAILABLE:
         return velo2downpcd(vel, cfg["voxel_size"])
     else:
-        print("Warning: Open3D not available, returning original point cloud")
+        LOGGER.warning("Warning: Open3D not available, returning original point cloud")
         return vel
 
 
 def visualize(vis_material):
     if not MATPLOTLIB_AVAILABLE:
-        print("Warning: Matplotlib not available, visualization disabled")
+        LOGGER.warning("Warning: Matplotlib not available, visualization disabled")
         return
         
     cfg = vis_material["cfg"]
@@ -51,12 +52,12 @@ def visualize(vis_material):
 
     plt.figure(figsize=(10, 10))
     if is_true(cfg["output"]["plot3d"]):
-        print("Visualization mode: 3D")
+        LOGGER.info("Visualization mode: 3D")
         ax = plt.axes(projection="3d")
         ax.plot3D(poses[:, 0], poses[:, 1], poses[:, 2], "b")
         ax.plot3D(poses_gt[:, 0], poses_gt[:, 1], poses_gt[:, 2], "r")
     else:
-        print("Visualization mode: 2D")
+        LOGGER.info("Visualization mode: 2D")
         ax = plt.axes()
         ax.plot(poses[:, 0], poses[:, 1], "b")
         ax.plot(poses_gt[:, 0], poses_gt[:, 1], "r")
@@ -89,7 +90,7 @@ def visualize(vis_material):
     figure_save_path = os.path.join(
         savedir, cfg["input"]["dataname"] + f"_{seq_idx}.png")
     plt.savefig(figure_save_path)
-    print(f"Saved to {figure_save_path}")
+    LOGGER.info(f"Saved to {figure_save_path}")
 
     import shutil
     cfg_src = cfg_path
@@ -105,7 +106,7 @@ def visualize(vis_material):
 
 def velo2downpcd(velodyne, voxel_size=0.5):
     if not OPEN3D_AVAILABLE:
-        print("Warning: Open3D not available, returning original point cloud")
+        LOGGER.warning("Warning: Open3D not available, returning original point cloud")
         return velodyne
         
     xyz = velodyne[:, :3]
@@ -117,7 +118,7 @@ def velo2downpcd(velodyne, voxel_size=0.5):
 
 def velo2skippedpcd(velodyne, skip=20):
     if not OPEN3D_AVAILABLE:
-        print("Warning: Open3D not available, returning original point cloud")
+        LOGGER.warning("Warning: Open3D not available, returning original point cloud")
         return velodyne
         
     xyz = velodyne[:, :3]
@@ -130,7 +131,7 @@ def velo2skippedpcd(velodyne, skip=20):
 
 def draw_registration_result(source, target, transformation):
     if not OPEN3D_AVAILABLE:
-        print("Warning: Open3D not available, registration visualization disabled")
+        LOGGER.warning("Warning: Open3D not available, registration visualization disabled")
         return
         
     source_temp = copy.deepcopy(source)
@@ -154,7 +155,7 @@ def plot_gaussian(ax, means, covs,
                   transparency=0.5, sigma=3, upto=None, skip=2):
     """Set specific color to show edges, otherwise same with facecolor."""
     if not MATPLOTLIB_AVAILABLE:
-        print("Warning: Matplotlib not available, gaussian plotting disabled")
+        LOGGER.warning("Warning: Matplotlib not available, gaussian plotting disabled")
         return
 
     ellipses = []
