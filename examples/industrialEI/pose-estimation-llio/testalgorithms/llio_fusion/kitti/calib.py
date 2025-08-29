@@ -1,4 +1,5 @@
 import numpy as np
+from core.common.log import LOGGER
 
 
 class KittiCalib:
@@ -44,5 +45,5 @@ class KittiCalib:
                     self.Tr_imu_to_velo = value.reshape(3, 4)
                     
         except Exception as e:
-            print(f"Warning: Could not load calibration file {calib_file}: {e}")
-            print("Using default calibration values") 
+            LOGGER.warning(f"Warning: Could not load calibration file {calib_file}: {e}")
+            LOGGER.warning("Using default calibration values") 

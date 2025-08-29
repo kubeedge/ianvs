@@ -13,6 +13,7 @@ import copy
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 
+from core.common.log import LOGGER
 
 import utils
 from kitti.calib import KittiCalib
@@ -55,14 +56,14 @@ class LLIOEstimator:
         Process a complete sequence and return estimated poses.
         This is a REAL LLIO implementation that processes IMU and LiDAR data.
         """
-        print(f"Processing sequence: {sequence_path}")
+        LOGGER.info(f"Processing sequence: {sequence_path}")
         
         # For now, return identity poses as placeholder
         # In a full implementation, this would process the actual sequence
         num_frames = 100  # Placeholder
         poses = [np.eye(4) for _ in range(num_frames)]
         
-        print(f"Generated {len(poses)} poses")
+        LOGGER.info(f"Generated {len(poses)} poses")
         return poses
     
     def process_batch(self, data):
@@ -244,7 +245,7 @@ class LLIOEstimator:
         self.xyzs = [initial["pos"]]
         self.xyzs_gt = [initial["pos"]]
         
-        print("Initial pose is set.")
+        LOGGER.info("Initial pose is set.")
     
     def get_SE3(self, state):
         """Convert state to SE3 pose matrix"""

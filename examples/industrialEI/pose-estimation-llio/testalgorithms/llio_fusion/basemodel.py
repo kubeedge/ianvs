@@ -355,7 +355,6 @@ class BaseModel:
                               end='', flush=True)
                     
                     except Exception as e:
-                        print(f"Failed to process batch {i}: {e}")
                         LOGGER.error(f"Failed to process batch {i}: {e}")
                         continue
                 
@@ -633,7 +632,7 @@ class BaseModel:
                         break
                 
                 if not dataname or not datadrive:
-                    print(f"Could not extract date/drive from sequence {sequence_path}, skipping")
+                    LOGGER.warning(f"Could not extract date/drive from sequence {sequence_path}, skipping")
                     continue
                 
                 try:

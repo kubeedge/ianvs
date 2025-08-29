@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import numpy as np
+from core.common.log import LOGGER
 
 # Minimal stand-in for Dataset using NumPy only
 class Data:
@@ -54,7 +55,7 @@ class KittiDataloader(Data.Dataset):
                 ]
             )
         except (IndexError, AttributeError) as e:
-            print(f"Warning: OXTS data loading failed: {e}, using default values")
+            LOGGER.warning(f"Warning: OXTS data loading failed: {e}, using default values")
             # Use default IMU values
             self.gyro = np.zeros((self.seq_len, 3))
             self.acc = np.zeros((self.seq_len, 3))
@@ -90,7 +91,7 @@ class KittiDataloader(Data.Dataset):
                 ]
             )
         except (IndexError, AttributeError) as e:
-            print(f"Warning: Rotation/velocity data loading failed: {e}, using default values")
+            LOGGER.warning(f"Warning: Rotation/velocity data loading failed: {e}, using default values")
             # Use default rotation and velocity values
             self.gt_rot = np.zeros((self.seq_len, 3))
             self.gt_rot_matrices = [np.eye(3) for _ in range(self.seq_len)]
@@ -100,7 +101,7 @@ class KittiDataloader(Data.Dataset):
             self.gt_pos = np.array([self.data.oxts[i].T_w_imu[0:3, 3]
                                    for i in range(self.seq_len)])
         except (IndexError, AttributeError) as e:
-            print(f"Warning: Position data loading failed: {e}, using default values")
+            LOGGER.warning(f"Warning: Position data loading failed: {e}, using default values")
             # Use default position values
             self.gt_pos = np.zeros((self.seq_len, 3))
 
@@ -113,12 +114,12 @@ class KittiDataloader(Data.Dataset):
                     self.velodyne.append(velo_data)
                 except (IndexError, FileNotFoundError, OSError) as e:
                     # Handle missing LiDAR data gracefully
-                    print(f"Warning: LiDAR data missing for frame {i}, using empty array")
+                    LOGGER.warning(f"Warning: LiDAR data missing for frame {i}, using empty array")
                     # Create empty point cloud as fallback
                     empty_cloud = np.zeros((100, 4))  # 100 points with x,y,z,intensity
                     self.velodyne.append(empty_cloud)
         except Exception as e:
-            print(f"Warning: Failed to load LiDAR data: {e}, using empty arrays")
+            LOGGER.warning(f"Warning: Failed to load LiDAR data: {e}, using empty arrays")
             # Fallback: create empty point clouds for all frames
             self.velodyne = [np.zeros((100, 4)) for _ in range(self.seq_len)]
 
@@ -129,7 +130,7 @@ class KittiDataloader(Data.Dataset):
         # Ensure all arrays have the same length
         min_length = min(len(self.velodyne), len(self.gyro), len(self.acc), len(self.gt_pos), len(self.gt_rot_matrices))
         if min_length < self.seq_len:
-            print(f"Warning: Data length mismatch, truncating to {min_length} frames")
+            LOGGER.warning(f"Warning: Data length mismatch, truncating to {min_length} frames")
             self.seq_len = min_length
             self.velodyne = self.velodyne[:min_length]
             self.gyro = self.gyro[:min_length]
@@ -144,7 +145,7 @@ class KittiDataloader(Data.Dataset):
         self.index_map = [
             i for i in range(0, end_frame - start_frame - self.duration, step_size)
         ]
-        # print(f"self.index_map is {self.index_map}")
+        # LOGGER.info(f"self.index_map is {self.index_map}")
 
     def __len__(self):
         return len(self.index_map)

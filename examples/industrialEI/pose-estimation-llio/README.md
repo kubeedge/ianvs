@@ -126,11 +126,11 @@ pose-estimation-llio/
    # Download dataset
    cd examples/industrialEI/pose-estimation-llio/
    mkdir -p data
-   kaggle datasets download -d rastogiji02/pose-estimation-llio -p data/
+   kaggle datasets download -d kubeedgeianvs/the-kitti-pose-estimation-dataset -p data/
    cd data
-   unzip pose-estimation-llio.zip
-   mv pose-estimation-llio/* ./
-   rm -rf pose-estimation-llio/ pose-estimation-llio.zip
+   unzip the-kitti-pose-estimation-dataset.zip
+   mv the-kitti-pose-estimation-dataset/* ./
+   rm -rf the-kitti-pose-estimation-dataset/ the-kitti-pose-estimation-dataset.zip
    ```
 
 4. **Set Environment Variables**:
