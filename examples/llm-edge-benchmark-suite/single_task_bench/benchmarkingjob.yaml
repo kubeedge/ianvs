@@ -2,18 +2,18 @@ benchmarkingjob:
   name: "benchmarkingjob"
   workspace: "./workspace"
 
-  testenv: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/testenv/testenv.yaml"
+  testenv: "./examples/llm-edge-benchmark-suite/single_task_bench/testenv/testenv.yaml"
 
   test_object:
     type: "algorithms"
     algorithms:
       - name: "llama-cpp"
-        url: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/testalgorithms/algorithm.yaml"
+        url: "./examples/llm-edge-benchmark-suite/single_task_bench/testalgorithms/algorithm.yaml"
 
   rank:
     sort_by: 
-      - { "latency": "descend" }
-      - { "throughput": "ascend" }
+      - { "latency": "ascend" }
+      - { "throughput": "descend" }
       - { "mem_usage": "ascend" }
       - { "prefill_latency": "ascend"}
 
@@ -25,6 +25,5 @@ benchmarkingjob:
       paradigms: [ "all" ]
       modules: [ "all" ]
       hyperparameters: [ "all" ]
-      metrics: [ "latency", "throughput", "prefill_latency" ]
-
+      metrics: [ "latency", "throughput", "prefill_latency", "mem_usage" ]
     save_mode: "selected_and_all"
