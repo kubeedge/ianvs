@@ -233,6 +233,7 @@ Palletizing
     └── testenv
         ├── metric.py
         └── testenv.yaml
+    ├── readme.md
 ```
 
 In this project, the selected metric is accuracy.
