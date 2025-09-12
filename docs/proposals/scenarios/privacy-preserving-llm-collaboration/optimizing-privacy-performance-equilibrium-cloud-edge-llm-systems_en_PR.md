@@ -29,13 +29,13 @@ With the widespread adoption of Large Language Models (LLMs), the traditional di
 ## Scenario Example (Cross-Border E-commerce, Multi-turn)
 
 - Jurisdiction & Compute: Edge in mainland China (Colab simulated), Cloud overseas (Ianvs inference service).
-- Privacy Policy: high-sensitivity ε≤0.8, general ε≤1.2, default δ=1e-5; session-level budget accumulation and rate limiting.
+- Privacy Policy: high-sensitivity ε�?.8, general ε�?.2, default δ=1e-5; session-level budget accumulation and rate limiting.
 - Zero Raw Text Cross-Border: Only anonymized vector + minimal necessary tags are transmitted.
 
 Turn 1
 
 - User: The iPhone 15 Pro I bought last week overheats. How can I return it?
-- Edge: PIPL classifier → General Sensitivity. Apply ε=1.0, mask_ratio=0.4, projection 768→64. Payload: 64-dim vector + {"intent": "return_request"}.
+- Edge: PIPL classifier �?General Sensitivity. Apply ε=1.0, mask_ratio=0.4, projection 768�?4. Payload: 64-dim vector + {"intent": "return_request"}.
 - Cloud: Generates return policy guidance based on anonymized context.
 
 Turn 2
@@ -88,7 +88,7 @@ Integrates adaptive differential privacy, saliency-guided masking, and random/mu
 ## Evaluation Methods & Report
 
 - Utility: Task Accuracy on ChnSentiCorp-Lite; End-to-End Latency.
-- Privacy: Neighbourhood MIA vs LOSS/LiRA; report TPR@FPR ∈ {1%, 0.1%, 0.01%} and AUC; NMI; inversion alert baseline.
+- Privacy: Neighbourhood MIA vs LOSS/LiRA; report TPR@FPR �?{1%, 0.1%, 0.01%} and AUC; NMI; inversion alert baseline.
 - Compliance: Minimal necessity, budget compliance, and audit integrity checks.
 
 ## Execution & Reproduction
