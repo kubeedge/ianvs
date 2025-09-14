@@ -18,15 +18,23 @@ However, existing universal embodied intelligence benchmarks struggle to provide
 
 1. **Build a multi-modal industrial assembly dataset**: Create a comprehensive, multi-modal dataset with URDFs, camera images, and force/torque sensor data to enable robust perception and manipulation benchmarking.
 
-2.**Develop an end-to-end assembly pipeline**: Implement a full assembly workflow that goes from component detection and placement to quality inspection and final packaging.
+2.**Develop an end-to-end assembly pipeline**: Implement a full assembly workflow that goes from component detection to placement to quality inspection.
 
-3.**Integrate multi-task AI capabilities**: Combine object detection, force-controlled manipulation, and visual inspection into a single, cohesive algorithm.
+3.**Integrate multi-model AI capabilities**: Combine object detection, RGB vision ,force-controlled manipulation that is the sense of touch and vision together with cohesive algorithm.
 
-4.**Create a conditional decision-making framework**: Develop the if-else logic for quality assurance and intelligent sorting, demonstrating the system's ability to adapt to its own performance.
-
-5.**Compile a list of key related research works**: Provide a list of relevant external datasets and algorithms (like REASSEMBLE ,DeepPCB and YOLOv8) that support the project's technical approach.
+4.**Compile a list of key related research works**: Provide a list of relevant external datasets and algorithms (like REASSEMBLE ,DeepPCB and YOLOv8) that support the project's technical approach.
 
 6.**Build a comprehensive benchmarking suite**: Develop a benchmarking suite within ianvs that includes standardized metrics, detailed test reports, and a leaderboard for evaluating multi-stage assembly performance.
+
+---
+
+## Scope
+
+1.**Create the Dataset**: Build a new, multimodal dataset that includes both visual and touch sensor data.
+
+2.**Develop Simple Algorithm Modules**: Create two simple, sequential modules: an object detection module (to find the component) and an assembly module (to place it). These algorithms will demonstrate that the new dataset is usable.
+
+3.**Define End-to-End Metrics**: Instead of focusing on metrics for each individual sub-task (like YOLO accuracy), define one or a few end-to-end metrics to evaluate the complete assembly process, such as the overall success rate or final assembly accuracy. This aligns with the "multi-stage" nature of the project.
 
 ---
 
@@ -59,8 +67,8 @@ Modern gadgets like smartphones and laptops contain motherboards with increasing
 
 ### What do this dataset do ?
 
- This  project addresses this by using an embodied intelligent robotic arm. This robotic arm leverages a fusion of advanced capabilities, including **force detection** for delicate haptic control, **visual detection** for accurate positioning, and **data-driven intelligence** to store, compare, and verify each assembly step. By integrating these systems, the robot can not only assemble components with superior precision but also perform real-time quality checks to ensure a perfect final product.
-[Image description](images/working_assembly_flowchart.png)
+ This  project addresses this by using an embodied intelligent robotic arm. This robotic arm leverages a fusion of advanced capabilities, including **force detection** for delicate haptic control, **visual detection** for accurate positioning. By integrating these systems, the robot can not only assemble components with superior precision but also perform real-time quality checks to ensure a perfect final product.
+[Image description](images/working_assembly_workflow.png)
 
 ---
 
@@ -68,66 +76,82 @@ Modern gadgets like smartphones and laptops contain motherboards with increasing
 
 ### Ianvs Framework Integration Architecture
 
-Our pose estimation algorithm is designed to integrate seamlessly with the Ianvs framework through its three core components, as illustrated in the following architecture diagram:
+The deformable component algorithm is designed to integrate seamlessly with the Ianvs framework through its three core components, as illustrated in the following architecture diagram:
 
-![Ianvs Framework Architecture](assets/ianvs-architecture.drawio.svg)
+![Ianvs Framework Architecture](images\benchmarking_architecture.png)
 
 *Figure above: Ianvs framework architecture showing the integration of Test Environment Manager, Test Case Controller, and Story Manager for benchmarking embodied intelligence in industrial environments.*
 
-The initial focus is on configuring the custom, multi-modal `Intelligent Assembly Dataset` within the Test Environment Manager and establishing the multi-stage performance metrics. Simultaneously, the `Test Case Controller` will be implemented with a new Multi-task Assembly Paradigm. This paradigm will perform comprehensive benchmark tests on the custom dataset, evaluating the full, end-to-end workflow—from component positioning with `YOLOv8` to the final quality inspection using a CNN.
+The initial focus is on configuring the custom, multi-modal `Intelligent Assembly Dataset` within the Test Environment Manager and establishing the multi-stage performance metrics. Simultaneously, the `Test Case Controller` will be implemented with a new Multi-stage Assembly Workflow. This paradigm will perform comprehensive benchmark tests on the custom dataset, evaluating the full, end-to-end workflow—from component positioning with `YOLOv8`.
+
+
+### Test Environment Manager Integration
+
+This project will be configured and deployed by defining a new `Test Environment` that specifies all the necessary components for the benchmarking process.
+
+1.**Dataset Configuration**: The ianvs environment will use the custom dataset hosted on Kaggle, including URDFs, images, and sensor data logs.
+2.**Sensor Configuration**: Parameters for the simulated camera (RGB-D) and the force/torque sensor will be defined.
+3.**Algorithm Parameters**: The configuration will include hyperparameters for our core algorithms, like YOLOv8 and force control logic.
+4.**System Constraints**: Define hardware and software constraints, such as processing time and memory limits, to ensure reproducibility.
+
+### Test Case Controller Implementation
+
+The `Test Case Controller` will be responsible for orchestrating the execution of our end-to-end assembly workflow.
+
+1.**Algorithm Template**: Implement a template that defines the sequential, multi-stage process: perception → manipulation → verification.
+2.**Data Loading**: Automated downloading and loading of our custom dataset from Kaggle.
+3.**Execution Pipeline**: The controller will execute the full workflow step-by-step, running object detection, assembly, and visual inspection.
+
+### Story Manager Output
+
+The `Story Manager` will handle the output and presentation of our benchmark results, providing clear insights into the algorithm's performance.
+
+1.**Metrics Calculation**: Compute our primary end-to-end metric: Assembly Success Rate.
+2.**Leaderboard Generation**: The results will be used to generate a leaderboard that ranks algorithm performance.
+3.**Report Generation**: A detailed report with a full analysis of the benchmark results will be produced.
+
 
 ###  Directory Structure
 
 The new dataset will be generated and uploaded in the https://www.kaggle.com/datasets/kubeedgeianvs ,users can install the zip file and then unzip in in their datasets folder .
 
 ```
-──ianvs/examples/robot/lifelong__learning__bench/
-              └── deformable__assembly/
-                  ├── dataset/  
+──ianvs/examples/industrialEI/
+            deformable__assembly/
                   ├── testalgorithms/
-                  │   └── assembly__alg/   
+                  │   └── assembly_alg/   
                   │       ├── __init__.py
                   │       ├── basemodel.py            # Core pose estimation algorithm
                   │       ├── data_utils.py           
                   │       ├── eval.py
                   │       ├── robot_control.py
                   │       ├── perception.py           # YOLO model for object detection and CNN for visual inspection
-                  │       ├── decision_logic.py       # if-else logic for quality check and cable sorting
-                  │       └── assembly_planner.py     #  Orchestrates the entire multi-stage assembly process
+                  │       └── assembly_planner.py     #  Orchestrates the entire multi-step component assembly process
                   ├── testenv/
                   │   └── assembly__env/    
                   │       ├── __init__.py
                   │       ├── testenv.yaml
-                  ├── utils/
-                  │   ├── __pycache__/
-                  │   └── view_dataset.py   # For viewing a local copy of the downloaded dataset
+                  |       ├── acc.py                  # Evaluation metrics
                   ├── .gitignore
                   ├── LICENSE
-                  ├── README.md             # documentation for users
+                  ├── README.md                       # documentation for users
                   └── benchmarkingjob.yaml
 ```
 
 
-### **Multi-task Assembly Paradigm**
+### **Multi-stage Assembly Workflow**
 
-The Multi-task Assembly Paradigm goes beyond traditional single-task learning by integrating multiple, sequential AI capabilities into a single cohesive workflow. This approach is more representative of a real-world, end-to-end industrial process and requires a more complex and robust model. It is designed to demonstrate an embodied intelligent system that can perceive, manipulate, verify, and reason.
+This proposal focuses on a multi-stage, single-task assembly process, which is a more accurate representation of real-world industrial workflows. The approach integrates multiple, sequential AI capabilities into a single cohesive pipeline. It demonstrates an embodied intelligent system that can perceive, manipulate, verify, and reason in a step-by-step manner.
 
-The multi-task assembly paradigm works as follows:
-1.  The developer creates and deploys an application based on a multi-task learning framework.
-2.  The application runs and launches the full assembly workflow, which includes a series of interdependent tasks.
-3.  The robotic arm uses **YOLOv8** to perform real-time object detection on components.
-4.  The robot then executes a **force-controlled assembly** task to place the components on the motherboard.
-5.  After assembly, the robot's camera captures an image for **visual inspection** and a **CNN-based model** performs a quality check against an ideal reference.
-6.  An `if-else` decision-making process is executed: if the quality check passes, the workflow proceeds; otherwise, it stops.
-7.  The robot performs a final logical task, sorting the correct cable (e.g., USB-C or USB-B) and packaging the final product.
-8.  The system then generates a final test report and updates the leaderboard, concluding the process.
+The Single-Task, Multi-stage Paradigm works as follows:
 
+1.A developer deploys an application that orchestrates the entire assembly process.
+2.The application launches the full workflow, which executes a series of interdependent, sequential tasks.
+3.The robotic arm uses **YOLOv8** to perform real-time object detection on components from the panel.
+4.The robot then executes a force-controlled assembly task using its touch sensors to place the components on the motherboard precisely.
+5.The system then generates a final test report and updates the leaderboard, concluding the process.
 
-`The specific implementation of Palletizing single task learning algorithm in `algorithm.yaml`
-`The URL address of the algorithm is filled in the configuration file `benchmarkingjob.yaml` .
-
-[Image description](images/intelligent_multi-stage_assembly.png)
-
+[Image description](images/benchmarking_architecture.png)
 
 ---
 
@@ -137,41 +161,11 @@ The multi-task assembly paradigm works as follows:
 
 | Target/Object | Input Data | Common Industrial Algorithms |
 | :--- | :--- | :--- |
-| **Component Positioning** | Live RGB-D camera feed `(PyBullet)` | `YOLOv8` (for object detection), `Pose CNN` (for 6D pose estimation) |
+| **Component Positioning & Grasping** | Live RGB-D camera feed `(PyBullet)` | `YOLOv8` (for object detection) |
 | **Robotic Arm Trajectory & Grasping** | Object position ($x, y, z$), orientation, component URDFs | GraspNet, RRT* (for path planning), Kinematics/Inverse Kinematics |
-| **Deformable Assembly** | Live force/torque sensor data, joint angles | Force/Impedance Control, Compliance Control |
-| **Visual Inspection & Defect Detection** | RGB image of assembled motherboard | `Convolutional Neural Network (CNN)` for Image Classification or Anomaly Detection |
-| **Logical Decision Making 1** | Result of visual inspection (Pass/Fail) | `if-else` control flow, Finite State Machine |
-| **Cable Type Recognition** | Motherboard component features | Rule-based classifier, Computer Vision (OCR if serial numbers are present) |
-| **Logical Decision Making 2** | Result of cable recognition (C-type or B-type) | `if-else` control flow, State Machine |
-| **Final Packaging** | Phone pose, cable pose, box pose | GraspNet, Motion Planning |
+| **Deformable Assembly** | Live force/torque sensor data, joint angles | Force/Impedance Control |
+| **Visual Inspection & Verification** | RGB image of assembled motherboard | `Convolutional Neural Network (CNN)` for Image Classification or Anomaly Detection |
 
----
-
-## Quality Control and Decision Making:
-
-### **Intelligent Decision-Making: The Cable Sorting Logic**
-
-A core component of our multi-task paradigm is the implementation of intelligent, conditional logic. After a successful assembly and quality check, the robotic arm must decide which accessory to include with the finished product. This is based on an `if-else` condition tied to a specific component on the motherboard.
-
-The process is as follows:
-* The system uses its perception module to confirm which type of USB receptacle component has been successfully assembled on the motherboard.
-* **Condition:** `IF` a USB-C receptacle component is detected on the motherboard, `THEN` the robotic arm selects a USB-C cable from the pallet.
-* **Condition:** `ELSE IF` a micro USB (Type B) receptacle component is detected, `THEN` the robotic arm selects the micro USB cable.
-
-This decision-making process demonstrates the robot's ability to reason, adapt its actions based on the specific assembly, and ensure the final package is complete and correct.
-[Image description](images/cable-if-else-logic.png)
-
-### **AI-Driven Quality Assurance & Benchmarking**
-
-A cornerstone of our multi-task assembly paradigm is the self-verification of the robot's work, which provides a critical feedback loop for quality assurance. This process moves beyond simple object detection and into intelligent defect detection, serving as a primary benchmark for the `ianvs` framework.
-
-The process is as follows:
-* After the robotic arm completes the assembly of all components, it uses its onboard camera to capture a high-resolution image of the final product.
-* This image is then processed by a **pre-trained CNN model** that performs a **visual inspection**. This model has been trained on a custom dataset to recognize an "ideal" assembly state.
-* **Condition:** An `if-else` logical check is performed. `IF` the visual inspection model determines the current assembly matches the ideal state, `THEN` the result is logged as "Pass." `ELSE`, the result is logged as "Fail."
-* The final outcome of this quality check—Pass or Fail—is captured by the `ianvs` framework and is a primary metric in the generated test reports and leaderboards. This mechanism directly evaluates the algorithm's ability to perform precise manipulation and provides a clear, objective measure of its success.
-[Image description](images/CNN_of_motherboard.png)
 ---
 
 ## Dataset Management
@@ -182,7 +176,7 @@ Different datasets will be used to train the robotic AI model:
 
 2.**REASSEMBLE** :  Used as a "practice test" to train and validate the fundamental skills of your robotic arm, especially for force-controlled insertion.
 
-3.**DeepPCB** : t's a collection of images of electronic circuit boards with defects. This data is used to train quality control AI to recognize defects on a motherboard.
+3.**DeepPCB** : It's a collection of images of electronic circuit boards with defects. This data is used to train quality control AI to recognize defects on a motherboard.
 
 
 ### Dataset Structure 
@@ -223,22 +217,28 @@ Different datasets will be used to train the robotic AI model:
 ### Key Outcomes
 
 1.**Custom Multimodal Dataset**: A publicly available, high-quality dataset containing all the necessary URDFs, meshes, images, and sensor data to replicate the end-to-end assembly scenario.
-2.**Integrated Multi-task Algorithm**: A working and fully documented algorithm that successfully performs object detection, force-guided assembly, AI-driven quality inspection, and logical decision-making.
-3.**Reproducible Benchmark Suite**: A complete and self-contained ianvs project that allows other developers and researchers to easily run, test, and compare their own algorithms against our benchmark.
+2.**Integrated Multi-task Algorithm**: A working and fully documented algorithm that serves as a reproducible baseline for the multi-stage workflow, successfully performing object detection and force-guided assembly.
+3.**Reproducible Benchmark Suite**: A complete and self-contained `ianvs` project that allows other developers and researchers to easily run, test, and compare their own algorithms against our benchmark.
 
 
 ### Evaluation Metrics
 
+The performance of any algorithm will be measured by a suite of end-to-end metrics that reflect real-world performance. These metrics will evaluate not only the final outcome but also the efficiency and precision of the entire multi-stage process.
 
-The performance of any algorithm will be measured using the following key metrics:
 
 | Metric Name | Description | Outcome/Value |
 | :--- | :--- | :--- |
 | **Assembly Accuracy** | Measures the success rate of the multi-stage assembly process. This is a binary Pass/Fail based on the visual inspection output. | `0` (Failure) or `1` (Success) |
-| **Defect Detection Accuracy** | Measures the precision and recall of the CNN model in correctly identifying defects on the motherboard. | Percentage (`%`) |
-| **Time Efficiency** | The total time taken for the robot to complete the entire workflow, from picking the first component to closing the box. | Time in seconds (`s`) |
-| **Sorting Accuracy** | Measures the success of the robot's final decision—placing the correct USB cable in the box based on the component on the motherboard. | Percentage (`%`) |
-| **Force Control Consistency** | Evaluates the smoothness and stability of the force-controlled assembly by analyzing sensor data logs. This ensures that delicate components are not damaged. | Quantitative score (e.g., Root Mean Square Error of force) |
+
+---
+
+## Future Work and Stretch Goals
+
+To maintain a clear and focused scope for this initial project, certain advanced features will be considered as future work. These enhancements, once implemented, will further validate the complexity and richness of our custom dataset.
+
+1.**Intelligent Decision-Making (Cable Sorting Logic)**: After a successful assembly and quality check, the robot could implement a secondary logical task. This would involve a conditional if-else check to determine which accessory (e.g., USB-C or USB-B cable) to include with the final product. This would demonstrate the robot's ability to reason and adapt its actions based on specific components used during assembly.
+
+2.**Complex Logical Control Flows**: Likely explore implementing more complex logical control flows beyond simple `if-else conditions. This includes advanced state machines and adaptive reasoning that would allow the robot to handle unexpected events, such as re-attempting a component placement if the initial visual inspection fails. These additions would push the boundaries of current embodied intelligence benchmarks.
 
 ---
 
@@ -251,20 +251,20 @@ The project is structured into three distinct phases, each with key deliverables
 | :--- | :--- | :--- |
 | **Phase 1: Foundation & Data Generation** | September | **• Proposal Finalization:** Multiple iterations of proposal refinement.<br>**• Custom Dataset Creation:** Design and create all URDFs and `.obj` files for the robot and all components.<br>**• Dataset Generation Pipeline:** Develop the PyBullet script to generate the complete multi-modal dataset•  |
 | **Phase 2: Core Algorithm & Integration** | October | **• Perception Module:** Implement the object detection algorithm (YOLOv8) to identify components on the pallet.<br>**• Manipulation Control:** Develop the force-controlled assembly logic for delicate component placement.<br>**• Quality Assurance Module:** Implement the CNN for visual inspection and defect detection.<br>**• `ianvs` Integration:** Integrate all algorithms and the custom dataset into the `ianvs` framework. |
-| **Phase 3: Benchmarking & Reporting** | November | **• Decision-Making Logic:** Implement the `if-else` conditions for the quality check and the final cable sorting.<br>** • Data Publication:** Publish the custom dataset on Kaggle for public access.• End-to-End Workflow:** Fully integrate and test the entire multi-stage assembly and packaging pipeline.<br>**• Performance Benchmarking:** Execute the benchmark and collect data on all defined metrics.<br>**• Final Report & Documentation:** Generate the final report, leaderboard, and comprehensive documentation for the project. |
+| **Phase 3: Benchmarking & Reporting** | November | **• Decision-Making Logic:** Implement the `if-else` conditions for the quality check and the final cable sorting.<br>** • Data Publication:** Publish the custom dataset on Kaggle for public access.• **End-to-End Workflow:** Fully integrate and test the entire multi-stage assembly and packaging pipeline.<br>**• Performance Benchmarking:** Execute the benchmark and collect data on all defined metrics.<br>**• Final Report & Documentation:** Generate the final report, leaderboard, and comprehensive documentation for the project. |
 
 ---
 
 ## Conclusion
 
-The proposed embodied intelligence benchmarking framework for intelligent industrial assembly provides a comprehensive solution for evaluating multi-task robotic systems. By creating a custom, multi-modal dataset and an end-to-end assembly pipeline, this project addresses a critical gap in existing benchmarks. It moves beyond single-task scenarios and provides a real-world testbed that integrates:
+The proposed embodied intelligence benchmarking framework for intelligent industrial assembly provides a comprehensive solution for evaluating robotic systems. By creating a custom, multi-modal dataset and an end-to-end assembly pipeline, this project addresses a critical gap in existing benchmarks. It provides a real-world testbed for a single, complex task that integrates:
 
 1.**High-Precision Perception**: The use of algorithms like YOLOv8 and CNNs for both object detection and quality assurance.
 
 2.**Intelligent Manipulation**: Force-controlled assembly that mimics human dexterity for delicate tasks.
 
-3.**Logical Reasoning**: Conditional decision-making that allows the system to verify its own work and adapt to different scenarios.
+3.End-to-End Evaluation: A complete pipeline that allows the system to verify its own work and provides objective performance metrics.
 
-This framework is designed as a complete example implementation that can be contributed to the ianvs repository, providing a valuable resource for the robotics and AI community. The impact of this project is significant, as it will serve as a foundation for developing the next generation of reliable, efficient, and truly intelligent autonomous systems for industrial manufacturing.
+This framework is designed as a complete example implementation that can be contributed to the ianvs repository, providing a valuable resource for the robotics and AI community. The impact of this project is significant, as it will serve as a foundation for developing the next generation of reliable and efficient autonomous systems for industrial manufacturing.
 
 ---
