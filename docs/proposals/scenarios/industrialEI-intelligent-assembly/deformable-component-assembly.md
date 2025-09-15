@@ -16,15 +16,15 @@ However, existing universal embodied intelligence benchmarks struggle to provide
 
 ## Goals
 
-1. **Build a multi-modal industrial assembly dataset**: Create a comprehensive, multi-modal dataset with URDFs, camera images, and force/torque sensor data to enable robust perception and manipulation benchmarking.
+1. **Build a multimodal industrial assembly dataset**: Create a comprehensive, multimodal dataset with URDFs, camera images, and force/torque sensor data to enable robust perception and manipulation benchmarking.
 
 2.**Develop an end-to-end assembly pipeline**: Implement a full assembly workflow that goes from component detection to placement to quality inspection.
 
-3.**Integrate multi-model AI capabilities**: Combine object detection, RGB vision ,force-controlled manipulation that is the sense of touch and vision together with cohesive algorithm.
+3.**Integrate multimodal AI capabilities**: Combine object detection, RGB vision ,force-controlled manipulation that is the sense of touch and vision together with cohesive algorithm.
 
 4.**Compile a list of key related research works**: Provide a list of relevant external datasets and algorithms (like REASSEMBLE ,DeepPCB and YOLOv8) that support the project's technical approach.
 
-6.**Build a comprehensive benchmarking suite**: Develop a benchmarking suite within ianvs that includes standardized metrics, detailed test reports, and a leaderboard for evaluating multi-stage assembly performance.
+5.**Build a comprehensive benchmarking suite**: Develop a benchmarking suite within ianvs that includes standardized metrics, detailed test reports, and a leaderboard for evaluating multi-stage assembly performance.
 
 ---
 
@@ -216,8 +216,8 @@ Different datasets will be used to train the robotic AI model:
 
 ### Key Outcomes
 
-1.**Custom Multimodal Dataset**: A publicly available, high-quality dataset containing all the necessary URDFs, meshes, images, and sensor data to replicate the end-to-end assembly scenario.
-2.**Integrated Multi-task Algorithm**: A working and fully documented algorithm that serves as a reproducible baseline for the multi-stage workflow, successfully performing object detection and force-guided assembly.
+1.**Custom multimodal Dataset**: A publicly available, high-quality dataset containing all the necessary URDFs, meshes, images, and sensor data to replicate the end-to-end assembly scenario.
+2.**Integrated multi-task Algorithm**: A working and fully documented algorithm that serves as a reproducible baseline for the multi-stage workflow, successfully performing object detection and force-guided assembly.
 3.**Reproducible Benchmark Suite**: A complete and self-contained `ianvs` project that allows other developers and researchers to easily run, test, and compare their own algorithms against our benchmark.
 
 
@@ -263,7 +263,7 @@ The proposed embodied intelligence benchmarking framework for intelligent indust
 
 2.**Intelligent Manipulation**: Force-controlled assembly that mimics human dexterity for delicate tasks.
 
-3.End-to-End Evaluation: A complete pipeline that allows the system to verify its own work and provides objective performance metrics.
+3.**End-to-End Evaluation**: A complete pipeline that allows the system to verify its own work and provides objective performance metrics.
 
 This framework is designed as a complete example implementation that can be contributed to the ianvs repository, providing a valuable resource for the robotics and AI community. The impact of this project is significant, as it will serve as a foundation for developing the next generation of reliable and efficient autonomous systems for industrial manufacturing.
 
