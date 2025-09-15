@@ -28,7 +28,9 @@ However, existing universal embodied intelligence benchmarks struggle to provide
 
 ---
 
-## Scope
+## Proposal
+
+### Scope
 
 1.**Create the Dataset**: Build a new, multimodal dataset that includes both visual and touch sensor data.
 
@@ -36,13 +38,28 @@ However, existing universal embodied intelligence benchmarks struggle to provide
 
 3.**Define End-to-End Metrics**: Instead of focusing on metrics for each individual sub-task (like YOLO accuracy), define one or a few end-to-end metrics to evaluate the complete assembly process, such as the overall success rate or final assembly accuracy. This aligns with the "multi-stage" nature of the project.
 
----
 
-## Proposal
+### Out of Scope
+
+1.**Re-inventing Core Frameworks**: The project will use existing, open-source frameworks like PyBullet, TensorFlow, or PyTorch, rather than creating new ones.
+
+2.**Developing New Algorithms**: The project focuses on applying established algorithms like YOLOv8 and standard CNNs as a benchmark, not on inventing new ones.
+
+3.**New Robotic Hardware**: Since the benchmark operates in a simulation, it does not include the design, fabrication, or physical testing of new robot hardware or sensors.
+
+4.**Developing a New Benchmarking Platform**: The project is a benchmark suite that runs within the existing Ianvs framework and will not involve building a new platform.
+
+5.**Complex Logical Reasoning**: Advanced logic, such as for complex failure recovery or cable sorting, is considered future work and is not included in the initial implementation.
+
+### Expected Users
+
+1.**Robotics and AI Researchers** : AI and Robotics researchers are the core users, seeking a novel high-quality dataset to train and validate their own algorithms,standardized benchmark  that allows for a fair comparison of different algorithms and approaches,a reproducible test environment and a public leaderboard to track the state-of-the-art and share their findings.
+
+2.**Students and Educators**: Comprehensive documentation and tutorials that explain the project's setup and concepts which helps the users achieve A simple, well-defined problem that is challenging but achievable for an educational setting.
+
 
 ## Design Details
-
-
+       
 ### **Dataset Map**
 This project will create a custom dataset for a complete, end-to-end industrial assembly task. However, the following existing datasets are referenced to validate and benchmark individual sub-tasks of the project's multi-stage workflow.
 
@@ -74,15 +91,37 @@ Modern gadgets like smartphones and laptops contain motherboards with increasing
 
 ## Ianvs 
 
-### Ianvs Framework Integration Architecture
+### User flow
+
+The user flow for an algorithm developer is as follows.
+
+1.**ianvs Preparation**:
+
+-Install ianvs and the required packages specified in the `requirements.txt` file.
+
+2.**Test Case Preparation**:
+
+-Prepare the custom, multimodal dataset for the targeted scenario. To avoid oversized projects, developers can download the dataset from a source link (from Kaggle).
+
+-Leverage the ianvs algorithm interface for the targeted end-to-end assembly process. The algorithm should follow this interface to ensure functional benchmarking.
+
+3**Algorithm Development**: Develop the targeted algorithm. In this case, the multi-stage algorithm uses YOLOv8 for perception, force control for manipulation, and a CNN for verification.
+
+4.**ianvs Configuration**: Fill in the configuration files for ianvs, including the testenv.yaml to define the environment and metrics and the benchmarkingjob.yaml to configure the benchmark run.
+
+5.**ianvs Execution**: Run the ianvs executable file from the command line to begin the benchmark.
+
+6.**ianvs Presentation**: View the benchmarking result of the targeted algorithm, including the Assembly Success Rate and the final report.
+
+
+### Ianvs Framework Integration Architecture and Modules
 
 The deformable component algorithm is designed to integrate seamlessly with the Ianvs framework through its three core components, as illustrated in the following architecture diagram:
 
 ![Ianvs Framework Architecture](images\benchmarking_architecture.png)
-
 *Figure above: Ianvs framework architecture showing the integration of Test Environment Manager, Test Case Controller, and Story Manager for benchmarking embodied intelligence in industrial environments.*
 
-The initial focus is on configuring the custom, multi-modal `Intelligent Assembly Dataset` within the Test Environment Manager and establishing the multi-stage performance metrics. Simultaneously, the `Test Case Controller` will be implemented with a new Multi-stage Assembly Workflow. This paradigm will perform comprehensive benchmark tests on the custom dataset, evaluating the full, end-to-end workflow—from component positioning with `YOLOv8`.
+The initial focus is on configuring the custom, multi-modal `Intelligent Assembly Dataset` within the Test Environment Manager and establishing the multi-stage performance metrics. Simultaneously, the `Test Case Controller` will be implemented with a new multi-stage Assembly Workflow. This paradigm will perform comprehensive benchmark tests on the custom dataset, evaluating the full, end-to-end workflow—from component positioning with `YOLOv8`.
 
 
 ### Test Environment Manager Integration
@@ -91,8 +130,9 @@ This project will be configured and deployed by defining a new `Test Environment
 
 1.**Dataset Configuration**: The ianvs environment will use the custom dataset hosted on Kaggle, including URDFs, images, and sensor data logs.
 2.**Sensor Configuration**: Parameters for the simulated camera (RGB-D) and the force/torque sensor will be defined.
-3.**Algorithm Parameters**: The configuration will include hyperparameters for our core algorithms, like YOLOv8 and force control logic.
+3.**Algorithm Parameters**: The configuration will include hyperparameters for our core algorithms, like YOLO and force control logic.
 4.**System Constraints**: Define hardware and software constraints, such as processing time and memory limits, to ensure reproducibility.
+5.**Metrics Calculation**: Compute our primary end-to-end metric: Assembly Success Rate.
 
 ### Test Case Controller Implementation
 
@@ -106,9 +146,8 @@ The `Test Case Controller` will be responsible for orchestrating the execution o
 
 The `Story Manager` will handle the output and presentation of our benchmark results, providing clear insights into the algorithm's performance.
 
-1.**Metrics Calculation**: Compute our primary end-to-end metric: Assembly Success Rate.
-2.**Leaderboard Generation**: The results will be used to generate a leaderboard that ranks algorithm performance.
-3.**Report Generation**: A detailed report with a full analysis of the benchmark results will be produced.
+1.**Leaderboard Generation**: The results will be used to generate a leaderboard that ranks algorithm performance.
+2.**Report Generation**: A detailed report with a full analysis of the benchmark results will be produced.
 
 
 ###  Directory Structure
@@ -116,26 +155,21 @@ The `Story Manager` will handle the output and presentation of our benchmark res
 The new dataset will be generated and uploaded in the https://www.kaggle.com/datasets/kubeedgeianvs ,users can install the zip file and then unzip in in their datasets folder .
 
 ```
-──ianvs/examples/industrialEI/
-            deformable__assembly/
-                  ├── testalgorithms/
-                  │   └── assembly_alg/   
-                  │       ├── __init__.py
-                  │       ├── basemodel.py            # Core pose estimation algorithm
-                  │       ├── data_utils.py           
-                  │       ├── eval.py
-                  │       ├── robot_control.py
-                  │       ├── perception.py           # YOLO model for object detection and CNN for visual inspection
-                  │       └── assembly_planner.py     #  Orchestrates the entire multi-step component assembly process
-                  ├── testenv/
-                  │   └── assembly__env/    
-                  │       ├── __init__.py
-                  │       ├── testenv.yaml
-                  |       ├── acc.py                  # Evaluation metrics
-                  ├── .gitignore
-                  ├── LICENSE
-                  ├── README.md                       # documentation for users
-                  └── benchmarkingjob.yaml
+ianvs/examples/industrialEI/single_task_learning_bench/
+└── deformable_assembly/
+    ├── testalgorithms/
+    │   └── assembly_alg/
+    │       ├── components/
+    │       │   ├── perception.py                    # YOLOv8 and CNN vision modules
+    │       │   └── manipulation.py                  # Force-control and robot movement
+    │       ├── testenv/
+    │       │   └── acc.py                           # For new end-to-end metrics
+    |       |   └── testenv.yaml
+    |       |
+    │       ├── naive_assembly_process.py            # Orchestrates the entire process
+    │       
+    ├── benchmarkingjob.yaml
+    └── README.md
 ```
 
 
@@ -143,7 +177,7 @@ The new dataset will be generated and uploaded in the https://www.kaggle.com/dat
 
 This proposal focuses on a multi-stage, single-task assembly process, which is a more accurate representation of real-world industrial workflows. The approach integrates multiple, sequential AI capabilities into a single cohesive pipeline. It demonstrates an embodied intelligent system that can perceive, manipulate, verify, and reason in a step-by-step manner.
 
-The Single-Task, Multi-stage Paradigm works as follows:
+The Single-Task, multi-stage Paradigm works as follows:
 
 1.A developer deploys an application that orchestrates the entire assembly process.
 2.The application launches the full workflow, which executes a series of interdependent, sequential tasks.
@@ -182,7 +216,7 @@ Different datasets will be used to train the robotic AI model:
 ### Dataset Structure 
 
 ```
-├── assembly_dataset/
+├──  deformable_assembly_dataset/
 │   ├── stage1_component_detection/
 │   │   ├── images/
 │   │   │   ├── 001_panel_view.png
@@ -217,8 +251,9 @@ Different datasets will be used to train the robotic AI model:
 ### Key Outcomes
 
 1.**Custom multimodal Dataset**: A publicly available, high-quality dataset containing all the necessary URDFs, meshes, images, and sensor data to replicate the end-to-end assembly scenario.
-2.**Integrated multi-task Algorithm**: A working and fully documented algorithm that serves as a reproducible baseline for the multi-stage workflow, successfully performing object detection and force-guided assembly.
-3.**Reproducible Benchmark Suite**: A complete and self-contained `ianvs` project that allows other developers and researchers to easily run, test, and compare their own algorithms against our benchmark.
+2.**Integrated multi-stage single task Algorithm**: A working and fully documented algorithm that serves as a reproducible baseline for the multi-stage workflow, successfully performing object detection and force-guided assembly.
+3.**Benchmark Report and Leaderboard**: A detailed report that provides objective performance analysis of the algorithm and a leaderboard to showcase the `Assembly Success Rate` and other key metrics.
+4..**Reproducible Benchmark Suite**: A complete and self-contained `ianvs` project that allows other developers and researchers to easily run, test, and compare their own algorithms against our benchmark.
 
 
 ### Evaluation Metrics
@@ -259,9 +294,9 @@ The project is structured into three distinct phases, each with key deliverables
 
 The proposed embodied intelligence benchmarking framework for intelligent industrial assembly provides a comprehensive solution for evaluating robotic systems. By creating a custom, multi-modal dataset and an end-to-end assembly pipeline, this project addresses a critical gap in existing benchmarks. It provides a real-world testbed for a single, complex task that integrates:
 
-1.**High-Precision Perception**: The use of algorithms like YOLOv8 and CNNs for both object detection and quality assurance.
+1.**High-Precision Perception**:A dataset is prepared which demonstrates industrial embodied assembly of precise components.
 
-2.**Intelligent Manipulation**: Force-controlled assembly that mimics human dexterity for delicate tasks.
+2.**Intelligent Manipulation**: CNN visual inspection and force-controlled assembly that mimics human dexterity for delicate tasks .
 
 3.**End-to-End Evaluation**: A complete pipeline that allows the system to verify its own work and provides objective performance metrics.
 
