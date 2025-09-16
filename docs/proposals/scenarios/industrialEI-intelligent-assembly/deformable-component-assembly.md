@@ -43,7 +43,7 @@ However, existing universal embodied intelligence benchmarks struggle to provide
 
 1.**Re-inventing Core Frameworks**: The project will use existing, open-source frameworks like PyBullet, TensorFlow, or PyTorch, rather than creating new ones.
 
-2.**Developing New Algorithms**: The project focuses on applying established algorithms like YOLOv8 and standard CNNs as a benchmark, not on inventing new ones.
+2.**Developing Fundamental AI Models**: The project will apply established, off-the-shelf models like YOLOv8 and standard CNNs as a baseline. The focus is on the creation of a `new assembly algorithm`, not on inventing a new fundamental AI model.
 
 3.**New Robotic Hardware**: Since the benchmark operates in a simulation, it does not include the design, fabrication, or physical testing of new robot hardware or sensors.
 
@@ -80,12 +80,18 @@ This project will create a custom dataset for a complete, end-to-end industrial 
 ### What is Deformable Component Assembly ?
 
 Modern gadgets like smartphones and laptops contain motherboards with increasingly small and delicate components. Assembling these parts requires a level of precision and consistency that is difficult to achieve with manual labor. This is the core challenge of deformable component assembly.
-[Image description](images/industrial_assembly.png)
+[the industrial scenario](images/industrial_assembly.png) [assembled motherboard](images\an_assembled_motherboard.png)
+
+This picture denotes the real industrial scene of deformable component assembly:
+[Real world robotic arm](images\robotic_arm.png)
+
+This picture denotes the pybullet simulated deformable component assembly:
+[Simulated robotic arm](images\robotic_arm_simulation.png)
 
 ### What do this dataset do ?
 
  This  project addresses this by using an embodied intelligent robotic arm. This robotic arm leverages a fusion of advanced capabilities, including **force detection** for delicate haptic control, **visual detection** for accurate positioning. By integrating these systems, the robot can not only assemble components with superior precision but also perform real-time quality checks to ensure a perfect final product.
-[Image description](images/working_assembly_workflow.png)
+[workflow of the assembly process](images/working_assembly_workflow.png)
 
 ---
 
@@ -181,11 +187,11 @@ The Single-Task, multi-stage Paradigm works as follows:
 
 1.A developer deploys an application that orchestrates the entire assembly process.
 2.The application launches the full workflow, which executes a series of interdependent, sequential tasks.
-3.The robotic arm uses **YOLOv8** to perform real-time object detection on components from the panel.
-4.The robot then executes a force-controlled assembly task using its touch sensors to place the components on the motherboard precisely.
+3.The robotic arm uses **YOLOv8** to perform real-time object detection on components from the panel and Cnn for final inspection.[CNN inspection](images\CNN_of_motherboard.png)
+4.The robot then executes a force-controlled assembly task using its touch sensors to place the components on the motherboard precisely.[touch sensors](images\force_sensors.png)
 5.The system then generates a final test report and updates the leaderboard, concluding the process.
 
-[Image description](images/benchmarking_architecture.png)
+[the ianvs architecture](images/benchmarking_architecture.png)
 
 ---
 
@@ -212,35 +218,41 @@ Different datasets will be used to train the robotic AI model:
 
 3.**DeepPCB** : It's a collection of images of electronic circuit boards with defects. This data is used to train quality control AI to recognize defects on a motherboard.
 
+### Dataset Description
+
+The Multimodal Robot Assembly Dataset is a comprehensive, open-source dataset designed for benchmarking end-to-end industrial assembly tasks. It focuses on the complex, multi-stage process of assembling electronic components with a robotic arm, leveraging both visual and haptic feedback.
+
+The dataset captures the entire assembly workflow, from initial component detection to precise, force-controlled placement and final visual inspection. It provides a rich collection of synchronized multimodal data, including:
+
+1.**RGB and Depth Images**: High-resolution visual input from a simulated camera in '.png' format will be obtained for preserving the quality of both color and depth information without artifacts.
+
+2.**Force/Torque Sensor Data**: Readings from the robot's wrist, providing haptic feedback on contact events during manipulation.This data should be logged in `.csv` or `.json` format for easy to read abd parse for data analysis and training.
+
+3.**Metadata**: Labeled information on object poses, robot joint states, and the success or failure of each step.
+
+4.**YOLO/COCO-style annotations**:The bounding box coordinates and class labels for each image, which are essential for training the object detection model will be obtained ,most common in `json` format.
+
+It will include a training set of 5,000 to 15,000 augmented images derived from an initial set of 100-300 simulated episodes. The total dataset is estimated to be approximately 15-20 GB.
+This data enables the development and evaluation of algorithms that integrate vision-based perception with force-controlled manipulation. The dataset is a part of the open-source distributed synergy AI benchmarking project, KubeEdge-Ianvs.
 
 ### Dataset Structure 
 
 ```
-├──  deformable_assembly_dataset/
-│   ├── stage1_component_detection/
-│   │   ├── images/
-│   │   │   ├── 001_panel_view.png
-│   │   │   ├── 002_panel_view.png
-│   │   │   └── ...
-│   │   └── annotations/
-│   │       ├── 001_panel_view.json      # YOLO/COCO-style annotations for each component
-│   │       └── ...
-│   ├── stage2_deformable_assembly/
-│   │   ├── force_logs/
-│   │   │   ├── 001_insertion_log.csv    # Logs of force/torque sensor data
-│   │   │   └── ...
-│   │   └── robotic_arm_poses/
-│   │       ├── 001_assembly_poses.csv   # Trajectory data (joint angles, end-effector poses)
-│   │       └── ...
-│   └── stage3_final_assembly/
-│       ├── correct_assembly_images/
-│       │   ├── ideal_phone_1.png
-│       │   └── ...
-│       └── defect_images/
-│           ├── misaligned_cpu.png       # For training the visual inspection AI
-│           ├── missing_ram.png
-│           ├── scratch_on_board.png
-│           └── ...
+deformable_assembly_dataset/
+├── episode_001/
+│   ├── images/
+│   │   ├── frame_0001_rgb.png      # RGB images for real-time detection
+│   │   ├── frame_0001_depth.png    # Depth images
+│   │   ├── ...                    # All intermediate frames
+│   │   └── frame_final_inspection.png    # 📸 Dedicated image for final inspection
+│   ├── sensor_data/
+│   │   ├── force_torque_log.csv    # A continuous log of force/torque data
+│   │   └── robotic_arm_poses.csv   # The full trajectory of the arm
+│   └── annotations/
+│       ├── frame_annotations.json  # YOLO/COCO-style annotations for all frames
+│       └── final_inspection_labels.json  # 📋 Label for the final image (e.g., "Pass" or "Fail")
+├── episode_002/
+│   └── ...
 ```
 
 ---
