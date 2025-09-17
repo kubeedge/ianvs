@@ -1,0 +1,35 @@
+algorithm:
+  paradigm_type: "federatedlearning"
+  fl_data_setting:
+    train_ratio: 1.0
+    splitting_method: "default"
+    label_data_ratio: 1.0
+
+  modules:
+    - type: "basemodel"
+      name: "fedllm-peft"
+      url: "/home/wwh/kubeFed/ianvs/examples/federated-llm/fedllm-peft/algorithm/model.py"
+      hyperparameters:
+        - batch_size:
+            values: [1]
+        - learning_rate:
+            values: [1e-4]
+        - local_epochs:
+            values: [2]
+        - model_name:
+            values: ["THUDM/chatglm-6b"]
+        - save_dir:
+            values: ["/home/wwh/kubeFed/ianvs/project/save_model/fedllm/chatglm_lora"]
+        - initial_model_url:
+            values: ["/home/wwh/kubeFed/ianvs/project/init_model/fedllm/chatglm"]
+        - peft_method:
+            values: ["lora"]  # ["ptuning", "lora"]
+
+    - type: "aggregation"
+      name: "FedAvgM-PEFT"
+      url: "/home/wwh/kubeFed/ianvs/examples/federated-llm/fedllm-peft/algorithm/FedAvgM-PEFT.py"
+      hyperparameters:
+        - beta:
+            values: [0.7]
+        - server_lr:
+            values: [1.0]

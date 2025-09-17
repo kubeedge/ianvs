@@ -19,14 +19,15 @@
 # pylint: disable=C0206
 # pylint: disable=C0201
 # pylint: disable=W1203
-from threading import Thread, RLock
+from queue import Queue
+from threading import Lock, Thread, RLock
 
 from sedna.algorithms.aggregation import AggClient
 from core.common.log import LOGGER
 from core.common.constant import ParadigmType, ModuleType
 from core.common.utils import get_file_format
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
-from core.testenvmanager.dataset.utils import read_data_from_file_to_npy, partition_data
+from core.testenvmanager.dataset.utils import partition_llm_data, read_data_from_file_to_npy, partition_data, rename_keys_jsonl
 
 
 class FederatedLearning(ParadigmBase):
@@ -61,15 +62,20 @@ class FederatedLearning(ParadigmBase):
 
         self.workspace = workspace
         self.kwargs = kwargs
-
+        LOGGER.info(f"kwargs: {self.kwargs}")
         self.fl_data_setting = kwargs.get("fl_data_setting")
         self.rounds = kwargs.get("round", 1)
         self.clients = []
         self.lock = RLock()
-
         self.aggregate_clients = []
         self.clients_number = kwargs.get("client_number", 1)
+        self.mode = kwargs.get("if_mode_llm", False)
         _, self.aggregator = self.module_instances.get(ModuleType.AGGREGATION.value)
+        if self.mode:
+            LOGGER.info("Using LLM multi GPU mode for Federated Learning")
+            self.gpu_num = kwargs.get("gpu_num", 1)
+            self._gpu_locks = [Lock() for _ in range(self.gpu_num)]
+        LOGGER.info(f"rounds: {self.rounds}, clients_number: {self.clients_number}, fl_data_setting: {self.fl_data_setting}")
 
     def init_client(self):
         """init clients for the paradigm of federated learning."""
@@ -92,12 +98,21 @@ class FederatedLearning(ParadigmBase):
         self.init_client()
         dataset_files = self.get_all_train_data()
         train_dataset_file, _ = dataset_files[0]
-        train_datasets = self.train_data_partition(train_dataset_file)
-        for r in range(self.rounds):
-            self.train(train_datasets, round=r)
-            global_weights = self.aggregator.aggregate(self.aggregate_clients)
-            self.send_weights_to_clients(global_weights)
-            self.aggregate_clients.clear()
+        if self.mode:
+            rename_keys_jsonl(train_dataset_file)
+            train_datasets = self.train_llm_data_partition(train_dataset_file)
+            for r in range(self.rounds):
+                self.llm_train(train_datasets, round=r)
+                global_weights = self.aggregator.aggregate(self.aggregate_clients)
+                self.send_weights_to_clients(global_weights)
+                self.aggregate_clients.clear()
+        else:
+            train_datasets = self.train_data_partition(train_dataset_file)
+            for r in range(self.rounds):
+                self.train(train_datasets, round=r)
+                global_weights = self.aggregator.aggregate(self.aggregate_clients)
+                self.send_weights_to_clients(global_weights)
+                self.aggregate_clients.clear()
         test_res = self.predict(self.dataset.test_url)
         return test_res, self.system_metric_info
 
@@ -137,7 +152,7 @@ class FederatedLearning(ParadigmBase):
         - i.i.d
         - non-i.i.d
         """
-        LOGGER.info(train_dataset_file)
+        LOGGER.info("train_dataset_file: %s", train_dataset_file)
         train_datasets = None
         if isinstance(train_dataset_file, str):
             train_datasets = self.dataset.load_data(train_dataset_file, "train")
@@ -156,6 +171,21 @@ class FederatedLearning(ParadigmBase):
             self.clients_number,
             self.fl_data_setting.get("data_partition"),
             self.fl_data_setting.get("non_iid_ratio"),
+        )
+        return train_datasets
+    
+    def train_llm_data_partition(self, train_dataset_file):
+        LOGGER.info("train_dataset_file: %s", train_dataset_file)
+        train_datasets = None
+        if isinstance(train_dataset_file, str):
+            if get_file_format(train_dataset_file) == "jsonl":
+                train_datasets = self.dataset.load_data(train_dataset_file, data_type="train")
+            else:
+                raise ValueError(f"LLM Unsupported file format: {get_file_format(train_dataset_file)}. Only jsonl is supported.")
+        assert train_datasets is not None, "train_dataset is None"
+        train_datasets = partition_llm_data(
+            train_datasets,
+            self.clients_number
         )
         return train_datasets
 
@@ -178,6 +208,17 @@ class FederatedLearning(ParadigmBase):
             self.aggregate_clients.append(agg_client)
         return train_info
 
+    def llm_client_train(self, client_idx, train_datasets, device_id=0, validation_datasets=None, **kwargs):
+        train_info = self.clients[client_idx].train(
+            train_data=train_datasets[client_idx], valid_data=validation_datasets, device_id=device_id, client_id=client_idx, **kwargs
+        )
+        train_info["client_id"] = client_idx
+        agg_client = AggClient()
+        agg_client.num_samples = train_info["num_samples"]
+        agg_client.weights = self.clients[client_idx].get_weights()
+        self.aggregate_clients.append(agg_client)
+        return train_info
+
     def train(self, train_datasets, **kwargs):
         """train——multi-threading to perform client local training
 
@@ -198,6 +239,39 @@ class FederatedLearning(ParadigmBase):
             thread.join()
         LOGGER.info("finish training")
 
+    def llm_train(self, train_datasets, **kwargs):
+        LOGGER.info(
+            f"Starting local training for {self.clients_number} clients "
+            f"on round {self.rounds} using {self.gpu_num} GPU(s)"
+        )
+        task_q = Queue()
+        for idx in range(self.clients_number):
+            task_q.put(idx)
+        def _gpu_worker(gpu_idx: int):
+            while not task_q.empty():
+                try:
+                    client_idx = task_q.get_nowait()
+                except Queue.Empty:
+                    break
+                LOGGER.info(f"GPU-{gpu_idx} starts training client {client_idx}")
+                # —— train ——
+                self.llm_client_train(
+                    client_idx=client_idx,
+                    train_datasets=train_datasets,
+                    validation_datasets=None,
+                    device_id=gpu_idx
+                )
+                LOGGER.info(f"GPU-{gpu_idx} finished client {client_idx}")
+                task_q.task_done()
+        workers = []
+        for gpu_idx in range(self.gpu_num):
+            t = Thread(target=_gpu_worker, args=(gpu_idx,))
+            t.start()
+            workers.append(t)
+        for t in workers:
+            t.join()
+        LOGGER.info("Finished local training for all clients")
+    
     def send_weights_to_clients(self, global_weights):
         """send weights to clients
 
@@ -228,6 +302,8 @@ class FederatedLearning(ParadigmBase):
             list: test result
         """
         test_dataset = None
+        if self.mode:
+            rename_keys_jsonl(test_dataset_file)
         if isinstance(test_dataset_file, str):
             test_dataset = self.dataset.load_data(test_dataset_file, "eval")
         if isinstance(test_dataset_file, list):
@@ -237,6 +313,10 @@ class FederatedLearning(ParadigmBase):
         assert test_dataset is not None, "test_dataset is None"
         LOGGER.info(f" before predict {len(test_dataset.x)}")
         job = self.get_global_model()
-        test_res = job.inference(test_dataset.x)
+        if self.mode:
+            input = [str(item) for item in test_dataset.x]
+        else:
+            input = test_dataset.x
+        test_res = job.inference(input)
         LOGGER.info(f" after predict {len(test_res)}")
         return test_res
