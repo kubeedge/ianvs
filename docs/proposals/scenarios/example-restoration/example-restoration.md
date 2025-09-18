@@ -23,11 +23,13 @@ For contributors and maintainers of distributed synergy AI solutions, the goals 
     - Full dependency resolution and compatibility fixing across Python versions (3.8, 3.9, 3.10)
     - Comprehensive documentation with step-by-step execution guide and troubleshooting playbook
     - Validated execution with 100% success rate and performance baseline establishment
+    - **Note**: This project focuses on restoring one example as a proof-of-concept, with restoration of additional examples designated as future work
 
 - **Establish CI/CD pipeline infrastructure for automated validation**
     - GitHub Actions workflow for automated testing of the restored example
     - Multi-Python version compatibility testing and dependency validation
     - Failure detection, reporting, and clear feedback mechanisms for contributors
+    - **Note**: The CI/CD pipeline will be designed to accommodate future expansion to additional examples
 
 ### **Optional Goals (Time Permitting - Maintenance Layer):**
 - **Advanced maintenance automation tools** for contributors by providing
@@ -45,14 +47,15 @@ For contributors and maintainers of distributed synergy AI solutions, the goals 
 The distributed synergy AI example restoration project aims to resurrect the usability of one complete example and establish a CI/CD pipeline framework, with optional advanced maintenance tools if time permits.
 
 ### **Core Scope (Primary Focus):**
-- **Complete restoration of one lifelong learning example** covering the most complex distributed-synergy AI use case
     - Manual dependency resolution and compatibility fixing
     - Complete documentation and debugging guides
     - Comprehensive testing and validation across multiple environments
+    - **Note**: This single-example approach provides a solid foundation and methodology that can be applied to additional examples in future work
 - **CI/CD pipeline development** to support ongoing example sustainability
     - Automated testing pipeline for the restored example
     - Integration with GitHub Actions for PR validation
     - Framework extensible to other examples in the future
+    - **Note**: Pipeline designed with scalability in mind for future multi-example validation
 
 ### **Optional Scope (Maintenance Layer - Time Permitting):**
 - **Automated maintenance tools** in separate maintenance directory
@@ -66,7 +69,7 @@ The distributed synergy AI example restoration project aims to resurrect the usa
 - **Future Contributors**: (Optional) Use advanced maintenance tools for efficient development
 
 **The scope of restoration does NOT include:**
-- Complete restoration of all 25+ examples (focus on one lifelong learning example)
+- Complete restoration of all 25+ examples (focus on one lifelong learning example, with additional examples as future work)
 - Re-invention of existing Ianvs core architecture
 - Re-invention of existing KubeEdge platform or edge-cloud synergy frameworks
 
@@ -78,31 +81,37 @@ The distributed synergy AI example restoration project aims to resurrect the usa
 1. **Example Reference:**
     - Access fully restored lifelong learning example as reference implementation
     - Follow comprehensive documentation with step-by-step setup and execution guide
+    - **Note**: This single restored example serves as a template and reference for future example contributions
 
 2. **Contribution Submission:**
     - Submit PR with automatic CI/CD pipeline validation
     - Receive clear feedback on compatibility, dependency conflicts, and test results
+    - **Note**: The CI/CD framework is designed to support validation of additional examples in future iterations
 
 3. **Issue Resolution:**
     - Use debugging playbook based on restored example common failure patterns
     - Apply fixes following established restoration methodology and best practices
+    - **Note**: Restoration methodology developed for this example can be applied to troubleshoot other examples in future work
 
-![alt text](<Contributor user Flow.png>)
+![alt text](contributor.png)
 
 #### **Maintainer Workflow (Primary Focus):**
 1. **Health Monitoring:**
     - Monitor CI/CD pipeline status and example execution health through automated reports
     - Receive notifications on example functionality and dependency status changes
+    - **Note**: Monitoring system designed with extensibility to accommodate additional examples in future development
 
 2. **Issue Analysis:**
     - Access detailed failure logs and root cause analysis from CI/CD pipeline
     - Apply systematic fixes using documented restoration methodology
+    - **Note**: Root cause analysis patterns from this example will inform maintenance strategies for future examples
 
 3. **Framework Extension:**
     - Use established CI/CD framework template to extend monitoring to additional examples
     - Leverage restoration patterns and documentation for future example maintenance
+    - **Note**: This project establishes the foundation framework that maintainers can systematically apply to restore additional examples as future work
 
-![alt text](<Maintainer User Flow.png>)
+![alt text](maintainer.png)
 
 #### **Advanced Workflow (Optional - If Time Permits):**
 - **Automated Maintenance Tools**: Access advanced dependency management and health monitoring
@@ -124,7 +133,7 @@ The architecture maintains core Ianvs unchanged while adding a separate maintena
 - **Documentation Framework**: Comprehensive guides for the restored example
 - **Contribution Templates**: Standardized processes following restoration methodology
 
-![alt text](Architecture.jpg)
+![alt text](Architecture-1.png)
 
 #### **Optional Maintenance Layer (Time Permitting):**
 
