@@ -66,7 +66,7 @@ The framework will be validated using the TAB (Text Anonymization Benchmark) dat
 
 The system adopts a privacy-first edge-cloud architecture with hard example mining and comprehensive privacy protection:
 
-![Alt Text](images/Architecture_ design.png)
+![image-20250918172503831](images/flowchart.png)
 
 ### 4.3 Core Components 
 
@@ -260,49 +260,41 @@ class PerformanceAssessment:
         return privacy_accuracy / baseline_accuracy if baseline_accuracy > 0 else 0
 ```
 
-### Workflow Design
+### Details of Design
 
-![Alt Text](images/Workflow_design.png)
+The overall design is shown in the figure below.
+
+<img src="images/architecture diagram.png" alt="image-20250918191407660" style="zoom:50%;" />
 
 ### File Directory Architecture
 
 ```
 kubeedge/ianvs/
 ├── /examples/
-│   └── /privacy-llm-collaboration/
-│       ├── /testenv/
-│       ├── /algorithms/
-│       │   ├── /edge_inference/
-│       │   ├── /privacy_desensitization/
-│       │   │   ├── regex_pseudonymization.py
-│       │   │   ├── ner_masking.py
-│       │   │   ├── differential_privacy.py
-│       │   │   ├── privacy_evaluator.py
-│       │   │   └── __init__.py
-│       │   ├── /cloud_processing/
-│       │   └── /performance_assessment/
-│       ├── /testcases/
-│       ├── /dataset/
-│       │   ├── /tab_corpus/
-│       │   └── /synthetic_test_data/
-│       ├── /benchmarking/
-│       │   ├── /privacy_metrics/
-│       │   ├── /performance_metrics/
-│       │   └── /visualization/
-│       ├── /docs/
-│       └── /results/
-├── /lib/
-│   └── /paradigm/
-│       └── /privacy_aware_collaboration/
-├── /docs/
-│   ├── /proposals/
-│   │   └── /scenarios/
-│   │       └── /privacy-llm-collaboration/
-│               └── privacy-llm-collaboration.md
-│   └── /guides/
-├── requirements_privacy_llm.txt
-├── setup_privacy_environment.py
-└── config_privacy_llm_benchmark.yaml
+│   └── /TAB/
+│   │   └── /cloud_edge_collaborative_inference_bench/
+│   │   	├── readme.md
+│   │   	├── requirements.txt
+│   │   	├── benchmarkingjob.yaml      
+│   │   	├──/test_algorithms/
+│   │   	│		├── test_algorithms.yaml
+│   │   	│		├── /cloud_model/	
+│   │   	│			└── cloud_model.py <---!Same as in cloud-edge-collaborative-inference-for-llm--->
+│   │   	│		├── /edge_model/	
+│   │   	│			└── edge_model.py  <---!Same as in cloud-edge-collaborative-inference-for-llm--->
+│   │   	│		└── /hard_sample_mining/
+│   │   	│			├── hard_sample_mining.py  <---!Same as in cloud-edge-collaborative-inference-for-llm--->
+│   │     │   	└── /privacy_desensitization/
+│   │     │       ├── regex_pseudonymization.py
+│   │     │       ├── ner_masking.py
+│   │     │       ├── differential_privacy.py
+│   │     │       ├── privacy_evaluator.py
+│   │     │       └── __init__.py
+│   │   	└──/test_env/
+│   │       ├── privacy_metrics.py
+│   │       ├── performance_metrics.py
+│   │       ├──  visualization_tools.py
+│   │       └── test_env.yaml
 ```
 
 
