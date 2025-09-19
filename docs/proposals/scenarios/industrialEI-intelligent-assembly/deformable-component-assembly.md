@@ -14,17 +14,36 @@ However, existing universal embodied intelligence benchmarks struggle to provide
 
 ---
 
+## Expected Users
+
+1.**Developers**(`Robotics and AI Researchers`) : AI and Robotics researchers are the core users, seeking a novel high-quality dataset to train and validate their own algorithms,standardized benchmark  that allows for a fair comparison of different algorithms and approaches,a reproducible test environment and a public leaderboard to track the state-of-the-art and share their findings.
+
+2.**End Users**(`Students and Educators`): Comprehensive documentation and tutorials that explain the project's setup and concepts which helps the users achieve A simple, well-defined problem that is challenging but achievable for an educational setting.
+
+---
+
 ## Goals
 
-1. **Build a multimodal industrial assembly dataset**: Create a comprehensive, multimodal dataset with URDFs, camera images, and force/torque sensor data to enable robust perception and manipulation benchmarking.
+### For Developers
 
-2.**Develop an end-to-end assembly pipeline**: Implement a full assembly workflow that goes from component detection to placement to quality inspection.
+1.**Build a novel multimodal industrial assembly dataset**: Create a comprehensive, multimodal dataset with URDFs, camera images, and force/torque sensor data to enable robust perception and manipulation benchmarking.
+
+2.**Build a comprehensive benchmarking suite**: Develop a benchmarking suite within ianvs that includes standardized metrics, detailed test reports, and a leaderboard for evaluating multi-stage assembly performance.
 
 3.**Integrate multimodal AI capabilities**: Combine object detection, RGB vision ,force-controlled manipulation that is the sense of touch and vision together with cohesive algorithm.
 
-4.**Compile a list of key related research works**: Provide a list of relevant external datasets and algorithms (like REASSEMBLE ,DeepPCB and YOLOv8) that support the project's technical approach.
+4.**Establish a Functional Baseline**: Provide a well-documented baseline algorithm to serve as a reference point for comparing future contributions.
 
-5.**Build a comprehensive benchmarking suite**: Develop a benchmarking suite within ianvs that includes standardized metrics, detailed test reports, and a leaderboard for evaluating multi-stage assembly performance.
+
+### For End Users
+
+1.**Provide a Standalone, Accessible Dataset**: Publish a clean and well-documented dataset that can be easily downloaded and used for independent research and learning without the need for the full benchmark suite.
+
+2.**Offer a Clear Learning Resource**: Deliver comprehensive documentation that explains the problem, the solution, and the core concepts of the multi-stage assembly process.
+
+3.**Compile a list of key related research works**: Provide a list of relevant external datasets and algorithms (like REASSEMBLE ,DeepPCB and YOLOv8) that support the project's technical approach and help end users understand machine learning.
+
+4.**Ensure Usability and Reproducibility**: Guarantee that the dataset and the baseline algorithm are easy to set up and run, enabling users to reproduce the benchmark's results effortlessly.
 
 ---
 
@@ -32,11 +51,21 @@ However, existing universal embodied intelligence benchmarks struggle to provide
 
 ### Scope
 
+#### For Developers
+
 1.**Create the Dataset**: Build a new, multimodal dataset that includes both visual and touch sensor data.
 
 2.**Develop Simple Algorithm Modules**: Create two simple, sequential modules: an object detection module (to find the component) and an assembly module (to place it). These algorithms will demonstrate that the new dataset is usable.
 
 3.**Define End-to-End Metrics**: Instead of focusing on metrics for each individual sub-task (like YOLO accuracy), define one or a few end-to-end metrics to evaluate the complete assembly process, such as the overall success rate or final assembly accuracy. This aligns with the "multi-stage" nature of the project.
+
+#### End Users
+
+1.**Access the Dataset**: Provide a publicly available, high-quality dataset that can be easily downloaded and used.
+
+2.**Access Baseline Algorithms**: Offer a well-documented and functional baseline algorithm that serves as a learning example.
+
+3.**Use Defined Metrics**: Deliver a set of clear, pre-defined metrics that allow users to evaluate their own work against a standard.
 
 
 ### Out of Scope
@@ -50,12 +79,6 @@ However, existing universal embodied intelligence benchmarks struggle to provide
 4.**Developing a New Benchmarking Platform**: The project is a benchmark suite that runs within the existing Ianvs framework and will not involve building a new platform.
 
 5.**Complex Logical Reasoning**: Advanced logic, such as for complex failure recovery or cable sorting, is considered future work and is not included in the initial implementation.
-
-### Expected Users
-
-1.**Robotics and AI Researchers** : AI and Robotics researchers are the core users, seeking a novel high-quality dataset to train and validate their own algorithms,standardized benchmark  that allows for a fair comparison of different algorithms and approaches,a reproducible test environment and a public leaderboard to track the state-of-the-art and share their findings.
-
-2.**Students and Educators**: Comprehensive documentation and tutorials that explain the project's setup and concepts which helps the users achieve A simple, well-defined problem that is challenging but achievable for an educational setting.
 
 
 ## Design Details
@@ -99,7 +122,7 @@ This picture denotes the pybullet simulated deformable component assembly:
 
 ### User flow
 
-The user flow for an algorithm developer is as follows.
+#### For Developers
 
 1.**ianvs Preparation**:
 
@@ -111,14 +134,25 @@ The user flow for an algorithm developer is as follows.
 
 -Leverage the ianvs algorithm interface for the targeted end-to-end assembly process. The algorithm should follow this interface to ensure functional benchmarking.
 
-3**Algorithm Development**: Develop the targeted algorithm. In this case, the multi-stage algorithm uses YOLOv8 for perception, force control for manipulation, and a CNN for verification.
+3.**Understand the Baseline**: Study the `naive_assembly_process.py` file to understand the multi-stage workflow, including how it orchestrates the perception, manipulation, and verification steps.
 
-4.**ianvs Configuration**: Fill in the configuration files for ianvs, including the testenv.yaml to define the environment and metrics and the benchmarkingjob.yaml to configure the benchmark run.
+4**Algorithm Development**: Develop the targeted algorithm. In this case, the multi-stage algorithm uses YOLOv8 for perception, force control for manipulation, and a CNN for verification.
 
-5.**ianvs Execution**: Run the ianvs executable file from the command line to begin the benchmark.
+5.**ianvs Configuration**: Fill in the configuration files for ianvs, including the `testenv.yaml` to define the environment and metrics and the benchmarkingjob.yaml to configure the benchmark run.
 
-6.**ianvs Presentation**: View the benchmarking result of the targeted algorithm, including the Assembly Success Rate and the final report.
+6.**ianvs Execution**: Run the ianvs executable file from the command line to begin the benchmark.
 
+7.**ianvs Presentation**: View the benchmarking result of the targeted algorithm, including the Assembly Success Rate and the final report.
+
+#### End Users
+
+1.**Ianvs Preparation**: Install ianvs and the project dependencies from the `requirements.txt` file.
+
+2.**Dataset Access**: Download the Deformable Component Assembly Dataset from the provided Kaggle link and unzip it into the designated data directory.
+
+3.**benchmark Execution**: Run the ianvs command to execute the baseline benchmark.
+
+4.**Results Analysis**: View the simulation output and the final report in workspace to understand the benchmark results.
 
 ### Ianvs Framework Integration Architecture and Modules
 
@@ -298,7 +332,7 @@ The project is structured into three distinct phases, each with key deliverables
 | :--- | :--- | :--- |
 | **Phase 1: Foundation & Data Generation** | September | **• Proposal Finalization:** Multiple iterations of proposal refinement.<br>**• Custom Dataset Creation:** Design and create all URDFs and `.obj` files for the robot and all components.<br>**• Dataset Generation Pipeline:** Develop the PyBullet script to generate the complete multi-modal dataset•  |
 | **Phase 2: Core Algorithm & Integration** | October | **• Perception Module:** Implement the object detection algorithm (YOLOv8) to identify components on the pallet.<br>**• Manipulation Control:** Develop the force-controlled assembly logic for delicate component placement.<br>**• Quality Assurance Module:** Implement the CNN for visual inspection and defect detection.<br>**• `ianvs` Integration:** Integrate all algorithms and the custom dataset into the `ianvs` framework. |
-| **Phase 3: Benchmarking & Reporting** | November | **• Decision-Making Logic:** Implement the `if-else` conditions for the quality check and the final cable sorting.<br>** • Data Publication:** Publish the custom dataset on Kaggle for public access.• **End-to-End Workflow:** Fully integrate and test the entire multi-stage assembly and packaging pipeline.<br>**• Performance Benchmarking:** Execute the benchmark and collect data on all defined metrics.<br>**• Final Report & Documentation:** Generate the final report, leaderboard, and comprehensive documentation for the project. |
+| **Phase 3: Benchmarking & Reporting** | November | • Data Publication:** Publish the custom dataset on Kaggle for public access.• **End-to-End Workflow:** Fully integrate and test the entire multi-stage assembly and packaging pipeline.<br>**• Performance Benchmarking:** Execute the benchmark and collect data on the defined metric.<br>**• Final Report & Documentation:** Generate the final report, leaderboard, and comprehensive documentation for the project. |
 
 ---
 
