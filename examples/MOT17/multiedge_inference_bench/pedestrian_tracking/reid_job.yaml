@@ -2,11 +2,11 @@ benchmarkingjob:
   # job name of benchmarking; string type;
   name: "reid_job"
   # the url address of job workspace that will reserve the output of tests; string type;
-  workspace: "/ianvs/multiedge_inference_bench/workspace"
+  workspace: "../workspace/"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/reid/testenv.yaml"
+  testenv: "./testenv/reid/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -36,7 +36,7 @@ benchmarkingjob:
       # method of visualization for selected dataitems; string type;
       # currently the options of value are as follows:
       #  1> "print_table": print selected dataitems;
-      method: "print_table"
+      method: "plot_in_pdf"
 
     # selected dataitem configuration
     # The user can add his/her interested dataitems in terms of "paradigms", "modules", "hyperparameters" and "metrics",
