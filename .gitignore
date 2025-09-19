@@ -143,3 +143,8 @@ dmypy.json
 .idea/misc.xml
 .idea/workspace.xml
 .idea/vcs.xml
+
+#workspace
+**/workspace/
+**/datasets/
+**/dataset/
