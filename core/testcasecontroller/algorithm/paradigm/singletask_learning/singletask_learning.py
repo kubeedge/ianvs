@@ -69,6 +69,8 @@ class SingleTaskLearning(ParadigmBase):
 
         job = self.build_paradigm_job(ParadigmType.SINGLE_TASK_LEARNING.value)
 
+        self._preprocess(job)
+
         trained_model = self._train(job, self.initial_model)
 
         if trained_model is None:
@@ -107,6 +109,11 @@ class SingleTaskLearning(ParadigmBase):
             return trained_model
 
         return compressed_model
+
+    def _preprocess(self, job):
+        if job.preprocess() is None:
+            return None
+        return job.preprocess()
 
     def _train(self, job, initial_model):
         train_output_dir = os.path.join(self.workspace, "output/train/")
