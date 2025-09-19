@@ -2,9 +2,9 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_url: "/data/datasets/robot_dataset/train-index-mix.txt"
+    train_url: "./datasets/Cloud-Robotics/train-index-mix.txt"
     # the url address of test dataset index; string type;
-    test_url: "/data/datasets/robot_dataset/test-index.txt"
+    test_url: "./datasets/Cloud-Robotics/test-index.txt"
 
   # model eval configuration of incremental learning;
   model_eval:
@@ -13,7 +13,7 @@ testenv:
       # metric name; string type;
       name: "accuracy"
       # the url address of python file
-      url: "./examples/robot/lifelong_learning_bench/testenv/accuracy.py"
+      url: "./examples/robot/lifelong_learning_bench/semantic-segmentation/testenv/accuracy.py"
       mode: "no-inference"
       #mode: "hard-example-mining"
 
@@ -29,7 +29,7 @@ testenv:
       # metric name; string type;
     - name: "accuracy"
       # the url address of python file
-      url: "./examples/robot/lifelong_learning_bench/testenv/accuracy.py"
+      url: "./examples/robot/lifelong_learning_bench/semantic-segmentation/testenv/accuracy.py"
     - name: "samples_transfer_ratio"
     - name: "task_avg_acc"
     - name: "BWT"
