@@ -158,8 +158,8 @@ Directory: `examples/government_agent`
 
 ```
 government_agent
-└── government_agent_learning_bench
-    └── government_agent_bench
+└── singletask_learning_bench
+    └── government_agent
         ├── benchmarkingjob.yaml
         ├── testalgorithms
         │   └── gen
