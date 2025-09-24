@@ -159,14 +159,13 @@ Directory: `examples/government_agent`
 ```
 government_agent
 └── singletask_learning_bench
-    └── government_agent
-        ├── benchmarkingjob.yaml
-        ├── testalgorithms
-        │   └── gen
-        │       ├── basemodel.py
-        │       ├── gen_algorithm.yaml
-        |       ├── gov_metrics.py
-        └── testenv
+    ├── benchmarkingjob.yaml
+    └── testalgorithms
+    │   └── gen
+    │       ├── basemodel.py
+    │       ├── gen_algorithm.yaml
+    |       ├── gov_metrics.py
+    └── testenv
             ├── acc.py
             └── testenv.yaml 
 ```
