@@ -71,12 +71,18 @@ class JointInference(ParadigmBase):
         os.makedirs(inference_output_dir, exist_ok=True)
 
         LOGGER.info("Loading dataset")
-
+         
+        # self.inference_dataset = self.dataset.load_data(
+        #     self.dataset.test_data_info,
+        #     "inference"
+        # )
+        #changed on 20250922
+        source = self.dataset.test_url if hasattr(self.dataset, 'test_url')  else self.dataset.test_data_info
         self.inference_dataset = self.dataset.load_data(
-            self.dataset.test_data_info,
+            source,
             "inference"
         )
-
+        
         dataset_processor = self.module_instances.get("dataset_processor", None)
         if callable(dataset_processor):
             self.inference_dataset = dataset_processor(self.inference_dataset)
