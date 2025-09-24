@@ -1,0 +1,63 @@
+# New Government Agent Test Environment Configuration
+# 新版政府代理测试环境配置
+
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_data: "./examples/new_government_agent/resources/datasets/train/data.jsonl"
+    # the url address of test dataset index; string type;
+    test_data: "./examples/new_government_agent/resources/datasets/test/data.jsonl"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "score"
+      # the url address of python file
+      url: "./examples/new_government_agent/singletask_learning_bench/testenv/acc.py"
+
+  # 测试环境特定配置
+  environment:
+    # 海报生成配置
+    poster_generation:
+      default_width: 48
+      default_height: 36
+      output_formats: ["pptx", "png", "jpg"]
+      quality_level: "high"
+      
+    # 并行处理配置
+    parallel_processing:
+      max_workers: 4
+      enable_async: true
+      batch_size: 1
+      
+    # 质量评估配置
+    quality_assessment:
+      enable_visual_inspection: true
+      enable_content_validation: true
+      enable_government_compliance_check: true
+      confidence_threshold: 0.8
+      enable_iterative_optimization: true
+      max_optimization_iterations: 3
+      quality_threshold: 0.8
+      
+    # 输出配置
+    output:
+      base_directory: "/home/linux/Desktop/government_agent/ianvs/workspace/new_government_agent_output"
+      create_subdirectories: true
+      save_intermediate_results: true
+      generate_reports: true
+      
+    # 日志配置
+    logging:
+      level: "INFO"
+      enable_file_logging: true
+      enable_console_logging: true
+      log_format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+      
+    # 错误处理配置
+    error_handling:
+      max_retries: 3
+      retry_delay: 1.0
+      continue_on_error: true
+      save_error_logs: true

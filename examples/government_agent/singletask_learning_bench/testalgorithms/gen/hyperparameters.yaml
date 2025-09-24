@@ -1,0 +1,31 @@
+# 政府代理系统超参数配置
+# Government Agent Hyperparameters Configuration
+
+# LLM和VLM配置
+llm_base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+vlm_base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+api_key: "sk-af51eb81b0a1410ca886a8fc1e0baaf8"
+llm_model: "qwen-max"
+vlm_model: "qwen-vl-max"
+
+# 重试和超时配置
+max_retries: 3
+timeout: 60
+
+# 海报尺寸配置
+poster_width_inches: 48
+poster_height_inches: 36
+
+# 并行处理配置
+max_workers: 4
+model_name_t: "qwen-max"
+model_name_v: "qwen-vl-max"
+
+# 功能开关
+enable_parallel_processing: true
+enable_quality_optimization: true
+enable_government_style_enhancement: true
+
+# 优化配置
+max_optimization_iterations: 1
+quality_threshold: 8.0

@@ -1,0 +1,111 @@
+# New Government Agent Algorithm Configuration
+# 新版政府代理算法配置
+
+algorithm:
+  # paradigm name; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  paradigm_type: "singletasklearning"
+
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # kind of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel"
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "NewGovernmentPosterAgent" for this benchmarking;
+      name: "NewGovernmentPosterAgent"
+      # the url address of python module; string type;
+      url: "./examples/new_government_agent/singletask_learning_bench/testalgorithms/gen/basemodel.py"
+      # 超参数配置文件路径
+      hyperparameters_file: "./examples/new_government_agent/singletask_learning_bench/testalgorithms/gen/hyperparameters.yaml"
+
+# 评估指标配置
+metrics:
+  - name: "score"
+    weight: 1.0
+    description: "VLM综合评分（10分制）"
+
+# 政府文档类型配置
+rule_types:
+  guiding_policy:
+    keywords: ["意见", "规划", "决议", "方案", "纲要", "战略", "政策", "指导"]
+    template: "policy_direction"
+    evaluation_criteria: ["政策要点覆盖", "语言规范性", "视觉一致性", "权威性", "层次清晰度"]
+    
+  implementation:
+    keywords: ["办法", "规定", "细则", "措施", "实施方案", "操作规程", "执行", "实施"]
+    template: "bullet_points"
+    evaluation_criteria: ["内容完整性", "逻辑清晰度", "可操作性", "实用性", "步骤明确性"]
+    
+  service_guide:
+    keywords: ["指南", "步骤", "流程", "服务", "办事指南", "操作手册", "服务", "便民"]
+    template: "procedure_diagram"
+    evaluation_criteria: ["步骤清晰度", "用户友好性", "信息准确性", "易理解性", "便民性"]
+    
+  notices:
+    keywords: ["公告", "通知", "声明", "发布", "通告", "公示", "告知", "通知"]
+    template: "public_notice"
+    evaluation_criteria: ["信息传达", "格式规范", "时效性", "重要性", "可读性"]
+    
+  faq:
+    keywords: ["常见问题", "咨询", "问答", "解答", "问题", "疑问", "FAQ", "帮助"]
+    template: "question_cards"
+    evaluation_criteria: ["问题相关性", "答案准确性", "易理解性", "完整性", "实用性"]
+    
+  legal_documents:
+    keywords: ["法律", "条例", "规章", "条款", "法规", "法令", "条文", "法律"]
+    template: "legal_structure"
+    evaluation_criteria: ["法律准确性", "结构清晰度", "可读性", "权威性", "严谨性"]
+
+# 政府风格主题配置
+government_theme:
+  primary_color: [47, 85, 151]      # 政府蓝
+  secondary_color: [255, 255, 255]  # 白色
+  accent_color: [220, 220, 220]     # 浅灰
+  text_color: [0, 0, 0]             # 黑色
+  highlight_color: [255, 193, 7]    # 金色（用于重点强调）
+  title_font_size: 48
+  heading_font_size: 32
+  body_font_size: 24
+  caption_font_size: 18
+  font_family: "Microsoft YaHei"
+  line_spacing: 1.2
+  border_thickness: 3
+  corner_radius: 8
+
+# 海报尺寸配置
+poster_dimensions:
+  standard:
+    width: 48
+    height: 36
+  large:
+    width: 60
+    height: 40
+  small:
+    width: 36
+    height: 24
+  a4:
+    width: 33.1
+    height: 23.4
+
+
+# 输出配置
+output:
+  format: ["pptx", "png", "jpg", "pdf"]
+  quality: "high"
+  compression: false
+  metadata: true
+  watermark: true
+  logo_placement: "top_right"
+
+# 处理配置
+processing:
+  enable_ocr: true
+  enable_table_extraction: true
+  enable_image_enhancement: true
+  enable_text_optimization: true
+  max_iterations: 3
+  quality_threshold: 8.0
