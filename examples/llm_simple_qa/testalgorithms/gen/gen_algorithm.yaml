@@ -15,4 +15,4 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "gen"
       # the url address of python module; string type;
-      url: "./examples/llm/singletask_learning_bench/simple_qa/testalgorithms/gen/basemodel.py"
+      url: "./examples/llm_simple_qa/testalgorithms/gen/basemodel.py"
