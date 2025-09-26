@@ -154,10 +154,10 @@ Government Document + Generated Poster
 
 ## Project Structure
 
-Directory: `examples/government_agent`
+Directory: `examples/GovDoc2Poster`
 
 ```
-government_agent
+GovDoc2Poster
 └── singletask_learning_bench
     ├── benchmarkingjob.yaml
     └── testalgorithms
