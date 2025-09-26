@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from logger import logger
 
 upsample = lambda x, size: F.interpolate(x, size, mode='bilinear', align_corners=False)
 batchnorm_momentum = 0.01 / 2
@@ -30,7 +31,7 @@ class _BNReluConv(nn.Sequential):
 class _Upsample(nn.Module):
     def __init__(self, num_maps_in, skip_maps_in, num_maps_out, use_bn=True, k=3):
         super(_Upsample, self).__init__()
-        print(f'Upsample layer: in = {num_maps_in}, skip = {skip_maps_in}, out = {num_maps_out}')
+        logger.info(f'Upsample layer: in = {num_maps_in}, skip = {skip_maps_in}, out = {num_maps_out}')
         self.bottleneck = _BNReluConv(skip_maps_in, num_maps_in, k=1, batch_norm=use_bn)
         self.blend_conv = _BNReluConv(num_maps_in, num_maps_out, k=k, batch_norm=use_bn)
 

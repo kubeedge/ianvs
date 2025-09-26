@@ -1,3 +1,4 @@
+from logger import logger
 class Path(object):
     @staticmethod
     def db_root_dir(dataset):
@@ -16,5 +17,5 @@ class Path(object):
         elif dataset == 'mapillary':
             return '/home/robo/m0063/project/RFNet-master/Data/mapillary/'
         else:
-            print('Dataset {} not available.'.format(dataset))
+            logger.info('Dataset {} not available.'.format(dataset))
             raise NotImplementedError
