@@ -1,0 +1,13 @@
+vllm
+transformers
+openai
+accelerate
+datamodel_code_generator
+kaggle
+groq
+spacy
+sentence-transformers
+scikit-learn
+matplotlib
+seaborn
+

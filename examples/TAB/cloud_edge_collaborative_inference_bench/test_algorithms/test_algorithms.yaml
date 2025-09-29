@@ -1,0 +1,20 @@
+algorithms:
+  - paradigm: "hard_example_mining"
+    modules:
+      - module: "edgemodel"
+        name: "EdgeModel"
+        parameters:
+          backend: "huggingface"
+          model: "gpt2"
+      - module: "cloudmodel"
+        name: "CloudModel"
+        parameters:
+          model: "gpt-4o-mini"
+      - module: "hard_example_mining"
+        name: "OracleRouter"
+        parameters: {}
+      - module: "privacy_desensitization"
+        name: "PrivacyPipeline"
+        parameters:
+          methods: ["regex", "ner", "dp"]
+

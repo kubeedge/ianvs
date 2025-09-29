@@ -1,0 +1,14 @@
+testenv:
+  name: "tab-privacy-env"
+  dataset:
+    name: "TAB"
+    path: "./datasets/TAB"  # placeholder
+  metrics:
+    privacy:
+      - "PDR"
+      - "SELS"
+    performance:
+      - "Latency"
+      - "Throughput"
+      - "TTFT"
+
