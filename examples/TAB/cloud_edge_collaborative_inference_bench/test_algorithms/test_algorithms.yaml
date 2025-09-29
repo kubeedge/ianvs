@@ -1,0 +1,87 @@
+algorithm:
+  paradigm_type: "jointinference"
+  model_path: "./examples/TAB/cloud_edge_collaborative_inference_bench/local_model"
+
+  modules:
+    - type: "dataset_processor"
+      name: "ECHRDataProcessor"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/data.py"
+
+    - type: "edgemodel"
+      name: "EdgeModel"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_algorithms/edge_model/edge_model.py"
+      hyperparameters:
+        - model:
+            values:
+              - "./examples/TAB/cloud_edge_collaborative_inference_bench/local_model"
+        - backend:
+            values:
+              - "huggingface"
+        - temperature:
+            values:
+              - 0.0000001
+        - top_p:
+            values:
+              - 0.9
+        - max_tokens:
+            values:
+              - 1024
+        - repetition_penalty:
+            values:
+              - 1
+        - use_cache:
+            values:
+              - true
+        - confidence_threshold:
+            values: [0.8]
+
+    - type: "cloudmodel"
+      name: "CloudModelAPI"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_algorithms/cloud_model/cloud_model.py"
+      hyperparameters:
+        - api_provider:
+            values:
+              - "openai"
+        - model:
+            values:
+              - "deepseek-chat"
+        - api_key_env:
+            values:
+              - "sk-zk267c3f794bd6c34bbf3b8613ce16aa54667dfb4ea1447a"
+        - api_base_url:
+            values:
+              - "https://api.zhizengzeng.com/v1"
+        - temperature:
+            values:
+              - 0.9
+        - top_p:
+            values:
+              - 0.9
+        - max_tokens:
+            values:
+              - 1024
+        - repetition_penalty:
+            values:
+              - 1.05
+        - use_cache:
+            values:
+              - true
+
+    - type: "hard_example_mining"
+      name: "OracleRouter"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_algorithms/hard_sample_mining/hard_sample_mining.py"
+      dependencies:
+        edgemodel: "EdgeModel"
+        cloudmodel: "CloudModelAPI"
+
+  privacy_protection:
+    methods:
+      - name: "regex_pseudonymization"
+        url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_algorithms/privacy_desensitization/regex_pseudonymization.py"
+        complexity: 1
+      - name: "ner_masking"
+        url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_algorithms/privacy_desensitization/ner_masking.py"
+        complexity: 2
+      - name: "differential_privacy"
+        url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_algorithms/privacy_desensitization/differential_privacy.py"
+        complexity: 3
