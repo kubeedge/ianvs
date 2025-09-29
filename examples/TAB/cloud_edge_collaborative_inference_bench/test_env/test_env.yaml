@@ -1,0 +1,46 @@
+testenv:
+  dataset:
+    train_data: "./data.jsonl"
+    test_data: "./data.jsonl"
+    test_data_info: "./metadata.json"
+    data_processor:
+      name: "ECHRDataProcessor"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/data.py"  
+  
+  metrics:
+    - name: "PIIDetectionRate"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_env/privacy_metrics.py"
+     
+    
+    - name: "SensitiveEntityLeakageScore"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_env/privacy_metrics.py"
+ 
+    
+    - name: "InferenceAttackResistance"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_env/privacy_metrics.py"
+     
+    
+    - name: "ContextualPrivacyPreservation"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_env/privacy_metrics.py"
+    
+    - name: "AccuracyPreservationRate"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_env/performance_metrics.py"
+
+    - name: "LatencyOverhead"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_env/performance_metrics.py"
+      
+    
+    - name: "LatencyOverhead"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_env/performance_metrics.py"
+      
+    
+    - name: "AccuracyPreservationRate"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_env/performance_metrics.py"
+     
+    
+    
+      
+  
+  visualization:
+    url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_env/visualization_tools.py"
+    

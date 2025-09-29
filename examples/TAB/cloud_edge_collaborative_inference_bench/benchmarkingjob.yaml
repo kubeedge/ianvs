@@ -1,0 +1,51 @@
+benchmarkingjob:
+  name: benchmarkingjob
+  namespace: default
+  description: ianvs-based cloud-edge collaborative inference benchmark with Sedna
+  testenv: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_env/test_env.yaml" 
+
+ 
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "privacy-aware-query-routing"
+        url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_algorithms/test_algorithms.yaml"
+
+  task:
+    type: "sedna_collaborative_inference"
+    algorithm:
+      name: "privacy-aware-query-routing"
+      url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_algorithms/test_algorithms.yaml"
+
+
+
+  evaluation:
+    metrics:
+      - name: "privacy_metrics"
+        url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_env/privacy_metrics.py"
+      - name: "performance_metrics"
+        url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_env/performance_metrics.py"
+  
+  rank:
+    sort_by:
+      - { privacy_score: "descend" }
+      - { apr: "descend" }
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+    selected_dataitem:
+      paradigms: ["all"]
+      modules: ["all"]
+      hyperparameters: ["all"]
+      metrics: ["all"]
+    save_mode: "selected_and_all"
+  
+  
+  runtime:
+    framework: "sedna"
+    max_parallel_tasks: 10
+    timeout: 300
+    log_level: "INFO"
+    sedna:
+      worker_nodes: ["edge-node-1", "edge-node-2"]
+      coordinator_node: "cloud-node"
