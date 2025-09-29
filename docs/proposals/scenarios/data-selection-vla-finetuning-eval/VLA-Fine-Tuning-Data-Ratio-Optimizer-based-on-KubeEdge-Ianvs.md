@@ -36,9 +36,9 @@ This project, built on the KubeEdge-Ianvs open platform, targets single-task lea
 ### Design Details
 1. Establishing the VLA Fine-tuning Framework and Algorithmic Baseline 
    
-   **Obejctive：** Develop a functional foundational framework and algorithmic baseline that supports dynamic scheduling of multi-source heterogeneous data.
+   **Objective:** Develop a functional foundational framework and algorithmic baseline that supports dynamic scheduling of multi-source heterogeneous data.
 
-   **Task：** 
+   **Task:** 
    - VLA Model Integration: Integrate a mainstream open-source VLA model into the Ianvs single-task learning framework, establishing the pipeline for training, fine-tuning, and inference. The current baseline model is OpenVLA-7B.
    - Multi-Source Data Modeling and Wrapping: Design a unified data interface to partition datasets by task type (e.g., grasping, placing, drawer opening) and scenario conditions (e.g., lighting variations, background noise). 
    - Dataset Support: Implement a unified training pipeline based on the RLDS format to support multi-source heterogeneous datasets, using LIBERO as the primary training dataset.
