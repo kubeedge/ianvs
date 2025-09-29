@@ -1,0 +1,26 @@
+benchmarkingjob:
+  name: "tab-privacy-bench"
+  workspace: "./workspace-tab"
+  hard_example_mining_mode: "mining-then-inference"
+  testenv: "./TAB/cloud_edge_collaborative_inference_bench/test_env/test_env.yaml"
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "cloud-edge-collab-privacy"
+        url: "./TAB/cloud_edge_collaborative_inference_bench/test_algorithms/test_algorithms.yaml"
+  rank:
+    sort_by: [ { "Accuracy": "descend" } ]
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+    selected_dataitem:
+      paradigms: [ "all" ]
+      modules: [ "hard_example_mining" ]
+      hyperparameters: [ "edgemodel-model", "edgemodel-backend", "cloudmodel-model" ]
+      metrics: [
+        "Accuracy", "Edge Ratio", "Time to First Token", "Throughput",
+        "Internal Token Latency", "Cloud Prompt Tokens", "Cloud Completion Tokens",
+        "Edge Prompt Tokens", "Edge Completion Tokens"
+      ]
+    save_mode: "selected_and_all"
+
