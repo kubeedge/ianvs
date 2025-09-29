@@ -152,7 +152,7 @@ cloud_VLA_finetune
 ```
 rlds_batch = {
   "dataset_name": "libero_10_no_noops",  # str
-  "action": np.ndarray of shape (1, A),  # float32，A≈7
+  "action": np.ndarray of shape (1, A),  # float32,A≈7
    # 例：array([[ 0.03, -0.02, 0.00, 0.01, ... ]], dtype=float32)
   "observation": {
     "image_primary": np.ndarray of shape (1, H, W, 3),
