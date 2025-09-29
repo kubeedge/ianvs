@@ -1,0 +1,18 @@
+algorithm:
+  paradigm_type: "singletasklearning"
+
+  modules:
+    - type: "basemodel"
+      name: "YOLOv8"
+      url: "./examples/Palletizing/singletask_learning_bench/testalgorithms/basemodel.py"
+      
+      hyperparameters:
+        - learning_rate:
+           values: 
+            - 0.01
+        - batch_size:
+           values: 
+            - 32
+        - epochs:
+           values: 
+            - 20
