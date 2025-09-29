@@ -3,9 +3,9 @@ testenv:
   dataset:
     name: 'cifar100'
     # the url address of train dataset index; string type;
-    train_url: "/home/wyd/ianvs/project/data/cifar100/cifar100_train.txt"
+    train_index: "{{TRAIN_INDEX_FILE}}"
     # the url address of test dataset index; string type;
-    test_url: "/home/wyd/ianvs/project/data/cifar100/cifar100_test.txt"
+    test_index: "{{TEST_INDEX_FILE}}"
 
 
   # network eval configuration of incremental learning;
@@ -15,7 +15,7 @@ testenv:
       # metric name; string type;
       name: "accuracy"
       # the url address of python file
-      url: "/home/wyd/ianvs/project/ianvs/examples/cifar100/federated_class_incremental_learning/fedavg/testenv/acc.py"
+      url: "./examples/cifar100/federated_class_incremental_learning/fedavg/testenv/acc.py"
 
     # condition of triggering inference network to update
     # threshold of the condition; types are float/int
@@ -29,7 +29,7 @@ testenv:
       # metric name; string type;
     - name: "accuracy"
       # the url address of python file
-      url: "/home/wyd/ianvs/project/ianvs/examples/cifar100/federated_class_incremental_learning/fedavg/testenv/acc.py"
+      url: "./examples/cifar100/federated_class_incremental_learning/fedavg/testenv/acc.py"
 
   # incremental rounds setting of incremental learning; int type; default value is 2;
   incremental_rounds: 2
