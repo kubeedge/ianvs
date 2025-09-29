@@ -7,7 +7,7 @@
 - The key challenge lies in designing dynamic data allocation strategies that can adaptively weigh the contributions of multi-source heterogeneous data (e.g., simulated/real-world data, multi-task data) during training while establishing interpretable correlations with downstream VLA task performance. This is crucial for enhancing model generalization and deployment efficiency.
 
 - **As a cutting-edge platform for edge AI benchmarking in VLA-based robotics, KubeEdge-Ianvs still faces the following key challenges:**
-  1. **Lack of VLA training algorithm for VLA models** -  A significant gap exists within IanVS for a unified training framework tailored to VLAs. This absence forces a fragmented training approach, complicating model development and reproducibility due to reliance on disparate external codebases.
+  1. **Lack of VLA training algorithm for VLA models** -  A significant gap exists within Ianvs for a unified training framework tailored to VLAs. This absence forces a fragmented training approach, complicating model development and reproducibility due to reliance on disparate external codebases.
   2. **Lack of adaptive data scheduling for VLA models** -  Current implementations rely on fixed multi-source data ratios, lacking adaptive scheduling for diverse robotic tasks and platforms.
   3. **Absence of standardized VLA evaluation protocols** - While supporting basic metrics, the framework lacks dedicated test suites for critical VLA performance dimensions like cross-platform generalization and failure-case robustness.
   
