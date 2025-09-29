@@ -139,8 +139,8 @@ cloud_VLA_finetune
             ├── vla_component ── ……
     │       ├── basemodel.py
     │       ├── generation.py
-    |       ├── finetuning.py
-    |       ├── vla_algorithm.yaml
+    │       ├── finetuning.py
+    │       ├── vla_algorithm.yaml
     └── testenv
             ├── test_data.json
             ├── test_data.txt
