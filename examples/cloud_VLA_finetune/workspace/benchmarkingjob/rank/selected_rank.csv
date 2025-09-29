@@ -1,0 +1,3 @@
+rank,algorithm,accuracy,task_avg_acc,BWT,FWT,paradigm,basemodel,time,url
+1,vla_dataselectg,,,,,singletasklearning,OpenVLA_Finetune,2025-09-26 17:04:23,/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/workspace/benchmarkingjob/vla_dataselectg/d9e91978-9afa-11f0-b861-b26da9992f88
+2,vla_dataselect,,,,,singletasklearning,OpenVLA_Finetune,2025-09-27 02:27:41,/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/workspace/benchmarkingjob/vla_dataselect/8b1ec1cc-9b49-11f0-adf8-b26da9992f88

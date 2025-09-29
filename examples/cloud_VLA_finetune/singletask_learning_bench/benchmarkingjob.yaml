@@ -1,0 +1,48 @@
+benchmarkingjob:
+  # job name of bechmarking; string type;
+  name: "benchmarkingjob"
+  # the url address of job workspace that will reserve the output of tests; string type;
+  workspace: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/workspace"
+
+  # the url address of test environment configuration file; string type;
+  # the file format supports yaml/yml;
+  testenv: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/testenv/testenv.yaml"
+
+  # the configuration of test object
+  test_object:
+    # test type; string type;
+    # currently the option of value is "algorithms",the others will be added in succession.
+    type: "algorithms"
+    # test algorithm configuration files; list type;
+    algorithms:
+      # algorithm name; string type;
+      - name: "vla_dataselect"
+        # the url address of test algorithm configuration file; string type;
+        # the file format supports yaml/yml
+        url: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/testalgorithms/vla_dataselect/vla_algorithm.yaml"
+  rank:
+    sort_by: [ { "rouge1_metric": "descend" } ]
+    
+    selected_dataitem:
+      # currently the options of value are as follows:
+      #   1> "all": select all paradigms in the leaderboard;
+      #   2> paradigms in the leaderboard, e.g., "singletasklearning"
+      paradigms: [ "all" ]
+      # currently the options of value are as follows:
+      #   1> "all": select all modules in the leaderboard;
+      #   2> modules in the leaderboard, e.g., "basemodel"
+      modules: [ "all" ]
+      # currently the options of value are as follows:
+      #   1> "all": select all hyperparameters in the leaderboard;
+      #   2> hyperparameters in the leaderboard, e.g., "momentum"
+      hyperparameters: [ "all" ]
+      # currently the options of value are as follows:
+      #   1> "all": select all metrics in the leaderboard;
+      #   2> metrics in the leaderboard, e.g., "F1_SCORE"
+      metrics: [ "accuracy", "task_avg_acc", "BWT", "FWT"]
+
+    # model of save selected and all dataitems in workspace `./rank` ; string type;
+    # currently the options of value are as follows:
+    #  1> "selected_and_all": save selected and all dataitems;
+    #  2> "selected_only": save selected dataitems;
+    save_mode: "selected_and_all"
