@@ -59,7 +59,7 @@ This project, built on the KubeEdge-Ianvs open platform, targets single-task lea
     | Foundation | KubeEdge-Ianvs orchestration (edge-cloud training/inference) |
     ```
 
-   **metric：** 
+   **Metric:** 
 
       Task Success Rate (SR):
       $$SR = \frac{\#\text{Success Episodes}}{\#\text{Total Episodes}}$$
