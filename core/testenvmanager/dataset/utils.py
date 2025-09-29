@@ -14,7 +14,11 @@
 
 """ Dataset utils to read data from file and partition data """
 # pylint: disable=W1203
+import json
+import os
+from pathlib import Path
 import random
+import tempfile
 import numpy as np
 from sedna.datasources import BaseDataSource
 from core.common.log import LOGGER
@@ -45,7 +49,6 @@ def read_data_from_file_to_npy(files: BaseDataSource):
     x_train = np.concatenate(x_train, axis=0)
     y_train = np.concatenate(y_train, axis=0)
     return x_train, y_train
-
 
 def partition_data(datasets, client_number, data_partition="iid", non_iid_ratio=0.6):
     """
@@ -90,3 +93,62 @@ def partition_data(datasets, client_number, data_partition="iid", non_iid_ratio=
     else:
         raise ValueError("paritiion_methods must be 'iid' or 'non-iid'")
     return data
+
+def partition_llm_data(data_source, client_number):
+    """
+    Partition data for llm federated learning paradigm
+    Parameters
+    ----------
+    data_source: BaseDataSource
+        The data source containing the data and labels (x_data, y_data).
+    client_number: int
+        The number of clients.
+    Returns
+    -------
+    list
+        A list of data for each client in numpy array format.
+    """
+    x_data, y_data = data_source.x, data_source.y
+    x_arr, y_arr = np.asarray(x_data), np.asarray(y_data)
+    assert len(x_arr) == len(y_arr), "x and y data length mismatch"
+    shuffled_idx = np.random.permutation(len(x_arr))
+    splits = np.array_split(shuffled_idx, client_number)
+    partitions = [
+        (x_arr[idx].tolist(), y_arr[idx].tolist()) for idx in splits
+    ]
+    return partitions
+
+def rename_keys_jsonl(path: str, encoding: str = "utf-8"):
+    """
+    Rename the first two keys of each line in a JSONL file to "question" and "answer".
+    If the keys are already "question" and "answer", no changes are made.
+    """
+    src = Path(path)
+    with src.open("r", encoding=encoding) as file_handle:
+        for first_line in file_handle:
+            if first_line.strip():
+                break
+        else:
+            raise RuntimeError("the JSONL file is empty or contains only empty lines")
+    obj = json.loads(first_line)
+    keys = list(obj.keys())
+    if len(keys) < 2:
+        raise ValueError("no enough keys in the first line of JSONL file")
+    key_one, key_two = keys[0], keys[1]
+    if key_one == "question" and key_two == "answer":
+        LOGGER.info("keys are already in the correct format, no need to rename")
+        return
+    file_descriptor, tmp_path = tempfile.mkstemp(suffix=".jsonl", dir=src.parent)
+    os.close(file_descriptor)
+    with src.open("r", encoding=encoding) as fin, \
+         open(tmp_path, "w", encoding=encoding) as fout:
+        for line in fin:
+            if not line.strip():
+                continue
+            obj = json.loads(line)
+            if key_one in obj:
+                obj["question"] = obj.pop(key_one)
+            if key_two in obj:
+                obj["answer"] = obj.pop(key_two)
+            fout.write(json.dumps(obj, ensure_ascii=False) + "\n")
+    os.replace(tmp_path, src)
