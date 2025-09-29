@@ -1,0 +1,14 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_index: "./RoboDK_Palletizing_Dataset/train_index.txt"
+    # the url address of val dataset index; string type;
+    test_index: "./RoboDK_Palletizing_Dataset/test_index.txt"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "map50"
+      # the url address of python file
+      url: "./examples/Palletizing/singletask_learning_bench/testenv/map50.py"

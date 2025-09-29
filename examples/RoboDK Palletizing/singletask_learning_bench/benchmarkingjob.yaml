@@ -1,0 +1,27 @@
+benchmarkingjob:
+  name: "palletizing_bench"
+  workspace: "./workspace/palletizing_bench"
+
+  testenv: "./examples/Palletizing/singletask_learning_bench/testenv/testenv.yaml"
+
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "YOLOv8"
+        url: "./examples/Palletizing/singletask_learning_bench/testalgorithms/algorithm.yaml"
+
+  rank:
+    sort_by:
+      - { "map50": "descend" }
+
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+
+    selected_dataitem:
+      paradigms: [ "all" ]
+      modules: [ "all" ]
+      hyperparameters: [ "all" ]
+      metrics: [ "map50" ]
+
+    save_mode: "selected_and_all"
