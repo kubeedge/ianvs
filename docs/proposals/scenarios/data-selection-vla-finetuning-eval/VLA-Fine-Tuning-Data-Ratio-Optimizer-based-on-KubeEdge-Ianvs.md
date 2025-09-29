@@ -44,7 +44,7 @@ This project, built on the KubeEdge-Ianvs open platform, targets single-task lea
    - Dataset Support: Implement a unified training pipeline based on the RLDS format to support multi-source heterogeneous datasets, using LIBERO as the primary training dataset.
 2. Development of a Standardized Testing Suite
   
-   **Obejctive:** 
+   **Objective:** 
       
     Within the KubeEdge-Ianvs single-task learning framework, we build a reproducible standardized testing suite based on **OpenVLA + LIBERO + MuJoCo**. The suite not only provides dataset partitioning, a unified success rate metric, and one-click environment configuration scripts for evaluating VLA fine-tuning, but also leverages a **physics-based simulation environment (MuJoCo)** to realistically reproduce robot interactions under diverse tasks and scenarios, forming a comparable and extensible baseline.
 
