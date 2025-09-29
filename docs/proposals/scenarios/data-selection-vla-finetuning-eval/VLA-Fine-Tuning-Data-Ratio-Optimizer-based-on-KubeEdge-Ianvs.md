@@ -172,7 +172,7 @@ sample = {
     "dataset_name": str  # dataset name
 }
 ```
-## Road Map
+## Roadmap
 
 The roadmap would be as follows
 
