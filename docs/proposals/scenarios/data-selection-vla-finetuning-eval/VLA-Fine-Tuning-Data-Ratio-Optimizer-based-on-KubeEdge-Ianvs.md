@@ -13,7 +13,7 @@
   
 - **This proposal enhances Ianvs with:**
   - Dynamic data ratio optimization
-  - VLA Finetuning algorithm 
+  - VLA fine-tuning algorithm 
   - Task-aware benchmarking kits
   - Automated analysis tools
 
