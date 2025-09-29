@@ -34,7 +34,7 @@ This project, built on the KubeEdge-Ianvs open platform, targets single-task lea
 ![Flow Diagram](./images/workflow.png)
 
 ### Design Details
-1. Establishing the VLA Finetuning Framework and Algorithmic Baseline 
+1. Establishing the VLA Fine-tuning Framework and Algorithmic Baseline 
    
    **Obejctive：** Develop a functional foundational framework and algorithmic baseline that supports dynamic scheduling of multi-source heterogeneous data.
 
