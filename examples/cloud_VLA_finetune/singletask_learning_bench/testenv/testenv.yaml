@@ -1,0 +1,14 @@
+testenv:
+  # dataset configuration
+  dataset:
+      # train_url: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/testenv/test_data.json"
+      # test_url:  "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/testenv/test_data.json"
+      # the url address of training set index; string type;
+      train_index: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/testenv/test_data.txt"
+      test_index: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/testenv/test_data.txt"
+      # test_data_info: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/testenv/metadata.json"
+  metrics:
+      # metric name; string type;
+    - name: "map"
+      # the url address of python file
+      url: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/testenv/test.py"

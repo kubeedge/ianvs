@@ -1,0 +1,32 @@
+algorithm:
+  # paradigm name; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  paradigm_type: "singletasklearning"
+  # the url address of initial model; string type; optional;
+  initial_model_url: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/model/finetune_model/models--openvla--openvla-7b+libero_10_no_noops+b8+lr-0.0005+lora-r32+dropout-0.0--image_aug.zip"
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # kind of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel"
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "OpenVLA_Finetune"
+      # the url address of python module; string type;
+      url: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/testalgorithms/vla_dataselect/basemodel.py"
+
+      # # hyperparameters configuration for the python module; list type;
+      # hyperparameters:
+      #   # name of the hyperparameter; string type;
+      #   - momentum:
+      #       # values of the hyperparameter; list type;
+      #       # types of the value are string/int/float/boolean/list/dictionary
+      #       values:
+      #         - 0.95
+      #         - 0.5
+      #   - learning_rate:
+      #       values:
+      #         - 0.1

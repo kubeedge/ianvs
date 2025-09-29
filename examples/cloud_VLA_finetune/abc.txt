@@ -1,0 +1,198 @@
+1)数据的样式：
+dataset_name = rlds_batch["dataset_name"]              # str
+action = rlds_batch["action"][0]                 # (A,) 来自 (1, A)
+img_np = rlds_batch["observation"]["image_primary"][0]  # (H, W, 3) 来自 (1, H, W, 3)
+lang = rlds_batch["task"]["language_instruction"].decode().lower()  # bytes -> str
+
+RLDS 原始样本（rlds_batch）
+来源：make_interleaved_dataset(**rlds_config).as_numpy_iterator()
+你现在的配置里：window_size=1，load_camera_views=("primary",), load_language=True, 关闭 depth/proprio。
+典型结构与类型/形状（以单窗 T=1 为例）：
+rlds_batch = {
+  "dataset_name": "libero_10_no_noops",             # str
+  "action": np.ndarray of shape (1, A),              # float32，A≈7
+  # 例：array([[ 0.03, -0.02, 0.00, 0.01, ... ]], dtype=float32)
+  "observation": {
+    "image_primary": np.ndarray of shape (1, H, W, 3),   # uint8，已按 rlds_config.resize_size 处理
+    # 例：array([[[[ 12,  8,  4], ... ]]], dtype=uint8)
+  },
+  "task": {
+    "language_instruction": b"put the red block on the green bowl",  # bytes
+  },
+}
+
+你的 RLDSBatchTransform.__call__ 里之所以有 [...] [0]，是因为 T=1，它在“去掉时间维”：
+action = rlds_batch["action"][0] → (A,)；
+img = rlds_batch["observation"]["image_primary"][0] → (H, W, 3)；
+lang = rlds_batch["task"]["language_instruction"].decode().lower()。
+如果以后把 window_size>1，上面 (1, …) 将变成 (T, …)。
+
+2) 训练样本（transform 之后，单条 sample）
+
+来源：RLDSBatchTransform.__call__(rlds_batch)
+它把上面的“原始样本”转成模型吃的输入：
+sample = {
+  "pixel_values": torch.FloatTensor of shape (3, H, W),  # float32，来自 HF processor 的图像预处理
+  "input_ids":   torch.LongTensor of shape (L,),         # tokenizer 分词后的 prompt
+  "labels":      torch.LongTensor of shape (L,),         # 绝大多数位置为 -100，只对“动作token(+可选stop)”监督
+  "dataset_name": str                                    # 透传，用于统计/过滤
+}
+labels[:-(len(action)+1)] = -100：只监督最后“动作 token (+1个 stop token)”这段。
+若 predict_stop_token=False，最后一个也会被置为 -100。
+pixel_values 的 H,W 来自你传给 RLDSDataset 的 resize_resolution（代码里取 vla.module.config.image_sizes）。
+
+3）Transform 后的训练样本
+经过 RLDSBatchTransform 处理后，每条数据变成 模型能直接用的输入：
+sample = {
+    "pixel_values": torch.FloatTensor,  # shape: (3, H, W)，图像已归一化/标准化
+    "input_ids": torch.LongTensor,      # shape: (L,)，tokenizer 生成的 prompt token 序列
+    "labels": torch.LongTensor,         # shape: (L,)，大部分是 -100，只有动作 token 保留监督
+    "dataset_name": str                 # 数据集名字
+}
+之所以“只有 input_ids”，是因为 语言指令 + 动作 token 全部拼接成一段文本 prompt，统一交给 LLM。
+这样模型在训练时，就像在做“对话补全”：输入是「人类提问+场景」，输出是「动作序列 token」。
+
+
+
+
+
+给你一版最简、可直接替换的实现：在 RLDSDataset.__iter__ 里做“动作近零”的样本级过滤。默认不启用；想开就传参打开。兼容 window_size=1 或 >1。
+
+把下面这段代码放进你的 datasets.py（只改动 RLDSDataset 的构造和 __iter__），其余保持不变即可。
+# 顶部确保有
+import numpy as np
+
+class RLDSDataset(IterableDataset):
+    def __init__(
+        self,
+        data_root_dir: Path,
+        data_mix: str,
+        batch_transform: RLDSBatchTransform,
+        resize_resolution: Tuple[int, int],
+        shuffle_buffer_size: int = 256_000,
+        train: bool = True,
+        image_aug: bool = False,
+        # ====== 新增的简洁过滤参数 ======
+        skip_zero_action: bool = False,    # 是否启用“近零动作”过滤
+        zero_thr: float = 1e-4,            # 动作强度阈值（L2 范数阈值）
+        use_pose6_only: bool = True,       # 只看前6维（位姿），忽略夹爪维
+        reject_nan_inf: bool = True,       # 动作中含 NaN/Inf 时直接丢弃
+    ) -> None:
+        """Lightweight wrapper around RLDS TFDS Pipeline for use with PyTorch/OpenVLA Data Loaders."""
+        self.data_root_dir, self.data_mix, self.batch_transform = data_root_dir, data_mix, batch_transform
+
+        # ====== 保存过滤配置 ======
+        self.skip_zero_action = skip_zero_action
+        self.zero_thr = float(zero_thr)
+        self.use_pose6_only = bool(use_pose6_only)
+        self.reject_nan_inf = bool(reject_nan_inf)
+
+        # Configure RLDS Dataset(s)
+        if self.data_mix in OXE_NAMED_MIXTURES:
+            mixture_spec = OXE_NAMED_MIXTURES[self.data_mix]
+        else:
+            mixture_spec = [(self.data_mix, 1.0)]
+
+        per_dataset_kwargs, weights = get_oxe_dataset_kwargs_and_weights(
+            self.data_root_dir,
+            mixture_spec,
+            load_camera_views=("primary",),
+            load_depth=False,
+            load_proprio=False,
+            load_language=True,
+            action_proprio_normalization_type=NormalizationType.BOUNDS_Q99,
+        )
+        rlds_config = dict(
+            traj_transform_kwargs=dict(
+                window_size=1,
+                future_action_window_size=0,
+                skip_unlabeled=True,
+                goal_relabeling_strategy="uniform",
+            ),
+            frame_transform_kwargs=dict(
+                resize_size=resize_resolution,
+                num_parallel_calls=16,
+            ),
+            dataset_kwargs_list=per_dataset_kwargs,
+            shuffle_buffer_size=shuffle_buffer_size,
+            sample_weights=weights,
+            balance_weights=True,
+            traj_transform_threads=len(mixture_spec),
+            traj_read_threads=len(mixture_spec),
+            train=train,
+        )
+
+        if image_aug:
+            rlds_config["frame_transform_kwargs"].update({"image_augment_kwargs" : dict(
+                random_resized_crop=dict(scale=[0.9, 0.9], ratio=[1.0, 1.0]),
+                random_brightness=[0.2],
+                random_contrast=[0.8, 1.2],
+                random_saturation=[0.8, 1.2],
+                random_hue=[0.05],
+                augment_order=[
+                    "random_resized_crop",
+                    "random_brightness",
+                    "random_contrast",
+                    "random_saturation",
+                    "random_hue",
+                ],
+            )})
+
+        # Initialize RLDS Dataset
+        self.dataset, self.dataset_length, self.dataset_statistics = self.make_dataset(rlds_config)
+
+    def make_dataset(self, rlds_config):
+        return make_interleaved_dataset(**rlds_config)
+
+    def __iter__(self) -> Dict[str, Any]:
+        """逐样本读取 →（可选）过滤近零动作 → 变换为模型输入 → 交给 DataLoader 组 batch。"""
+        for rlds_batch in self.dataset.as_numpy_iterator():
+            if self.skip_zero_action:
+                # 统一为 (T, A) 形状，兼容 window_size=1 或 >1
+                act = np.asarray(rlds_batch["action"], dtype=np.float32)  # (T, A) 或 (1, A) 或 (A,)
+                if act.ndim == 1:
+                    act = act.reshape(1, -1)  # (1, A)
+
+                # 数值合法性检查
+                if self.reject_nan_inf and not np.isfinite(act).all():
+                    continue
+
+                # 选择参与判断的维度：只看位姿6维（避免把“仅夹爪动作”误判为零动作）
+                A = act.shape[-1]
+                sel = act[:, :6] if (self.use_pose6_only and A >= 6) else act  # (T, D)
+
+                # 计算每帧的 L2 范数，取最大值；若最大也很小，则视为“近零动作” → 丢弃
+                if np.linalg.norm(sel, axis=1).max() < self.zero_thr:
+                    continue
+
+            # 通过过滤的样本做变换并产出
+            yield self.batch_transform(rlds_batch)
+
+    def __len__(self) -> int:
+        return self.dataset_length
+
+    def __getitem__(self, idx: int) -> None:
+        raise NotImplementedError("IterableDataset does not implement map-style __getitem__; see __iter__ instead!")
+
+使用：
+vla_dataset = RLDSDataset(
+    cfg.data_root_dir,
+    cfg.dataset_name,
+    batch_transform,
+    resize_resolution=tuple(vla.module.config.image_sizes),
+    shuffle_buffer_size=cfg.shuffle_buffer_size,
+    image_aug=cfg.image_aug,
+    # 打开过滤 & 配置阈值
+    skip_zero_action=True,
+    zero_thr=1e-4,        # 若过滤过多可调小（如 1e-5），过少可调大
+    use_pose6_only=True,  # 只看位姿6维，避免误杀“只有夹爪动作”的样本
+    reject_nan_inf=True,
+)
+
+
+要点：
+过滤发生在 组 batch 之前，DataLoader 只会从“已过滤的样本流”里凑 batch；不会有“空 batch”问题。
+
+zero_thr 要与动作的标度匹配：若动作已归一化到 [-1,1]，1e-4 ~ 1e-3 常用；若是米/弧度等物理量，请按分布调。
+
+想包含夹爪一起判断，把 use_pose6_only=False。
