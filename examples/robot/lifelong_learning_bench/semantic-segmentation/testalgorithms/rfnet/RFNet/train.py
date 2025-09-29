@@ -4,7 +4,7 @@ import numpy as np
 from tqdm import tqdm
 import torch
 import copy
-
+from logger import logger
 from mypath import Path
 from dataloaders import make_data_loader
 from models.rfnet import RFNet
@@ -76,7 +76,7 @@ class Trainer(object):
         if args.resume is not None:
             if not os.path.isfile(args.resume):
                 raise RuntimeError("=> no checkpoint found at '{}'" .format(args.resume))
-            print(f"Training: load model from {args.resume}")
+            logger.info(f"Training: load model from {args.resume}")
             checkpoint = torch.load(args.resume, map_location=torch.device("cpu"))
             args.start_epoch = checkpoint['epoch']
             # if args.cuda:
@@ -87,21 +87,21 @@ class Trainer(object):
             if not args.ft:
                 self.optimizer.load_state_dict(checkpoint['optimizer'])
             self.best_pred = checkpoint['best_pred']
-            print("=> loaded checkpoint '{}' (epoch {})".format(args.resume, checkpoint['epoch']))
+            logger.info("=> loaded checkpoint '{}' (epoch {})".format(args.resume, checkpoint['epoch']))
 
         # Clear start epoch if fine-tuning
         if args.ft:
             args.start_epoch = 0
 
     def get_weight(self):
-        print("get weight")
+        logger.info("get weight")
         current_model = copy.deepcopy(self.model)
         return current_model.parameters()
     
     def set_weight(self, weights):
         length = len(weights)
-        print("set weight", length)
-        print("model:", self.args.resume)
+        logger.info("set weight", length)
+        logger.info("model:", self.args.resume)
         tau = 0.2
         if length == 1:  
             for param, target_param in zip(weights[0], self.model.parameters()):
@@ -114,7 +114,7 @@ class Trainer(object):
 
     def my_training(self, epoch):
         train_loss = 0.0
-        print(self.optimizer.state_dict()['param_groups'][0]['lr'])
+        logger.info(self.optimizer.state_dict()['param_groups'][0]['lr'])
         current_model = copy.deepcopy(self.model)
         self.model.train()
         tbar = tqdm(self.train_loader)
@@ -126,7 +126,7 @@ class Trainer(object):
                 #print(target.shape)
             else:
                 image, target = sample['image'], sample['label']
-                print(image.shape)
+                logger.info(image.shape)
             if self.args.cuda:
                 image, target = image.cuda(self.args.gpu_ids), target.cuda(self.args.gpu_ids)
                 if self.args.depth:
@@ -165,8 +165,8 @@ class Trainer(object):
                     self.summary.visualize_image(self.writer, self.args.dataset, image, target, output, global_step)
 
         self.writer.add_scalar('train/total_loss_epoch', train_loss, epoch)
-        print('[Epoch: %d, numImages: %5d]' % (epoch, i * self.args.batch_size + image.data.shape[0]))
-        print('Loss: %.3f' % train_loss)
+        logger.info('[Epoch: %d, numImages: %5d]' % (epoch, i * self.args.batch_size + image.data.shape[0]))
+        logger.info('Loss: %.3f' % train_loss)
         tau = 0.3
         flag = True
         for param, target_param in zip(current_model.parameters(), self.model.parameters()):
@@ -189,7 +189,7 @@ class Trainer(object):
 
     def training(self, epoch):
         train_loss = 0.0
-        print(self.optimizer.state_dict()['param_groups'][0]['lr'])
+        logger.info(self.optimizer.state_dict()['param_groups'][0]['lr'])
         self.model.train()
         tbar = tqdm(self.train_loader)
         num_img_tr = len(self.train_loader)
@@ -200,7 +200,7 @@ class Trainer(object):
                 #print(target.shape)
             else:
                 image, target = sample['image'], sample['label']
-                print(image.shape)
+                logger.info(image.shape)
             if self.args.cuda:
                 image, target = image.cuda(self.args.gpu_ids), target.cuda(self.args.gpu_ids)
                 if self.args.depth:
@@ -239,8 +239,8 @@ class Trainer(object):
                     self.summary.visualize_image(self.writer, self.args.dataset, image, target, output, global_step)
 
         self.writer.add_scalar('train/total_loss_epoch', train_loss, epoch)
-        print('[Epoch: %d, numImages: %5d]' % (epoch, i * self.args.batch_size + image.data.shape[0]))
-        print('Loss: %.3f' % train_loss)
+        logger.info('[Epoch: %d, numImages: %5d]' % (epoch, i * self.args.batch_size + image.data.shape[0]))
+        logger.info('Loss: %.3f' % train_loss)
 
         # if self.args.no_val:
         #     # save checkpoint every epoch
@@ -293,10 +293,10 @@ class Trainer(object):
         self.writer.add_scalar('val/Acc', Acc, epoch)
         self.writer.add_scalar('val/Acc_class', Acc_class, epoch)
         self.writer.add_scalar('val/fwIoU', FWIoU, epoch)
-        print('Validation:')
-        print('[Epoch: %d, numImages: %5d]' % (epoch, i * self.args.batch_size + image.data.shape[0]))
-        print("Acc:{}, Acc_class:{}, mIoU:{}, fwIoU: {}".format(Acc, Acc_class, mIoU, FWIoU))
-        print('Loss: %.3f' % test_loss)
+        logger.info('Validation:')
+        logger.info('[Epoch: %d, numImages: %5d]' % (epoch, i * self.args.batch_size + image.data.shape[0]))
+        logger.info("Acc:{}, Acc_class:{}, mIoU:{}, fwIoU: {}".format(Acc, Acc_class, mIoU, FWIoU))
+        logger.info('Loss: %.3f' % test_loss)
 
         new_pred = mIoU
         if new_pred > self.best_pred:

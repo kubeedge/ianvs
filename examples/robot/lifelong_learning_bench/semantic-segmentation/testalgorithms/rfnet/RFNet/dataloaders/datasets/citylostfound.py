@@ -6,6 +6,7 @@ from mypath import Path
 from torchvision import transforms
 from dataloaders import custom_transforms as tr
 from dataloaders import custom_transforms_rgb as tr_rgb
+from logger import logger
 
 class CitylostfoundSegmentation(data.Dataset):
     NUM_CLASSES = 20
@@ -41,8 +42,8 @@ class CitylostfoundSegmentation(data.Dataset):
             raise Exception("No depth images for split=[%s] found in %s" % (split, self.disparities_base))
 
 
-        print("Found %d %s RGB images" % (len(self.images[split]), split))
-        print("Found %d %s disparity images" % (len(self.disparities[split]), split))
+        logger.info("Found %d %s RGB images" % (len(self.images[split]), split))
+        logger.info("Found %d %s disparity images" % (len(self.disparities[split]), split))
 
 
     def __len__(self):
@@ -159,7 +160,7 @@ class CitylostfoundSegmentation_rgb(data.Dataset):
         if not self.files[split]:
             raise Exception("No files for split=[%s] found in %s" % (split, self.images_base))
 
-        print("Found %d %s images" % (len(self.files[split]), split))
+        logger.info("Found %d %s images" % (len(self.files[split]), split))
 
     def __len__(self):
         return len(self.files[self.split])

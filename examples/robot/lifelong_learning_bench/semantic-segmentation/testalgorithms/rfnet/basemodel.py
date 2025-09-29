@@ -9,7 +9,7 @@ from sedna.common.file_ops import FileOps
 from sedna.common.log import LOGGER
 from PIL import Image
 from torchvision import transforms
-
+from logger import logger
 from RFNet.train import Trainer
 from RFNet.eval import Validator, load_my_state_dict
 from RFNet.dataloaders import custom_transforms as tr
@@ -52,7 +52,7 @@ class BaseModel:
 
     def train(self, train_data, valid_data=None, **kwargs):
         self.trainer = Trainer(self.train_args, train_data=train_data)
-        print("Total epoches:", self.trainer.args.epochs)
+        logger.info("Total epoches:", self.trainer.args.epochs)
         loss_all = []
         for epoch in range(
                 self.trainer.args.start_epoch,
@@ -93,11 +93,11 @@ class BaseModel:
         Use the RFNet model to predict at the edge 
         """
         if len(data) > 10:
-            print("predict start for big data")
+            logger.info("predict start for big data")
             my_kwargs = {'num_workers': self.val_args.workers, 'pin_memory': True}
             _, _, self.validator.test_loader, _ = make_data_loader(self.val_args, test_data=data, **my_kwargs)
         else:
-            print("predict start for small data")
+            logger.info("predict start for small data")
             if not isinstance(data[0][0], dict):
                 data = self._preprocess(data)
                 #print("predict starting 69")
@@ -112,7 +112,7 @@ class BaseModel:
         return self.validator.validate()
 
     def evaluate(self, data, **kwargs):
-        print("evaluate starting 77")
+        logger.info("evaluate starting 77")
         self.val_args.save_predicted_image = kwargs.get("save_predicted_image", True)
         samples = self._preprocess(data.x)
         predictions = self.predict(samples)
@@ -124,7 +124,7 @@ class BaseModel:
 
     def load(self, model_url, **kwargs):
         if model_url:
-            print("load model url: ",model_url)
+            logger.info("load model url: ",model_url)
             self.validator.new_state_dict = torch.load(model_url, map_location=torch.device("cpu"))
             self.train_args.resume = model_url
         else:

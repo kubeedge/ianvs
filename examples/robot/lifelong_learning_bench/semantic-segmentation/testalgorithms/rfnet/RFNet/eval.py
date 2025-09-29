@@ -10,9 +10,9 @@ from PIL import Image
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
 import mmcv
 import pycocotools.mask as maskUtils
-from mmdet.visualization.image import imshow_det_bboxes
+from mmdet.visualization import DetLocalVisualizer
 import pickle
-
+from logger import logger
 from dataloaders import make_data_loader
 from dataloaders.utils import decode_seg_map_sequence, Colorize
 from utils.metrics import Evaluator
@@ -38,7 +38,7 @@ class Validator(object):
         kwargs = {'num_workers': args.workers, 'pin_memory': False}
         # _, self.val_loader, _, self.custom_loader, self.num_class = make_data_loader(args, **kwargs)
         _, _, self.test_loader, _ = make_data_loader(args, test_data=data, **kwargs)
-        print('un_classes:'+str(self.num_class))
+        logger.info('un_classes:'+str(self.num_class))
 
         # Define evaluator
         self.evaluator = Evaluator(self.num_class)
@@ -56,7 +56,7 @@ class Validator(object):
             #self.model = torch.nn.DataParallel(self.model, device_ids=self.args.gpu_ids)
             self.model = self.model.cuda(args.gpu_ids)
             cudnn.benchmark = True  # accelarate speed
-        print('Model loaded successfully!')
+        logger.info('Model loaded successfully!')
 
         # # Load weights
         # assert os.path.exists(args.weight_path), 'weight-path:{} doesn\'t exit!'.format(args.weight_path)
@@ -106,7 +106,7 @@ class Validator(object):
                         font_size=25,
                         show=False,
                         out_file=os.path.join(output_path, filename + '_mask.png'))
-        print('[Save] save mask: ', os.path.join(output_path, filename + '_mask.png'))
+        logger.info('[Save] save mask: ', os.path.join(output_path, filename + '_mask.png'))
         semantc_mask = semantc_mask.unsqueeze(0).numpy()
         del img
         del semantic_bitmasks
@@ -139,7 +139,7 @@ class Validator(object):
                             font_size=25,
                             show=False,
                             out_file=os.path.join(output_path, filename + suffix))
-        print('[Save] save rfnet prediction: ', os.path.join(output_path, filename + suffix))
+        logger.info('[Save] save rfnet prediction: ', os.path.join(output_path, filename + suffix))
         #semantc_mask = semantc_mask.unsqueeze(0).numpy()
         del img
         del semantic_bitmasks
@@ -167,7 +167,7 @@ class Validator(object):
         img = mmcv.imread(image_name)
         if image_name in cache.keys():
             mask = cache[image_name]
-            print("load cache")
+            logger.info("load cache")
         else:
             sam = sam_model_registry["vit_h"](checkpoint="/home/hsj/ianvs/project/segment-anything/sam_vit_h_4b8939.pth").to('cuda:1')
             mask_branch_model = SamAutomaticMaskGenerator(
@@ -181,12 +181,12 @@ class Validator(object):
                 #min_mask_region_area=100,  # Requires open-cv to run post-processing
                 output_mode='coco_rle',
             )
-            print('[Model loaded] Mask branch (SAM) is loaded.')
+            logger.info('[Model loaded] Mask branch (SAM) is loaded.')
             mask = mask_branch_model.generate(img)
             cache[image_name] = mask
             with open('/home/hsj/ianvs/project/cache.pickle', 'wb') as file:
                 pickle.dump(cache, file)
-                print("save cache")
+                logger.info("save cache")
 
         anns = {'annotations': mask}
         #print(len(anns['annotations']), len(anns['annotations'][0]))
@@ -239,7 +239,7 @@ class Validator(object):
         img = mmcv.imread(image_name)
         if image_name in cache.keys():
             mask = cache[image_name]
-            print("load cache")
+            logger.info("load cache")
         else:
             sam = sam_model_registry["vit_h"](checkpoint="/home/hsj/ianvs/project/segment-anything/sam_vit_h_4b8939.pth").to('cuda:1')
             mask_branch_model = SamAutomaticMaskGenerator(
@@ -253,12 +253,12 @@ class Validator(object):
                 #min_mask_region_area=100,  # Requires open-cv to run post-processing
                 output_mode='coco_rle',
             )
-            print('[Model loaded] Mask branch (SAM) is loaded.')
+            logger.info('[Model loaded] Mask branch (SAM) is loaded.')
             mask = mask_branch_model.generate(img)
             cache[image_name] = mask
             with open('/home/hsj/ianvs/project/cache.pickle', 'wb') as file:
                 pickle.dump(cache, file)
-                print("save cache")
+                logger.info("save cache")
 
         anns = {'annotations': mask}
         #print(len(anns['annotations']), len(anns['annotations'][0]))
@@ -486,7 +486,7 @@ class Validator(object):
             if i != 0:
                 fwt = time.time() - start_time
                 self.time_train.append(fwt)
-                print("Forward time per img (bath size=%d): %.3f (Mean: %.3f)" % (
+                logger.info("Forward time per img (bath size=%d): %.3f (Mean: %.3f)" % (
                     self.args.val_batch_size, fwt / self.args.val_batch_size,
                     sum(self.time_train) / len(self.time_train) / self.args.val_batch_size))
             time.sleep(0.1)  # to avoid overheating the GPU too much
@@ -529,7 +529,7 @@ def load_my_state_dict(model, state_dict):  # custom function to load model when
     own_state = model.state_dict()
     for name, param in state_dict.items():
         if name not in own_state:
-            print('{} not in model_state'.format(name))
+            logger.info('{} not in model_state'.format(name))
             continue
         else:
             own_state[name].copy_(param)
