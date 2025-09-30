@@ -657,3 +657,4 @@ class PrivacyMetrics:
         """Get current timestamp."""
         from datetime import datetime
         return datetime.now().isoformat()
+

@@ -477,3 +477,4 @@ class PrivacyPreservingLLM:
             
         except Exception as e:
             logger.warning(f"Cleanup failed: {e}")
+
