@@ -1,0 +1,161 @@
+Task suite: libero_10
+
+Task: put both the alphabet soup and the tomato sauce in the basket
+Starting episode 1...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=1--success=True--task=put_both_the_alphabet_soup_and_the_tomato_sauce_in.mp4
+Success: True
+# episodes completed so far: 1
+# successes: 1 (100.0%)
+
+Task: put both the alphabet soup and the tomato sauce in the basket
+Starting episode 2...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=2--success=True--task=put_both_the_alphabet_soup_and_the_tomato_sauce_in.mp4
+Success: True
+# episodes completed so far: 2
+# successes: 2 (100.0%)
+Current task success rate: 1.0
+Current total success rate: 1.0
+
+Task: put both the cream cheese box and the butter in the basket
+Starting episode 1...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=3--success=True--task=put_both_the_cream_cheese_box_and_the_butter_in_th.mp4
+Success: True
+# episodes completed so far: 3
+# successes: 3 (100.0%)
+
+Task: put both the cream cheese box and the butter in the basket
+Starting episode 2...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=4--success=False--task=put_both_the_cream_cheese_box_and_the_butter_in_th.mp4
+Success: False
+# episodes completed so far: 4
+# successes: 3 (75.0%)
+Current task success rate: 0.5
+Current total success rate: 0.75
+
+Task: turn on the stove and put the moka pot on it
+Starting episode 1...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=5--success=True--task=turn_on_the_stove_and_put_the_moka_pot_on_it.mp4
+Success: True
+# episodes completed so far: 5
+# successes: 4 (80.0%)
+
+Task: turn on the stove and put the moka pot on it
+Starting episode 2...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=6--success=True--task=turn_on_the_stove_and_put_the_moka_pot_on_it.mp4
+Success: True
+# episodes completed so far: 6
+# successes: 5 (83.3%)
+Current task success rate: 1.0
+Current total success rate: 0.8333333333333334
+
+Task: put the black bowl in the bottom drawer of the cabinet and close it
+Starting episode 1...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=7--success=False--task=put_the_black_bowl_in_the_bottom_drawer_of_the_cab.mp4
+Success: False
+# episodes completed so far: 7
+# successes: 5 (71.4%)
+
+Task: put the black bowl in the bottom drawer of the cabinet and close it
+Starting episode 2...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=8--success=True--task=put_the_black_bowl_in_the_bottom_drawer_of_the_cab.mp4
+Success: True
+# episodes completed so far: 8
+# successes: 6 (75.0%)
+Current task success rate: 0.5
+Current total success rate: 0.75
+
+Task: put the white mug on the left plate and put the yellow and white mug on the right plate
+Starting episode 1...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=9--success=False--task=put_the_white_mug_on_the_left_plate_and_put_the_ye.mp4
+Success: False
+# episodes completed so far: 9
+# successes: 6 (66.7%)
+
+Task: put the white mug on the left plate and put the yellow and white mug on the right plate
+Starting episode 2...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=10--success=False--task=put_the_white_mug_on_the_left_plate_and_put_the_ye.mp4
+Success: False
+# episodes completed so far: 10
+# successes: 6 (60.0%)
+Current task success rate: 0.0
+Current total success rate: 0.6
+
+Task: pick up the book and place it in the back compartment of the caddy
+Starting episode 1...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=11--success=True--task=pick_up_the_book_and_place_it_in_the_back_compartm.mp4
+Success: True
+# episodes completed so far: 11
+# successes: 7 (63.6%)
+
+Task: pick up the book and place it in the back compartment of the caddy
+Starting episode 2...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=12--success=True--task=pick_up_the_book_and_place_it_in_the_back_compartm.mp4
+Success: True
+# episodes completed so far: 12
+# successes: 8 (66.7%)
+Current task success rate: 1.0
+Current total success rate: 0.6666666666666666
+
+Task: put the white mug on the plate and put the chocolate pudding to the right of the plate
+Starting episode 1...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=13--success=False--task=put_the_white_mug_on_the_plate_and_put_the_chocola.mp4
+Success: False
+# episodes completed so far: 13
+# successes: 8 (61.5%)
+
+Task: put the white mug on the plate and put the chocolate pudding to the right of the plate
+Starting episode 2...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=14--success=True--task=put_the_white_mug_on_the_plate_and_put_the_chocola.mp4
+Success: True
+# episodes completed so far: 14
+# successes: 9 (64.3%)
+Current task success rate: 0.5
+Current total success rate: 0.6428571428571429
+
+Task: put both the alphabet soup and the cream cheese box in the basket
+Starting episode 1...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=15--success=True--task=put_both_the_alphabet_soup_and_the_cream_cheese_bo.mp4
+Success: True
+# episodes completed so far: 15
+# successes: 10 (66.7%)
+
+Task: put both the alphabet soup and the cream cheese box in the basket
+Starting episode 2...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=16--success=True--task=put_both_the_alphabet_soup_and_the_cream_cheese_bo.mp4
+Success: True
+# episodes completed so far: 16
+# successes: 11 (68.8%)
+Current task success rate: 1.0
+Current total success rate: 0.6875
+
+Task: put both moka pots on the stove
+Starting episode 1...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=17--success=True--task=put_both_moka_pots_on_the_stove.mp4
+Success: True
+# episodes completed so far: 17
+# successes: 12 (70.6%)
+
+Task: put both moka pots on the stove
+Starting episode 2...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=18--success=True--task=put_both_moka_pots_on_the_stove.mp4
+Success: True
+# episodes completed so far: 18
+# successes: 13 (72.2%)
+Current task success rate: 1.0
+Current total success rate: 0.7222222222222222
+
+Task: put the yellow and white mug in the microwave and close it
+Starting episode 1...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=19--success=False--task=put_the_yellow_and_white_mug_in_the_microwave_and_.mp4
+Success: False
+# episodes completed so far: 19
+# successes: 13 (68.4%)
+
+Task: put the yellow and white mug in the microwave and close it
+Starting episode 2...
+Saved rollout MP4 at path ./rollouts/2025_09_23/2025_09_23-15_36_12--episode=20--success=True--task=put_the_yellow_and_white_mug_in_the_microwave_and_.mp4
+Success: True
+# episodes completed so far: 20
+# successes: 14 (70.0%)
+Current task success rate: 0.5
+Current total success rate: 0.7
