@@ -481,3 +481,4 @@ class ComplianceMonitor:
             'compliance_status': 'healthy' if recent_violations == 0 else 'warning',
             'last_audit_entry': self.audit_logs[-1]['timestamp'] if self.audit_logs else None
         }
+

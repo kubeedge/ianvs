@@ -50,3 +50,4 @@ psutil>=5.8.0
 
 # Configuration management
 python-dotenv>=0.19.0
+

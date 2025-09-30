@@ -439,3 +439,4 @@ class PIIDetector:
             'protection_required': protection_required,
             'protection_ratio': protection_required / len(entities) if entities else 0
         }
+
