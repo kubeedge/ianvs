@@ -1,0 +1,28 @@
+# benchmarkingjob.yaml
+
+benchmarkingjob:
+  name: "holodeck-scene-generation-benchmark"
+  workspace: "./examples/phys_scene_gen/singletask_learning_bench/workspace"
+
+  testenv: "./examples/phys_scene_gen/singletask_learning_bench/testenv/testenv.yaml"
+
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "HolodeckAlgorithm"
+        url: "./examples/phys_scene_gen/singletask_learning_bench/testalgorithms/ai2holodeck/test_holodeck.yaml"
+
+  rank:
+    sort_by: [ { "semantic_conformance": "descend" } ]
+
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+
+    selected_dataitem:
+      paradigms: [ "all" ]
+      modules: [ "all" ]
+      hyperparameters: [ "all" ]
+      metrics: [ "semantic_conformance" ]
+
+    save_mode: "selected_and_all"

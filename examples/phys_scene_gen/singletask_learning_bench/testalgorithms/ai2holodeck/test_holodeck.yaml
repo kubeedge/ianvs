@@ -1,0 +1,24 @@
+# testalgorithms/ai2holodeck/test_holodeck.yaml
+
+algorithm:
+  paradigm_type: "singletasklearning"
+
+  modules:
+    - type: "basemodel"
+      
+      name: "HolodeckSceneGen" 
+      url: "examples.phys_scene_gen.singletask_learning_bench.testalgorithms.ai2holodeck.two_stage_generator"
+      
+      hyperparameters:
+        - openai_api_key:
+            values:
+              - "sk-YjAvEzzr3zzmRwqugtKDyU4utXC5CS3LepUMhoIPDjcPwmGH"
+        - objaverse_asset_dir:
+            values:
+              - "/mnt/f/AI_Datasets/.objathor-assets"
+        - single_room:
+            values:
+              - False
+        - data_path:
+            values:
+              - "./examples/phys_scene_gen/singletask_learning_bench/dataset/queries.jsonl"
