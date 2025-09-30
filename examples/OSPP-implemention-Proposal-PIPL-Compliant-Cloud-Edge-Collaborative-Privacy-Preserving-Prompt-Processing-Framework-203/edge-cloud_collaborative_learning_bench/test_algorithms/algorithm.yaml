@@ -1,0 +1,67 @@
+algorithm:
+  name: "privacy-preserving-llm-collaboration"
+  type: "privacy_preserving_llm"
+  url: "./privacy_preserving_llm/privacy_preserving_llm.py"
+  
+  edge_model:
+    name: "meta-llama/Llama-3-8B-Instruct"
+    quantization: "4bit"
+    api_base: "https://api.openai.com/v1"
+    api_key: "${EDGE_API_KEY}"
+    hidden_layer_index: -2
+    pooling_strategy: "mean"
+    max_length: 2048
+    device: "cuda"
+  
+  cloud_model:
+    name: "gpt-4o-mini"
+    api_base: "https://api.openai.com/v1"
+    api_key: "${CLOUD_API_KEY}"
+    vector_adapter:
+      input_dim: 64
+      hidden_dim: 512
+      output_dim: 4096
+    max_tokens: 1024
+    temperature: 0.7
+  
+  privacy_detection:
+    detection_methods:
+      regex_patterns: ["phone", "id_card", "email", "address", "name"]
+      ner_model: "hfl/chinese-bert-wwm-ext"
+      entity_types: ["PERSON", "ORG", "LOC", "PHONE", "EMAIL", "ID"]
+    risk_weights:
+      structured_pii: 0.8
+      named_entities: 0.6
+      semantic_context: 0.4
+    pipl_compliance:
+      cross_border_threshold: 0.5
+      high_sensitivity_threshold: 0.7
+  
+  privacy_encryption:
+    differential_privacy:
+      general:
+        epsilon: 1.2
+        delta: 0.00001
+        clipping_norm: 1.0
+        noise_multiplier: 1.1
+      high_sensitivity:
+        epsilon: 0.8
+        delta: 0.00001
+        clipping_norm: 0.5
+        noise_multiplier: 1.5
+    anonymization:
+      general_mask_ratio: 0.4
+      high_sensitivity_mask_ratio: 0.6
+      projection_method: "johnson_lindenstrauss"
+      target_dims: 64
+      saliency_threshold: 0.3
+    budget_management:
+      session_limit: 10.0
+      rate_limit: 5
+      audit_logging: true
+  
+  compliance:
+    pipl_version: "2021"
+    audit_level: "detailed"
+    cross_border_policy: "strict"
+    minimal_necessity: true
