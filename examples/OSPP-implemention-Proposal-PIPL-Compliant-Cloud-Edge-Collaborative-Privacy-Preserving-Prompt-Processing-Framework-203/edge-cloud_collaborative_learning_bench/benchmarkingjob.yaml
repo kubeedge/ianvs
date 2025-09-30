@@ -1,0 +1,32 @@
+benchmarkingjob:
+  name: "pipl-compliant-privacy-preserving-llm-bench"
+  workspace: "./workspace-pipl-llm"
+  
+  testenv: "./testenv/testenv.yaml"
+  
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "privacy-preserving-llm-collaboration"
+        url: "./test_algorithms/algorithm.yaml"
+  
+  rank:
+    sort_by: [{"Accuracy": "descend"}, {"Privacy_Score": "descend"}]
+  
+  visualization:
+    mode: "selected_only"
+    method: "print_table"
+    selected_dataitem:
+      paradigms: ["all"]
+      modules: ["privacy_preserving_llm", "privacy_detection", "privacy_encryption"]
+      hyperparameters: [
+        "edge_model-model", "cloud_model-model", 
+        "privacy_detection-ner_model", "privacy_encryption-epsilon"
+      ]
+      metrics: [
+        "Accuracy", "F1_Score", "Privacy_Score", "PIPL_Compliance_Score",
+        "End_to_End_Latency", "Throughput", "Privacy_Budget_Consumption",
+        "MIA_Attack_Success_Rate", "Cross_Border_Payload_Size"
+      ]
+  
+  save_mode: "selected_and_all"
