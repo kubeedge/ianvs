@@ -572,3 +572,4 @@ class PerformanceMetrics:
                 return 'stable'
         
         return 'stable'
+

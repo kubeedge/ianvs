@@ -460,3 +460,4 @@ class RiskEvaluator:
             recommendations.append(f"Special attention required for {len(high_risk_entities)} high-risk entities")
         
         return recommendations
+
