@@ -29,7 +29,7 @@ class FederatedLearning(JobBase):
         self.estimator = cp_estimator
 
     # pylint: disable=W0221
-    def train(self, train_data, vald_data, **kwargs):
+    def train(self, train_data, valid_data, **kwargs):
         """Local training function
 
         Args:
@@ -39,7 +39,7 @@ class FederatedLearning(JobBase):
         Returns:
             dict: train info that will be used for aggregation
         """
-        return self.estimator.train(train_data, vald_data, **kwargs)
+        return self.estimator.train(train_data, valid_data, **kwargs)
 
     def get_weights(self):
         """get the weights of the model
