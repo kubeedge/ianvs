@@ -196,7 +196,7 @@ class Dataset:
         dataset_url: str
             the address url of dataset.
         dataset_format: str
-            the format of dataset, e.g.: txt and csv.
+            the format of dataset, e.g.: txt, csv and jsonl.
         ratio: float
             the float of splitting dataset
         method: string
@@ -269,7 +269,7 @@ class Dataset:
 
     @classmethod
     def _write_data_file(cls, data, data_file, data_format):
-        if data_format == DatasetFormat.TXT.value:
+        if data_format in (DatasetFormat.TXT.value, DatasetFormat.JSONL.value):
             with open(data_file, "w", encoding="utf-8") as file:
                 for line in data:
                     file.writelines(line + "\n")
@@ -280,7 +280,7 @@ class Dataset:
     def _read_data_file(cls, data_file, data_format):
         data = None
 
-        if data_format == DatasetFormat.TXT.value:
+        if data_format in (DatasetFormat.TXT.value, DatasetFormat.JSONL.value):
             with open(data_file, "r", encoding="utf-8") as file:
                 data = [line.strip() for line in file.readlines()]
 
