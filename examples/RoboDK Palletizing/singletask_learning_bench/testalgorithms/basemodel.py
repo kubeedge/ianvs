@@ -37,12 +37,12 @@ __all__ = ["BaseModel"]
 os.environ['BACKEND_TYPE'] = 'TORCH'
 
 
-@ClassFactory.register(ClassType.GENERAL, alias="YOLOv8")
+@ClassFactory.register(ClassType.GENERAL, alias="YOLOv8n")
 class BaseModel:
     """YOLOv8 Model for Ianvs Framework"""
     def __init__(self, **kwargs):
         """
-        Initialize the YOLOv8 algorithm.
+        Initialize the YOLOv8n algorithm.
         
         Args:
             **kwargs: Hyperparameters from algorithm configuration
