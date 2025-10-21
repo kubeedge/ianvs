@@ -3,16 +3,16 @@ algorithm:
 
   modules:
     - type: "basemodel"
-      name: "YOLOv8"
-      url: "./examples/Palletizing/singletask_learning_bench/testalgorithms/basemodel.py"
+      name: "YOLOv8n"
+      url: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testalgorithms/basemodel.py"
       
       hyperparameters:
         - learning_rate:
            values: 
-            - 0.01
+            - 0.001
         - batch_size:
            values: 
             - 32
         - epochs:
            values: 
-            - 20
+            - 30
