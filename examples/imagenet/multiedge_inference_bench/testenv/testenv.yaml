@@ -1,0 +1,25 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_url: "./dataset/train.txt"
+    # the url address of test dataset index; string type;
+    test_url: "./dataset/test.txt"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "accuracy"
+      # the url address of python file
+      url: "./examples/imagenet/multiedge_inference_bench/testenv/accuracy.py"
+    - name: "fps"
+      # the url address of python file
+      url: "./examples/imagenet/multiedge_inference_bench/testenv/fps.py"
+    - name: "peak_memory"
+      # the url address of python file
+      url: "./examples/imagenet/multiedge_inference_bench/testenv/peak_memory.py"
+    - name: "peak_power"
+      # the url address of python file
+      url: "./examples/imagenet/multiedge_inference_bench/testenv/peak_power.py"
+  devices:
+    - url : "./devices.yaml"

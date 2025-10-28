@@ -1,0 +1,7 @@
+prettytable~=2.5.0 # BSD
+scikit-learn
+numpy
+pandas
+tqdm
+matplotlib
+onnx

@@ -1,0 +1,18 @@
+algorithm:
+  paradigm_type: "singletasklearning_with_compression"
+  mode: "with_compression"
+  initial_model_url: "models/qwen/qwen_1_5_0_5b.gguf"
+  quantization_type: "q8_0"
+  llama_quantize_path: "llama.cpp/llama-quantize"
+  modules:
+    - type: "basemodel"
+      name: "LlamaCppModel"
+      url: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/testalgorithms/basemodel.py"
+      
+      hyperparameters:
+        - model_path:
+            values:
+              - "models/qwen/qwen_1_5_0_5b.gguf"
+        - n_ctx:
+            values:
+              - 2048

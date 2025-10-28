@@ -1,0 +1,25 @@
+<View>
+  <Header value="Select label and click the image to start"/>
+  <Image name="image" value="$image" zoom="true" zoomControl="true" rotateControl="false"/>
+  <PolygonLabels name="labels" toName="image" Opacity="0.5" strokeWidth="3">
+	  <Label value="road" background="#ADC6FF"/>
+	  <Label value="sidewalk" background="#9254DE"/>
+	  <Label value="building" background="#F759AB"/>
+	  <Label value="wall" background="#FFA39E"/>
+	  <Label value="fence" background="#D4380D"/>
+	  <Label value="pole" background="#FFC069"/>
+	  <Label value="traffic light" background="#AD8B00"/>
+	  <Label value="traffic sign" background="#D3F261"/>
+	  <Label value="vegetation" background="#389E0D"/>
+	  <Label value="terrain" background="#5CDBD3"/>
+	  <Label value="sky" background="#096DD9"/>
+	  <Label value="person" background="#ADC6FF"/>
+	  <Label value="rider" background="#9254DE"/>
+	  <Label value="car" background="#F759AB"/>
+	  <Label value="truck" background="#FFA39E"/>
+	  <Label value="bus" background="#D4380D"/>
+	  <Label value="train" background="#FFC069"/>
+	  <Label value="motorcycle" background="#AD8B00"/>
+	  <Label value="bicycle" background="#D3F261"/>
+  </PolygonLabels>
+</View>

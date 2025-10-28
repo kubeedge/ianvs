@@ -1,0 +1,40 @@
+algorithm:
+  paradigm_type: "singletasklearning"
+  
+  modules:
+    - type: "basemodel"
+      name: "llio_fusion"
+      url: "examples/industrialEI/pose-estimation-llio/testalgorithms/llio_fusion/basemodel.py"
+      
+      hyperparameters:
+        # IMU parameters
+        - gyro_std:
+            values:
+              - 0.0032  # Default gyroscope noise standard deviation
+        - acc_std:
+            values:
+              - 0.02   # Default accelerometer noise standard deviation
+        
+        # LLIO specific parameters
+        - step_size:
+            values:
+              - 5      # Default processing step size
+        
+        # LiDAR processing parameters  
+        - voxel_size:
+            values:
+              - 0.3
+        - icp_inlier_threshold:
+            values:
+              - 0.5    # Default ICP inlier threshold
+        
+        # Processing options
+        - use_lidar_correction:
+            values:
+              - True   # Default LLIO mode
+        - use_groundtruth_rot:
+            values:
+              - False  # Default for LLIO
+        - lidar_only_mode:
+            values:
+              - False  # Default for LLIO (use sensor fusion)
