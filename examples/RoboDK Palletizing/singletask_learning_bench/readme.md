@@ -20,6 +20,7 @@
         - [Step 3. Run Ianvs](#step-3-run-ianvs)
             - [Run Example](#run-example)
         - [Results](#results)
+          - [Discussion](#discussion)
 
 - [Configuration File Explanation](#configuration-file-explanation)
     - [benchmarkingjob.yaml](#benchmarkingjobyaml)
@@ -245,13 +246,11 @@ Result Interpretation:
 | 14    | YOLO11n  | 0.9929186046511628   | 0.9097108359994436  | singletasklearning | YOLO11n  | 0.001                   | 32                   | 30               | 2025-10-17 10:18:56  |  ./workspace/palletizing_bench/palletizing_bench/YOLO11n/345690a2-aaff-11f0-bc65-0242ac110007  |
 | 15    | YOLO12n  | 0.9907157387346394   | 0.9172008060765484  | singletasklearning | YOLO12n  | 0.001                   | 32                   | 30               | 2025-10-21 09:51:03  |  ./workspace/palletizing_bench/palletizing_bench/YOLO12n/dd3425ea-ae1f-11f0-9342-0242ac110006   |
 
-- YOLOv8n_662images has the best overall performance: map50 (0.9942) and map90 (0.9099) are both the highest, making it the model with the most balanced performance.
+#### Discussion
 
-- The impact of data volume on map performance: YOLOv8n has a map50 exceeding 0.9938 when there are 600-1004 data, and a significant decrease in map50 when the data volume is below 442; However, the YOLOv8n map90 (0.9046) of 121 data points is actually higher than that of the model with 772 data points (0.8999), showing a special performance.
+- In this **object detection task**, the model exhibits **extremely strong few sample convergence ability**. Even with only 121 samples, the YOLOv8n series can still achieve mAP50 of 0.978 and mAP90 of 0.905, which fully demonstrates the high learnability of this task and belongs to a **relatively simple object detection scenario**. The model can **quickly learn effective features and achieve performance convergence with a small number of sample inputs**. 
 
-- There are differences in different versions of map90: YOLO11n map90 (0.9097) is close to YOLOv8n_662images, while YOLO12n map90 (0.9172) is the highest among all models, but map50 (0.9907) is slightly lower; YOLOv10n map90 (0.9006) is relatively weak.
-
-- Training parameters without interference: All models have the same learning rate, batch size, and iteration times. The difference between map50 and map90 mainly comes from the model architecture and data volume.
+- Further observation shows that although the performance of different model variants with sample sizes ranging from 221 to 1004 fluctuates, the overall performance remains at a high level, which once again confirms that the task requires a low threshold for sample size. **A small number of samples can support the model to complete effective training and achieve performance**. Based on this, in the future, we can focus on the direction of **Few Shot object detection**, explore the generalization boundary of the model in a very small number of samples, and introduce complex scene variables (such as multi class confusion and dense target distribution) to comprehensively verify the performance **resilience and scalability** of the algorithm when transferring from simple tasks to complex scenes.
 
 ## Configuration File Explanation
 
@@ -365,22 +364,25 @@ algorithm:
 This framework provides a foundation for industrial embodied intelligence benchmarking but has limitations, such as a singular dataset that may not reflect real-world complexity. Future improvements include:
 
 ### **1. Dataset Expansion**
-- Add diverse scenarios: varying lighting (glare/shadow), material types (metal/plastic), and dynamic interference (human workers in the scene).
-- Increase scale to 5,000+ annotated images for more robust evaluation.
+- **Add diverse scenarios**: varying lighting (glare/shadow), material types (metal/plastic), and dynamic interference (human workers in the scene).
+
+- **Increase scale** to 5,000+ annotated images for more robust evaluation.
+
+- **Introduce oriented bounding box annotations**: For objects with angular tilts, adopt rotated bounding boxes with angle features instead of traditional axis-aligned boxes. This reduces the inclusion of redundant background information, enabling models to focus on object-specific features and further improving detection precision.
 
 ### **2. Algorithm Diversification**
-- Integrate state-of-the-art models (e.g., Faster R-CNN, DETR) and compare their performance on edge devices (focusing on inference speed ≤100ms and precision).
+- **Integrate state-of-the-art models** (e.g., Faster R-CNN, DETR) and compare their performance on edge devices (focusing on inference speed ≤100ms and precision).
 
 ### **3. Cloud-Edge Collaboration Optimization**
-- Add metrics for edge-device resource usage (CPU/GPU/memory) and latency, to evaluate real-world deployment feasibility.
+- **Add metrics** for edge-device resource usage (CPU/GPU/memory) and latency, to evaluate real-world deployment feasibility.
 
 ### **4. Deep Mining: New Applications of Robot Arm Information**
 
-- Information utilization direction
-Combining VLA and other technologies, utilizing the motion and joint information of the robotic arm for path planning, and planning a more reasonable robotic arm movement path based on joint angles and motion trends to improve operational accuracy and efficiency.
+- **Information utilization direction**
+Combining Visual Language Action (VLA) and other technologies, utilizing the motion and joint information of the robotic arm for path planning, and planning a more reasonable robotic arm movement path based on joint angles and motion trends to improve operational accuracy and efficiency.
 
-- Optimization of control strategy
+- **Optimization of control strategy**
 Utilize this information to adjust the control strategy of the robotic arm in real-time, such as optimizing power output based on joint loads and motion states, enhancing the stability and adaptability of the robotic arm.
 
-- Intelligent task execution
+- **Intelligent task execution** 
 By using Visual Language Action (VLA) to associate language instructions with robotic arm movements, the robotic arm can use its own motion and joint information to complete complex tasks based on language instructions, thereby enhancing its level of intelligence.
