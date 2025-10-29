@@ -1,0 +1,103 @@
+# New Government Agent Requirements
+# 新版政府代理依赖包
+
+# Core dependencies
+ianvs>=0.1.0
+sedna>=0.1.0
+
+# Document processing (轻量级方案)
+PyPDF2>=3.0.0
+PyMuPDF>=1.23.0  # fitz
+python-docx>=0.8.11
+python-pptx>=0.6.21
+pdfplumber>=0.7.0  # 可选，用于更好的表格提取
+
+# Image processing
+Pillow>=9.0.0
+opencv-python>=4.5.0
+
+# Machine Learning and AI
+openai>=1.0.0
+transformers>=4.20.0
+torch>=1.12.0
+torchvision>=0.13.0
+scikit-learn>=1.1.0
+numpy>=1.21.0
+scipy>=1.8.0
+
+# Computer Vision
+# clip-by-openai>=1.0   # commented out: incompatible with modern torch/torchvision. If you need it, pin torch and torchvision to compatible older versions (e.g., torch==1.7.1, torchvision==0.8.2)
+sentence-transformers>=2.2.0
+
+# Text processing
+jieba>=0.42.1
+nltk>=3.7
+spacy>=3.4.0
+
+# Web and API
+requests>=2.28.0
+httpx>=0.23.0
+aiohttp>=3.8.0
+
+# Data processing
+pandas>=1.4.0
+jsonlines>=3.0.0
+pyyaml>=6.0
+
+# Template engine
+Jinja2>=3.1.0
+
+# Configuration
+python-dotenv>=0.19.0
+pydantic>=1.9.0
+
+# Logging and monitoring
+loguru>=0.6.0
+tqdm>=4.64.0
+
+# Testing
+pytest>=7.0.0
+pytest-asyncio>=0.19.0
+pytest-cov>=3.0.0
+
+# Development tools
+black>=22.0.0
+flake8>=4.0.0
+mypy>=0.950
+
+# Optional: GPU acceleration
+# torch-audio>=0.12.0
+# torchaudio>=0.12.0
+
+# Optional: Additional document formats
+# pymupdf>=1.20.0
+# pdfplumber>=0.7.0
+
+# Optional: Advanced image processing
+# imageio>=2.19.0
+# scikit-image>=0.19.0
+
+# Optional: Database support
+# sqlalchemy>=1.4.0
+# pymongo>=4.2.0
+
+# Optional: Caching
+# redis>=4.3.0
+# memcached>=1.6.0
+
+# Optional: Monitoring and metrics
+# prometheus-client>=0.14.0
+# grafana-api>=1.0.3
+
+# Optional: Deployment
+# gunicorn>=20.1.0
+# uvicorn>=0.18.0
+# fastapi>=0.78.0
+
+# System dependencies (install separately)
+# libgl1-mesa-glx
+# libglib2.0-0
+# libsm6
+# libxext6
+# libxrender-dev
+# libgomp1

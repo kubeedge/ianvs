@@ -1,0 +1,17 @@
+# New Government Agent Test Environment Configuration
+# 新版政府代理测试环境配置
+
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_data: "./examples/GovDoc2Poster/resources/datasets/train/data.jsonl"
+    # the url address of test dataset index; string type;
+    test_data: "./examples/GovDoc2Poster/resources/datasets/test/data.jsonl"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "score"
+      # the url address of python file
+      url: "./examples/GovDoc2Poster/singletask_learning_bench/testenv/acc.py"
