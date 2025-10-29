@@ -33,6 +33,15 @@ except ImportError:
     class ClassType:
         GENERAL = "general"
 
+# Import optional Unsloth library for optimized model loading
+# Unsloth is an optional dependency for edge model optimization
+try:
+    from unsloth import FastLanguageModel
+    UNSLOTH_AVAILABLE = True
+except ImportError:
+    UNSLOTH_AVAILABLE = False
+    FastLanguageModel = None
+
 # Import privacy modules
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -126,9 +135,13 @@ class PrivacyPreservingLLM:
     
     def _init_colab_unsloth_model(self, edge_config):
         """Initialize Colab Unsloth model for edge processing."""
+        if not UNSLOTH_AVAILABLE or FastLanguageModel is None:
+            logger.warning("Unsloth not available, using fallback model loading")
+            self._init_fallback_model(edge_config)
+            return
+        
         try:
-            # Try to import Unsloth for optimized model loading
-            from unsloth import FastLanguageModel
+            # Unsloth is available for optimized model loading
             logger.info("Unsloth available, initializing optimized model")
             
             # Configure Unsloth model parameters
@@ -164,10 +177,6 @@ class PrivacyPreservingLLM:
             
             logger.info("Colab Unsloth model initialized successfully")
             
-        except ImportError:
-            logger.warning("Unsloth not available, using fallback model loading")
-            # Fallback to standard model loading
-            self._init_fallback_model(edge_config)
         except Exception as e:
             logger.error(f"Failed to initialize Colab Unsloth model: {e}")
             # Fallback to standard model loading
@@ -216,9 +225,13 @@ class PrivacyPreservingLLM:
     
     def _init_colab_unsloth_cloud_model(self, cloud_config):
         """Initialize Colab Unsloth model for cloud processing."""
+        if not UNSLOTH_AVAILABLE or FastLanguageModel is None:
+            logger.warning("Unsloth not available for cloud model, using fallback")
+            self._init_fallback_cloud_model(cloud_config)
+            return
+        
         try:
-            # Try to import Unsloth for cloud model optimization
-            from unsloth import FastLanguageModel
+            # Unsloth is available for cloud model optimization
             logger.info("Unsloth available for cloud model, initializing optimized model")
             
             # Configure Unsloth cloud model parameters
@@ -256,10 +269,6 @@ class PrivacyPreservingLLM:
             self.cloud_config = cloud_config
             logger.info("Colab Unsloth cloud model initialized successfully")
             
-        except ImportError:
-            logger.warning("Unsloth not available for cloud model, using fallback")
-            # Fallback to standard model loading
-            self._init_fallback_cloud_model(cloud_config)
         except Exception as e:
             logger.error(f"Failed to initialize Colab Unsloth cloud model: {e}")
             # Fallback to standard model loading

@@ -509,7 +509,8 @@ class PrivacyMetrics:
                     proba = model.predict_proba(embedding.reshape(1, -1))[0]
                     likelihood = np.max(proba)  # Use max probability as likelihood
                     model_likelihoods.append(likelihood)
-                except:
+                except Exception as e:
+                    logger.warning(f"Failed to get probability from shadow model: {e}")
                     model_likelihoods.append(0.5)  # Default likelihood
             
             avg_likelihood = np.mean(model_likelihoods)

@@ -367,8 +367,8 @@ class SaliencyMasking:
             # Use tokenizer's conversion if available
             try:
                 return self.tokenizer.convert_tokens_to_string(masked_tokens)
-            except:
-                pass
+            except Exception as e:
+                logger.warning(f"Failed to reconstruct text with tokenizer, falling back to joining: {e}")
         
         # Fallback to simple joining
         return " ".join(masked_tokens)
