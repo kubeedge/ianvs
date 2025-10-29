@@ -17,6 +17,22 @@ from transformers import AutoTokenizer, AutoModel
 import openai
 from datetime import datetime
 
+# Import sedna ClassFactory for Ianvs integration
+try:
+    from sedna.common.class_factory import ClassFactory, ClassType
+    SEDNA_AVAILABLE = True
+except ImportError:
+    SEDNA_AVAILABLE = False
+    # Create dummy decorators if sedna is not available
+    class ClassFactory:
+        @staticmethod
+        def register(class_type, alias=None):
+            def decorator(cls):
+                return cls
+            return decorator
+    class ClassType:
+        GENERAL = "general"
+
 # Import privacy modules
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -31,6 +47,9 @@ from privacy_encryption.compliance_monitor import ComplianceMonitor
 logger = logging.getLogger(__name__)
 
 
+@ClassFactory.register(ClassType.GENERAL, alias="PIPLPrivacyDatasetProcessor")
+@ClassFactory.register(ClassType.GENERAL, alias="PrivacyPreservingEdgeModel")
+@ClassFactory.register(ClassType.GENERAL, alias="PrivacyPreservingCloudModel")
 class PrivacyPreservingLLM:
     """
     PIPL-Compliant Privacy-Preserving LLM for Cloud-Edge Collaborative Inference
@@ -70,12 +89,34 @@ class PrivacyPreservingLLM:
         
         # Initialize tokenizer and model
         model_name = edge_config.get('name', 'meta-llama/Llama-3-8B-Instruct')
-        self.edge_tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.edge_model = AutoModel.from_pretrained(
-            model_name,
-            load_in_4bit=edge_config.get('quantization') == '4bit',
-            device_map='auto' if self.device.type == 'cuda' else None
-        )
+        
+        # Check if using mock model for testing
+        if model_name == 'mock_model':
+            logger.info("Using mock edge model for testing")
+            self.edge_tokenizer = None
+            self.edge_model = None
+            self.edge_api_key = os.getenv('EDGE_API_KEY', 'mock_key')
+            self.edge_api_base = edge_config.get('api_base', 'https://api.openai.com/v1')
+            return
+        
+        # Check if using Colab Unsloth model
+        if model_name == 'colab_unsloth_model':
+            logger.info("Using Colab Unsloth model")
+            self._init_colab_unsloth_model(edge_config)
+            return
+        
+        try:
+            self.edge_tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.edge_model = AutoModel.from_pretrained(
+                model_name,
+                load_in_4bit=edge_config.get('quantization') == '4bit',
+                device_map='auto' if self.device.type == 'cuda' else None
+            )
+        except Exception as e:
+            logger.warning(f"Failed to load edge model {model_name}: {e}")
+            logger.info("Using mock edge model instead")
+            self.edge_tokenizer = None
+            self.edge_model = None
         
         # API configuration for edge model
         self.edge_api_key = os.getenv('EDGE_API_KEY')
@@ -83,19 +124,162 @@ class PrivacyPreservingLLM:
         
         logger.info(f"Edge model initialized: {model_name}")
     
+    def _init_colab_unsloth_model(self, edge_config):
+        """Initialize Colab Unsloth model for edge processing."""
+        try:
+            # Try to import Unsloth for optimized model loading
+            from unsloth import FastLanguageModel
+            logger.info("Unsloth available, initializing optimized model")
+            
+            # Configure Unsloth model parameters
+            model_name = edge_config.get('colab_model_name', 'Qwen/Qwen2.5-7B-Instruct')
+            max_seq_length = edge_config.get('max_length', 2048)
+            dtype = edge_config.get('dtype', None)
+            load_in_4bit = edge_config.get('quantization') == '4bit'
+            
+            # Load model using Unsloth for optimization
+            self.edge_model, self.edge_tokenizer = FastLanguageModel.from_pretrained(
+                model_name=model_name,
+                max_seq_length=max_seq_length,
+                dtype=dtype,
+                load_in_4bit=load_in_4bit,
+                device_map='auto' if self.device.type == 'cuda' else None
+            )
+            
+            # Apply LoRA adapter if needed
+            if edge_config.get('use_lora', True):
+                self.edge_model = FastLanguageModel.get_peft_model(
+                    self.edge_model,
+                    r=edge_config.get('lora_r', 16),
+                    target_modules=edge_config.get('target_modules', 
+                        ["q_proj", "k_proj", "v_proj", "o_proj",
+                         "gate_proj", "up_proj", "down_proj"]),
+                    lora_alpha=edge_config.get('lora_alpha', 16),
+                    lora_dropout=edge_config.get('lora_dropout', 0),
+                    bias="none",
+                    use_gradient_checkpointing="unsloth",
+                    random_state=3407,
+                    loftq_config=None,
+                )
+            
+            logger.info("Colab Unsloth model initialized successfully")
+            
+        except ImportError:
+            logger.warning("Unsloth not available, using fallback model loading")
+            # Fallback to standard model loading
+            self._init_fallback_model(edge_config)
+        except Exception as e:
+            logger.error(f"Failed to initialize Colab Unsloth model: {e}")
+            # Fallback to standard model loading
+            self._init_fallback_model(edge_config)
+    
+    def _init_fallback_model(self, edge_config):
+        """Fallback model initialization when Unsloth is not available."""
+        model_name = edge_config.get('colab_model_name', 'microsoft/DialoGPT-medium')
+        try:
+            self.edge_tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.edge_model = AutoModel.from_pretrained(model_name)
+            logger.info(f"Fallback model loaded: {model_name}")
+        except Exception as e:
+            logger.error(f"Fallback model loading failed: {e}")
+            self.edge_tokenizer = None
+            self.edge_model = None
+    
     def _init_cloud_model(self):
         """Initialize the cloud model for final inference."""
         cloud_config = self.config.get('cloud_model', {})
+        
+        # Check if using mock model for testing
+        model_name = cloud_config.get('name', 'gpt-4o-mini')
+        if model_name == 'mock_model':
+            logger.info("Using mock cloud model for testing")
+            self.cloud_api_key = os.getenv('CLOUD_API_KEY', 'mock_key')
+            self.cloud_model_name = 'mock_model'
+            self.cloud_config = cloud_config
+            return
+        
+        # Check if using Colab Unsloth model
+        if model_name == 'colab_unsloth_model':
+            logger.info("Using Colab Unsloth model for cloud processing")
+            self._init_colab_unsloth_cloud_model(cloud_config)
+            return
         
         # Configure OpenAI client for cloud model
         self.cloud_api_key = os.getenv('CLOUD_API_KEY')
         openai.api_key = self.cloud_api_key
         openai.api_base = cloud_config.get('api_base', 'https://api.openai.com/v1')
         
-        self.cloud_model_name = cloud_config.get('name', 'gpt-4o-mini')
+        self.cloud_model_name = model_name
         self.cloud_config = cloud_config
         
         logger.info(f"Cloud model initialized: {self.cloud_model_name}")
+    
+    def _init_colab_unsloth_cloud_model(self, cloud_config):
+        """Initialize Colab Unsloth model for cloud processing."""
+        try:
+            # Try to import Unsloth for cloud model optimization
+            from unsloth import FastLanguageModel
+            logger.info("Unsloth available for cloud model, initializing optimized model")
+            
+            # Configure Unsloth cloud model parameters
+            model_name = cloud_config.get('colab_model_name', 'Qwen/Qwen2.5-7B-Instruct')
+            max_seq_length = cloud_config.get('max_tokens', 1024)
+            dtype = cloud_config.get('dtype', None)
+            load_in_4bit = cloud_config.get('quantization') == '4bit'
+            
+            # Load cloud model using Unsloth for optimization
+            self.cloud_model, self.cloud_tokenizer = FastLanguageModel.from_pretrained(
+                model_name=model_name,
+                max_seq_length=max_seq_length,
+                dtype=dtype,
+                load_in_4bit=load_in_4bit,
+                device_map='auto' if self.device.type == 'cuda' else None
+            )
+            
+            # Apply LoRA adapter if needed
+            if cloud_config.get('use_lora', True):
+                self.cloud_model = FastLanguageModel.get_peft_model(
+                    self.cloud_model,
+                    r=cloud_config.get('lora_r', 16),
+                    target_modules=cloud_config.get('target_modules', 
+                        ["q_proj", "k_proj", "v_proj", "o_proj",
+                         "gate_proj", "up_proj", "down_proj"]),
+                    lora_alpha=cloud_config.get('lora_alpha', 16),
+                    lora_dropout=cloud_config.get('lora_dropout', 0),
+                    bias="none",
+                    use_gradient_checkpointing="unsloth",
+                    random_state=3407,
+                    loftq_config=None,
+                )
+            
+            self.cloud_model_name = 'colab_unsloth_model'
+            self.cloud_config = cloud_config
+            logger.info("Colab Unsloth cloud model initialized successfully")
+            
+        except ImportError:
+            logger.warning("Unsloth not available for cloud model, using fallback")
+            # Fallback to standard model loading
+            self._init_fallback_cloud_model(cloud_config)
+        except Exception as e:
+            logger.error(f"Failed to initialize Colab Unsloth cloud model: {e}")
+            # Fallback to standard model loading
+            self._init_fallback_cloud_model(cloud_config)
+    
+    def _init_fallback_cloud_model(self, cloud_config):
+        """Fallback cloud model initialization when Unsloth is not available."""
+        model_name = cloud_config.get('colab_model_name', 'microsoft/DialoGPT-medium')
+        try:
+            self.cloud_tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.cloud_model = AutoModel.from_pretrained(model_name)
+            self.cloud_model_name = model_name
+            self.cloud_config = cloud_config
+            logger.info(f"Fallback cloud model loaded: {model_name}")
+        except Exception as e:
+            logger.error(f"Fallback cloud model loading failed: {e}")
+            self.cloud_tokenizer = None
+            self.cloud_model = None
+            self.cloud_model_name = 'fallback_failed'
+            self.cloud_config = cloud_config
     
     def _init_privacy_modules(self):
         """Initialize all privacy protection modules."""
