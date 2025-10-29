@@ -1,0 +1,27 @@
+# New Government Agent Algorithm Configuration
+# 新版政府代理算法配置
+
+algorithm:
+  # paradigm name; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  paradigm_type: "singletasklearning"
+
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # kind of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel"
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "NewGovernmentPosterAgent" for this benchmarking;
+      name: "NewGovernmentPosterAgent"
+      # the url address of python module; string type;
+      url: "./examples/GovDoc2Poster/singletask_learning_bench/testalgorithms/gen/basemodel.py"
+      # 超参数配置文件
+      hyperparameters: [
+        {'llm_model': {'values': ['qwen-max']}}, 
+        {'vlm_model': {'values': ['qwen-vl-max']}}, 
+        {'evaluate_only': {'values': [true]}},
+        ]
