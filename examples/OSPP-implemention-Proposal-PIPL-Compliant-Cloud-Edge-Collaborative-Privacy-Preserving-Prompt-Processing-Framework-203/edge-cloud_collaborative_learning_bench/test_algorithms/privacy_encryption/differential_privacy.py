@@ -15,9 +15,26 @@ import torch
 from typing import Dict, Any, List, Tuple, Optional
 from datetime import datetime, timedelta
 
+# Import sedna ClassFactory for Ianvs integration
+try:
+    from sedna.common.class_factory import ClassFactory, ClassType
+    SEDNA_AVAILABLE = True
+except ImportError:
+    SEDNA_AVAILABLE = False
+    # Create dummy decorators if sedna is not available
+    class ClassFactory:
+        @staticmethod
+        def register(class_type, alias=None):
+            def decorator(cls):
+                return cls
+            return decorator
+    class ClassType:
+        GENERAL = "general"
+
 logger = logging.getLogger(__name__)
 
 
+@ClassFactory.register(ClassType.GENERAL, alias="DifferentialPrivacy")
 class DifferentialPrivacy:
     """
     Differential Privacy mechanism for text data protection.

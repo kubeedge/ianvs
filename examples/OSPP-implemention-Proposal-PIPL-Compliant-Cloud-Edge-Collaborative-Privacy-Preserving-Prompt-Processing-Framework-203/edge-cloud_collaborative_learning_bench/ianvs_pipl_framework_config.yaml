@@ -1,0 +1,320 @@
+# Ianvs框架下的PIPL隐私保护云边协同提示处理框架配置
+# KubeEdge-Ianvs Privacy-Preserving Cloud-Edge Collaborative Prompt Processing Framework (PIPL Compliant)
+
+# 框架基本信息
+framework:
+  name: "PIPL-Privacy-Preserving-Cloud-Edge-Collaborative-Framework"
+  version: "1.0.0"
+  description: "基于Ianvs框架的KubeEdge云边协同隐私保护提示处理框架"
+  compliance: "PIPL-Compliant"
+  
+# 云边协同架构配置
+cloud_edge_architecture:
+  # 边缘节点配置
+  edge_nodes:
+    - name: "edge-node-1"
+      location: "beijing"
+      capabilities: ["privacy_detection", "local_processing", "data_encryption"]
+      resources:
+        cpu: "4"
+        memory: "8Gi"
+        gpu: "1"
+      models:
+        - name: "Qwen2.5-7B-Instruct"
+          type: "edge_model"
+          quantization: "4bit"
+          optimization: "unsloth"
+    
+    - name: "edge-node-2"
+      location: "shanghai"
+      capabilities: ["privacy_detection", "local_processing", "data_encryption"]
+      resources:
+        cpu: "4"
+        memory: "8Gi"
+        gpu: "1"
+      models:
+        - name: "Qwen2.5-7B-Instruct"
+          type: "edge_model"
+          quantization: "4bit"
+          optimization: "unsloth"
+  
+  # 云端节点配置
+  cloud_nodes:
+    - name: "cloud-node-1"
+      location: "cloud"
+      capabilities: ["advanced_processing", "model_aggregation", "privacy_analysis"]
+      resources:
+        cpu: "16"
+        memory: "32Gi"
+        gpu: "4"
+      models:
+        - name: "Qwen2.5-7B-Instruct"
+          type: "cloud_model"
+          quantization: "8bit"
+          optimization: "unsloth"
+
+# 隐私保护配置
+privacy_protection:
+  # PIPL合规性配置
+  pipl_compliance:
+    enabled: true
+    cross_border_restrictions: true
+    data_localization: true
+    consent_management: true
+    data_minimization: true
+  
+  # 隐私检测配置
+  privacy_detection:
+    methods:
+      - "regex_patterns"
+      - "ner_models"
+      - "rule_based"
+    pii_types:
+      - "PERSON"
+      - "PHONE"
+      - "EMAIL"
+      - "ID_CARD"
+      - "ADDRESS"
+    sensitivity_levels:
+      - "high_sensitivity"
+      - "general"
+  
+  # 差分隐私配置
+  differential_privacy:
+    enabled: true
+    epsilon: 1.2
+    delta: 0.00001
+    clipping_norm: 1.0
+    noise_mechanism: "gaussian"
+  
+  # 数据加密配置
+  data_encryption:
+    enabled: true
+    algorithm: "AES-256"
+    key_management: "distributed"
+    transport_encryption: true
+
+# 数据处理配置
+data_processing:
+  # 数据集配置
+  datasets:
+    - name: "ChnSentiCorp-Lite"
+      path: "data/chnsenticorp_lite"
+      format: "jsonl"
+      splits: ["train", "val", "test"]
+      privacy_annotations: true
+  
+  # 数据预处理
+  preprocessing:
+    text_cleaning: true
+    pii_masking: true
+    privacy_level_classification: true
+    cross_border_validation: true
+  
+  # 数据分割策略
+  data_splitting:
+    strategy: "privacy_aware"
+    train_ratio: 0.7
+    val_ratio: 0.15
+    test_ratio: 0.15
+    privacy_balance: true
+
+# 模型配置
+models:
+  # 边缘模型配置
+  edge_models:
+    - name: "Qwen2.5-7B-Instruct-Edge"
+      type: "language_model"
+      framework: "unsloth"
+      quantization: "4bit"
+      optimization:
+        lora: true
+        lora_r: 16
+        lora_alpha: 16
+        lora_dropout: 0.1
+      privacy_features:
+        local_inference: true
+        pii_detection: true
+        data_encryption: true
+  
+  # 云端模型配置
+  cloud_models:
+    - name: "Qwen2.5-7B-Instruct-Cloud"
+      type: "language_model"
+      framework: "unsloth"
+      quantization: "8bit"
+      optimization:
+        lora: true
+        lora_r: 32
+        lora_alpha: 32
+        lora_dropout: 0.1
+      privacy_features:
+        advanced_processing: true
+        privacy_analysis: true
+        model_aggregation: true
+
+# 协同推理配置
+collaborative_inference:
+  # 工作流配置
+  workflow:
+    stages:
+      - name: "privacy_detection"
+        location: "edge"
+        function: "detect_pii"
+        privacy_budget: 0.1
+      
+      - name: "privacy_protection"
+        location: "edge"
+        function: "protect_privacy"
+        privacy_budget: 0.2
+      
+      - name: "edge_processing"
+        location: "edge"
+        function: "local_inference"
+        privacy_budget: 0.3
+      
+      - name: "cloud_processing"
+        location: "cloud"
+        function: "advanced_inference"
+        privacy_budget: 0.4
+      
+      - name: "result_aggregation"
+        location: "cloud"
+        function: "aggregate_results"
+        privacy_budget: 0.0
+  
+  # 通信配置
+  communication:
+    protocol: "secure_https"
+    encryption: "TLS_1.3"
+    compression: true
+    timeout: 30
+  
+  # 负载均衡
+  load_balancing:
+    strategy: "privacy_aware"
+    edge_capacity: 100
+    cloud_capacity: 1000
+    failover: true
+
+# 监控和日志配置
+monitoring:
+  # 性能监控
+  performance:
+    metrics:
+      - "throughput"
+      - "latency"
+      - "resource_usage"
+      - "model_accuracy"
+    collection_interval: 10
+  
+  # 隐私监控
+  privacy:
+    metrics:
+      - "pii_detection_rate"
+      - "privacy_protection_rate"
+      - "compliance_violations"
+      - "privacy_budget_usage"
+    collection_interval: 5
+  
+  # 合规性监控
+  compliance:
+    metrics:
+      - "pipl_compliance_rate"
+      - "cross_border_violations"
+      - "data_localization_compliance"
+      - "consent_compliance"
+    collection_interval: 5
+
+# 安全配置
+security:
+  # 身份认证
+  authentication:
+    method: "oauth2"
+    token_expiry: 3600
+    refresh_token: true
+  
+  # 访问控制
+  access_control:
+    rbac_enabled: true
+    privacy_roles:
+      - "privacy_admin"
+      - "data_processor"
+      - "compliance_officer"
+  
+  # 审计日志
+  audit_logging:
+    enabled: true
+    log_level: "INFO"
+    retention_days: 90
+    privacy_sensitive: true
+
+# 部署配置
+deployment:
+  # KubeEdge配置
+  kubeedge:
+    enabled: true
+    edge_core_version: "1.14.0"
+    device_plugin: true
+    service_mesh: true
+  
+  # 容器配置
+  containers:
+    base_image: "python:3.9-slim"
+    resources:
+      requests:
+        cpu: "1"
+        memory: "2Gi"
+      limits:
+        cpu: "4"
+        memory: "8Gi"
+  
+  # 存储配置
+  storage:
+    type: "persistent_volume"
+    size: "100Gi"
+    access_mode: "ReadWriteOnce"
+    encryption: true
+
+# 测试配置
+testing:
+  # 单元测试
+  unit_tests:
+    enabled: true
+    coverage_threshold: 80
+    privacy_tests: true
+  
+  # 集成测试
+  integration_tests:
+    enabled: true
+    end_to_end: true
+    privacy_validation: true
+  
+  # 性能测试
+  performance_tests:
+    enabled: true
+    load_testing: true
+    stress_testing: true
+    privacy_impact: true
+
+# 报告配置
+reporting:
+  # 性能报告
+  performance:
+    enabled: true
+    format: "json"
+    frequency: "daily"
+  
+  # 隐私报告
+  privacy:
+    enabled: true
+    format: "json"
+    frequency: "real_time"
+    compliance_summary: true
+  
+  # 合规性报告
+  compliance:
+    enabled: true
+    format: "pdf"
+    frequency: "weekly"
+    pipl_audit: true

@@ -460,4 +460,117 @@ class RiskEvaluator:
             recommendations.append(f"Special attention required for {len(high_risk_entities)} high-risk entities")
         
         return recommendations
+    
+    def evaluate_risk(self, data: Dict[str, Any], context: str) -> Dict[str, Any]:
+        """
+        Evaluate privacy risk for given data and context.
+        
+        Args:
+            data: Data dictionary containing type and value
+            context: Context information for risk assessment
+            
+        Returns:
+            Risk evaluation result with level, score, and recommendations
+        """
+        risk_result = {
+            'risk_level': 'low',
+            'risk_score': 0.0,
+            'factors': [],
+            'recommendations': [],
+            'timestamp': None
+        }
+        
+        try:
+            # Extract data information
+            data_type = data.get('type', 'unknown')
+            data_value = data.get('value', '')
+            
+            # Initialize risk score
+            base_risk_score = 0.0
+            
+            # Risk assessment based on data type
+            if data_type in ['phone', 'id_card', 'bank_card', 'FINANCIAL']:
+                base_risk_score = 0.8
+                risk_result['risk_level'] = 'high'
+                risk_result['factors'].append('Sensitive personal information')
+                risk_result['recommendations'].append('Apply strong encryption')
+                risk_result['recommendations'].append('Implement access controls')
+            
+            elif data_type in ['email', 'address', 'PERSON']:
+                base_risk_score = 0.5
+                risk_result['risk_level'] = 'medium'
+                risk_result['factors'].append('Personal contact information')
+                risk_result['recommendations'].append('Apply standard protection')
+                risk_result['recommendations'].append('Consider anonymization')
+            
+            elif data_type in ['ORG', 'LOCATION']:
+                base_risk_score = 0.3
+                risk_result['risk_level'] = 'low'
+                risk_result['factors'].append('Organizational or location information')
+                risk_result['recommendations'].append('Apply basic protection')
+            
+            else:
+                base_risk_score = 0.1
+                risk_result['risk_level'] = 'very_low'
+                risk_result['factors'].append('General information')
+                risk_result['recommendations'].append('Minimal protection required')
+            
+            # Context-based risk adjustment
+            context_lower = context.lower()
+            
+            # Cross-border transmission risk
+            if 'cross_border' in context_lower or 'international' in context_lower:
+                base_risk_score += 0.2
+                risk_result['factors'].append('Cross-border transmission risk')
+                risk_result['recommendations'].append('Use cross-border encryption')
+                risk_result['recommendations'].append('Obtain explicit consent')
+            
+            # Medical or financial context
+            if any(keyword in context_lower for keyword in ['medical', 'health', 'financial', 'banking']):
+                base_risk_score += 0.15
+                risk_result['factors'].append('Sensitive domain context')
+                risk_result['recommendations'].append('Apply enhanced protection')
+            
+            # Legal or compliance context
+            if any(keyword in context_lower for keyword in ['legal', 'compliance', 'audit', 'regulatory']):
+                base_risk_score += 0.1
+                risk_result['factors'].append('Legal compliance context')
+                risk_result['recommendations'].append('Ensure regulatory compliance')
+            
+            # Data volume consideration
+            if len(data_value) > 100:
+                base_risk_score += 0.05
+                risk_result['factors'].append('Large data volume')
+                risk_result['recommendations'].append('Review data minimization')
+            
+            # Normalize risk score to [0, 1] range
+            risk_score = min(base_risk_score, 1.0)
+            risk_result['risk_score'] = risk_score
+            
+            # Adjust risk level based on final score
+            if risk_score >= 0.8:
+                risk_result['risk_level'] = 'critical'
+            elif risk_score >= 0.6:
+                risk_result['risk_level'] = 'high'
+            elif risk_score >= 0.4:
+                risk_result['risk_level'] = 'medium'
+            elif risk_score >= 0.2:
+                risk_result['risk_level'] = 'low'
+            else:
+                risk_result['risk_level'] = 'very_low'
+            
+            # Add timestamp
+            from datetime import datetime
+            risk_result['timestamp'] = datetime.now().isoformat()
+            
+            # Log risk evaluation
+            logger.info(f"Risk evaluation completed: {data_type} -> {risk_result['risk_level']} (score: {risk_score:.2f})")
+            
+        except Exception as e:
+            logger.error(f"Error in risk evaluation: {e}")
+            risk_result['error'] = str(e)
+            risk_result['risk_level'] = 'unknown'
+            risk_result['risk_score'] = 0.0
+        
+        return risk_result
 

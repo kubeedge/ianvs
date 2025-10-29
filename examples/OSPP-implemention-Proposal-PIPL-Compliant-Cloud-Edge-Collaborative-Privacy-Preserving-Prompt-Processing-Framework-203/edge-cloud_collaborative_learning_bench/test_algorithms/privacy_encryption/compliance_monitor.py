@@ -13,9 +13,26 @@ from typing import Dict, List, Any, Optional, Tuple
 import os
 from pathlib import Path
 
+# Import sedna ClassFactory for Ianvs integration
+try:
+    from sedna.common.class_factory import ClassFactory, ClassType
+    SEDNA_AVAILABLE = True
+except ImportError:
+    SEDNA_AVAILABLE = False
+    # Create dummy decorators if sedna is not available
+    class ClassFactory:
+        @staticmethod
+        def register(class_type, alias=None):
+            def decorator(cls):
+                return cls
+            return decorator
+    class ClassType:
+        GENERAL = "general"
+
 logger = logging.getLogger(__name__)
 
 
+@ClassFactory.register(ClassType.GENERAL, alias="ComplianceMonitor")
 class ComplianceMonitor:
     """
     Monitors and enforces compliance with PIPL and other privacy regulations.
@@ -481,4 +498,256 @@ class ComplianceMonitor:
             'compliance_status': 'healthy' if recent_violations == 0 else 'warning',
             'last_audit_entry': self.audit_logs[-1]['timestamp'] if self.audit_logs else None
         }
+    
+    def check_compliance(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Check data compliance with PIPL and privacy regulations.
+        
+        Args:
+            data: Data dictionary containing type, content, and metadata
+            
+        Returns:
+            Compliance check result with status and recommendations
+        """
+        compliance_result = {
+            'status': 'compliant',
+            'violations': [],
+            'recommendations': [],
+            'risk_level': 'low',
+            'timestamp': datetime.now().isoformat()
+        }
+        
+        # Extract data information
+        data_type = data.get('type', 'unknown')
+        content = data.get('content', '')
+        cross_border = data.get('cross_border', False)
+        risk_level = data.get('risk_level', 'low')
+        
+        # Check data type compliance
+        if data_type in ['personal_info', 'sensitive_info', 'biometric_data']:
+            compliance_result['status'] = 'requires_protection'
+            compliance_result['risk_level'] = 'high'
+            compliance_result['recommendations'].append('Apply encryption')
+            compliance_result['recommendations'].append('Implement access controls')
+        
+        # Check cross-border transmission
+        if cross_border:
+            if self.cross_border_policy == 'strict':
+                compliance_result['status'] = 'requires_encryption'
+                compliance_result['violations'].append('Cross-border transmission detected')
+                compliance_result['recommendations'].append('Use cross-border encryption')
+                compliance_result['recommendations'].append('Obtain explicit consent')
+            else:
+                compliance_result['recommendations'].append('Review cross-border policy')
+        
+        # Check risk level
+        if risk_level in ['high', 'critical']:
+            compliance_result['risk_level'] = risk_level
+            if compliance_result['status'] == 'compliant':
+                compliance_result['status'] = 'requires_protection'
+            compliance_result['recommendations'].append('Apply enhanced protection measures')
+        
+        # Check minimal necessity principle
+        if self.minimal_necessity and len(content) > 1000:
+            compliance_result['recommendations'].append('Review data minimization requirements')
+        
+        # Log compliance check
+        self.log_audit({
+            'action': 'compliance_check',
+            'data_type': data_type,
+            'status': compliance_result['status'],
+            'risk_level': compliance_result['risk_level'],
+            'cross_border': cross_border
+        })
+        
+        return compliance_result
+    
+    def get_audit_log(self) -> List[Dict[str, Any]]:
+        """
+        Get audit log entries.
+        
+        Returns:
+            List of audit log entries
+        """
+        try:
+            if os.path.exists(self.audit_log_file):
+                with open(self.audit_log_file, 'r', encoding='utf-8') as f:
+                    return [json.loads(line) for line in f if line.strip()]
+            return []
+        except Exception as e:
+            logger.error(f"Failed to read audit log: {e}")
+            return []
+    
+    def log_operation(self, operation: Dict[str, Any]) -> bool:
+        """
+        Log an operation to audit trail.
+        
+        Args:
+            operation: Operation details dictionary
+            
+        Returns:
+            True if logging successful, False otherwise
+        """
+        try:
+            log_entry = {
+                'timestamp': datetime.now().isoformat(),
+                'operation_id': operation.get('operation_id', 'unknown'),
+                'operation_type': operation.get('operation_type', 'unknown'),
+                'user_id': operation.get('user_id', 'unknown'),
+                'data_type': operation.get('data_type', 'unknown'),
+                'status': 'logged',
+                'details': operation.get('details', {})
+            }
+            
+            # Add to in-memory logs
+            self.audit_logs.append(log_entry)
+            
+            # Write to file
+            with open(self.audit_log_file, 'a', encoding='utf-8') as f:
+                f.write(json.dumps(log_entry, ensure_ascii=False) + '\n')
+            
+            # Maintain log size limit
+            if len(self.audit_logs) > self.max_log_entries:
+                self.audit_logs = self.audit_logs[-self.max_log_entries:]
+            
+            return True
+        except Exception as e:
+            logger.error(f"Failed to log operation: {e}")
+            return False
+    
+    def get_audit_report(self) -> Dict[str, Any]:
+        """
+        Generate comprehensive audit report.
+        
+        Returns:
+            Audit report with statistics and analysis
+        """
+        try:
+            audit_logs = self.get_audit_log()
+            
+            if not audit_logs:
+                return {
+                    'total_entries': 0,
+                    'period': 'No data available',
+                    'summary': 'No audit entries found'
+                }
+            
+            # Calculate time period
+            timestamps = [entry.get('timestamp', '') for entry in audit_logs if entry.get('timestamp')]
+            if timestamps:
+                start_time = min(timestamps)
+                end_time = max(timestamps)
+                period = f"{start_time} to {end_time}"
+            else:
+                period = "Unknown"
+            
+            # Analyze operation types
+            operation_types = {}
+            for entry in audit_logs:
+                op_type = entry.get('operation_type', 'unknown')
+                operation_types[op_type] = operation_types.get(op_type, 0) + 1
+            
+            # Analyze data types
+            data_types = {}
+            for entry in audit_logs:
+                data_type = entry.get('data_type', 'unknown')
+                data_types[data_type] = data_types.get(data_type, 0) + 1
+            
+            # Analyze compliance status
+            compliance_statuses = {}
+            for entry in audit_logs:
+                status = entry.get('status', 'unknown')
+                compliance_statuses[status] = compliance_statuses.get(status, 0) + 1
+            
+            return {
+                'total_entries': len(audit_logs),
+                'period': period,
+                'operation_types': operation_types,
+                'data_types': data_types,
+                'compliance_statuses': compliance_statuses,
+                'recent_entries': audit_logs[-10:] if len(audit_logs) > 10 else audit_logs,
+                'generated_at': datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Failed to generate audit report: {e}")
+            return {
+                'error': str(e),
+                'total_entries': 0,
+                'period': 'Error',
+                'summary': 'Failed to generate report'
+            }
+    
+    def get_compliance_statistics(self) -> Dict[str, Any]:
+        """
+        Get compliance statistics and metrics.
+        
+        Returns:
+            Compliance statistics dictionary
+        """
+        try:
+            audit_logs = self.get_audit_log()
+            
+            if not audit_logs:
+                return {
+                    'total_operations': 0,
+                    'compliance_rate': 0.0,
+                    'violation_count': 0,
+                    'risk_distribution': {},
+                    'summary': 'No data available'
+                }
+            
+            # Calculate compliance metrics
+            total_operations = len(audit_logs)
+            compliant_operations = len([entry for entry in audit_logs if entry.get('status') == 'compliant'])
+            violation_count = total_operations - compliant_operations
+            compliance_rate = compliant_operations / total_operations if total_operations > 0 else 0.0
+            
+            # Analyze risk distribution
+            risk_levels = {}
+            for entry in audit_logs:
+                risk_level = entry.get('risk_level', 'unknown')
+                risk_levels[risk_level] = risk_levels.get(risk_level, 0) + 1
+            
+            # Analyze cross-border transmissions
+            cross_border_count = len([entry for entry in audit_logs if entry.get('cross_border', False)])
+            
+            # Recent activity (last 24 hours)
+            recent_cutoff = datetime.now() - timedelta(hours=24)
+            recent_entries = [
+                entry for entry in audit_logs 
+                if entry.get('timestamp') and 
+                datetime.fromisoformat(entry['timestamp'].replace('Z', '+00:00')) > recent_cutoff
+            ]
+            
+            return {
+                'total_operations': total_operations,
+                'compliant_operations': compliant_operations,
+                'violation_count': violation_count,
+                'compliance_rate': compliance_rate,
+                'risk_distribution': risk_levels,
+                'cross_border_transmissions': cross_border_count,
+                'recent_activity_24h': len(recent_entries),
+                'active_sessions': len(self.privacy_budget_tracking),
+                'privacy_budget_utilization': self._calculate_budget_utilization(),
+                'generated_at': datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Failed to generate compliance statistics: {e}")
+            return {
+                'error': str(e),
+                'total_operations': 0,
+                'compliance_rate': 0.0,
+                'violation_count': 0,
+                'summary': 'Failed to generate statistics'
+            }
+    
+    def _calculate_budget_utilization(self) -> float:
+        """Calculate privacy budget utilization rate."""
+        if not self.privacy_budget_tracking:
+            return 0.0
+        
+        total_budget = sum(session.get('total_budget', 10.0) for session in self.privacy_budget_tracking.values())
+        consumed_budget = sum(session.get('consumed_budget', 0.0) for session in self.privacy_budget_tracking.values())
+        
+        return consumed_budget / total_budget if total_budget > 0 else 0.0
 
