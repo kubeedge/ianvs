@@ -1,0 +1,90 @@
+algorithm:
+  # paradigm name; string type;
+  paradigm_type: "jointinference"
+
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # kind of algorithm module; string type;
+    - type: "dataset_processor"
+      # name of custom dataset processor; string type;
+      name: "PIPLPrivacyDatasetProcessor"
+      # the url address of custom dataset processor; string type;
+      url: "./test_algorithms/privacy_preserving_llm/privacy_preserving_llm.py"
+
+    - type: "edgemodel"
+      # name of edge model module; string type;
+      name: "PrivacyPreservingEdgeModel"
+      # the url address of edge model module; string type;
+      url: "./test_algorithms/privacy_preserving_llm/privacy_preserving_llm.py"
+
+      hyperparameters:
+      # name of the hyperparameter; string type;
+        - model:
+            values:
+              - "colab_unsloth_model"  # 使用Colab Unsloth部署的模型
+        - quantization:
+            values:
+              - "4bit"  # Unsloth 4-bit量化
+        - api_base:
+            values:
+              - "https://colab.research.google.com"  # Colab API基础URL
+        - api_key_env:
+            values:
+              - "COLAB_API_KEY"  # Colab API密钥
+        - colab_url:
+            values:
+              - "https://colab.research.google.com/drive/YOUR_NOTEBOOK_ID"  # 您的Colab Notebook URL
+        - hidden_layer_index:
+            values:
+              - -2
+        - pooling_strategy:
+            values:
+              - "mean"
+        - max_length:
+            values:
+              - 2048
+        - device:
+            values:
+              - "cuda"  # 使用GPU加速
+        - unsloth_optimized:
+            values:
+              - true  # 启用Unsloth优化
+              
+    - type: "cloudmodel"
+      # name of python module; string type;
+      name: "PrivacyPreservingCloudModel"
+      # the url address of python module; string type;
+      url: "./test_algorithms/privacy_preserving_llm/privacy_preserving_llm.py"
+
+      hyperparameters:
+        # name of the hyperparameter; string type;
+        - model:
+            values:
+              - "colab_unsloth_model"  # 使用Colab Unsloth部署的模型
+        - api_base:
+            values:
+              - "https://colab.research.google.com"
+        - api_key_env:
+            values:
+              - "COLAB_API_KEY"
+        - colab_url:
+            values:
+              - "https://colab.research.google.com/drive/YOUR_NOTEBOOK_ID"
+        - vector_adapter_input_dim:
+            values:
+              - 64
+        - vector_adapter_hidden_dim:
+            values:
+              - 512
+        - vector_adapter_output_dim:
+            values:
+              - 4096
+        - max_tokens:
+            values:
+              - 1024
+        - temperature:
+            values:
+              - 0.7
+        - unsloth_optimized:
+            values:
+              - true  # 启用Unsloth优化
