@@ -14,9 +14,26 @@ import spacy
 from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
 import jieba
 
+# Import sedna ClassFactory for Ianvs integration
+try:
+    from sedna.common.class_factory import ClassFactory, ClassType
+    SEDNA_AVAILABLE = True
+except ImportError:
+    SEDNA_AVAILABLE = False
+    # Create dummy decorators if sedna is not available
+    class ClassFactory:
+        @staticmethod
+        def register(class_type, alias=None):
+            def decorator(cls):
+                return cls
+            return decorator
+    class ClassType:
+        GENERAL = "general"
+
 logger = logging.getLogger(__name__)
 
 
+@ClassFactory.register(ClassType.GENERAL, alias="PIIDetector")
 class PIIDetector:
     """
     Comprehensive PII detection for Chinese and English text.
@@ -49,43 +66,43 @@ class PIIDetector:
         
         # Chinese mobile phone patterns
         self.phone_patterns = [
-            r'1[3-9]\d{9}',  # Chinese mobile
+            r'1[3-9]\d{9}',  # Chinese mobile phone number
             r'\+86[-\s]?1[3-9]\d{9}',  # Chinese mobile with country code
             r'(\d{3}[-\s]?)?\d{3}[-\s]?\d{4}',  # General phone format
-            r'电话[:：]\s*(\+?86[-\s]?)?1[3-9]\d{9}',  # Phone with label
-            r'手机[:：]\s*(\+?86[-\s]?)?1[3-9]\d{9}'   # Mobile with label
+            r'电话[:：]\s*(\+?86[-\s]?)?1[3-9]\d{9}',  # Phone with Chinese label
+            r'手机[:：]\s*(\+?86[-\s]?)?1[3-9]\d{9}'   # Mobile with Chinese label
         ]
         
         # Email patterns
         self.email_patterns = [
             r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
-            r'邮箱[:：]\s*[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}',
-            r'邮件[:：]\s*[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}'
+            r'邮箱[:：]\s*[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}',  # Email with Chinese label
+            r'邮件[:：]\s*[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}'   # Email with Chinese label
         ]
         
         # Chinese ID card patterns
         self.id_card_patterns = [
-            r'\b\d{17}[0-9Xx]\b',  # 18-digit Chinese ID
-            r'\b\d{15}\b',  # 15-digit Chinese ID (old format)
-            r'身份证号[:：]\s*\d{15,18}[0-9Xx]?',
-            r'证件号[:：]\s*\d{15,18}[0-9Xx]?'
+            r'\b\d{17}[0-9Xx]\b',  # 18-digit Chinese ID card
+            r'\b\d{15}\b',  # 15-digit Chinese ID card (old format)
+            r'身份证号[:：]\s*\d{15,18}[0-9Xx]?',  # ID card with Chinese label
+            r'证件号[:：]\s*\d{15,18}[0-9Xx]?'     # ID card with Chinese label
         ]
         
         # Address patterns
         self.address_patterns = [
-            r'[北上广深]\w*[市区县]\w*[路街道]\w*号?\d*',  # Major cities
-            r'\w+省\w*[市区县]\w*[路街道镇村]\w*',  # Provincial addresses
-            r'地址[:：]\s*[\w\d\s-]+',
-            r'住址[:：]\s*[\w\d\s-]+',
+            r'[北上广深]\w*[市区县]\w*[路街道]\w*号?\d*',  # Major Chinese cities
+            r'\w+省\w*[市区县]\w*[路街道镇村]\w*',  # Provincial Chinese addresses
+            r'地址[:：]\s*[\w\d\s-]+',  # Address with Chinese label
+            r'住址[:：]\s*[\w\d\s-]+',  # Residence with Chinese label
             r'\d+\s+\w+\s+(Street|St|Avenue|Ave|Road|Rd)',  # English addresses
         ]
         
         # Name patterns (Chinese)
         self.name_patterns = [
-            r'[姓名][:：]\s*[\u4e00-\u9fff]{2,4}',
-            r'客户[:：]\s*[\u4e00-\u9fff]{2,4}',
-            r'联系人[:：]\s*[\u4e00-\u9fff]{2,4}',
-            r'[张王李赵刘陈杨黄周吴徐孙胡朱高林何郭马罗梁宋郑谢韩唐冯于董萧程曹袁邓许傅沈曾彭吕苏卢蒋蔡贾丁魏薛叶阎余潘杜戴夏钟汪田任姜范方石姚谭廖邹熊金陆郝孔白崔康毛邱秦江史顾侯邵孟龙万段漕钱汤尹黎易常武乔贺赖龚文][一-龯]{1,3}',
+            r'[姓名][:：]\s*[\u4e00-\u9fff]{2,4}',  # Name with Chinese label
+            r'客户[:：]\s*[\u4e00-\u9fff]{2,4}',     # Customer with Chinese label
+            r'联系人[:：]\s*[\u4e00-\u9fff]{2,4}',   # Contact with Chinese label
+            r'[张王李赵刘陈杨黄周吴徐孙胡朱高林何郭马罗梁宋郑谢韩唐冯于董萧程曹袁邓许傅沈曾彭吕苏卢蒋蔡贾丁魏薛叶阎余潘杜戴夏钟汪田任姜范方石姚谭廖邹熊金陆郝孔白崔康毛邱秦江史顾侯邵孟龙万段漕钱汤尹黎易常武乔贺赖龚文][一-龯]{1,3}',  # Common Chinese surnames
             r'Mr\\.?\\s+[A-Z][a-z]+',  # English names
             r'Ms\\.?\\s+[A-Z][a-z]+',
             r'Dr\\.?\\s+[A-Z][a-z]+'
@@ -93,21 +110,21 @@ class PIIDetector:
         
         # Financial information patterns
         self.financial_patterns = [
-            r'\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}',  # Credit card
-            r'信用卡[:：]\s*\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}',
-            r'银行卡[:：]\s*\d{16,19}',
-            r'账号[:：]\s*\d{10,20}',
-            r'IBAN[:：]?\s*[A-Z]{2}\d{2}[A-Z0-9]{4,30}'
+            r'\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}',  # Credit card number
+            r'信用卡[:：]\s*\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}',  # Credit card with Chinese label
+            r'银行卡[:：]\s*\d{16,19}',  # Bank card with Chinese label
+            r'账号[:：]\s*\d{10,20}',    # Account with Chinese label
+            r'IBAN[:：]?\s*[A-Z]{2}\d{2}[A-Z0-9]{4,30}'  # IBAN with Chinese label
         ]
         
         # Organization patterns
         self.organization_patterns = [
-            r'[\u4e00-\u9fff]+公司',
-            r'[\u4e00-\u9fff]+集团',
-            r'[\u4e00-\u9fff]+企业',
-            r'[\u4e00-\u9fff]+有限责任公司',
-            r'[\u4e00-\u9fff]+股份有限公司',
-            r'[A-Z][a-z]+\\s+(Inc|Corp|LLC|Ltd|Company)',
+            r'[\u4e00-\u9fff]+公司',      # Chinese company names
+            r'[\u4e00-\u9fff]+集团',      # Chinese group names
+            r'[\u4e00-\u9fff]+企业',      # Chinese enterprise names
+            r'[\u4e00-\u9fff]+有限责任公司',  # Chinese limited liability company
+            r'[\u4e00-\u9fff]+股份有限公司',  # Chinese joint stock company
+            r'[A-Z][a-z]+\\s+(Inc|Corp|LLC|Ltd|Company)',  # English company names
         ]
     
     def _init_ner_models(self):
@@ -402,8 +419,14 @@ class PIIDetector:
         """Determine if entity requires privacy protection."""
         high_protection_types = {'ID_CARD', 'FINANCIAL', 'PHONE', 'EMAIL'}
         
+        # Calculate risk level if not already present
+        if 'risk_level' not in entity:
+            risk_level = self._calculate_risk_level(entity)
+        else:
+            risk_level = entity['risk_level']
+        
         return (entity['type'] in high_protection_types or 
-                entity['risk_level'] in ['high', 'critical'])
+                risk_level in ['high', 'critical'])
     
     def get_entity_summary(self, entities: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Get summary statistics of detected entities."""
