@@ -1,0 +1,33 @@
+# testalgorithms/ai2holodeck/algorithmenv.yaml
+
+algorithm:
+  paradigm_type: "singletasklearning"
+
+  modules:
+    - type: "basemodel"
+      
+      name: "PhysSceneGen" 
+      url: "examples.phys_scene_gen.singletask_learning_bench.testalgorithms.ai2holodeck.phys_scene_generator"
+      
+      hyperparameters:
+        - openai_api_key:
+            values:
+              - "sk-YOUR_OPENAI_API_KEY_HERE"
+        - objaverse_asset_dir:
+            values:
+              - "YOUR_ROOT_TO_OBJAVERSE_ASSET"
+        - single_room:
+            values:
+              - False
+        - data_path:
+            values:
+              - "./examples/phys_scene_gen/singletask_learning_bench/dataset/queries.jsonl"
+        - gapartnet_annotations_path:
+            values:
+              - "./examples/phys_scene_gen/singletask_learning_bench/dataset/gapartnet_annotations.json.gz"
+        - gapartnet_clip_features_path:
+            values:
+              - "./examples/phys_scene_gen/singletask_learning_bench/dataset/gapartnet_clip_features.pkl"
+        - gapartnet_sbert_features_path:
+            values:
+              - "./examples/phys_scene_gen/singletask_learning_bench/dataset/gapartnet_sbert_features.pkl"
