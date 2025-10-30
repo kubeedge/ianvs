@@ -4,6 +4,16 @@ PIPL-Compliant Privacy-Preserving LLM for Cloud-Edge Collaborative Inference
 This module implements the main privacy-preserving LLM algorithm that integrates
 privacy detection and encryption modules to ensure PIPL compliance while maintaining
 high inference quality.
+
+Key Features:
+- Zero raw text cross-border transmission
+- Real-time PIPL compliance verification
+- Membership Inference Attack (MIA) evaluation
+- IANVS framework integration
+- Comprehensive privacy metrics
+
+Author: 张瀚元 <zhylife2327@163.com>
+Issue: #203
 """
 
 import os

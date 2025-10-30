@@ -1,6 +1,7 @@
 benchmarkingjob:
   name: "pipl-compliant-privacy-preserving-llm-bench"
   workspace: "./workspace-pipl-llm"
+  description: "PIPL-compliant cloud-edge collaborative privacy-preserving LLM inference benchmark"
   
   testenv: "./testenv/testenv.yaml"
   

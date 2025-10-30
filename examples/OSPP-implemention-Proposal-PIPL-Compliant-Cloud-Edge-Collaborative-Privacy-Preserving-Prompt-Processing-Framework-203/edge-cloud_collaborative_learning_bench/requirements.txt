@@ -51,3 +51,12 @@ psutil>=5.8.0
 # Configuration management
 python-dotenv>=0.19.0
 
+# IANVS Framework Integration
+ianvs>=0.1.0
+
+# Additional Privacy Metrics
+privacy-metrics>=0.2.0
+
+# Model Fine-tuning
+unsloth>=2024.1  # Optional for model optimization
+

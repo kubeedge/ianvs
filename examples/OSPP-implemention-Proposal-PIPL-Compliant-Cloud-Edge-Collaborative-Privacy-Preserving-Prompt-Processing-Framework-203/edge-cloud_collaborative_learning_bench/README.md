@@ -1,12 +1,14 @@
 # PIPL-Compliant Cloud-Edge Collaborative Privacy-Preserving Prompt Processing Framework
 
-This example implements a PIPL-compliant cloud-edge collaborative privacy-preserving LLM inference workflow validated with the ChnSentiCorp-Lite dataset, including:
+This example implements a comprehensive PIPL-compliant cloud-edge collaborative privacy-preserving LLM inference workflow validated with the ChnSentiCorp-Lite dataset, including:
 
 - Edge-first inference with hard sample mining
 - Adaptive privacy desensitization (regex, NER masking, differential privacy)
 - Privacy and performance metrics visualization
 - Zero raw text cross-border transmission
 - Real-time PIPL compliance verification and audit logging
+- IANVS StoryManager integration for comprehensive reporting
+- Membership Inference Attack (MIA) evaluation framework
 
 ## Directory Structure
 
