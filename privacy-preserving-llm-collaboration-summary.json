@@ -1,0 +1,29 @@
+{
+  "warning": "Current version focuses exclusively on privacy-compliant and cloud-edge collaborative inference for text data. Multi-modal (image, audio, etc.) support is NOT included in this release but can be integrated in the future.",
+  "project_background": "With the rapid evolution of large language models (LLMs) from cloud-only deployment to cloud-edge collaboration, data compliance and privacy protection have become crucial obstacles. In China, the Personal Information Protection Law (PIPL) enforces strict requirements on data locality and border-cross transfer of personal data. Industries and developers are challenged to maximize AI capabilities while guaranteeing no sensitive raw textual data leakage across domains or borders. This project addresses privacy-compliant cloud-edge LLM inference for text data, leveraging the IANVS distributed benchmarking framework for fully automatable reporting, scoring, and traceability. We introduce and open-source an end-to-end solution: 'on-edge desensitization, anonymous feature transfer, and secure cloud inference' as a reproducible compliance reference for the community and enterprises.",
+  "problems_solved": [
+    "Full PIPL-compliant cloud-edge text pipeline: All sensitive processing is performed locally at the edge; only irreversibly anonymized features or minimal labels cross the border, eliminating legal risks of transmitting original sensitive content.",
+    "Dynamic trade-off between privacy and utility: Fine-grained edge-cloud workflow allows customizable trade-offs between privacy strength and inference accuracy/latency.",
+    "Quantifiable privacy risk: Built-in Membership Inference Attack (MIA) and other state-of-the-art tools provide quantitative evaluation/benchmarking of privacy protection effectiveness.",
+    "Open and reproducible compliance evaluation: Full end-to-end scripts and benchmarks enable developers, auditors, and researchers to easily reproduce, compare, and enhance privacy-compliant LLM solutions.",
+    "Full-process compliance tracking: Every step from data flow, feature anonymization, model inference, and audit logging is auto-traced to facilitate regulatory checks and accountability."
+  ],
+  "results_achieved": [
+    "End-to-end compliance workflow: Runs the complete loop 'sensitive text → local desensitization → only features/labels crossing → secure cloud LLM inference → compliance report', with all source code open.",
+    "First open-source PIPL-compliant cloud-edge benchmarking suite: One-click evaluation of privacy, MIA risk, and inference performance in cloud-edge AI deployments.",
+    "Extensibility/ reproducibility: Supports both ChnSentiCorp-Lite and any custom label-enhanced text data; batch report/export/visualization available.",
+    "Industry best-practice: Directly applicable for regulatory-intensive industries (healthcare, government, cross-border customer service, etc.) where compliance and privacy are mission-critical."
+  ],
+  "pipl_compliance_highlights": [
+    "Edge: Data minimization & feature limitation: All raw text stays and desensitization is done on the edge. Named-entity-recognition, regex, NLP, and business rules anonymize sensitive data with irreversible feature abstraction before transfer. Only minimal, irreversible vector representations or classification labels are transmitted to the cloud (never original content).",
+    "Cloud: Secure, compliant model usage: Cloud models (e.g., GPT-4o-mini via API) receive only anonymous features—not reversible or raw text inputs. All cloud APIs/procedures strictly prohibit data reconstruction or reverse mapping to originals.",
+    "Full traceability & audit: Every data operation, processing step, and inference is logged and can be externally audited. Automated compliance self-check and reporting modules simplify regulatory readiness."
+  ],
+  "implementation_with_ianvs": [
+    "Fully automated evaluation: End-to-end usage of IANVS for benchmarking job definitions, test environments, standardized test algorithms, scoring, MIA evaluation, and markdown/JSON report export.",
+    "Easy reproduction and comparison: Single command 'ianvs -f benchmarkingjob.yaml' to launch the complete experiment, obtain quantitative scores and comprehensive compliance/utility tradeoff reports.",
+    "Extensible modular design: All anonymization, privacy control, feature extraction, and cloud inference modules are plugged into IANVS as components for rapid integration or replacement.",
+    "Open ecosystem collaboration: Strict adherence to open interfaces and benchmarks; researchers and industry users can contribute and share new solutions under a common, reproducible framework."
+  ],
+  "note": "The current implementation is optimized for text data. The architecture allows for future expansion to image, audio, and other modalities as needed."
+}
