@@ -1,0 +1,307 @@
+# Ianvs PIPL隐私保护云边协同提示处理框架配置文件
+
+# 框架基本信息
+framework:
+  name: "Ianvs PIPL Privacy Protection Framework"
+  version: "1.0.0"
+  description: "基于Ianvs框架的PIPL隐私保护云边协同提示处理框架"
+  environment: "colab"
+  compliance: "PIPL-Compliant"
+
+# 模型配置
+models:
+  edge_model:
+    name: "Qwen2.5-7B-Edge"
+    type: "edge_model"
+    quantization: "4bit"
+    optimization: "unsloth"
+    device: "cuda"
+    memory_usage: "4GB"
+    parameters: "7B"
+  
+  cloud_model:
+    name: "Qwen2.5-7B-Cloud"
+    type: "cloud_model"
+    quantization: "8bit"
+    optimization: "unsloth"
+    device: "cuda"
+    memory_usage: "8GB"
+    parameters: "7B"
+
+# 隐私保护配置
+privacy:
+  pipl_compliance: true
+  privacy_budget: 1.2
+  epsilon: 1.2
+  delta: 0.00001
+  clipping_norm: 1.0
+  
+  pii_detection:
+    methods: ["regex", "ner", "spacy"]
+    risk_levels: ["high", "medium", "low"]
+    confidence_threshold: 0.8
+  
+  differential_privacy:
+    enabled: true
+    noise_mechanism: "gaussian"
+    sensitivity: 1.0
+  
+  compliance_monitoring:
+    enabled: true
+    cross_border_check: true
+    audit_logging: true
+
+# 数据集配置
+dataset:
+  name: "ChnSentiCorp-Lite"
+  description: "中文情感分析数据集（轻量版）"
+  format: "jsonl"
+  path: "/content/ianvs_pipl_framework/data/processed"
+  
+  splits:
+    train:
+      file: "chnsenticorp_lite_train.jsonl"
+      samples: 1000
+      description: "训练集"
+    val:
+      file: "chnsenticorp_lite_val.jsonl"
+      samples: 200
+      description: "验证集"
+    test:
+      file: "chnsenticorp_lite_test.jsonl"
+      samples: 200
+      description: "测试集"
+  
+  schema:
+    sample_id: "string"
+    text: "string"
+    label: "string"
+    privacy_level: "string"
+    pii_entities: "list"
+    pipl_cross_border: "boolean"
+    synthetic_pii: "object"
+    privacy_budget_cost: "float"
+    metadata: "object"
+
+# 性能配置
+performance:
+  batch_size: 8
+  max_length: 512
+  num_workers: 2
+  device: "cuda"
+  
+  monitoring:
+    interval: 1.0
+    alert_thresholds:
+      cpu_usage: 80
+      memory_usage: 80
+      disk_usage: 80
+      gpu_usage: 80
+  
+  optimization:
+    mixed_precision: true
+    gradient_checkpointing: true
+    memory_efficient_attention: true
+
+# 协同工作流配置
+workflow:
+  batch_size: 5
+  max_processing_time: 30.0
+  privacy_budget_limit: 1.0
+  
+  stages:
+    - name: "privacy_detection"
+      description: "隐私检测"
+      timeout: 5.0
+    - name: "privacy_protection"
+      description: "隐私保护"
+      timeout: 5.0
+    - name: "edge_processing"
+      description: "边缘处理"
+      timeout: 10.0
+    - name: "cloud_processing"
+      description: "云端处理"
+      timeout: 15.0
+    - name: "result_aggregation"
+      description: "结果聚合"
+      timeout: 5.0
+
+# 指标配置
+metrics:
+  performance_metrics:
+    accuracy:
+      name: "准确率"
+      description: "模型预测准确率"
+      target: ">0.85"
+      weight: 0.3
+    throughput:
+      name: "吞吐量"
+      description: "系统处理能力（样本/秒）"
+      target: ">100"
+      weight: 0.2
+    latency:
+      name: "延迟"
+      description: "响应时间（秒）"
+      target: "<0.5"
+      weight: 0.2
+    cpu_usage:
+      name: "CPU使用率"
+      description: "CPU使用率（%）"
+      target: "<80"
+      weight: 0.1
+    memory_usage:
+      name: "内存使用率"
+      description: "内存使用率（%）"
+      target: "<80"
+      weight: 0.1
+    gpu_usage:
+      name: "GPU使用率"
+      description: "GPU使用率（%）"
+      target: "<90"
+      weight: 0.1
+  
+  privacy_metrics:
+    pii_detection_rate:
+      name: "PII检测率"
+      description: "个人身份信息检测准确率"
+      target: ">0.90"
+      weight: 0.3
+    privacy_protection_rate:
+      name: "隐私保护率"
+      description: "隐私保护措施覆盖率"
+      target: ">0.85"
+      weight: 0.3
+    privacy_budget_usage:
+      name: "隐私预算使用率"
+      description: "差分隐私预算使用情况"
+      target: "<0.9"
+      weight: 0.2
+    compliance_violations:
+      name: "合规违规数"
+      description: "违反隐私法规的次数"
+      target: "=0"
+      weight: 0.2
+  
+  compliance_metrics:
+    pipl_compliance_rate:
+      name: "PIPL合规率"
+      description: "个人信息保护法合规率"
+      target: "=1.0"
+      weight: 0.4
+    cross_border_violations:
+      name: "跨境违规数"
+      description: "跨境数据传输违规次数"
+      target: "=0"
+      weight: 0.3
+    total_violations:
+      name: "总违规数"
+      description: "所有合规性违规总数"
+      target: "=0"
+      weight: 0.3
+
+# StoryManager配置
+storymanager:
+  rank:
+    sort_by: ["accuracy", "privacy_score", "compliance_rate"]
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+    save_mode: "selected_and_all_and_picture"
+  
+  visualization:
+    charts:
+      - type: "performance_radar"
+        title: "性能指标雷达图"
+      - type: "privacy_bar"
+        title: "隐私保护指标柱状图"
+      - type: "compliance_pie"
+        title: "合规性评分饼图"
+      - type: "overall_gauge"
+        title: "总体评分仪表盘"
+  
+  reports:
+    comprehensive_report: true
+    detailed_analysis: true
+    recommendations: true
+    export_formats: ["json", "csv", "png"]
+
+# 日志配置
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  handlers:
+    - type: "file"
+      filename: "/content/ianvs_pipl_framework/logs/framework.log"
+      max_bytes: 10485760  # 10MB
+      backup_count: 5
+    - type: "console"
+      stream: "stdout"
+  
+  loggers:
+    framework:
+      level: "INFO"
+      handlers: ["file", "console"]
+    privacy:
+      level: "DEBUG"
+      handlers: ["file", "console"]
+    performance:
+      level: "INFO"
+      handlers: ["file"]
+
+# 输出配置
+output:
+  results_dir: "/content/ianvs_pipl_framework/results"
+  logs_dir: "/content/ianvs_pipl_framework/logs"
+  analysis_dir: "/content/ianvs_pipl_framework/analysis"
+  
+  files:
+    metrics: "performance_metrics.json"
+    monitoring: "monitoring_report.json"
+    workflow: "collaborative_workflow_results.json"
+    storymanager: "comprehensive_evaluation_report.json"
+    analysis: "comprehensive_analysis_report.json"
+  
+  export:
+    formats: ["json", "csv", "png", "html"]
+    compression: true
+    backup: true
+
+# 安全配置
+security:
+  encryption:
+    enabled: true
+    algorithm: "AES-256"
+    key_rotation: true
+  
+  access_control:
+    enabled: true
+    authentication: true
+    authorization: true
+  
+  audit:
+    enabled: true
+    log_all_operations: true
+    retention_days: 30
+
+# 环境配置
+environment:
+  python_version: "3.8+"
+  memory_requirement: "8GB+"
+  disk_requirement: "10GB+"
+  gpu_requirement: "optional"
+  
+  dependencies:
+    core: ["torch", "transformers", "numpy", "pandas"]
+    nlp: ["spacy", "jieba", "nltk"]
+    privacy: ["opacus", "cryptography"]
+    visualization: ["matplotlib", "seaborn", "plotly"]
+    ianvs: ["ianvs", "prettytable", "onnx"]
+  
+  paths:
+    base: "/content/ianvs_pipl_framework"
+    data: "/content/ianvs_pipl_framework/data"
+    models: "/content/ianvs_pipl_framework/models"
+    results: "/content/ianvs_pipl_framework/results"
+    logs: "/content/ianvs_pipl_framework/logs"
+

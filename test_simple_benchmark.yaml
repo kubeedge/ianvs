@@ -1,0 +1,24 @@
+benchmarkingjob:
+  name: "simple-pipl-test"
+  workspace: "./workspace-simple"
+  
+  testenv: "examples/OSPP-implemention-Proposal-PIPL-Compliant-Cloud-Edge-Collaborative-Privacy-Preserving-Prompt-Processing-Framework-203/edge-cloud_collaborative_learning_bench/testenv/testenv.yaml"
+  
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "privacy-preserving-llm-collaboration"
+        url: "examples/OSPP-implemention-Proposal-PIPL-Compliant-Cloud-Edge-Collaborative-Privacy-Preserving-Prompt-Processing-Framework-203/edge-cloud_collaborative_learning_bench/test_algorithms/algorithm.yaml"
+  
+  rank:
+    sort_by: [{"Accuracy": "descend"}]
+  
+  visualization:
+    mode: "selected_only"
+    method: "print_table"
+    selected_dataitem:
+      paradigms: ["all"]
+      modules: ["privacy_preserving_llm"]
+      metrics: ["Accuracy", "Privacy_Score"]
+  
+  save_mode: "selected_and_all"

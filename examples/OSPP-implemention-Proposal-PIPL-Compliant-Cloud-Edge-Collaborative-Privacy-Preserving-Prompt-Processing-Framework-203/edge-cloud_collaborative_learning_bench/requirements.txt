@@ -1,0 +1,101 @@
+# Ianvs PIPL隐私保护云边协同提示处理框架依赖列表
+
+# 核心依赖
+torch>=2.0.0
+transformers>=4.30.0
+numpy>=1.21.0
+pandas>=1.3.0
+scikit-learn>=1.0.0
+matplotlib>=3.5.0
+seaborn>=0.11.0
+plotly>=5.0.0
+tqdm>=4.60.0
+requests>=2.25.0
+psutil>=5.8.0
+pyyaml>=6.0
+jsonlines>=3.0.0
+rich>=12.0.0
+loguru>=0.6.0
+
+# NLP依赖
+spacy>=3.4.0
+jieba>=0.42.1
+nltk>=3.7
+openai>=0.27.0
+huggingface-hub>=0.15.0
+
+# 隐私保护依赖
+opacus>=1.3.0
+cryptography>=3.4.8
+membership-inference-attacks>=0.1.0
+
+# 可视化依赖
+dash>=2.0.0
+bokeh>=2.4.0
+altair>=4.2.0
+wordcloud>=1.8.0
+
+# Ianvs相关依赖
+prettytable>=3.0.0
+onnx>=1.12.0
+onnxruntime>=1.12.0
+pydantic>=1.8.0
+click>=8.0.0
+
+# 数据处理依赖
+scipy>=1.7.0
+scikit-image>=0.19.0
+pillow>=8.3.0
+opencv-python>=4.5.0
+
+# 机器学习依赖
+xgboost>=1.5.0
+lightgbm>=3.3.0
+catboost>=1.0.0
+
+# 深度学习依赖
+tensorflow>=2.8.0
+keras>=2.8.0
+pytorch-lightning>=1.6.0
+
+# 数据库依赖
+sqlalchemy>=1.4.0
+sqlite3
+redis>=4.0.0
+
+# 网络依赖
+flask>=2.0.0
+fastapi>=0.68.0
+uvicorn>=0.15.0
+httpx>=0.24.0
+
+# 测试依赖
+pytest>=6.2.0
+pytest-cov>=2.12.0
+pytest-mock>=3.6.0
+
+# 文档依赖
+sphinx>=4.0.0
+sphinx-rtd-theme>=1.0.0
+mkdocs>=1.2.0
+
+# 开发依赖
+black>=21.0.0
+flake8>=3.9.0
+mypy>=0.910
+pre-commit>=2.15.0
+
+# 部署依赖
+docker>=5.0.0
+kubernetes>=18.0.0
+helm>=3.7.0
+
+# 监控依赖
+prometheus-client>=0.11.0
+grafana-api>=1.0.0
+elasticsearch>=7.15.0
+
+# 安全依赖
+cryptography>=3.4.8
+pyjwt>=2.3.0
+bcrypt>=3.2.0
