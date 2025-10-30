@@ -1,0 +1,39 @@
+testenv:
+  # dataset configuration
+  dataset:
+    # the url address of train dataset index; string type;
+    train_data: "./dataset/gpqa/train_data/data.json"
+    # the url address of test dataset index; string type;
+    test_data_info: "./dataset/gpqa/test_data/metadata.json"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "Accuracy"
+      # the url address of python file
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/accuracy.py"
+
+    - name: "Edge Ratio"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/edge_ratio.py"
+
+    - name: "Cloud Prompt Tokens"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/cloud_prompt_tokens.py"
+
+    - name: "Cloud Completion Tokens"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/cloud_completion_tokens.py"
+
+    - name: "Edge Prompt Tokens"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/edge_prompt_tokens.py"
+
+    - name: "Edge Completion Tokens"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/edge_completion_tokens.py"
+
+    - name: "Time to First Token"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/time_to_first_token.py"
+
+    - name: "Throughput"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/throughput.py"
+
+    - name: "Internal Token Latency"
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/internal_token_latency.py"
+

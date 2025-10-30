@@ -1,0 +1,106 @@
+algorithm:
+  # paradigm name; string type;
+  paradigm_type: "jointinference"
+
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # kind of algorithm module; string type;
+    - type: "dataset_processor"
+      # name of custom dataset processor; string type;
+      name: "OracleRouterDatasetProcessor"
+      # the url address of custom dataset processor; string type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/data_processor.py"
+
+    - type: "edgemodel"
+      # name of edge model module; string type;
+      name: "EdgeModel"
+      # the url address of edge model module; string type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/edge_model.py"
+
+      hyperparameters:
+      # name of the hyperparameter; string type;
+        - model:
+            values:
+              - "Qwen/Qwen2.5-7B-Instruct"
+        - backend:
+            # backend; string type;
+            # currently the options of value are as follows:
+            #  1> "huggingface": transformers backend;
+            #  2> "vllm": vLLM backend;
+            #  3> "api": OpenAI API backend;
+            #  4> "EagleSpecDec": EAGLE Speculative Decoding framework;
+            #  5> "LadeSepcDec": Lookahead Decoding framework;
+            values:
+              - "huggingface"
+              - "vllm"
+              # - "EagleSpecDec"
+
+        # If you're using speculative models, uncomment the following lines:
+        # - draft_model:
+        #     values:
+        #       - "yuhuili/EAGLE-llama2-chat-7B"
+
+        - temperature:
+            # What sampling temperature to use, between 0 and 2; float type;
+            # For reproducable results, the temperature should be set to 0;
+            values:
+              - 0.0000001
+        - top_p:
+            # nucleus sampling parameter; float type;
+            values:
+              - 0.9
+        -  max_tokens:
+            # The maximum number of tokens that can be generated in the chat completion; int type;
+            values:
+              - 1024
+        -  repetition_penalty:
+            # The parameter for repetition penalty; float type;
+            values:
+              - 1
+        -  use_cache:
+            # Whether to use reponse cache; boolean type;
+            values:
+              - true
+              
+    - type: "cloudmodel"
+      # name of python module; string type;
+      name: "CloudModel"
+      # the url address of python module; string type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/cloud_model.py"
+
+      hyperparameters:
+        # name of the hyperparameter; string type;
+        - api_provider:
+            values:
+              - "openai" 
+        - model:
+            values:
+              - "gpt-4o-mini"
+        - api_key_env:
+            values:
+              - "OPENAI_API_KEY"
+        - api_base_url:
+            values:
+              - "OPENAI_BASE_URL"
+        - temperature:
+            values:
+              - 0.9
+        - top_p:
+            values:
+              - 0.9
+        -  max_tokens:
+            values:
+              - 1024
+        -  repetition_penalty:
+            values:
+              - 1.05
+        -  use_cache:
+            values:
+              - true
+
+    - type: "hard_example_mining"
+      # name of Router module; string type;
+      # BERTRouter, EdgeOnly, CloudOnly, RandomRouter, OracleRouter
+      name: "OracleRouter"
+      # the url address of python module; string type;
+      url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/hard_sample_mining.py"
