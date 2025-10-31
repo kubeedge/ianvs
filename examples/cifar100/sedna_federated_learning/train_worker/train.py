@@ -12,10 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+import os
 from sedna.core.federated_learning import FederatedLearning
 from sedna.datasources import TxtDataParse
 import numpy as np
 from basemodel import Estimator
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
+from config import TRAIN_INDEX_FILE
 
 
 def read_data_from_file_to_npy(files):
@@ -47,7 +51,7 @@ def read_data_from_file_to_npy(files):
 
 
 def main():
-    train_file = "/home/wyd/ianvs/project/data/cifar100/cifar100_train.txt"
+    train_file = TRAIN_INDEX_FILE
     train_data = TxtDataParse(data_type="train")
     train_data.parse(train_file)
     train_data = read_data_from_file_to_npy(train_data)
