@@ -1,0 +1,10 @@
+{"prompt": "Explain the difference between edge computing and cloud computing in one sentence."}
+{"prompt": "List three advantages of on-device LLM inference."}
+{"prompt": "Summarize the purpose of a benchmarking framework."}
+{"prompt": "Give one example use case for KubeEdge."}
+{"prompt": "What is a token in large language models?"}
+{"prompt": "Provide a short definition of latency in performance testing."}
+{"prompt": "Provide a short definition of throughput in performance testing."}
+{"prompt": "Why measure prefill latency separately?"}
+{"prompt": "Describe one optimization for reducing LLM memory footprint."}
+{"prompt": "Name one risk of truncating benchmark datasets too aggressively."}
