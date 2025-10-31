@@ -6,7 +6,7 @@
 # year = {2021}
 # }
 from typing import List, Any, Tuple
-
+from logger import logger
 from sedna.datasources import BaseDataSource
 from sedna.common.class_factory import ClassFactory, ClassType
 import random
@@ -44,12 +44,12 @@ class HardSampleMining:
         unseen_task_samples = BaseDataSource(data_type=samples.data_type)
 
         if scores[0] > self.threhold:
-            print(f"found easy sample, confidence score: {scores[0]}")
+            logger.info(f"found easy sample, confidence score: {scores[0]}")
             seen_task_samples.x = samples.x
             unseen_task_samples.x = []
 
         else:
-            print(f"found hard sample, confidence score: {scores[0]}")
+            logger.info(f"found hard sample, confidence score: {scores[0]}")
             seen_task_samples.x = []
             unseen_task_samples.x = samples.x
 
