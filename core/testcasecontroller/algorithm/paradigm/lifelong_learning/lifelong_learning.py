@@ -416,7 +416,7 @@ class LifelongLearning(ParadigmBase):
 
         job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
         _, metric_func = get_metric_func(model_metric)
-        edge_task_index, tasks_detail, res = job.evaluate(eval_dataset, metrics=metric_func)
+         res = job.evaluate(eval_dataset, metrics=metric_func)
 
         del job
 
