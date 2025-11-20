@@ -1,6 +1,8 @@
 # Cloud-Edge Collaborative Inference Benchmark: A Privacy-Utility Evaluation Framework
 
-## Introduction
+[TOC]
+
+## 1. Introduction
 
 The rapid advancement of Large Language Models (LLMs) has driven their deployment across distributed cloud-edge architectures, enabling low-latency inference and efficient resource utilization. However, this distributed paradigm introduces critical privacy and performance challenges that remain unaddressed by existing frameworks:
 
@@ -12,7 +14,7 @@ The rapid advancement of Large Language Models (LLMs) has driven their deploymen
 
 This project addresses these gaps through a privacy-first cloud-edge collaborative inference framework that implements adaptive processing routing, multi-level privacy protection, and comprehensive benchmarking capabilities validated with the Text Anonymization Benchmark (TAB) dataset.
 
-## Project Purpose
+## 2. Project Purpose
 
 The Cloud-Edge Collaborative Inference Benchmark aims to:
 
@@ -22,9 +24,9 @@ The Cloud-Edge Collaborative Inference Benchmark aims to:
 - Facilitate **systematic benchmarking** using standardized datasets to compare collaborative inference strategies.
 - Offer a **flexible platform** for researchers and developers to experiment with privacy-performance tradeoffs in real-world cloud-edge environments.
 
-## Details of Design
+## 3. Details of Design
 
-### Core Workflow
+### 3.1 Core Workflow
 
 ![image-20251031085231877](images/flowchart.png)
 
@@ -38,14 +40,14 @@ The framework's inference routing follows a structured sequential process with p
      - 3.2.1 **Threshold Met**: If edge inference confidence meets or exceeds the threshold, the edge result is returned.
      - 3.2.2 **Threshold Not Met**: If confidence is insufficient, an appropriate privacy protection method is applied, and the sanitized data is sent to the cloud for further processing.
 
-### Key Components
+### 3.2 Key Components
 
 #### 3.2.1 Privacy Detection Module
 
 This module identifies sensitive information using a combination of:
 
 - Pattern matching for structured PII (emails, phone numbers, IDs)
-- NLP-based entity recognition (using spaCy models) for contextual sensitive entities
+- NLP-based entity recognition (using spaCy models) for contextually sensitive entities
 - Sensitivity scoring based on predefined and customizable entity categories
 
 #### 3.2.2 Hard Sample Mining (Routing Logic)
@@ -66,24 +68,44 @@ Multi-level privacy desensitization techniques with varying complexity:
 
 #### 3.2.4 Evaluation Metrics
 
-Comprehensive metrics for assessing both privacy and performance:
+Comprehensive metrics for assessing both privacy preservation and system utility:
 
-**Privacy Metrics**:
+##### Privacy Metrics
 
-- **PII Detection Rate (PDR)**: Percentage of PII successfully identified and protected
-- **Sensitive Entity Leakage Score (SELS)**: Quantification of sensitive information remaining after protection
-- **Inference Attack Resistance (IAR)**: Resistance to privacy inference attacks using auxiliary information
-- **Contextual Privacy Preservation (CPP)**: Preservation of contextual meaning while protecting privacy
+- **PII Detection Rate (PDR)**:
+  - Inputs: Entity annotations from original text and sanitized text from cloud model output 
+  - Calculation: Compares detected sensitive entities in sanitized text with TAB benchmark annotations, using TAB's marked entity positions and categories to measure detection accuracy.
+- **Sensitive Entity Leakage Score (SELS)**:
+  - Inputs: Entity annotations from the original text and unsanitized entities in the cloud model output 
+  - Calculation: Weighted score based on entity types that should be anonymized but remain exposed:
+    - `DIRECT` identifiers (require anonymization): weight = 5
+    - `QUASI` identifiers (require anonymization): weight = 3
+    - `NO_MASK` entities (no anonymization needed): weight = 0
+  - Computed using TAB's predefined classification weights.
+- **Inference Attack Resistance (IAR)**:
+  - Inputs: Sanitized text from cloud model output  and auxiliary information from cloud model results 
+  - Calculation:
+    1. Convert both sanitized text and auxiliary information to semantic vectors using a sentence embedding model
+    2. Compute cosine similarity between vectors (higher similarity indicates greater inference vulnerability)
+    3. Final IAR = 1 - cosine similarity
+- **Contextual Privacy Preservation (CPP)**:
+  - Inputs: Original text and sanitized text from cloud model output 
+  - Calculation:
+    1. Convert both texts to semantic vectors using `SentenceTransformer('all-MiniLM-L6-v2')`
+    2. Cosine similarity between vectors  is used directly as CPP score
 
-**Performance Metrics**:
+### 3.3 Utility Metrics
 
-- **Latency Overhead (LO)**: Additional latency introduced by privacy protection
-- **Accuracy Preservation Rate (APR)**: Inference accuracy retained after privacy processing
-- **Throughput Impact (TI)**: Reduction in system throughput due to privacy measures
+- **Latency Overhead (LO)**:
+  - Measures total time elapsed from initial privacy processing through cloud inference completion
+  - Unit: Seconds
+- **Accuracy Preservation Rate (APR)**:
+  - Inputs: Cloud model inference result and ground truth answer
+  - Calculation: Similarity between cloud model result and constructed ground truth
 
-## Quick Start Guide
+## 4. Quick Start Guide
 
-### Required Resources
+### 4.1 Required Resources
 
 - Python >= 3.10 Conda or virtual environment
 - Internet connection for GitHub, PyPI, HuggingFace, etc
@@ -91,9 +113,7 @@ Comprehensive metrics for assessing both privacy and performance:
 - 5GB+ free disk space
 - (Optional) GPU acceleration for edge model inference, depending on the tested model
 
-### Methods for Benchmarking with Ianvs
-
-### Detailed Setup Guide
+### 4.2 Detailed Setup Guide
 
 #### Step 1: Ianvs Preparation
 
@@ -266,7 +286,7 @@ These files are located in the `.workspace/benchmarkingjob/rank` directory.
 | 4    | privacy-aware-query-routing | 0.9747982621192932            | 0.0                  | 1.0                         | 0.9076447784900664        | 0.9441471099853516       | 23.58801794052124  | jointinference | ECHRDataProcessor | EdgeModel | CloudModelAPI | OracleRouter        | ./examples/TAB/cloud_edge_collaborative_inference_bench/local_model | huggingface       | 1e-07                 | 0.9             | 1024                 | 1                            | True                | 0.8                            | openai                  | deepseek-chat    |
 | 5    | privacy-aware-query-routing | 0.9700681567192078            | 0.044585987261146494 | 0.9567010309278351          | 0.9368005767464638        | 0.8194546699523926       | 28.663337469100952 | jointinference | ECHRDataProcessor | EdgeModel | CloudModelAPI | OracleRouter        | ./examples/TAB/cloud_edge_collaborative_inference_bench/local_model | huggingface       | 1e-07                 | 0.9             | 1024                 | 1                            | True                | 0.8                            | openai                  | deepseek-chat    |
 
-## Discussion
+## 5. Discussion
 
 #### PII Detection Rate
 This metric measures the accuracy of detecting personally identifiable information. Regex Pseudonymization's variable rate shows its struggle with non-standard PII despite handling common formats well. NER Masking generally detects context-sensitive PII well but depends on model quality. Differential Privacy, focused on noise, doesn't directly detect but affects the perceived PII. This variance reflects different detection approaches and limitations.
@@ -283,17 +303,21 @@ Regex Pseudonymization disrupts context with its rigid masking. NER Masking, con
 #### Latency Overhead
 Regex Pseudonymization has variable latency based on pattern complexity. NER Masking is slower due to semantic analysis. Differential Privacy incurs latency from noise computation. 
 
-#### **Accuracy Preservation Rate **
+#### Accuracy Preservation Rate 
 
 It calculates the similarity between the inference result and the standard answer, reflecting the impact of the privacy protection process on the accuracy of the model. Regex Pseudonymization can have a significant impact on accuracy, with variable rates depending on how masking affects the data for model processing. NER Masking may preserve accuracy well if the NER model is accurate, but can reduce it if there are errors. 
 
 ### Overall Performance Summary
 Regex Pseudonymization is simple for structured PII but falters with complexity, offers moderate privacy and variable latency. NER Masking is good for context-sensitive PII but relies on model quality and has high latency. Differential Privacy excels at inference resistance but affects data accuracy and incurs computational cost. Each method has its own strengths and weaknesses for different privacy needs. 
 
-## Future Work
+## 6. Future Work
 
 - Expand privacy desensitization methods to include advanced techniques such as federated learning-based privacy preservation
+
 - Introduce more granular privacy detection metrics covering emerging sensitive data categories
+
 - Enhance cross-framework compatibility for seamless integration with diverse cloud and edge platforms
+
 - Develop automated tuning mechanisms for optimal privacy-performance tradeoff configurations
-- Extend support for multi-modal data (images, audio) in collaborative inference scenarios
+
+  
