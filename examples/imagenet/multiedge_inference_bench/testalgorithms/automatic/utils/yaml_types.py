@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """YAML types."""
 from typing import List, Optional, Union
 
@@ -80,3 +81,8 @@ def yaml_device_neighbors(neighbors: List[str], bws_Mbps: Union[List[int], List[
         neighbor: yaml_device_neighbors_type(bw_Mbps)
             for neighbor, bw_Mbps in zip(neighbors, bws_Mbps)
     }
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f5d44b905a6492b6c3eac042eb0175318e1499ec03b95a4b882963ea472cfa66
+size 2668
+>>>>>>> 9676c3e (ya toh aar ya toh par)

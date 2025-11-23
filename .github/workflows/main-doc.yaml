@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: CI
 
 on:
@@ -18,3 +19,8 @@ jobs:
         python-version: [ "3.7", "3.8", "3.9" ]
     steps:
       - run: 'echo "only docs modified, no need to trigger CI"'
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:1ca29d2c41b073d725cd179022c93976f83c362024b9ce10382820269179aad2
+size 313
+>>>>>>> 9676c3e (ya toh aar ya toh par)

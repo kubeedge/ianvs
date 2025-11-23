@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,3 +38,8 @@ def cloud_completion_tokens(_, y_pred):
     cloud_completion_tokens = sum([pred.cloud_result.completion_tokens for pred in infer_res])
 
     return cloud_completion_tokens
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:8a4bb1e375aceaefc64f6f065fc4537a06bb26d313d7f2a4fc94d82a42112d37
+size 1338
+>>>>>>> 9676c3e (ya toh aar ya toh par)

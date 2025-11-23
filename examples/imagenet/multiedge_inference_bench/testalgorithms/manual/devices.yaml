@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 devices:
   - name: "gpu"
     type: "gpu-0"
@@ -24,3 +25,8 @@ partition_points:
   - input_names: ["input.160"]
     output_names: ["logits"]
     device_name: "gpu-2"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:e71e1908478ace158a072463c9ab899adfd9bb3e7f1105848a47ad3ec63b9c9b
+size 553
+>>>>>>> 9676c3e (ya toh aar ya toh par)

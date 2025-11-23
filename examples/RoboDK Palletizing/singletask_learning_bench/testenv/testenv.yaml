@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 testenv:
   # dataset configuration
   dataset:
@@ -15,3 +16,8 @@ testenv:
     - name: "map90"
       # the url address of python file
       url: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testenv/map90.py"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:07fbc010712ec5659f53d92c8fd3245aef3c75720f8694dd84a05d7440b26271
+size 797
+>>>>>>> 9676c3e (ya toh aar ya toh par)

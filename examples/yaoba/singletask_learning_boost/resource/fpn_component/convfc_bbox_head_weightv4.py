@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import numpy as np
 from mmdet.core.bbox.iou_calculators import build_iou_calculator
 from mmdet.models.builder import HEADS
@@ -186,3 +187,8 @@ class Shared2FCBBoxHeadWeightV4(Shared2FCBBoxHead):
             label_weights[-num_neg:] = 1.0
 
         return labels, label_weights, bbox_targets, bbox_weights, bbox_gt_inds
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:b51305033292713fc7312f7af9673f9f329b00050ccd7c1435202b200a9b3b12
+size 9397
+>>>>>>> 9676c3e (ya toh aar ya toh par)

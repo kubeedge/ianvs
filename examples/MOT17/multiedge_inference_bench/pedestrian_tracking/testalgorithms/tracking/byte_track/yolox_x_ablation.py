@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # MIT License
 
 # Copyright (c) 2021 Yifu Zhang
@@ -81,3 +82,8 @@ class Exp(MyExp):
         val_loader = torch.utils.data.DataLoader(valdataset, **dataloader_kwargs)
 
         return val_loader
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:2e19ab5f7ebb92298cba382f79060138a931321dc02f210c8fa80c59f858f846
+size 3027
+>>>>>>> 9676c3e (ya toh aar ya toh par)

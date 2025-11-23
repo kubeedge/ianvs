@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,3 +38,8 @@ def time_to_first_token(_, y_pred):
     average_ttft = sum([pred.result.time_to_first_token for pred in infer_res]) / len(infer_res)
 
     return round(average_ttft, 3)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:b9b6db8ab85b01a786fc91455724347e10461cfa41a17c862046e954607f52dd
+size 1299
+>>>>>>> 9676c3e (ya toh aar ya toh par)

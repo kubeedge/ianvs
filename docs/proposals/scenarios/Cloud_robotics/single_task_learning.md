@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # **Cloud-Robotics Dataset for Single Task Learning**  
 
 Edge computing and AI are reshaping how devices operate in real-time, making **single task learning** a cornerstone for achieving specialization in robotic applications. With edge devices' growing performance and deployment, single task learning—focused on mastering one well-defined objective—is gaining traction for applications requiring high precision and reliability.   
@@ -281,3 +282,8 @@ For robots performing routine inspections in industrial facilities:
 ---
 
 By focusing on single task learning, the Cloud-Robotics Dataset empowers developers to achieve unmatched precision and robustness in robotics AI. Get started today and shape the future of edge-computing AI!  
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:dece8c3968aaad09e14e9b04a873dabfcbf7985d3ee5ab9b6bff01bc8b88c7e1
+size 14280
+>>>>>>> 9676c3e (ya toh aar ya toh par)

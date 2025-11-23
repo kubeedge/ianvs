@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """Models module."""
 from typing import Any, Tuple, Type, Union
 from torch import nn, Tensor
@@ -47,3 +48,8 @@ def get_microbatch_size(shard_data: ModuleShardData, verify: bool=False):
             assert isinstance(tensor, Tensor)
             assert len(tensor) == ubatch_size
     return ubatch_size
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:68d7a39be1ec68ae638a35711812ce9a76fa69953292ab6401eb966be4459f65
+size 1763
+>>>>>>> 9676c3e (ya toh aar ya toh par)

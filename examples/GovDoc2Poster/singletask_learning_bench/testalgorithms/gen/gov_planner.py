@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 New Government Agent Project
 # New Government Poster Planner
 
@@ -372,3 +373,8 @@ Important Requirements:
             self.logger.warning(f"Failed to validate and adjust layout: {str(e)}")
             return None
     
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:60cd3f589783357e0cd44c64af7f6bf1d460a5ecf2aaf1a364b75a295d2ec42b
+size 15800
+>>>>>>> 9676c3e (ya toh aar ya toh par)

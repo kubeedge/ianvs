@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,3 +16,8 @@
 # pylint: disable=missing-module-docstring
 from .federated_learning import FederatedLearning
 from .federated_class_incremental_learning import FederatedClassIncrementalLearning
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:da395c9335875ae9832362233dc61cc2514e2a9d5131f9529dd30d305515e1ed
+size 763
+>>>>>>> 9676c3e (ya toh aar ya toh par)

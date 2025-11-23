@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 absl-py==2.1.0
 addict==2.4.0
 asgiref==3.7.2
@@ -111,3 +112,8 @@ xmltodict==0.13.0
 yapf==0.40.2
 -e git+https://github.com/ifzhang/ByteTrack.git@d1bf0191adff59bc8fcfeaa0b33d3d1642552a99#egg=yolox
 zipp==3.15.0
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:fc2b3ca02964c6a88c396c75aa8cfd881b637943f99df54a3fc8b0628a319713
+size 2103
+>>>>>>> 9676c3e (ya toh aar ya toh par)

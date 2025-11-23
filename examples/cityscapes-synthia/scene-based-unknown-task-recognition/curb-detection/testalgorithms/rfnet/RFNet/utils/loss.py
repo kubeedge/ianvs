@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import torch
 import torch.nn as nn
 
@@ -62,3 +63,8 @@ if __name__ == "__main__":
 
 
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:5d673151746d8b8516fae24230febf52ac94a9c24ca66f9cb913143d16a029fc
+size 2048
+>>>>>>> 9676c3e (ya toh aar ya toh par)

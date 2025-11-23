@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -204,3 +205,8 @@ class Algorithm:
             except Exception as err:
                 raise RuntimeError(f"load third party packages(name={name}, url={url}) failed,"
                                 f" error: {err}.") from err
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:18ae947a981d4e3b24484d23806c14d31a34b4b4c7ef213277a0dad54fe61002
+size 7729
+>>>>>>> 9676c3e (ya toh aar ya toh par)

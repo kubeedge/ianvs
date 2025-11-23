@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   paradigm_type: "singletasklearningwithcompression"
 
@@ -14,3 +15,8 @@ algorithm:
         - n_ctx:
             values:
               - 2048
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:06a5d7fdd8fcac18d3b6d7d8ef1ecd9369e35d3f80169a1730d3c5fdfbbd3a8f
+size 466
+>>>>>>> 9676c3e (ya toh aar ya toh par)

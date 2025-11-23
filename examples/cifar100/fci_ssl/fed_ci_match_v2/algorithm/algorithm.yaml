@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   paradigm_type: "federatedclassincrementallearning"
   fl_data_setting:
@@ -25,3 +26,8 @@ algorithm:
       name: "FedAvg"
       url: "./examples/cifar100/fci_ssl/fed_ci_match_v2/algorithm/aggregation.py"
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:e9490d2c9aabcc2b0f79bbf48b712fffa634c80a77e3ce3ef8cd1e58afcf299f
+size 730
+>>>>>>> 9676c3e (ya toh aar ya toh par)

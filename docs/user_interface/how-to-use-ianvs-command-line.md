@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # How to use Ianvs command line
 
 ### List available commands
@@ -59,3 +60,8 @@ Refer to [details of example].
 
 [details of example]: ../guides/quick-start.md
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:350165b08e406924b824141d30da03c0df7197b3b8927226be15605a7d247003
+size 5578
+>>>>>>> 9676c3e (ya toh aar ya toh par)

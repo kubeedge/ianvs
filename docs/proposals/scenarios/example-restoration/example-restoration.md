@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # KubeEdge Ianvs Example Restoration 
 
 Focused Example Restoration and CI/CD Pipeline Development for Distributed Synergy AI Benchmarking
@@ -222,3 +223,8 @@ Focused 12-week roadmap with clear priorities and optional components:
 - Functional maintenance layer with automated health monitoring and dependency management
 - Advanced dashboard for maintainer efficiency and automated maintenance workflows
 - Template framework validated and ready for extension to additional examples
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:1d441c5840e119ab40bc793a515021879aadea5a11ff768b5f0c9f39d303c363
+size 14221
+>>>>>>> 9676c3e (ya toh aar ya toh par)

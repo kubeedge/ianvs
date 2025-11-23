@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   # paradigm name; string type;
   # currently the options of value are as follows:
@@ -16,3 +17,8 @@ algorithm:
       name: "gen"
       # the url address of python module; string type;
       url: "./examples/government/singletask_learning_bench/subjective/testalgorithms/gen/basemodel.py"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:e6e9d658ccdf0c3e4d0862a1b2f64a37f52d432ebdd5c12230fb5f30415a80d0
+size 731
+>>>>>>> 9676c3e (ya toh aar ya toh par)

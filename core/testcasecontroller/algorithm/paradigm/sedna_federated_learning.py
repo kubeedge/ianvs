@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -67,3 +68,8 @@ class FederatedLearning(JobBase):
             None: None
         """
         return self.estimator.helper_function(helper_info)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:2ceb473b73af500116a8485f914647775c185eaccd95b6ff8fb2f3e6dc669b17
+size 2143
+>>>>>>> 9676c3e (ya toh aar ya toh par)

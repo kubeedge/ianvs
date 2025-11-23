@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -160,3 +161,8 @@ class BaseModel:
             .shuffle(100000)
             .batch(self.batch_size)
         )
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:c9d14a7d10c3ff029e324201920cdbc01d8e28e1962704a08b3672886d7c4c65
+size 5920
+>>>>>>> 9676c3e (ya toh aar ya toh par)

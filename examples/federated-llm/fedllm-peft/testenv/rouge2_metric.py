@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2025 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,3 +26,8 @@ def rouge2_metric(y_pred, y_true, **kwargs):
     rouge = load_metric("rouge")
     score = rouge.compute(predictions=preds, references=refs, use_stemmer=True)["rouge2"]
     return round(float(score), 4)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:02d9be4cc8deb866c029c300a4c286a5781e8ba4d9cc51be86533d4e5fc22908
+size 1196
+>>>>>>> 9676c3e (ya toh aar ya toh par)

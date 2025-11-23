@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Industrial Edge Intelligence: LiDAR-Inertial Pose Estimation Benchmark
 
 [![LFX 2025 Term 2](https://img.shields.io/badge/LFX-2025%20Term%202-blue.svg)](https://mentorship.lfx.linuxfoundation.org/)
@@ -283,3 +284,8 @@ This project is licensed under the same terms as the Ianvs framework. The KITTI 
 
 **Developed for LFX Mentorship 2025 Term 2 - Industrial Edge Intelligence**
 **Contributed to Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge-Ianvs**
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:16ca5e5f30caa1cb91b58c2396474d317dfe9ac7a33d9183227934b199201927
+size 10972
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """ViT Transformers."""
 from collections.abc import Mapping
 import logging
@@ -230,3 +231,8 @@ class ViTShardForImageClassification(ModuleShard):
                      timeout_sec: Optional[float]=None) -> None:
         """Save the model weights file."""
         ViTModelShard.save_weights(model_name, model_file, url=url, timeout_sec=timeout_sec)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:9471b5aaecd348a26fb93236dd0b40d9e050c75553fff4f758d272f06ac2fe11
+size 11170
+>>>>>>> 9676c3e (ya toh aar ya toh par)

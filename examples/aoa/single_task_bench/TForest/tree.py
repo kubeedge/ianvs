@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from sklearn.ensemble import AdaBoostRegressor
 from sklearn.metrics import mean_absolute_error
 
@@ -20,3 +21,8 @@ class Tree:
 
     def predict_score(self, model):
         return -mean_absolute_error(model.predict(self.test_features), self.test_labels)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:cac54be0f90e23b7d94c7426ed4f7eb4c356c7aaaaadad7521abaa13d8a7d933
+size 865
+>>>>>>> 9676c3e (ya toh aar ya toh par)

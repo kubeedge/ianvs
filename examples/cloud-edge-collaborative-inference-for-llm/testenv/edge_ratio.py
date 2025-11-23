@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,3 +41,8 @@ def edge_ratio(_, y_pred):
 
     return round(edge_ratio * 100,2)
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:02093e1bfe7d0b9ed22bd9d3f7c943467ee4719805bd2c5495a9008367e51651
+size 1298
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -133,3 +134,8 @@ class DCNN(nn.Module):
         # x = x.view(x.size(0), x.size(1) * 5, x.size(3), x.size(4))
         return x
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:841783777ed7479d8ece8636b54cbbbc37e4e0819e79d34df4ac37bceafd17b7
+size 5363
+>>>>>>> 9676c3e (ya toh aar ya toh par)

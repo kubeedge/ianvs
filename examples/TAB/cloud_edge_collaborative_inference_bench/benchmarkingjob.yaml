@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 benchmarkingjob:
   name: benchmarkingjob
   namespace: default
@@ -49,3 +50,8 @@ benchmarkingjob:
     sedna:
       worker_nodes: ["edge-node-1", "edge-node-2"]
       coordinator_node: "cloud-node"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:8eb3392551b7adcc292f60fc205bcc1732b9a9064ddbb4e915a77e68a3e058a3
+size 1487
+>>>>>>> 9676c3e (ya toh aar ya toh par)

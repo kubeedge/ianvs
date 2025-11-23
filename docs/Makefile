@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Minimal makefile for Sphinx documentation
 # This script is only used for Ianvs documents maintainer,
 # who can use this script to generate Sphinx html for local preview.
@@ -34,3 +35,8 @@ livehtml:
 	sphinx-autobuild $(SOURCEDIR) $(BUILDDIR)/html
 	
 all: clean api html
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:c227352ec2430d1a88729849065c43fa2f03d6d77712ce9f072a691665fecd73
+size 1030
+>>>>>>> 9676c3e (ya toh aar ya toh par)

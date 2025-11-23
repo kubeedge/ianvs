@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 1 Background
 The current traditional machine learning models and algorithms have obvious limitations, that is, they can only effectively predict and classify categories that have been seen in the training stage, and the models tend to show uncertain behavior for categories that have never appeared in the training data, which limits the performance of the models when dealing with open-world tasks. Traditional machine learning models typically acquire specific knowledge during the training phase, but struggle to transfer that knowledge to new tasks. Lifelong learning, one of the machine learning paradigms, attempts to solve this problem by enabling models to gradually accumulate previously learned knowledge and respond flexibly to different tasks.
 
@@ -116,3 +117,8 @@ The route map is as follows:
 ### September
 - Optimize the system architecture to achieve an accuracy of greater than 0.45 for the open-world object segmentation algorithm.
 - Integrate it into the library of the Ianvs module.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:8465c0d6339ff51083cb77465f7cdee1ed32c5cb86812b239d7ac8891fad2be6
+size 10935
+>>>>>>> 9676c3e (ya toh aar ya toh par)

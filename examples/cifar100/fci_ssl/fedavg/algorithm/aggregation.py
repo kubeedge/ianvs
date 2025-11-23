@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,3 +59,8 @@ class FedAvg(BaseAggregation, abc.ABC):
         self.weights = deepcopy(updates)
         print("finish aggregation....")
         return [np.array(layer) for layer in updates]
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f8e1ee24c89fa79c4b2ac8f1eefd3b488a2a4c945345eb36dff4ce9f87a18c3f
+size 1978
+>>>>>>> 9676c3e (ya toh aar ya toh par)

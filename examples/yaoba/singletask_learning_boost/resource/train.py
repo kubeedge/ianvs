@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright (c) OpenMMLab. All rights reserved.
 import argparse
 import copy
@@ -240,3 +241,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:7968abde11771966a3ae8eff1c9b8f91a54daa8bb43fc42f09dffddb21a239cd
+size 9024
+>>>>>>> 9676c3e (ya toh aar ya toh par)

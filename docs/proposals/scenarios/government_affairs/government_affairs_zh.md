@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 项目提案：面向边缘电子政务服务的领域专用大模型基准测试
 
 ## 1. 摘要
@@ -320,3 +321,8 @@ vector_db.save_local("./vector_store")
 | 基准测试 | 4.14-5.2 |
 | 性能优化 | 5.5-5.23 |
 | 项目收尾 | 5.26-5.30 |
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:8deecca71c2d1292681b28f78cee1a51ffad5e9b5eb808c38bff79aae3eeb57e
+size 16097
+>>>>>>> 9676c3e (ya toh aar ya toh par)

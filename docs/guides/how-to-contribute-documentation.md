@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # How to contribute documentation
 
 **First off, thanks for taking the time to think about contributing!**
@@ -34,3 +35,8 @@ make livehtml
 ```
 
 Now, you can open http://127.0.0.1:8000 on any browser to see the rendered HTML with live updates. Clear cookies and site data in your browser window to view up to date site.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:dc70f5de01374f2c900694b14c5aaff3729e643a315d702395e63a3600de7734
+size 1856
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -115,3 +116,8 @@ setup(
         "Operating System :: POSIX :: Linux",
     ],
 )
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:cd375ae19c7722a9961016a1ace83235f242e2d3506e953c46564a4c6cbda118
+size 4091
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 Holodeck, 2025 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -516,3 +517,8 @@ class SmallObjectGenerator:
             if box1["max"][i] < box2["min"][i] or box1["min"][i] > box2["max"][i]:
                 return False
         return True
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:57c7b24765912252c83f23070818688fbf4d1fd8d8c671a2219961a47cc3fcf5
+size 21280
+>>>>>>> 9676c3e (ya toh aar ya toh par)

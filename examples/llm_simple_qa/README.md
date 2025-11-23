@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # README
 
 ## Simple QA
@@ -82,3 +83,8 @@ Run the following command:
 
 `python run_op.py examples/llm/singletask_learning_bench/simple_qa/testalgorithms/gen/op_eval.py`
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:dba36465156783a5f2126bc2f4cb2d95cb15fc167ead42a2c3705bf2564dd56e
+size 2455
+>>>>>>> 9676c3e (ya toh aar ya toh par)

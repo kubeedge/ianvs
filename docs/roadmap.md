@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Ianvs v0.1.0 release
 
 ## 1. Release the Ianvs distributed synergy AI benchmarking framework.
@@ -66,3 +67,8 @@ Ianvs includes new algorithms to improve LLM performance and usability in variou
 - Multimodal Large Model Joint Learning Algorithm: A joint learning algorithm for multimodal understanding with the pretrained RFNet model. [Try the example here](https://github.com/aryan0931/ianvs/tree/main/examples/Cloud_Robotics/singletask_learning_bench/Semantic_Segmentation) and learn more in the [documentation](https://github.com/kubeedge/ianvs/blob/main/docs/proposals/scenarios/Cloud_robotics/single_task_learning.md).
 
 - Unseen Task Processing Algorithm: Supports lifelong learning with pretrained models to handle unseen tasks effectively. [Access the example](https://github.com/kubeedge/ianvs/tree/main/examples/cityscapes/lifelong_learning_bench/unseen_task_processing-GANwithSelfTaughtLearning) and gain insights from the [background documentation](https://github.com/kubeedge/ianvs/blob/main/docs/proposals/algorithms/lifelong-learning/Unknown_Task_Processing_Algorithm_based_on_Lifelong_Learning_of_Ianvs.md).
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:c034b13314ff7c0d7fb181d671ee87a391bf83b8924b08904104c716830ebb2c
+size 7866
+>>>>>>> 9676c3e (ya toh aar ya toh par)

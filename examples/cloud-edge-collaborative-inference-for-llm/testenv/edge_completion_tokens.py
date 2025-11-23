@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,3 +39,8 @@ def edge_completion_tokens(_, y_pred):
     edge_completion_tokens = sum([pred.edge_result.completion_tokens for pred in infer_res])
 
     return edge_completion_tokens
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:c0db7734cee2afe1845ffdb5d3c58da69cb3a7d39ead07047e9e2e6e99f35dd6
+size 1332
+>>>>>>> 9676c3e (ya toh aar ya toh par)

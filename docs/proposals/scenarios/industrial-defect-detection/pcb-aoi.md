@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Industrial defect detection: the PCB-AoI dataset
 
 Download link: [Kaggle](https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi), [Huawei OBS](https://kubeedge.obs.cn-north-1.myhuaweicloud.com:443/ianvs/pcb-aoi/dataset.zip)
@@ -50,3 +51,8 @@ The following is part of `index.txt`:
 ```
 
 Column 1 stands for the file path of the raw image, and column 2 is the file path of corresponding annotation file.In this dataset, the xml annotation follows Pascal VOC XML format.  you can find more description of Pascal VOC XML at [here](https://roboflow.com/formats/pascal-voc-xml).
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:975ab6c39dba41a9ecc0ecb66613a9b3c1c580a0917795a55e1062d44fd8e2dd
+size 3305
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 mmcv-full==1.7.1
 mmdet==2.28.2
 torch==1.13.0
@@ -5,3 +6,8 @@ torchvision==0.14.0
 numpy==1.24.2
 opencv_python==4.5.5.64
 Pillow==9.4.0
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:d953ec4401fc710a3c19d64d10a1a4b66df573f068342f5f06e1c4b4022acedf
+size 124
+>>>>>>> 9676c3e (ya toh aar ya toh par)

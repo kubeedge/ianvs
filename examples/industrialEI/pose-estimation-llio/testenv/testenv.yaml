@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 testenv:
   dataset:
     train_index: examples/industrialEI/pose-estimation-llio/data/train_index.txt
@@ -11,3 +12,8 @@ testenv:
     url: examples/industrialEI/pose-estimation-llio/testenv/orientation_error.py
   - name: trajectory_consistency
     url: examples/industrialEI/pose-estimation-llio/testenv/trajectory_consistency.py
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:6925f642e4f575710e6062145a2d9190ca96717781eea6f66a6e8e79ecfd4204
+size 667
+>>>>>>> 9676c3e (ya toh aar ya toh par)

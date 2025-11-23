@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -184,3 +185,8 @@ def destory_simulation_enviroment(simulation):
     retcode = subprocess.call(shell_cmd, shell=True)
 
     return retcode
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:64c83cb1fcb55939dba4d500a54ee9494d1fd0b0be85beaa3ed8f1489db5c72b
+size 5953
+>>>>>>> 9676c3e (ya toh aar ya toh par)

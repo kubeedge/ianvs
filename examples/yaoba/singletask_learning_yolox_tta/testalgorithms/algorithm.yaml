@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   # paradigm name; string type;
   # currently the options of value are as follows:
@@ -28,3 +29,8 @@ algorithm:
         - work_dir:
             values:
               - "examples/yaoba/singletask_learning_yolox_tta/work_dir"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:693bbaca397043a6f9c6e9bd849d8454d8c4ea0721f2b08e4347ce6dac23a3e4
+size 1266
+>>>>>>> 9676c3e (ya toh aar ya toh par)

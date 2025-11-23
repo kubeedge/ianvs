@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 optimizer = dict(
     type='SGD',
     lr=0.01,
@@ -213,3 +214,8 @@ evaluation = dict(
 work_dir = '/home/wjj/wjj/Public/code/huawei/experiments/23-02-18_yaoba/yolox'
 auto_resume = False
 gpu_ids = range(0, 4)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:8718090f04a1b188f0db04537fbccca15a00eee6e274bce111cf5a3b326bf77f
+size 7563
+>>>>>>> 9676c3e (ya toh aar ya toh par)

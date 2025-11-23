@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Distributed Synergy AI Benchmarking
 
 Edge computing emerges as a promising technical framework to overcome the challenges in cloud computing. In this machine-learning era, the AI application becomes one of the most critical types of applications on the edge. Driven by the increasing computation power of edge devices and the increasing amount of data generated from the edge, edge-cloud synergy AI and distributed synergy AI techniques have received more and more attention for the sake of device, edge, and cloud intelligence enhancement.
@@ -105,3 +106,8 @@ The concept definition of modules has been shown in the Architecture Section. In
     - The local node holds the local leaderboard for private usage.
     - The global leaderboard is shared (e.g., via GitHub) by the acknowledged organization.
 - ``Test Report``: the manuscript recording how the testing is conducted.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:620a045edcd2054a949e4904b44d0dfdcd8384e998ba443f0f1f4eb6fd7bf95e
+size 8618
+>>>>>>> 9676c3e (ya toh aar ya toh par)

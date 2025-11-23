@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,3 +45,8 @@ def mAP(query_ids, pred):
     query_ids = np.asarray([int(y.split('/')[-1]) for y in query_ids])
     distmat, gallery_ids = pred
     return mean_ap(distmat, query_ids, gallery_ids)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:9f94556779b7b4b6b2c802c36f7d3b45a1390781a38e05510c50cc694b4794d5
+size 1593
+>>>>>>> 9676c3e (ya toh aar ya toh par)

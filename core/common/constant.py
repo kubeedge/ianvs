@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -101,3 +102,8 @@ class TestObjectType(Enum):
     """
 
     ALGORITHMS = "algorithms"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:4308f3a5af6cc321fc72bae464837dcc396919266374b6ad4a168529f8ac7250
+size 2513
+>>>>>>> 9676c3e (ya toh aar ya toh par)

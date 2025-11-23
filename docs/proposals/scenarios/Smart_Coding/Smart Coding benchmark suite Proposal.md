@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Background
 Large Language Models (LLMs) have demonstrated powerful capabilities in tasks such as code generation, automatic programming, and code analysis. However, these models are typically trained on generic code data and often fail to fully leverage the collaboration and feedback from software engineers in real-world scenarios. To construct a more intelligent and efficient code ecosystem, it is necessary to establish a collaborative code dataset and evaluation benchmark to facilitate tight collaboration between LLMs and software engineers. This project aims to build a collaborative code intelligent agent alignment dataset and evaluation benchmark for LLMs based on the open-source edge computing framework KubeEdge-Ianvs. This dataset will include behavioral trajectories, feedback, and iterative processes of software engineers during development, as well as relevant code versions and annotation information. Through this data, we will design evaluation metrics and benchmarks to measure the performance of LLMs in tasks such as code generation, recommendation, and analysis, fostering collaboration between LLMs and software engineers.
 
@@ -176,3 +177,8 @@ In the final stage, after the data set is organized, we began to design test eva
 
 
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:9caaa32ea8f8a37abe6cbe621ea2845aa79d22c03b98bf64afd82ea119332bb2
+size 12688
+>>>>>>> 9676c3e (ya toh aar ya toh par)

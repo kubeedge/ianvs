@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import torch
 import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
@@ -394,3 +395,8 @@ def resnet18(pretrained=True, **kwargs):
         model.load_state_dict(model_zoo.load_url(model_urls['resnet18']), strict=False)
         print('pretrained dict loaded sucessfully')
     return model
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:d3a87828c24988e4085679b29dbff2c3e66aca45474c5ddad2fc7a68e7b27c2a
+size 15357
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Benchmarking of pedestrian tracking
 
 Person Re-ID based on Cloud-edge collaborative architecture is an example feature that [Sedna](https://github.com/kubeedge/sedna) supports, which can continuously recognize, track and search the target person provided by the user in the source video, and push the video containing the search results to the streaming media server. This guide provides users with the actual performance test of the AI algorithm as a reference. To simulate the workflow in Sedna, the benchmarking process consists of a tracking job and a Re-ID job. The MOT17 dataset is used as the input for both tracking and Re-ID. After running benchmarking jobs, a report will be generated.
@@ -120,3 +121,8 @@ If any problems happen, the user can refer to [the issue page on Github](https:/
 
 Enjoy your journey on Ianvs!
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:32aa4c09934e47b3cd37b212d03d6d16b23261b6303140a07177b68e97d9674f
+size 7335
+>>>>>>> 9676c3e (ya toh aar ya toh par)

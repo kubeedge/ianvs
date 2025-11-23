@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 for i in range(len(nam_label)):
         img_label = cv2.imread(label_ori_path+nam_label[i], -1)[:,:,2]
         img_label_temp = img_label.copy()
@@ -36,3 +37,8 @@ for i in range(len(nam_label)):
         #img_label[img_label == 11] = 2
         img_resize_lab = cv2.resize(img_label_temp, (2048,1024), interpolation=cv2.INTER_NEAREST)
         cv2.imwrite(label_save_path+str(i)+'TrainIds.png', img_resize_lab.astype(np.uint16))
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:c51e4040047e5d0ff3bb2c8cae570c347e59b900a00eaa0066d8f93d95c59f5b
+size 1730
+>>>>>>> 9676c3e (ya toh aar ya toh par)

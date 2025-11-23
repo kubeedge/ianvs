@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -107,3 +108,8 @@ class EdgeModel:
         unique_labels = [CITYSCAPES_CLASSES[i] for i in np.unique(pred_mask) if i < len(CITYSCAPES_CLASSES)]
         LOGGER.info(f"Predicted unique labels: {unique_labels}")
         return pred_mask
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:b8387c03555f0aed1bbcc40474af293a48adbcab45459c38ac548d1b5c0fcf39
+size 4225
+>>>>>>> 9676c3e (ya toh aar ya toh par)

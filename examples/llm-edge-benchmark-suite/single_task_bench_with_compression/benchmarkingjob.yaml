@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 benchmarkingjob:
   name: "benchmarkingjob"
   workspace: "./workspace"
@@ -28,3 +29,8 @@ benchmarkingjob:
       metrics: [ "latency", "throughput", "prefill_latency" ]
 
     save_mode: "selected_and_all"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:926d81b15c92ef701bc93df39acc35c87b9b431677be5dc5e3b90d9a393bf3c4
+size 818
+>>>>>>> 9676c3e (ya toh aar ya toh par)

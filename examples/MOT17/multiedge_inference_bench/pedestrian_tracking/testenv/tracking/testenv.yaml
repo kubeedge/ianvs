@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 testenv:
   # dataset configuration
   dataset:
@@ -27,3 +28,8 @@ testenv:
     - name: "idf1"
       # the url address of python file
       url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/tracking/idf1.py"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:1bc9bcdd0ef87d32cfc7db43367856947a76bdbbfb62be3c7058ac1eb24c5e21
+size 1333
+>>>>>>> 9676c3e (ya toh aar ya toh par)

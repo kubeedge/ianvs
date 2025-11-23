@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 annotated-types==0.7.0
 anyio==4.11.0
 argon2-cffi==25.1.0
@@ -53,3 +54,8 @@ uvicorn==0.37.0
 watchdog==6.0.0
 wcwidth==0.2.14
 websockets==15.0.1
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:20df755c8e41627c327b3341477d2daf9a26f9ab28ab64c87142d6f3b0a3f3e0
+size 969
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import time
 from sedna.common.class_factory import ClassFactory, ClassType
@@ -141,3 +142,8 @@ def measure_inference_time(model, data):
     return end_time - start_time
 
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:44d198e8135fbe77c5df7c9f756f7f5131dee622366342493551a1b1eaa85f45
+size 5326
+>>>>>>> 9676c3e (ya toh aar ya toh par)

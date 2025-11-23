@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 transformers>=4.34.0
 datasets>=2.14.0
 spacy>=3.6.0
@@ -13,3 +14,8 @@ seaborn>=0.12.0
 python-dotenv>=1.0.0  
 colorlog>=6.7.0
 matplotlib>=3.7.0
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:2b36c0d2b9bfaa1ee6b102e519d9722e72d3f49d92e3671aad13a996b8e5961d
+size 265
+>>>>>>> 9676c3e (ya toh aar ya toh par)

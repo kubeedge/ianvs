@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -62,3 +63,8 @@ def create(name, *args, **kwargs):
     if name not in __factory:
         raise KeyError("Unknown model:", name)
     return __factory[name](*args, **kwargs)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:8a1b4d641ad05501e2eb7a5443f004a8bf61e4db13a2f6d865146f9dec747800
+size 2283
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -95,3 +96,8 @@ class CloudModel:
             LOGGER.info("Cleanup completed successfully.")
         except Exception as e:
             LOGGER.warning("Cleanup encountered an issue: %s", str(e))
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:6a9d1a5709a21c3811e3555c054d647c7de5b4487c0a4559c5769aa4ba93f25a
+size 3516
+>>>>>>> 9676c3e (ya toh aar ya toh par)

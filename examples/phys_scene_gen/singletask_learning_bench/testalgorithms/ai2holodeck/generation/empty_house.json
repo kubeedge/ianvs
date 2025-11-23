@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
     "doors": [],
     "metadata": {
@@ -281,3 +282,8 @@
     "walls": [],
     "windows": []
 }
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:ebe8da15ea43b9e3eab8e454200310cbb89a5f6fbd7823efd8220881e93553c6
+size 7335
+>>>>>>> 9676c3e (ya toh aar ya toh par)

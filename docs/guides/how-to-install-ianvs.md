@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # How to install Ianvs
 
 It is recommended to use Ianvs on a Linux machine. But for quick algorithm development, the Windows platform is also planned to support, to reduce the configuration cost of the development environment.  
@@ -82,3 +83,8 @@ If the version information is printed, Ianvs is installed successfully.
 At the time being, the package requirements of Ianvs are only applicable for Linux, to ensure comprehensive support from the Linux ecosystem and to ease the burden of manual installation for users in Windows.
 
 If you are more used to developing on Windows, you can still do so with remote connections like SSH from Windows connecting to a Linux machine with ianvs installed. Such remote connection is already supported in common Python coding tools like VScode, Pycharm, etc. By doing so, it helps to provide efficient installation and robust functionality of Ianvs.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:d92a6c07cef19f33af95928bd6fda5728255fe59bd89be0bf2c89f0e295be1f7
+size 2696
+>>>>>>> 9676c3e (ya toh aar ya toh par)

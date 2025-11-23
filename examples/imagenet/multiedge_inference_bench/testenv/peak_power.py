@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import sys
 import os
 
@@ -30,3 +31,8 @@ def peak_power(y_true, y_pred, **kwargs):
     plt.savefig(dir + 'power_usage_per_device' + now + '.png')
     
     return peak_power
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:2449a70de2d11731d3c9357072fc92d2537650cd9b79b8d352a3e5a815e32ce4
+size 998
+>>>>>>> 9676c3e (ya toh aar ya toh par)

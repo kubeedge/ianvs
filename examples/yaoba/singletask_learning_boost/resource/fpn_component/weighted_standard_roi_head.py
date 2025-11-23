@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright (c) OpenMMLab. All rights reserved.
 import json
 import numpy as np
@@ -72,3 +73,8 @@ class WeightRoIHead(StandardRoIHead):
         bbox_results.update(loss_bbox=loss_bbox)
         return bbox_results
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:b33679f0cc23b310310316678e7ea69660ad5d408e887e10b018f543c216e0a5
+size 3153
+>>>>>>> 9676c3e (ya toh aar ya toh par)

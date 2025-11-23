@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 - [Cloud-Edge collaborative inference for LLM based on KubeEdge-Ianvs](#cloud-edge-collaborative-inference-for-llm-based-on-kubeedge-ianvs)
   - [Motivation](#motivation)
     - [Goals](#goals)
@@ -562,3 +563,8 @@ Advanced task is planned to be implemented as follows:
 [8] G. Gerganov, “ggerganov/llama.cpp.” May 31, 2024. Accessed: May 31, 2024. [Online]. Available: https://github.com/ggerganov/llama.cpp
 
 [9] H. Xia *et al.*, “Unlocking Efficiency in Large Language Model Inference: A Comprehensive Survey of Speculative Decoding.” arXiv, Feb. 20, 2024. Accessed: May 31, 2024.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0a3c4798eff6902532018f7edba07f017c5a1807e3340ced3055a7172eecd636
+size 29991
+>>>>>>> 9676c3e (ya toh aar ya toh par)

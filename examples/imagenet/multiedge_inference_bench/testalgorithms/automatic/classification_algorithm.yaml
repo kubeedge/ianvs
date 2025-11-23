@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   # paradigm name; string type;
   # currently the options of value are as follows:
@@ -25,3 +26,8 @@ algorithm:
           - batch_size:
              values:
               - 1
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:a7b97b71c6cc72179ebc5790b5d9dab6166c3579d6d1d0adb9d5f91d5d84b638
+size 1063
+>>>>>>> 9676c3e (ya toh aar ya toh par)

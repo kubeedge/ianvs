@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,3 +82,8 @@ def copy_model(model: NetWork):
 
     copy_model = model.from_config(cfg)
     return copy_model
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:ca146d66152a1aca4b0709e45bde4224f7f03064417517b445f668496264e3c5
+size 2768
+>>>>>>> 9676c3e (ya toh aar ya toh par)

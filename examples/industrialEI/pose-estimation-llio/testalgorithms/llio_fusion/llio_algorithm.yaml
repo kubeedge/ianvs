@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   paradigm_type: "singletasklearning"
   
@@ -38,3 +39,8 @@ algorithm:
         - lidar_only_mode:
             values:
               - False  # Default for LLIO (use sensor fusion)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:066a0aede5ad37abc9b55d0b8308c9ea834c8d6811a08a3854d2922a1b39a898
+size 1174
+>>>>>>> 9676c3e (ya toh aar ya toh par)

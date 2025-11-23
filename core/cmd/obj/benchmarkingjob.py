@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # pylint: disable=R0801
 # Copyright 2022 The KubeEdge Authors.
 #
@@ -128,3 +129,8 @@ class BenchmarkingJob:
 
     def _parse_simulation_config(self, simulation_config):
         self.simulation = Simulation(simulation_config)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:28524eed0020dbea42128136fb21508b05195b6988fa03808413d71be457ab44
+size 4922
+>>>>>>> 9676c3e (ya toh aar ya toh par)

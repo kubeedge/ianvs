@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -445,3 +446,8 @@ class GLFC_Client:
         del total_correct
         logging.info(f"finsih task {self.old_task_id} evaluate, acc: {acc}")
         return acc
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:6492e2a4143286ef02b2a46e534034299972ea06541d72b808065de6752423a6
+size 18351
+>>>>>>> 9676c3e (ya toh aar ya toh par)

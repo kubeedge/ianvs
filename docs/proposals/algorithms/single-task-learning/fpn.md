@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Single task learning: FPN
 
 Pre-trained model: [Huawei OBS](https://kubeedge.obs.cn-north-1.myhuaweicloud.com:443/ianvs/pcb-aoi/model.zip)
@@ -169,3 +170,8 @@ After registration, you only need to change the name of the STL and parameters i
 [FPN]: https://github.com/DetectionTeamUCAS/FPN_Tensorflow
 [examples directory]: ../../../../examples
 [Sedna repository]: https://github.com/kubeedge/sedna
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:5b99051385a6ca9304909096342188f8a3be074632385f28aadc3b7e6c875ba3
+size 8483
+>>>>>>> 9676c3e (ya toh aar ya toh par)

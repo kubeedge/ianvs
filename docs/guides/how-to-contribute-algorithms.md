@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # How to contributrbute an algorithm to Ianvs
 
 Ianvs serves as testing tools for test objects, e.g., algorithms. Ianvs does NOT include code directly on the test object. Algorithms serve as typical test objects in Ianvs and detailed algorithms are thus NOT included in this Ianvs python file. As for the details of example test objects, e.g., algorithms, please refer to third party packages in the Ianvs example. For example, for AI workflow and interface please refer to sedna and for module implementation please refer to third party packages like FPN_TensorFlow and Sedna IBT algorithm.
@@ -18,3 +19,8 @@ Also, if a new algorithm has already been integrated into Sedna, it can be used 
 [examples directory]: ../../../../examples
 [Sedna repository]: https://github.com/kubeedge/sedna
 [cloud-edge-collaborative-inference-for-llm]: https://github.com/kubeedge/ianvs/tree/main/examples/cloud-edge-collaborative-inference-for-llm
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:51cb49dc80e2d554bdced8e50ecb6562b02db23d32e2ef77ffff7bb9800edaeb
+size 1645
+>>>>>>> 9676c3e (ya toh aar ya toh par)

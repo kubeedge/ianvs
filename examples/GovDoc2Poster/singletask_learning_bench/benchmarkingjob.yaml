@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # New Government Agent Poster Generation Benchmark
 # 新版政府代理海报生成基准测试
 
@@ -68,3 +69,8 @@ benchmarkingjob:
     #  1> "selected_and_all": save selected and all dataitems;
     #  2> "selected_only": save selected dataitems;
     save_mode: "selected_and_all"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:b8fb39695cd0a31d9929cfa493298d32846a359dcd8617c58804597580b528b2
+size 3384
+>>>>>>> 9676c3e (ya toh aar ya toh par)

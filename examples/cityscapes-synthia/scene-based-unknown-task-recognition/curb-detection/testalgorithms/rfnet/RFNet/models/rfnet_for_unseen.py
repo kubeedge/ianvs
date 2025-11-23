@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import torch.nn as nn
 from itertools import chain # 串联多个迭代对象
 
@@ -31,3 +32,8 @@ class RFNet(nn.Module):
 
     def fine_tune_params(self):
         return self.backbone.fine_tune_params()
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:1e8e9c9e706934b35cbdf66764fb6a0d1091bc0118ba6d5b0bd302563a62d082
+size 1588
+>>>>>>> 9676c3e (ya toh aar ya toh par)

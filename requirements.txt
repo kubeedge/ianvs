@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 prettytable~=2.5.0 # BSD
 scikit-learn
 numpy
@@ -5,3 +6,8 @@ pandas
 tqdm
 matplotlib
 onnx
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:6b58e140a02bd6f9da4066e0a56364562e740598177bb711c50b4dfa1468fbc0
+size 71
+>>>>>>> 9676c3e (ya toh aar ya toh par)

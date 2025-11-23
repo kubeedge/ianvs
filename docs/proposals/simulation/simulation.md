@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Benchmarks for Edge-cloud Collaborative Lifelong Learning
 
 Artificial intelligence technology has served us in all aspects of life, especially in image, video, voice, recommendation systems, etc. It has brought breakthrough results. AI Benchmark is designed to measure the performance and efficacy of AI models. There are already many authoritative AI Benchmark systems in the traditional AI field. As an emerging direction of edge AI, the corresponding Benchmark development is not perfect, and there are generally problems such as insufficient paradigm coverage, inactive communities, no edge/cloud side involved, and few test samples.
@@ -173,3 +174,8 @@ The roadmap would be as follows
 2. (0905-0911) Improve the code and verify the reliability.
 3. (0912-0918) Prepare the final PR.
 4. (0919-0930) Linkage integration with other projects
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:6567e50c07837cb0c57d86efc18d1448c9c70d2fbe13db790f0b0c0c4dc17b13
+size 8063
+>>>>>>> 9676c3e (ya toh aar ya toh par)

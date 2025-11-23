@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
     "tokenizer_dir": "./examples/LLM-Agent-Benchmark/pretrains/Langboat/bloom-1b4-zh",
     "auth_token": "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",
@@ -9,3 +10,8 @@
     "device": "auto",
     "output_dir": "./checkpoint"
   }
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:9f693fc973a3358ccf8170519d2c2104b097d4f770f3b75191ab39e3daa27cf5
+size 397
+>>>>>>> 9676c3e (ya toh aar ya toh par)

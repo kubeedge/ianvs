@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import torch
 import numpy as np
 from torch.utils.data import Dataset,DataLoader
@@ -27,3 +28,8 @@ if __name__ == '__main__':
         print(i)
     print(len(data))
     train_dataloader = DataLoader(data,batch_size=32,shuffle=True,drop_last=False,)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:e4eb4837c35b91d9c89f09645cfad4a0df68a57f1593514b210cdc36b666bed2
+size 1007
+>>>>>>> 9676c3e (ya toh aar ya toh par)

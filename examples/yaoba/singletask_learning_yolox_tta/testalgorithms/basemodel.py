@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from __future__ import absolute_import, division, print_function
 import json
 from sedna.common.class_factory import ClassType, ClassFactory
@@ -182,3 +183,8 @@ class BaseModel:
                 temp_dict["bbox"] = vs
                 predict_dict[name].append(temp_dict)
         return predict_dict
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:843d625f9bcc14d9c65d3d297a84f4389aaae858407b1232a835d8267a7a1719
+size 7374
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 New Government Agent Project
 # New Government Agent Poster Generation Base Model
 
@@ -985,3 +986,8 @@ class NewGovernmentPosterAgent:
             int: Priority (smaller number means higher priority)
         """
         return self.rule_types.get(rule_type, {}).get('priority', 999)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0d7d18c1b2354f15d96548e82d6d4d238c69e60b0ae4288a2488e9aae2353933
+size 47676
+>>>>>>> 9676c3e (ya toh aar ya toh par)

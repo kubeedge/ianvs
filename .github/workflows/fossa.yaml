@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: FOSSA
 on:
   push:
@@ -28,3 +29,8 @@ jobs:
           sudo curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | sudo bash
           cd '${{github.workspace}}'
           sudo -E fossa analyze
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:606a9639f3dd6c6d69d089324d9b471355851abf97163692ab2514ebf1626bf4
+size 880
+>>>>>>> 9676c3e (ya toh aar ya toh par)

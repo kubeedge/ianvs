@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [Quick Start]: ./quick-start.md
 [Links of scenarios]: ../proposals/scenarios/cloud-edge-collaborative-inference-for-llm/mmlu-5-shot.md
 [Ianvs-MMLU-5-shot dataset]: https://www.kaggle.com/datasets/kubeedgeianvs/ianvs-mmlu-5shot
@@ -829,3 +830,8 @@ benchmarkingjob:
 Finally, the user can run ianvs for benchmarking.
 
 The benchmarking result of the targeted algorithms will be shown after the evaluation is done. Leaderboard examples can be found [here](../leaderboards/leaderboard-in-cloud-edge-collaborative-inference-for-llm/leaderboard-of-cloud-edge-collaborative-inference-for-llm.md).
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:e8153bd9f73355dacbb9c291f825cbde62aba50068c5fb3285eee393611c543c
+size 33031
+>>>>>>> 9676c3e (ya toh aar ya toh par)

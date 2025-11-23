@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   # paradigm name; string type;
   # currently the options of value are as follows:
@@ -47,3 +48,8 @@ algorithm:
       name: "FedAvg"
       url: "./examples/cifar100/federated_class_incremental_learning/fedavg/algorithm/aggregation.py"
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:91fff4eb62ee996003c9bc837e91291ed9fbd2d096fa8539cf07dd53561ff36d
+size 1905
+>>>>>>> 9676c3e (ya toh aar ya toh par)

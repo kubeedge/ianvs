@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Industrial Embodied Intelligence Benchmarking Framework: Multiview Defect Detection
 
 As industrial manufacturing becomes increasingly automated, the need for intelligent, adaptable, and perception-rich robotic systems is growing rapidly. Traditional inspection and automation systems, reliant on single-view analysis or rigid control algorithms, struggle in environments with complex geometries, dynamic lighting, and unpredictable defects.
@@ -133,3 +134,8 @@ The **Real-IAD (Real-World Multi-View Dataset for Benchmarking Versatile Industr
 | Annotation Type | Pixel-level anomaly masks |
 | Use Case | Unsupervised anomaly detection |
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:4134170e45ce14b6e3cfff7bcc2d8d78a51ed864df4679fc38c8d1ed0e912c35
+size 15065
+>>>>>>> 9676c3e (ya toh aar ya toh par)

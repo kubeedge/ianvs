@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -307,3 +308,8 @@ class LeNet5(keras.Model):
             return convs
 
         return get_all_conv_layers_(self)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:67200e5eef3d82281287ca2da85c20576527d6f2039023e166f0cb687bf5af71
+size 9740
+>>>>>>> 9676c3e (ya toh aar ya toh par)

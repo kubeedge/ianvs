@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 Holodeck, 2025 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -666,3 +667,8 @@ class DFS_Solver_Wall:
 
         ax.set_aspect("equal", "box")  # to keep the ratios equal along x and y axis
         plt.show()
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:64f6d98d807c1d3ebb2d1ec995a04a024e983d13c6702c06cfa92f8a9bb108b8
+size 25464
+>>>>>>> 9676c3e (ya toh aar ya toh par)

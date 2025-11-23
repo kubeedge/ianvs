@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import torch
 import random
 import numpy as np
@@ -228,3 +229,8 @@ class Relabel(object):
         #                                                            torch.ByteTensor)), 'tensor needs to be LongTensor'
         tensor[tensor == self.olabel] = self.nlabel
         return tensor
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0b782f273baaa3aaae25d6e82f742671d46986d3a98c62551f062c2df834b75c
+size 6963
+>>>>>>> 9676c3e (ya toh aar ya toh par)

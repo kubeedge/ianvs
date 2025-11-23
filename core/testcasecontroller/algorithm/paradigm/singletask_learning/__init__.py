@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,3 +15,8 @@
 
 # pylint: disable=missing-module-docstring
 from .singletask_learning import SingleTaskLearning
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:be433a82e3c19f2189812d960b3f9cc35da6bd67cb6985aca3f65dc9c665a588
+size 681
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   # paradigm name; string type;
   # currently the options of value are as follows:
@@ -31,3 +32,8 @@ algorithm:
         - learning_rate:
             values:
               - 0.1
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:ef7ccd20d4b947a5e108262847d233f99499ba368ce423ab5a0b188b688e29d4
+size 1269
+>>>>>>> 9676c3e (ya toh aar ya toh par)

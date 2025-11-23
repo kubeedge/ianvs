@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   # paradigm type; string type;
   # currently the options of value are as follows:
@@ -56,3 +57,8 @@ algorithm:
         - threshold_box:
             values:
               - 0.9
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f78148cb2491326cb0740ac439283c3bddfc49cc5b0445fb430b495da37a05c8
+size 2451
+>>>>>>> 9676c3e (ya toh aar ya toh par)

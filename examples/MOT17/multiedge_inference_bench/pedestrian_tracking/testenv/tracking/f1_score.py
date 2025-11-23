@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,3 +50,8 @@ def metric(y_true, y_pred):
     precision = float(summary.iloc[-1][['precision']])
     recall = float(summary.iloc[-1][['recall']])
     return round(2*((precision*recall)/(precision+recall)), 4)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:fe84c202e412373657e855856b14e644f7b0a2c2ac3f0890076268b14bbd8998
+size 1835
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Proposal: Physically Consistent and Interactable Indoor Simulation Scene Generation: Implementation Based on KubeEdge-Ianvs
 
 ## Introduction / Motivation
@@ -213,3 +214,8 @@ The project plan is structured to methodically follow the advised research and d
   - Task 3: Prepare, document, and publish the final `PhysicsSceneDataset` to the KubeEdge Kaggle profile.
   
   - Task 4: Prepare and submit the final project report, code, and Pull Request to the KubeEdge community.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0b445c3fea9e1684dbdc0d5d7e3c550058dc3a65c24ea9f03e309fba68bab471
+size 14275
+>>>>>>> 9676c3e (ya toh aar ya toh par)

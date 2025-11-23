@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -220,3 +221,8 @@ class MetaResNet(MetaModule):
             return bn_x
 
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:30d5cc08b543382a9e5edea084a7b9ecb428e1d54c5d053bb7aec1a3072855ae
+size 7161
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -111,3 +112,8 @@ class MultiedgeInference(ParadigmBase):
                 LOGGER.info(str(e))
             map_info[sub_model_path.split('/')[-1]] = point['device_name']
         return sub_model_dir, map_info
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:202d904d33990b7a41321563d31717b46b2a4079a3d6f5a7fc8bc43b8edb93a6
+size 4739
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -90,3 +91,8 @@ class JointInferenceResult:
             Response.from_dict(edge_result),
             Response.from_dict(cloud_reslut),
         )
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:93962310c9dad0a060a0ed6763fed61bb4e5edca102ef748c5b0e0ab62f3c688
+size 2817
+>>>>>>> 9676c3e (ya toh aar ya toh par)

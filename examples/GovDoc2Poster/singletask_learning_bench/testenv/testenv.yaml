@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # New Government Agent Test Environment Configuration
 # 新版政府代理测试环境配置
 
@@ -15,3 +16,8 @@ testenv:
     - name: "score"
       # the url address of python file
       url: "./examples/GovDoc2Poster/singletask_learning_bench/testenv/acc.py"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:42cf2769834c6bcb4c3b4f285a2a9b981332884f9d2d4b1868b3fc75440af98a
+size 662
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Unknown Task Recognition Algorithm Reproduction based on Lifelong Learning of Ianvs
 
 
@@ -290,3 +291,8 @@ The roadmap would be as follows
 - Improved accuracy of unknown task recognition algorithm to 90%；
 - Merge into the lib of the Ianvs module；
 - Intermodulation with other related projects；
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:812fa651e099682fc3e25dec2c512a8168ca9388066e84af6598f04aae12c84c
+size 15387
+>>>>>>> 9676c3e (ya toh aar ya toh par)

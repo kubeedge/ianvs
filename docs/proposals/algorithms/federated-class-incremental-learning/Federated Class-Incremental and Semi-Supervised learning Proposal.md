@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Federated Incremental Learning for Label Scarcity: Base on KubeEdge-Ianvs
 
 ## 1 Motivation
@@ -761,3 +762,8 @@ The road map of this project will be list as follow:
 [6] LeNet5: [Gradient-based learning applied to document recognition | IEEE Journals & Magazine | IEEE Xplore\](https://ieeexplore.ieee.org/document/726791?reload=true&arnumber=726791)
 
 [7]  Federated Class-Incremental Learning With Dynamic Feature Extractor Fusion [Federated Class-Incremental Learning With Dynamic Feature Extractor Fusion | IEEE Journals & Magazine | IEEE Xplore](https://ieeexplore.ieee.org/document/10574196)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:eb3f52d006bc54b56375bac33dd9e068f4c2a74c1929c15aeecbed8c32d172f0
+size 34163
+>>>>>>> 9676c3e (ya toh aar ya toh par)

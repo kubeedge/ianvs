@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 Holodeck.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -442,3 +443,8 @@ class WindowGenerator:
         ]
 
         return top_rectangle, bottom_rectangle
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:c0b190a6242df160a81dcf25c58e4bad087a9f1fad01e0084fb0abb051170690
+size 16501
+>>>>>>> 9676c3e (ya toh aar ya toh par)

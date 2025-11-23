@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Table of Contents
 
 - [Details of Cloud Edge Collaborative Inference for LLM](#deatails-of-cloud-edge-collaborative-inference-for-llms)
@@ -462,3 +463,8 @@ Thus, the future tasks of this example include:
 [2] Ong, Isaac, et al. "Routellm: Learning to route llms with preference data." *arXiv preprint arXiv:2406.18665* (2024).
 
 [3] Xia, Heming, et al. "Unlocking efficiency in large language model inference: A comprehensive survey of speculative decoding." *arXiv preprint arXiv:2401.07851* (2024).
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:98f3232fdc604a51d3427c736c66c3692684fed1713ba119568d84de34bfdd48
+size 33913
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 custom_imports = dict(
     imports=[
         'examples.yaoba.singletask_learning_boost.resource.fpn_component.weighted_standard_roi_head',
@@ -220,3 +221,8 @@ auto_scale_lr = dict(enable=True, base_batch_size=16)
 work_dir = '/home/wjj/wjj/Public/code/huawei/custom_code/instance_based/model/weight_fpn/cls'
 auto_resume = False
 gpu_ids = [0]
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f48b7e2551ab9cd4b558cb935c2fd497688e08458e8cdcd1e02c8e59152a2206
+size 8378
+>>>>>>> 9676c3e (ya toh aar ya toh par)

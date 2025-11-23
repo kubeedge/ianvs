@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 新数据集开源！Kubeedge-Ianvs发布Cloud-Robotics云机器人数据集
 
 作者：复旦大学，华为
@@ -191,3 +192,8 @@ https://github.com/hsj576/ianvs-lifelong-learning-tutorial/blob/main/tutorial/tu
 （2）更丰富的终身学习算法
 
 目前在Cloud-Robotics数据集上进行的终身学习测试结果中出现了明显的爆炸性遗忘问题，这也给了终身学习领域带来了新的挑战。目前，终身学习算法在Cloud-Robotics数据集上的性能有着很大的提升空间，未来希望有更多的终身学习算法在Cloud-Robotics数据集上进行测试。
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:3d56b03edc4fa1a646c9642eb96dfa5b064edf53d1bc35b16dfd0ce2c89dd8c6
+size 12777
+>>>>>>> 9676c3e (ya toh aar ya toh par)

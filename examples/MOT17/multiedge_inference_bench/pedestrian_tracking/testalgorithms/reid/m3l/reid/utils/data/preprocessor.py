@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,3 +45,8 @@ class Preprocessor(Dataset):
             img = self.transform(img)
 
         return img, fname, pid, camid, dataset_id, index
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:dc3d029cb09520887414896bec15a12e6f68a669d5aef2f77835dad470e7c458
+size 1461
+>>>>>>> 9676c3e (ya toh aar ya toh par)

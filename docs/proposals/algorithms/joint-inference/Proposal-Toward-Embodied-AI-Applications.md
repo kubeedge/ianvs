@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 - [A Multi-LLM Cloud-Edge Collaboration Paradigm Based on KubeEdge-Ianvs: Toward Embodied-AI Applications](#A-Multi-LLM-Cloud-Edge)
 - [Motivation](#motivation)
     - [Goals](#goals)
@@ -345,3 +346,8 @@ Task 3 is planned to be implemented as follows:
 
 
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:31ca2e2f447d29101a55f9ccaefd11c57185b45af99160e63d8e65c664a0e739
+size 23290
+>>>>>>> 9676c3e (ya toh aar ya toh par)

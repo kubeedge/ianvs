@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   paradigm_type: "jointinference"
   model_path: "./examples/TAB/cloud_edge_collaborative_inference_bench/local_model"
@@ -85,3 +86,8 @@ algorithm:
       - name: "differential_privacy"
         url: "./examples/TAB/cloud_edge_collaborative_inference_bench/test_algorithms/privacy_desensitization/differential_privacy.py"
         complexity: 3
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:d125f422f0319c707d6092495321fa6d1b6ab2b9d075506eb77d4b8bca874ef3
+size 2760
+>>>>>>> 9676c3e (ya toh aar ya toh par)

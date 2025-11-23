@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -180,3 +181,8 @@ def get_metric_func(metric_dict: dict):
             ) from err
 
     return name, getattr(sys.modules[__name__], str.lower(name) + "_func")
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:48da6fc77c8c425d9003efa61dfbab8d57e11486068db9a8ccccae537cf4a8f1
+size 5045
+>>>>>>> 9676c3e (ya toh aar ya toh par)

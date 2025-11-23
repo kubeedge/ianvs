@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,3 +81,8 @@ class FedAvg(BaseAggregation, abc.ABC):
         self.proxy_server.set_weights(self.weights)
         print(f"finish set weight for proxy server")
         return {"best_old_model": self.proxy_server.model_back()}
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:7f85d61883f5940edcd494279a7786d06eed8da2ea41f30f0a5ffb82013d5736
+size 2944
+>>>>>>> 9676c3e (ya toh aar ya toh par)

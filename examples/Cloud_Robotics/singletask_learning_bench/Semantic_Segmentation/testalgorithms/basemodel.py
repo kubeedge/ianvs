@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -170,3 +171,8 @@ class BaseModel:
             transformed_images.append((composed_transforms(sample), img_path))
 
         return transformed_images
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:c14aee8a3d736ee5c6377695a1c6b11d23fb1d621a44ce6d906016c033974f66
+size 6307
+>>>>>>> 9676c3e (ya toh aar ya toh par)

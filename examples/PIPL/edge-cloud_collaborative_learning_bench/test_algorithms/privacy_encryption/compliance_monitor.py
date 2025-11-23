@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 Compliance Monitor for PIPL and Privacy Regulations
 
@@ -482,3 +483,8 @@ class ComplianceMonitor:
             'last_audit_entry': self.audit_logs[-1]['timestamp'] if self.audit_logs else None
         }
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:d36a7388177c169d148c8ba5781f62b39698826450cc1a5ec6cf3a5487a9df74
+size 19760
+>>>>>>> 9676c3e (ya toh aar ya toh par)

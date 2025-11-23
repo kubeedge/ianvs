@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from basemodel import val_args
 from utils.metrics import Evaluator
 from tqdm import tqdm
@@ -36,3 +37,8 @@ def accuracy(y_true, y_pred, **kwargs):
 
     print("CPA:{}, mIoU:{}, fwIoU: {}".format(CPA, mIoU, FWIoU))
     return CPA
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:5c104788d58e0d31558cf64ddd082a6f540e5df93ebcc1237e23d41a8964ba8f
+size 1346
+>>>>>>> 9676c3e (ya toh aar ya toh par)

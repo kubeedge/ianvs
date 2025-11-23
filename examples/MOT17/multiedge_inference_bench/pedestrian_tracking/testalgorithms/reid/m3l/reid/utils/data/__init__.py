@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,3 +35,8 @@ class IterLoader:
         except:
             self.iter = iter(self.loader)
             return next(self.iter)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:428fed884ab7e6deaeef8daa0589f1a34cf44acebf93d57745b1e175f1b8b4eb
+size 1121
+>>>>>>> 9676c3e (ya toh aar ya toh par)

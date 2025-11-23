@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,3 +47,8 @@ def draw_heatmap_picture(output, title, matrix):
 def get_visualization_func(mode):
     """ get visualization func """
     return getattr(sys.modules[__name__], mode)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:63ea2a3f843f085cc9b3230e011838b4fcb959387a5741e980a2139fd35c8a95
+size 1618
+>>>>>>> 9676c3e (ya toh aar ya toh par)

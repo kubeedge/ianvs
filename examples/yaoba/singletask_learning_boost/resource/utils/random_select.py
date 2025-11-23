@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import random
 from random import sample
@@ -23,3 +24,8 @@ if __name__ == '__main__':
                   "/home/wjj/wjj/Public/code/huawei/custom_code/instance_based/txt/merged_part",
                   select_name="NG_test.txt",
                   rest_name="NG_labeled.txt")
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:425dc43cec337fd4a79ffc34f41f908f330a426d215f2ffc472596b8c6bfe801
+size 887
+>>>>>>> 9676c3e (ya toh aar ya toh par)

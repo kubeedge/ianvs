@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import evaluate
 import numpy as np
 from sedna.common.class_factory import ClassType, ClassFactory
@@ -41,3 +42,8 @@ def calculate_mean(lst):
     if not lst:
         return None
     return sum(lst) / len(lst)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:7724741995d825d8b88c77ab1f70ca78b0a556e2120f9418450b370ca0a14529
+size 1638
+>>>>>>> 9676c3e (ya toh aar ya toh par)

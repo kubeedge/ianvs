@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import argparse
 from modelscope import snapshot_download
@@ -23,3 +24,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     download_model(args.model_id, args.revision, args.local_dir)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:5fed69345bdac448701f03dd7b3b41f82e7330ce4918df10f124e0b0f511b7d5
+size 981
+>>>>>>> 9676c3e (ya toh aar ya toh par)

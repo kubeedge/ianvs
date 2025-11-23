@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 Holodeck.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,3 +48,8 @@ else:
 LLM_MODEL_NAME = "gpt-4o-2024-05-13"
 
 DEBUGGING = os.environ.get("DEBUGGING", "0").lower() in ["1", "true", "True", "t", "T"]
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:9b884e9075a77a8f145482a272b3d78ac5789e19490d668b7bfb17d78ad70faa
+size 1886
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2023 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,3 +29,8 @@ def throughput(y_true, y_pred):
         total_latency += result['total_time']
     avg_throughput = num_requests /total_latency
     return avg_throughput
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:edb41717c0d07f863e30e6a20babbcea5c9868a1c50eb3b71c198f3dc2f51cc1
+size 1082
+>>>>>>> 9676c3e (ya toh aar ya toh par)

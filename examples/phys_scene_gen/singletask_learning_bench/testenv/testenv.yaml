@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # testenv/testenv.yaml
 
 testenv:
@@ -10,3 +11,8 @@ testenv:
       url: "./examples/phys_scene_gen/singletask_learning_bench/testenv/metrics/semantic_conformance.py"
     - name: "navigation_validity"
       url: "./examples/phys_scene_gen/singletask_learning_bench/testenv/metrics/navigation_validity.py"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:d75704ba012a4b234a0469cc8c8c25c7ec6bafba454576370dae3777f75745fb
+size 518
+>>>>>>> 9676c3e (ya toh aar ya toh par)

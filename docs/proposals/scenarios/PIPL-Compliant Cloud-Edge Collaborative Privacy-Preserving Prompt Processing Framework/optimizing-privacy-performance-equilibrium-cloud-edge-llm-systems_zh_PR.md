@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # 标题
 
@@ -358,3 +359,8 @@ testenv:
 * 目前Transform引擎的参数为静态配置，后续可探索基于输入内容自适应调整的策略。
 * 嵌入反演防御基线仍较初步，未来可引入更强的反演攻击模型进行压力测试。
 * 当前仅支持文本模态，未来可扩展至语音、图像等多模态的隐私保护。
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:926d044d387822f6e671590d74dcaeafc046a2ac6ca78df82a3fe2e05792742c
+size 11756
+>>>>>>> 9676c3e (ya toh aar ya toh par)

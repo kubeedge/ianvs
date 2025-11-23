@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2025 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -276,3 +277,8 @@ def _check_connectivity(walkable_map, rooms, scale, origin, image_size):
             return False
 
     return True
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:cd622b18f650f476fc41f9542d4b7a115567ed96f448cb9a6b26c63a67275993
+size 11607
+>>>>>>> 9676c3e (ya toh aar ya toh par)

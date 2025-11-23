@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """Model configurations and default parameters."""
 import logging
 from typing import Any, Callable, List, Optional, Tuple
@@ -91,3 +92,8 @@ def module_shard_factory(model_name: str, model_file: Optional[str], layer_start
     _logger.info("======= %s Stage %d =======", module.__name__, stage)
     shard.to(device=devices.DEVICE)
     return shard
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f63bd5a1ba88654072a77d25a58581d65c1a6383c8c798914440379d9430ac87
+size 4313
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,3 +34,8 @@ def to_torch(ndarray):
         raise ValueError("Cannot convert {} to torch tensor"
                         .format(type(ndarray)))
     return ndarray
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:6a0ef1ff8fcfece518b5a48c419a0eaf06d970eb4543fd72bc0c225b8b6132f7
+size 1178
+>>>>>>> 9676c3e (ya toh aar ya toh par)

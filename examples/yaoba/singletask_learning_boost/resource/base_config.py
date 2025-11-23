@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 model = dict(
     type='FasterRCNN',
     backbone=dict(
@@ -206,3 +207,8 @@ auto_scale_lr = dict(enable=True, base_batch_size=16)
 work_dir = '/home/wjj/wjj/Public/code/huawei/custom_code/instance_based/model/fpn/known'
 auto_resume = False
 gpu_ids = range(0, 4)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:5a1b5522d51ad7b2a6cee9e5e60f8615842d5317f1d3d2b65bffd4b1c707dfe9
+size 7534
+>>>>>>> 9676c3e (ya toh aar ya toh par)

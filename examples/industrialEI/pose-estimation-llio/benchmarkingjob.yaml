@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 benchmarkingjob:
   name: llio_pose_estimation_benchmark
   rank:
@@ -28,3 +29,8 @@ benchmarkingjob:
   testenv: examples/industrialEI/pose-estimation-llio/testenv/testenv.yaml
   workspace: examples/industrialEI/pose-estimation-llio/workspace/llio_pose_estimation_results
   data_root: examples/industrialEI/pose-estimation-llio/data_restructured
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:16f98aab318b3f2134a710622008f798bd00919ef5b2f477cccc451848f8dfd8
+size 908
+>>>>>>> 9676c3e (ya toh aar ya toh par)

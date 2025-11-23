@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,3 +20,8 @@ from .multiedge_inference import MultiedgeInference
 from .lifelong_learning import LifelongLearning
 from .federated_learning import FederatedLearning, FederatedClassIncrementalLearning
 from .joint_inference import JointInference
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0bbd24b0317b0e62d47e5f08e416c2d2e85a7db28ca8f3e57d8cba42eab60a8a
+size 964
+>>>>>>> 9676c3e (ya toh aar ya toh par)

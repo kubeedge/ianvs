@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import sys
 import os
 
@@ -30,3 +31,8 @@ def peak_power(y_true, y_pred, **kwargs):
     plt.savefig(dir + 'peak_mem_per_device' + now + '.png')
     
     return peak_mem
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:324cb40671d6c4a025729424f2b1cf02d62bf4fec6768d737583d0c56d0b3bc6
+size 994
+>>>>>>> 9676c3e (ya toh aar ya toh par)

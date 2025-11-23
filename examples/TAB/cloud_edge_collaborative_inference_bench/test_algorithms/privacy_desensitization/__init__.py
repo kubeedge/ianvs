@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from .regex_pseudonymization import RegexPseudonymization
 from .ner_masking import NERMasking
 from .differential_privacy import DifferentialPrivacy
@@ -19,3 +20,8 @@ def desensitize(text, methods=None):
         current_text, _ = dp_processor.add_noise(current_text)
 
     return current_text
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:558fb285f717b587f62b4dd67710df1e0a09bc166576ccc49f06f265b2181afe
+size 660
+>>>>>>> 9676c3e (ya toh aar ya toh par)

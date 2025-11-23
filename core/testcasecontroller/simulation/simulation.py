@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,3 +78,8 @@ class Simulation:
         if not isinstance(self.sedna_version, str):
             raise ValueError(
                 f"simulation ({self.sedna_version}) must be string type.")
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:19c7c9f010d981bd3d38d7e08bac21fba30b3bc7f21322c2b314d12e999d6bc4
+size 2592
+>>>>>>> 9676c3e (ya toh aar ya toh par)

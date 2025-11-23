@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Background
 
 With the rapid development of cloud-edge collaborative large models, their application potential in governmental scenarios is becoming increasingly prominent. Currently, the intelligent upgrade of government services urgently requires support for three core application domains: **internal government collaboration**, **public services**, and **enterprise services**. However, existing LLM evaluation systems generally lack standardized methods tailored for government-specific tasks, making it difficult to effectively assess model performance in real-world governmental environments.
@@ -199,3 +200,8 @@ Test and refine the multimodal pipeline, optimize model outputs, and tune LLM sc
 | **Early July – Late July** | **Early Phase: Document & Rule Design** | • Collect government policy documents (PDF, Word, images)<br>• Extract and standardize key content<br>• Define common `rule_type` categories (e.g., Notice, Report, Speech)<br>• Construct compliance rules and prompts per rule type<br>• Build a structured dataset with rule-type labels |
 | **Early August – Mid August** | **Mid Phase: Pipeline Implementation** | • Develop evaluation workflow under Ianvs<br>• Implement structured content extraction and poster generation<br>• Integrate metrics: CLIP (visual), QA (info), PPL (language)<br>• Add LLM-as-Judge scoring with rule-specific prompts |
 | **Late August – Mid September** | **Late Phase: Optimization & Deployment** | • Debug multimodal processing pipeline<br>• Tune extraction and poster modules for consistency<br>• Optimize evaluation prompts and scoring criteria<br>• Deploy under Ianvs and validate system performance<br>• Deliver outputs: samples, scores, final evaluation report |
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:3146c5973aa9a00ba58d294bead5e8c4835043247014519ae543c321ba35a112
+size 14285
+>>>>>>> 9676c3e (ya toh aar ya toh par)

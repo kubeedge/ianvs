@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -228,3 +229,8 @@ class RandAugment(Base_Augment):
                 for img in images
             ]
         )
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:95aa52b51c4d33f4e8385aa86f6bba42b1d2709441ea79f3a36e8ae1bc290c11
+size 8436
+>>>>>>> 9676c3e (ya toh aar ya toh par)

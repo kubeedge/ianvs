@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   # paradigm name; string type;
   # currently the options of value are as follows:
@@ -47,3 +48,8 @@ algorithm:
       name: "FedAvg"
       url: "./examples/cifar100/fci_ssl/fedavg/algorithm/aggregation.py"
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:3e9542d7f4ba1bfe4f445dd2b9f172a681bf255fbc0be4b89b252a57b8bbd30b
+size 1856
+>>>>>>> 9676c3e (ya toh aar ya toh par)

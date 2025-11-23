@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 Holodeck.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -622,3 +623,8 @@ def create_relative_constraints(c1, c2, object_dim_1, object_dim_2, constraint_t
         )
 
     return hard_constraints
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:13539b7e640773618158c420336ff5a52bcc9f165ec08a226214002acec0935b
+size 24110
+>>>>>>> 9676c3e (ya toh aar ya toh par)

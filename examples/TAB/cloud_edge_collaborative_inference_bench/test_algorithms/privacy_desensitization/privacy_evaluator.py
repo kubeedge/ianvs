@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import numpy as np
 import spacy
 from sentence_transformers import SentenceTransformer, util
@@ -157,3 +158,8 @@ class PrivacyEvaluator:
         original_embedding = self.sentence_model.encode(original_text, convert_to_tensor=True)
         anonymized_embedding = self.sentence_model.encode(anonymized_text, convert_to_tensor=True)
         return util.cos_sim(original_embedding, anonymized_embedding).item()
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:ed2b6fa2cba6994ed925c67b523541c303fe739a8286779c2c66a859b83e5107
+size 6540
+>>>>>>> 9676c3e (ya toh aar ya toh par)

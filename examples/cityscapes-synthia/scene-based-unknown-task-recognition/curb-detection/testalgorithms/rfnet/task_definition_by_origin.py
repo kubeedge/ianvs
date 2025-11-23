@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from typing import List, Any, Tuple
 
 from sedna.datasources import BaseDataSource
@@ -79,3 +80,8 @@ class TaskDefinitionByOrigin:
         tasks.append(task_obj)
 
         return tasks, task_index, samples
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:dc65319d6e374159ccd0e9856616d02efce3aadc34294a310442d8e662f8d6f8
+size 2480
+>>>>>>> 9676c3e (ya toh aar ya toh par)

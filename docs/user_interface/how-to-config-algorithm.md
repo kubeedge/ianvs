@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # How to config algorithm
 
 Lets take the example of [cloud-edge-collaborative-inference-for-llm](../proposals/scenarios/cloud-edge-collaborative-inference-for-llm/mmlu-5-shot.md) scenario and understand how algorithm developer is able to test his/her own targeted algorithm and configs the algorithm using the following configuration.
@@ -170,3 +171,8 @@ algorithm:
       # the url address of python module; string type;
       url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/hard_sample_mining.py"
 ```
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:532bcdc22f6bd22c8e34c41cd8dc703c92d3c37cbd6c434deac0b8d18c113514
+size 8231
+>>>>>>> 9676c3e (ya toh aar ya toh par)

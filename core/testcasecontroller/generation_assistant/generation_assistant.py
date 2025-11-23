@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,3 +50,8 @@ def get_full_combinations(name_values_list):
         name_value_dict_list.append(name_value_dict)
 
     return name_value_dict_list
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:be8faa712205078086c9437c928f5ea42d6c135f3d0c4a70e4e601426f036ddf
+size 1571
+>>>>>>> 9676c3e (ya toh aar ya toh par)

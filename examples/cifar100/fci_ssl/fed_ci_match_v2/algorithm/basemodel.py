@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -70,3 +71,8 @@ class BaseModel:
             result[data] = res.numpy()
         print("finish predict")
         return result
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:e43f88723aa318bf4062bd5bee3bff9af6ed5bc046605b1d159b362ded155a14
+size 2611
+>>>>>>> 9676c3e (ya toh aar ya toh par)

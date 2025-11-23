@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Project Proposal: Domain-Specific Large Model Benchmarking for Edge-Based E-Government Services
 
 ## 1. Abstract
@@ -260,3 +261,8 @@ Future research should develop and test complete methodologies for domain-specif
 | Benchmark Testing | 4.14-5.2 |
 | Performance Optimization | 5.5-5.23 |
 | Project Finalization | 5.26-5.30 |
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:5d5e1fca8cac438e69d991b3d3f213527eeadc2d9a46495a2206f1c6b5322d15
+size 12052
+>>>>>>> 9676c3e (ya toh aar ya toh par)

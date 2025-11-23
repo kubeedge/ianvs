@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Industry Large-Scale Model Benchmarking Suite: Implemented Based on KubeEdge-Ianvs
 
 As large-scale models enter the era of large-scale application, the cloud has provided infrastructure and services for large-scale models. Related customers have further proposed targeted application demands on the edge side, including personalization, data compliance, and real-time capabilities, and cloud-edge collaborative artificial intelligence services have become a major trend. However, there are currently two major challenges in terms of product definition, service quality, service qualifications, and industry influence: general competitiveness and customer trust issues. The crux lies in the fact that the current large-scale model benchmarking focuses on the assessment of general basic capabilities and has not driven the application of large-scale models from an industry perspective. This project reflects the real value of large-scale models from the perspective of the large-scale model industry and cloud-edge collaborative artificial intelligence, and drives the incubation of large-scale model applications through industry benchmarking. This project is based on the collaborative artificial intelligence benchmarking suite KubeEdge-Ianvs, supplements the large-scale model testing tool interface, supports the testing dataset, and constructs a large-scale model testing suite for industries such as government affairs.
@@ -508,3 +509,8 @@ print(tokenizer.decode(tokenized_chat[0]))
 
 
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:698e400733d3f91bd3643046cf965f8a14cedab003113bb7f6d0f8d6bb1caa38
+size 51056
+>>>>>>> 9676c3e (ya toh aar ya toh par)

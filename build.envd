@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,3 +24,8 @@ def build():
       "cd /home/ianvs && pip install ./examples/resources/third_party/*",
       "cd /home/ianvs && python setup.py install"
     ])
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:7c1b99cc23383eb5101d76b2cc74be77687c916991bbd5fb7b6b85f9ef011875
+size 1003
+>>>>>>> 9676c3e (ya toh aar ya toh par)

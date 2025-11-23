@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # @inproceedings{zhou2021learning,
 # author = {Zhou, Da-Wei and Ye, Han-Jia and Zhan, De-Chuan},
 # title = {Learning Placeholders for Open-Set Recognition},
@@ -59,3 +60,8 @@ class UnseenSampleRecognitionByScene:
             unseen_image.x.append(x_data[0])
         
         return seen_image, unseen_image
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:06961f878d0e0d74a5f7de21563cced951d86fcd61a10a3676db38e4b9552433
+size 2184
+>>>>>>> 9676c3e (ya toh aar ya toh par)

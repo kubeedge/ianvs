@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from sedna.common.class_factory import ClassFactory, ClassType
 from llama_cpp import Llama
 from contextlib import redirect_stderr
@@ -127,3 +128,8 @@ class LlamaCppModel:
 
     def train(self, train_data, valid_data=None, **kwargs):
         return
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:8ce702882a3c29a49fe935bf468f778dfe00b02d760391a43fd867e32b6e1d83
+size 4201
+>>>>>>> 9676c3e (ya toh aar ya toh par)

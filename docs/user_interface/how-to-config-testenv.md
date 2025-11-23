@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # How to config testenv
 
 Lets take the example of [cloud-edge-collaborative-inference-for-llm](../proposals/scenarios/cloud-edge-collaborative-inference-for-llm/mmlu-5-shot.md) scenario and understand how the algorithm developer is able to prepare and config the test environment using the following configuration.
@@ -103,3 +104,8 @@ testenv:
     - name: "Internal Token Latency"
       url: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/internal_token_latency.py"
 ```
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:79f46a5f2c8c3ab531827d928d7baae19392e72eab14aa7cd7efa363002f087e
+size 4447
+>>>>>>> 9676c3e (ya toh aar ya toh par)

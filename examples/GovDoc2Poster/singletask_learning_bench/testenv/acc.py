@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 New Government Agent Project
 # New government agent test environment implementation
 
@@ -73,3 +74,8 @@ def score(ground_truths, predictions, metric_name: str = 'score') -> float:
     except Exception as e:
         logging.error(f"Failed to calculate metric {metric_name}: {str(e)}")
         return 0.0
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:e09fe588b92bd2ba8754a4d573e164240aa0d3ef532cc3747382cf256fbf10b5
+size 2323
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # testalgorithms/ai2holodeck/algorithmenv.yaml
 
 algorithm:
@@ -31,3 +32,8 @@ algorithm:
         - gapartnet_sbert_features_path:
             values:
               - "./examples/phys_scene_gen/singletask_learning_bench/dataset/gapartnet_sbert_features.pkl"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:b78ff443cff083b1ee9dc6b6a648a0100c824996a554f1754cd9f94751d3ba99
+size 1196
+>>>>>>> 9676c3e (ya toh aar ya toh par)

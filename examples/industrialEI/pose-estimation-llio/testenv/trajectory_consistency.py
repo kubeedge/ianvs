@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -128,3 +129,8 @@ def trajectory_consistency(y_true, y_pred, **kwargs):
     total_consistency = np.clip(total_consistency, 0.0, 1.0)
     
     return float(total_consistency) 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:1d14c1800a313d195aac6796586c617b91a23a9a3395365452ea0c9663122360
+size 5583
+>>>>>>> 9676c3e (ya toh aar ya toh par)

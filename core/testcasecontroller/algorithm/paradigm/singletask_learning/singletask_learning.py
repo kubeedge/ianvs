@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -127,3 +128,8 @@ class SingleTaskLearning(ParadigmBase):
         else:
             infer_res = job.predict(inference_dataset.x)
         return infer_res
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:deae34b5bf7bd1ddea5eeab788c6d8db9b797b65ede4531eb839652399acd00d
+size 4671
+>>>>>>> 9676c3e (ya toh aar ya toh par)

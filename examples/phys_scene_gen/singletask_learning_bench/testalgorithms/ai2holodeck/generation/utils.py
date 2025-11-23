@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 Holodeck, 2025 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -577,3 +578,8 @@ if __name__ == "__main__":
         for room_name, images in room_images.items():
             for i, image in enumerate(images):
                 image.save(f"{save_folder}/{room_name}_{i}.png")
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:eebfa011f7758f7f1c0142722b61a590843a2d29ed3d50c6ae787fb464f82be3
+size 18909
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # How to contribute test environments
 
 ## Overall contribution workflow
@@ -83,3 +84,8 @@ If all things have been done, and you think that would be a nice "examination pa
 Interested "students" from our community will take the exam.
 
 [contribute algorithm]: how-to-contribute-algorithms.md
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:d269ba028cf353866c707075e41b0c7c3c2deaf79320438bb42bdc037f53d953
+size 3934
+>>>>>>> 9676c3e (ya toh aar ya toh par)

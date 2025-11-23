@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ## Created by: Hang Zhang
 ## ECE Department, Rutgers University
@@ -68,3 +69,8 @@ class LR_Scheduler(object):
             optimizer.param_groups[0]['lr'] = lr * 4
             for i in range(1, len(optimizer.param_groups)):
                 optimizer.param_groups[i]['lr'] = lr
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:a9610976a3aa99ccc113f964304ea2143f58b4eb2be2d378cbb3399e54658d19
+size 2644
+>>>>>>> 9676c3e (ya toh aar ya toh par)

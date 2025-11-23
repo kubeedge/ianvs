@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import numpy as np
 import time
 from diffprivlib.mechanisms import Laplace
@@ -81,3 +82,8 @@ class DifferentialPrivacy:
         """Adjust Privacy Budget"""
         self.epsilon = epsilon
         self.laplace = Laplace(epsilon=epsilon, sensitivity=1)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:93a72c4dee0ff97775c302e9a0e06c156d4df1615d0d013125290b20940bb4b4
+size 2825
+>>>>>>> 9676c3e (ya toh aar ya toh par)

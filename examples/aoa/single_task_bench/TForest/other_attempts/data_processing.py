@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 import os
 import numpy as np
@@ -270,3 +271,8 @@ if __name__ == '__main__':
 
 
 # 读取文件，随机 9：1 分数据，数据保存到两个文件里
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f0437ce4ee380066d5cc89eaa4e990d12a0816f2d0d221eaeb6565561353d678
+size 10413
+>>>>>>> 9676c3e (ya toh aar ya toh par)

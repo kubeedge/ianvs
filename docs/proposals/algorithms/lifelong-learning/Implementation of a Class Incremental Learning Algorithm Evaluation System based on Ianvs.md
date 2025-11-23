@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!-- TOC -->
 
 - [Implementation of a Class Incremental Learning Algorithm Evaluation System based on Ianvs](#implementation-of-a-class-incremental-learning-algorithm-evaluation-system-based-on-ianvs)
@@ -268,3 +269,8 @@ The test report is designed as follows, which contains the ranking, algorithm na
 - Organize the project code and related documentation, and merge them into the Ianvs repository.
 
 - Upon merging into the repository, explore new research areas and produce additional outcomes based on this project.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:3fd06d89d5aed9a33ab47793e1aaec48c5d42815dbc9084e59fccb87bf4ccdb5
+size 15946
+>>>>>>> 9676c3e (ya toh aar ya toh par)

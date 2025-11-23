@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # How to contribute examples
 
 ## Overall contribution workflow
@@ -32,3 +33,8 @@ For contributing a new example, you can follow these steps to determine its stor
 1. Under the examples directory, choose the dataset you used in this example, such as cityscapes, robot, and so on. Only when you use a new dataset can you create a new folder under the examples directory to store the example related to that dataset.
 2. After determining the dataset, select the algorithm paradigm you used, such as lifelong learning, single-task learning, and so on. If you used a new algorithm paradigm, you can create a new folder under the dataset directory to store examples of that type of algorithm.
 3. After determining the algorithm paradigm, select the task for your example, such as semantic segmentation, curb detection, and so on. If you used a new task, you can create a new folder under the algorithm paradigm directory to store examples of that type of task.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:4380f9573f1953c143e3b3314653206c56b07fdfd55c98ccf78a7db1305ea6ae
+size 1917
+>>>>>>> 9676c3e (ya toh aar ya toh par)

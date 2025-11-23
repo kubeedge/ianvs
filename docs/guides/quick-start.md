@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [Links of scenarios]: ../proposals/scenarios/industrial-defect-detection/pcb-aoi.md
 
 [the PCB-AoI public dataset]: https://www.kaggle.com/datasets/kubeedgeianvs/pcb-aoi
@@ -238,3 +239,8 @@ If the reader is ready to explore more on Ianvs, e.g., after the quick start, th
 If any problems happen, the user can refer to [the issue page on Github](https://github.com/kubeedge/ianvs/issues) for help and are also welcome to raise any new issue.
 
 Enjoy your journey on Ianvs!
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:70328ee1a025bbad0ed18c9a0481a17814dc355ecaa2f6908844539e0d81de9c
+size 16478
+>>>>>>> 9676c3e (ya toh aar ya toh par)

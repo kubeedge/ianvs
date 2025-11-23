@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -416,3 +417,8 @@ class FedCiMatch:
         preds = tf.argmin(dists, axis=1)  # shape: (bs)
         logging.info(f"preds : {preds}")
         return preds
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:b83033189b3095aa4971a22a9b7a78d6a7ec8f08777b2614f1a690b694eb6a64
+size 17059
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   # paradigm name; string type;
   paradigm_type: "jointinference"
@@ -104,3 +105,8 @@ algorithm:
       name: "OracleRouter"
       # the url address of python module; string type;
       url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/hard_sample_mining.py"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:5e0baf6c19f47c4469fb9718ae227b3280cd265c57807a88159af3884531ba87
+size 3655
+>>>>>>> 9676c3e (ya toh aar ya toh par)

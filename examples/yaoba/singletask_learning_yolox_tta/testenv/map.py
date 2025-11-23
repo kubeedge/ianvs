@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import json
 
 from mmdet.datasets import build_dataset
@@ -33,3 +34,8 @@ def map(y_true, y_pred):
         predict_results.append(new_predict)
     metric = dataset.evaluate(predict_results)
     return metric['bbox_mAP_50']
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:c139cf9871d5eb0c32a753ecc49693c6fec2fc769666fb11593fea3ed063ae2c
+size 1060
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Cloud-Robotic AI Benchmarking for Edge-cloud Collaborative Lifelong Learning
 
 ## 1 Motivation
@@ -242,3 +243,8 @@ The entire network architecture of RFNet is shown below. In the encoder part of 
 
 - Reproduction of BWT, FWT and other system metrics;
 - Merge into the lib of the Ianvs module.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f7173da9588462150d19ff10eaceaafc24839a685b7dd187dc45fe66a875375e
+size 14727
+>>>>>>> 9676c3e (ya toh aar ya toh par)

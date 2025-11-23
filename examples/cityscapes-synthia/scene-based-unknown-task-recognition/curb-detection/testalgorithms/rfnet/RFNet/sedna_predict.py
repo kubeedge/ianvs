@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 
 os.environ['BACKEND_TYPE'] = 'PYTORCH'
@@ -130,3 +131,8 @@ def predict(ll_job, data=None, validator=None):
 if __name__ == '__main__':
     ll_job, validator = init_ll_job()
     print("Inference result:", predict(ll_job, validator=validator))
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:3b3e23e78865d0567d35d01fb43dc62f606f7e52692825da2a30dc02fbbf8668
+size 4146
+>>>>>>> 9676c3e (ya toh aar ya toh par)

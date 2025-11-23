@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import numpy as np
 import scipy.misc as m
@@ -149,3 +150,8 @@ if __name__ == '__main__':
 
     plt.show(block=True)
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:8a85cc0687ac4cab01185d43297c561997239a3550055aa4d5eeb144118d028c
+size 5401
+>>>>>>> 9676c3e (ya toh aar ya toh par)

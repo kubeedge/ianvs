@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Unknown Task Processing Algorithm based on Lifelong Learning of Ianvs
 
 
@@ -77,3 +78,8 @@ The case fully proves that the solution is effective in model training in the ca
 
   In implementing the Self-taught Learning module, we use Convolutional AutoEncoder for fast extracting data representations.
   ![](./images/unknown_task_processing_algorithm_based_on_lifelong_learning_of_ianvs/cae.png)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:fca98a87c490d47cfaea7d505ca0bfd65d289d80d334c4d67a845e6e2dcc932c
+size 7597
+>>>>>>> 9676c3e (ya toh aar ya toh par)

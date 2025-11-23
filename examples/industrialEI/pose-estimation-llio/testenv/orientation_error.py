@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -99,3 +100,8 @@ def orientation_error(y_true, y_pred, **kwargs):
             
     except Exception:
         return 0.0 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:ab35b326e32268a4a0e2cbd003f498758e38d3d7f81fef3defecfc49cf5f2680
+size 3231
+>>>>>>> 9676c3e (ya toh aar ya toh par)

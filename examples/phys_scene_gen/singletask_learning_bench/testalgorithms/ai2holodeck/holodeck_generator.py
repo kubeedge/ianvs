@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 Holodeck.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -227,3 +228,8 @@ if __name__ == "__main__":
 
     else:
         raise Exception(f"Mode {args.mode} not supported.")
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:b059f8321cfb1e21ff21005a296173bb19e8f74a5b1f565de1a61d763cb5b4ec
+size 7497
+>>>>>>> 9676c3e (ya toh aar ya toh par)

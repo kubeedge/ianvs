@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # How to config benchmarkingjob
 
 Lets take the example of [cloud-edge-collaborative-inference-for-llm](../proposals/scenarios/cloud-edge-collaborative-inference-for-llm/mmlu-5-shot.md) scenario and understand how algorithm developer is able to test his/her own targeted algorithm and configs the benchmarkingjob using the following configuration.
@@ -233,3 +234,8 @@ benchmarkingjob:
     #  2> "selected_only": save selected dataitems;
     save_mode: "selected_and_all"
 ```
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:581c43c7419c9725d4e4a2e79dc65fa09cf7393a22854dd4cb51179148fe2aff
+size 11747
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Testing incremental learning in industrial defect detection
 
 ## About Industrial Defect Detection
@@ -156,3 +157,8 @@ The pcb image has 8 bad defects. See [label file](./images/20170316-SPI-AOI-19.x
 * After incremental learning, `8` the bad defects have been detected.
 
 ![](./images/after_increment_20170316-SPI-AOI-19.jpeg_fpn.jpg)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f05beeb240be1794f306ff10db3dbcc8d4de3ff293ebf3206826a4fd96476174
+size 8108
+>>>>>>> 9676c3e (ya toh aar ya toh par)

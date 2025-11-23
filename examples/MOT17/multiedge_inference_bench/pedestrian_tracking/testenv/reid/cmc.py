@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,3 +58,8 @@ def cmc(query_ids, pred):
     query_ids = np.asarray([int(y.split('/')[-1]) for y in query_ids])
     distmat, gallery_ids = pred
     return plot_cmc(distmat, query_ids, gallery_ids, 5)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:82a4df535404172856b0054d002640fe9e605a15dd9e089b91bdf3557520c112
+size 2115
+>>>>>>> 9676c3e (ya toh aar ya toh par)

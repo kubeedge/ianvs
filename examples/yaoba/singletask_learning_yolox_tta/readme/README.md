@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## About Industrial Defect Detection
 
 Defects are an unwanted thing in manufacturing industry. There are many types of defect in manufacturing like blow
@@ -164,3 +165,8 @@ method is 2.5 mAP.
 ## License
 
 MIT © Richard McRichface_
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:66e99d76732b5d4d16d813f7400eb2738e1db116cbfd9b9d76f9bcf201ea53e9
+size 7889
+>>>>>>> 9676c3e (ya toh aar ya toh par)

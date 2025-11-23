@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -127,3 +128,8 @@ class BaseModel:
         res = response.choices[0].message.content
 
         return res
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:d06cad7767d718ff1d6569414aaabbbab13766856887f7e6f89c2106cb4da921
+size 4206
+>>>>>>> 9676c3e (ya toh aar ya toh par)

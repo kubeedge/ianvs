@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Benchmarking of Image Clasification for High Mobility Scenarios
 
 In high-mobility scenarios such as highways and high-speed railways, the connection between personal terminal devices and cloud servers is significantly weakened. However, in recent years, artificial intelligence technology has permeated every aspect of our lives, and we also need to use artificial intelligence technologies with high computational and storage demands and sensitive to latency in high-mobility scenarios. For example, even when driving through a tunnel with a weak network environment, we may still need to use AI capabilities such as image classification. Therefore, in the event that edge devices lose connection with the cloud, offloading AI computing tasks to adjacent edge devices and achieving computational aggregation based on the mutual collaboration between devices, to complete computing tasks that traditionally require cloud-edge collaboration, has become an issue worth addressing. This benchmarking job aims to simulate such scenario: using multiple heterogeneous computing units on the edge (such as personal mobile phones, tablets, bracelets, laptops, and other computing devices) for collaborative ViT inference, enabling image classification to be completed with lower latency using devices that are closer to the edge, thereby enhancing the user experience.After running benchmarking jobs, a report will be generated.
@@ -102,3 +103,8 @@ def partiton(self, initial_model):
 Hope you have a perfect journey in solving this problem!
 
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:517d3e9bc3ac7021dbfd137e642fa5e239856703e07c0096828edc55055b356d
+size 7160
+>>>>>>> 9676c3e (ya toh aar ya toh par)

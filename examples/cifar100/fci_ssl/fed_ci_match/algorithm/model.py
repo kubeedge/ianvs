@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -169,3 +170,8 @@ def resnet18():
 
 def resnet34():
     return ResNet([3, 4, 6, 3])
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:af7915651163d08e2def749a692cf51a25048da3e9ac36cee2ba6d5b91bdfce2
+size 5320
+>>>>>>> 9676c3e (ya toh aar ya toh par)

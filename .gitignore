@@ -1,4 +1,6 @@
 # Byte-compiled / optimized / DLL files
+*
+ianvs/lifelong_learning_bench
 __pycache__/
 *.py[cod]
 *$py.class

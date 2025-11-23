@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 benchmarkingjob:
   # job name of bechmarking; string type;
   name: "benchmarkingjob"
@@ -70,3 +71,8 @@ benchmarkingjob:
 
 
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:758240193c36ef8190beada89a3f1f0c75369de1f29c914cfb7c18faf974e21e
+size 3184
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import json
 import shutil
 import os.path
@@ -165,3 +166,8 @@ def merge_two_anno(anno1, anno2, out_dir):
     json_str = json.dumps(dataset_dict)
     with open(os.path.join(out_dir, "merged.json"), 'w') as json_file:
         json_file.write(json_str)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0a835c16dd64cd27d1e2e14dbaec2787a35868f40dd99d292fe84288a23f4e4a
+size 6419
+>>>>>>> 9676c3e (ya toh aar ya toh par)

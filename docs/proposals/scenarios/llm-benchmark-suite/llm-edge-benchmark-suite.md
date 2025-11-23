@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Large Language Model Edge Benchmark Suite: Implementation on KubeEdge-lanvs 
 
 
@@ -260,3 +261,8 @@ This method is responsible for executing all configured test cases.
 - [KubeEdge-Ianvs Benchmark Sample](https://github.com/kubeedge/ianvs/blob/main/examples/robot-cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/README.md)
 - [how-to-build-simulation-env](https://github.com/kubeedge/ianvs/blob/main/docs/guides/how-to-build-simulation-env.md)
 - [Example LLMs Benchmark List](https://github.com/terryyz/llm-benchmark)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:fce3455f423d4599f69982fadc67dee70d2f332512c33dcca60c9024cd5636b4
+size 13939
+>>>>>>> 9676c3e (ya toh aar ya toh par)

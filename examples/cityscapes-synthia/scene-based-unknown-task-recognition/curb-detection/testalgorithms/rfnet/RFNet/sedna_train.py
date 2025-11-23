@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 os.environ['BACKEND_TYPE'] = 'PYTORCH'
 os.environ["OUTPUT_URL"] = "./cloud_kb/"
@@ -76,3 +77,8 @@ def run():
 
 if __name__ == '__main__':
     run()
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:25a4396d86e729ce912984131eccd3a04d74a2ccf74b54c4a0295843e0fbfba7
+size 2855
+>>>>>>> 9676c3e (ya toh aar ya toh par)

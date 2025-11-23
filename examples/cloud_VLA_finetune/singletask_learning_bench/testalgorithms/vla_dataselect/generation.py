@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from typing import Optional
 from vla_component.experiments.robot.libero.run_libero_eval import GenerateConfig, eval_libero
 
@@ -49,3 +50,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:03ea18ec84ee0892ee4aa834e225f4c1b6d23420bc78ae898da4967761eaef4b
+size 1838
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -161,3 +162,8 @@ class ParadigmBase:
             )
 
         return None
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:8cb75a6667828a577d1996aebda9a51d6d93e721d6320f6a9aa26f8f383faeeb
+size 6244
+>>>>>>> 9676c3e (ya toh aar ya toh par)

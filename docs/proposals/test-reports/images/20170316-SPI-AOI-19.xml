@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <annotation>
 	<folder>UAV_data</folder>
 	<filename>20170316-SPI-AOI-19.jpg</filename>
@@ -114,3 +115,8 @@
 		</bndbox>
 	</object>
 </annotation>
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:469079aa7075db5d413e50f730b90e41650ad6bf2b325b9a8611e1f1025715d3
+size 2278
+>>>>>>> 9676c3e (ya toh aar ya toh par)

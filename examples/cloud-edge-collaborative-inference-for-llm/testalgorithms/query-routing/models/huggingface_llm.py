@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -141,3 +142,8 @@ if __name__ == "__main__":
     model = HuggingfaceLLM()
     model._load("Qwen/Qwen2-7B-Instruct")
     LOGGER.info(model._infer("Hello, how are you?"))
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:5416df6e2866da87bec7c46318789731082d413a9c29ab58f40df69596360f29
+size 4620
+>>>>>>> 9676c3e (ya toh aar ya toh par)

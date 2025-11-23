@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## Introduction
 
 To solve the problem of flexible model prediction (FMP) in DeepAOA work, an online vehicular AoA estimation scheme based on a deep learning method, TForest was used to divide the scenarios.
@@ -7,3 +8,8 @@ The proposed algorithm has wide applicability and can operate effectively in a v
 In terms of task allocation, the algorithm will identify the key features in each scene and select the optimal model to process according to these features. This processing method ensures the applicability of the model and the accuracy of prediction, especially when predicting the Angle between vehicles, it can predict and analyze the relative Angle direction between vehicles more accurately.
 
 Other attempts are in the `other_attempts` folder, but due to the conflict between the data characteristics and the task of this project, and the data is not authorized to be disclosed, looking forward to the subsequent update.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:ba4248488865d10b109934c233458761481fe4970037f2fb745baf1ada5e91c0
+size 1323
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 accelerate>=0.26.0
 transformers>=4.30.0
 numpy
 Pillow
 pytorch
 dashscope=1.24.5
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:d602a9a38fcb66318b221df8d7eab79b43716b6b313bcf35dc40075f815d0006
+size 77
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 from tqdm import tqdm
 import numpy as np
@@ -27,3 +28,8 @@ def calculate_weigths_labels(dataset, dataloader, num_classes):
     np.save(classes_weights_path, ret)
 
     return ret
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0138ff374363600aa7f8b4e6f973fc912ad412425c58d15d02cb7159235184b5
+size 985
+>>>>>>> 9676c3e (ya toh aar ya toh par)

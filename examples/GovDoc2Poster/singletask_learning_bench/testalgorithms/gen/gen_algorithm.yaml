@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # New Government Agent Algorithm Configuration
 # 新版政府代理算法配置
 
@@ -25,3 +26,8 @@ algorithm:
         {'vlm_model': {'values': ['qwen-vl-max']}}, 
         {'evaluate_only': {'values': [true]}},
         ]
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:52b82ec57fc1c73022f9c1b3a1f364a56b8cfe4f85ffa21ae6f410f5180d8a2e
+size 1062
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Testing Joint Inference Learning in Cloud Edge Collaborative Inference for LLM Scenario with Ianvs-MMLU-5-shot dataset
 
 The Deatils of Cloud Edge Collaborative Inference for LLM Scenario can be found [here](../scenarios/cloud-edge-collaborative-inference-for-llm/mmlu-5-shot.md) and the details of query-routing algorithm can be found [here](../algorithms/joint-inference/query-routing.md). 
@@ -230,3 +231,8 @@ benchmarkingjob:
 ## Benchmark Result
 
 We released the leaderboard [here](../leaderboards/leaderboard-in-cloud-edge-collaborative-inference-for-llm/leaderboard-of-cloud-edge-collaborative-inference-for-llm.md).
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:33969e9f37d840111dfb2ccc54ba9685370148ae4437cd5a2e9e37c2b93b223a
+size 9757
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Modified Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -188,3 +189,8 @@ class BaseModel:
         val_loader = torch.utils.data.DataLoader(valdataset, **dataloader_kwargs)
 
         return val_loader
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:b8bbce5956eff2d3d50299f589fa2238c9f556fe2b1b178ec8435b40811fdf0e
+size 6729
+>>>>>>> 9676c3e (ya toh aar ya toh par)

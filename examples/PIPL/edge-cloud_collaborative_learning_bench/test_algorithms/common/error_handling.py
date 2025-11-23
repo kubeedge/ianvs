@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 Error Handling Utilities and Decorators
 
@@ -421,3 +422,8 @@ def set_global_error_handler(error_handler: ErrorHandler):
     """Set global error handler"""
     global _global_error_handler
     _global_error_handler = error_handler
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0de5b1a62bf9bbc90f57cedb372738736daf8a338ef963abc585e3ee7cbb9db4
+size 14940
+>>>>>>> 9676c3e (ya toh aar ya toh par)

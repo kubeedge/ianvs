@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import datetime
 import numpy as np
@@ -177,3 +178,8 @@ def plot_gaussian(ax, means, covs,
     facecolor.append(transparency)
     ax.add_collection(PatchCollection(
         ellipses, edgecolors=edgecolor, facecolors=facecolor, linewidth=0.1)) 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:e21706881e3a3567bf278804ed8787198645b49c65fc67e860fa3ad7a7318c07
+size 5616
+>>>>>>> 9676c3e (ya toh aar ya toh par)

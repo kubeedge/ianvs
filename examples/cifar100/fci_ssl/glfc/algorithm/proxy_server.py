@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -199,3 +200,8 @@ class ProxyServer:
 
                 self.new_set.extend(agumentation)
                 self.new_set_label.extend([label_i])
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:15552091efda30052e1948091f096aa5630d408849a224296bfc1a257e7dd953
+size 7562
+>>>>>>> 9676c3e (ya toh aar ya toh par)

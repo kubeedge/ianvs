@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Real-Time IoT Perception Systems Based on Edge-Cloud Collaboration with Large Foundation Models
 
 ## 1 Motivation
@@ -119,3 +120,8 @@ In this model architecture, AppealNet builds a predictor head on top of the feat
 
 - Port the implemented edge-cloud collaboration algorithms to the **Kubeedge/Sedna** platform;
 - Commit the codes for **Kubeedge/Ianvs**.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:703482ef54d32f5b554b90767f2ff4b68ebc56207aec8b60659d05f29d9d0e7d
+size 13003
+>>>>>>> 9676c3e (ya toh aar ya toh par)

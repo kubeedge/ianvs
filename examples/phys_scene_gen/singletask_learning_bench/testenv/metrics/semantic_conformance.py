@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2025 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,3 +64,8 @@ def semantic_conformance(y_true, y_pred, **kwargs) -> float:
     normalized_score = (cosine_score.item() + 1) / 2
 
     return normalized_score
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:2ac54ce986181df35a86a54cfd76e299e8ec8eef6b5ee8880213af4e95ab6858
+size 2522
+>>>>>>> 9676c3e (ya toh aar ya toh par)

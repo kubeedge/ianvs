@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,3 +40,8 @@ def rank_2(query_ids, pred):
     query_ids = np.asarray([int(y.split('/')[-1]) for y in query_ids])
     distmat, gallery_ids = pred
     return cmc(distmat, query_ids, gallery_ids, 2)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f7f893fc51e8bfdce8bc2aea22791882fc2d94786b453f39405ad2aa1844db9e
+size 1407
+>>>>>>> 9676c3e (ya toh aar ya toh par)

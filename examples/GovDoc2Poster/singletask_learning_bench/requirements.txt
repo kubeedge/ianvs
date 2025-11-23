@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # New Government Agent Requirements
 # 新版政府代理依赖包
 
@@ -101,3 +102,8 @@ mypy>=0.950
 # libxext6
 # libxrender-dev
 # libgomp1
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:84bc9582ea748e59d4293111127424a6d904b8d78478a14c3850c3afd02d25a7
+size 1823
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -250,3 +251,8 @@ def get_curb(results):
 if __name__ == '__main__':
     web_app = InferenceServer("lifelong-learning-robo", host=get_host_ip())
     web_app.start()
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:64babebb24001251769b12690293fb2d6806145ca86c2bf431a14f59f1fafdf3
+size 7973
+>>>>>>> 9676c3e (ya toh aar ya toh par)

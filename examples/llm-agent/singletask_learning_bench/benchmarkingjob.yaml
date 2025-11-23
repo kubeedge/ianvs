@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 benchmarkingjob:
   # job name of bechmarking; string type;
   name: "benchmarkingjob"
@@ -64,3 +65,8 @@ benchmarkingjob:
     #  1> "selected_and_all": save selected and all dataitems;
     #  2> "selected_only": save selected dataitems;
     save_mode: "selected_and_all"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:16756ad23e788976696a15396b3b5f63d8a1b77fa843e2d603abb36983bc3f4e
+size 3201
+>>>>>>> 9676c3e (ya toh aar ya toh par)

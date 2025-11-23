@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -152,3 +153,8 @@ def rename_keys_jsonl(path: str, encoding: str = "utf-8"):
                 obj["answer"] = obj.pop(key_two)
             fout.write(json.dumps(obj, ensure_ascii=False) + "\n")
     os.replace(tmp_path, src)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:a0f004bafbe959b8d711fbc37766007941b29ed8f26e28466882e8b13ab6c9a2
+size 5277
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Table of Contents 
 
 - [Enhance Dependency Management and Documentation for Ianvs](#enhance-dependency-management-and-documentation-for-ianvs)
@@ -296,3 +297,8 @@ Hence, in summary, the goal of developing CI-CD pipelines will be to ensure that
 ### May
 - Developing CI pipelines for the examples. 
 - Correcting all the errors present in old examples.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:88c1bb2e9338e999b8ef4fad13da9f9984e314c15d525f712cb4f41fc958ee3d
+size 21543
+>>>>>>> 9676c3e (ya toh aar ya toh par)

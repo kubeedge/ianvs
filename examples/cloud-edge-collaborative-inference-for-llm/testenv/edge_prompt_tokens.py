@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,3 +39,8 @@ def edge_prompt_tokens(_, y_pred):
     edge_prompt_tokens = sum([pred.edge_result.prompt_tokens for pred in infer_res])
 
     return edge_prompt_tokens
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:9f67d2e72a32565bffe3f5eae9c739183f1a9e9d447734d5d156a8e6dfe7e1bb
+size 1304
+>>>>>>> 9676c3e (ya toh aar ya toh par)

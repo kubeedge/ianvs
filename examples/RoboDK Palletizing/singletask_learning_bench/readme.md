@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Table of Contents
 
 - [Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge](#embodied-intelligence-benchmarking-framework-for-industrial-manufacturing-with-kubeEdge)
@@ -386,3 +387,8 @@ Utilize this information to adjust the control strategy of the robotic arm in re
 
 - **Intelligent task execution** 
 By using Visual Language Action (VLA) to associate language instructions with robotic arm movements, the robotic arm can use its own motion and joint information to complete complex tasks based on language instructions, thereby enhancing its level of intelligence.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:4c270fbd648b6837a0c89e9eb636882aec20d3a78d6cf1a3745f23f75d802d75
+size 28038
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Semantic Segmentation: Cityscapes and SYNTHIA
 
 You can download the dataset directly locally by following the command below.
@@ -176,3 +177,8 @@ The following is part of `index.txt`:
 ```
 
 The first column represents the file path of the original image, and the second column represents the file path of the label file.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:e97d32f240bf2ac6a614a83b7c9ba335c045587ec764aa2eccc52e660091bbc3
+size 7269
+>>>>>>> 9676c3e (ya toh aar ya toh par)

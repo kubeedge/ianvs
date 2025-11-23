@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -96,3 +97,8 @@ class BaseModel:
         response = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
         
         return response
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:7cb1cdeccedb1c9aeb36429383f2afd62a42cc9f8d63de8af26446fe557042a7
+size 3033
+>>>>>>> 9676c3e (ya toh aar ya toh par)

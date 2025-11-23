@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,3 +67,8 @@ def compute_fwiou(evaluator):
     FWIoU = evaluator.Frequency_Weighted_Intersection_over_Union()
     logger.info(f"FWIoU: {FWIoU}")
     return FWIoU
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:a091c69d011ff86466d101675fd5295896fe170384c29e786030e5ec319032c7
+size 2342
+>>>>>>> 9676c3e (ya toh aar ya toh par)

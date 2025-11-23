@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Joint Inference: Query Routing
 
 ## Motivation
@@ -174,3 +175,8 @@ class OracleRouterFilter(BaseFilter, abc.ABC):
 ```
 
 After registration, you only need to change the name of the STL and parameters in the yaml file, and then the corresponding class will be automatically called according to the name.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:e1c5ad72ef0afa02c17cac600b9423d36e45e1b73643fddab73c9df95bbd0896
+size 12578
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   paradigm_type: "federatedlearning"
   fl_data_setting:
@@ -37,3 +38,8 @@ algorithm:
     - type: "aggregation"
       name: "FedAvg-PEFT"
       url: "./examples/federated-llm/fedllm-peft/algorithm/FedAvg-PEFT.py"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0733680798027cbb03a58ccbe72097172ff3fe2f8487ea072f9755bccec50114
+size 1145
+>>>>>>> 9676c3e (ya toh aar ya toh par)

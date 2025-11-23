@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,3 +38,8 @@ def cloud_prompt_tokens(_, y_pred):
     cloud_prompt_tokens = sum([pred.cloud_result.prompt_tokens for pred in infer_res])
 
     return cloud_prompt_tokens
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:62ea2f3c9d3f517ab2b97217b2ca0c61baf5015e2761cc4bb73570e022fee3ef
+size 1310
+>>>>>>> 9676c3e (ya toh aar ya toh par)

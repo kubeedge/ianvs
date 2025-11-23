@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2023 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,3 +28,8 @@ def latency(y_true, y_pred):
         total_latency += result['total_time']
     average_latency = total_latency / num_requests
     return average_latency
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:06e9ef1cd95448a6996d20d728b777354232bef3b49b215eec8e6423c7d77b6a
+size 1041
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,3 +15,8 @@
 
 # pylint: disable=missing-module-docstring
 from .__version__ import __version__
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f8cb2d3d0f5cbd6974cccc1b41ae40e40f7964f6392fb0cdaebdcf68b77bcb66
+size 666
+>>>>>>> 9676c3e (ya toh aar ya toh par)

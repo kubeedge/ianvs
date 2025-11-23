@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from torch.utils.data import Dataset,DataLoader,random_split
 import numpy as np
 import torch
@@ -130,3 +131,8 @@ if __name__ == "__main__":
 # all_features = all_data[:, 10:-1]
 # all_labels = all_data[:, 5]
 # print(all_data.shape)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:d21e426512ccb7eaeb7993ef3fa5f9aad93494e2cfd76fe0aa983190e18e265f
+size 4813
+>>>>>>> 9676c3e (ya toh aar ya toh par)

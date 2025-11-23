@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -191,3 +192,8 @@ class JointInference(ParadigmBase):
         LOGGER.info("Inference Finished")
 
         return results
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:131c71e25110c2bd6ff6191829fca039deda753f027c7149e15fbe5f01e472bc
+size 6317
+>>>>>>> 9676c3e (ya toh aar ya toh par)

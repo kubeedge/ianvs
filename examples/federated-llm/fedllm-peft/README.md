@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Federated LLM Parameter-Efficient Fine-Tuning (FedLLM-PEFT)
 
 ## Overview
@@ -323,3 +324,8 @@ Furthermore, FedAvg-PEFT benefits from its simple averaging scheme that works we
 3. Fan, T., Kang, Y., Ma, G., Chen, W., Wei, W., Fan, L., & Yang, Q. *FATE-LLM: A Industrial Grade Federated Learning Framework for Large Language Models.* In **Symposium on Advances and Open Problems in Large Language Models (LLM@IJCAI'23)**, 2023.
 4. Liu, X., Ji, K., Fu, Y., *et al.* *P-Tuning v2: Prompt Tuning Can Be Comparable to Fine-tuning Universally Across Scales and Tasks.* arXiv:2110.07602, 2021.
 5. KubeEdge. *Ianvs: Distributed Synergy AI Benchmarking Framework.* GitHub repository: [https://github.com/kubeedge/ianvs](https://github.com/kubeedge/ianvs)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:323ae0a7bc15fa1ebebfede1f73618018e160e4a3e694f738509dd0acefd2ffd
+size 19674
+>>>>>>> 9676c3e (ya toh aar ya toh par)

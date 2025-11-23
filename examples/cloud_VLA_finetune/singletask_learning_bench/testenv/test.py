@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import json
 
 from sedna.common.class_factory import ClassType, ClassFactory
@@ -24,3 +25,8 @@ def accuracy(y_true, y_pred, **kwargs):
     print("loading test")
     return acc
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:54882d613ed5b0d20fda4af8ae3d6e2f7ce09f4eff75590c0387f4016506902a
+size 856
+>>>>>>> 9676c3e (ya toh aar ya toh par)

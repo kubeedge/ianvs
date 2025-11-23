@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,3 +67,8 @@ class Dataset_Preprocessor:
             )
             .batch(batch_size)
         )
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:6e4b6a4a2443357da00c721a7b3f7640f201185145226a6bc948934219af4837
+size 2534
+>>>>>>> 9676c3e (ya toh aar ya toh par)

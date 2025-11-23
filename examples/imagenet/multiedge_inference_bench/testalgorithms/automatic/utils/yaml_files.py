@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """Manage YAML files."""
 import os
 import yaml
@@ -47,3 +48,8 @@ def yaml_save(yml, file):
     """Save a YAML file."""
     with open(file, 'w', encoding='utf-8') as yfile:
         yaml.safe_dump(yml, yfile, default_flow_style=None, encoding='utf-8')
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:4008d461330b37a62824df363fc9a48e31b4bc03dbcda247b9d5c9f81ecb1847
+size 1473
+>>>>>>> 9676c3e (ya toh aar ya toh par)

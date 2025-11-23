@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 testenv:
   # dataset configuration
   dataset:
@@ -22,3 +23,8 @@ testenv:
     - name: "map"
       # the python file URL address for calculating the above metric
       url: "examples/yaoba/singletask_learning_boost/testenv/map.py"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:892eb6243b0c5bf7300c8696d32c8b340b8e8218a9a692cf20d74877c82a7629
+size 1443
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import torch
 import torch.nn as nn
 import torch.nn.init as init
@@ -92,3 +93,8 @@ if __name__ == '__main__':
     net = Wide_ResNet(28, 10, 0.3, 10)
     y = net.forward(Variable(torch.randn(5,3,32,32)))
     print(y.size())
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:af2d9d98b85bca2dc55b728077dbba2cd0816e7c003b0c20ca7b0c70370395f1
+size 3238
+>>>>>>> 9676c3e (ya toh aar ya toh par)

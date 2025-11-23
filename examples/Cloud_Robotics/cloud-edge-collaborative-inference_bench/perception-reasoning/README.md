@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## Cloud Edge Collaborative Inference for Perception and Reasoning
 ### Introduction
 Current AI systems struggle with a fundamental trade-off: edge-only solutions lack the intelligence to understand complex scenes, while cloud-dependent designs risk dangerous delays from unpredictable networks. Our architecture solves this by splitting responsibilities across tiers. The edge handles urgent safety tasks like obstacle detection with minimal latency, while the cloud asynchronously processes richer scene understanding. **By intelligently selecting image resolutions based on scene complexity and exchanging compact semantic summaries instead of raw high-resolution video, our framework achieves significant bandwidth savings (up to 56% reduction in data transmission) while maintaining high accuracy (>95%).** We enable both rapid reactions and advanced cognition—like allowing a robot to instantly stop for an obstacle while the cloud simultaneously replans its path—all within strict timing constraints and without compromising privacy.
@@ -309,3 +310,8 @@ While bandwidth efficiency is crucial, maintaining high accuracy for safety-crit
 The **15+ percentage point accuracy improvement** (from ~80% to >95%) is critical for safety-critical applications such as autonomous robotics and intelligent transportation systems. This improvement significantly reduces false negatives in pedestrian detection, vehicle recognition, and obstacle identification—scenarios where errors could have serious consequences.
 
 By combining lightweight edge processing with powerful cloud reasoning, our framework achieves the best of both worlds: **real-time responsiveness at the edge** with **near-perfect accuracy through cloud augmentation**, all while maintaining bandwidth efficiency through intelligent adaptive resolution selection.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:18a8706f799c5d77b67de8cc130b43053ce3b12d9ba3e96ae799efdc77e1f043
+size 17549
+>>>>>>> 9676c3e (ya toh aar ya toh par)

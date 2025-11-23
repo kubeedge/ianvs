@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,3 +32,8 @@ def accuracy(y_true, y_pred, **kwargs):
     acc = float(int(correct) / total)
     print(f"acc:{acc}")
     return acc
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:9fe1f1ff8b30d4bfb351ee777721b1adb5c61d28a5bb703008e20d9e3c1dd558
+size 1351
+>>>>>>> 9676c3e (ya toh aar ya toh par)

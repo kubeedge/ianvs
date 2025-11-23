@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Backgroud
 In high-mobility scenarios such as highways and high-speed railways, the connection between personal terminal devices and cloud servers is significantly weakened. However, in recent years, artificial intelligence technology has permeated every aspect of our lives, and we also need to use artificial intelligence technologies with high computational and storage demands and sensitive to latency in high-mobility scenarios. For example, even when driving through a tunnel with a weak network environment, we may still need to use AI capabilities such as image classification and large model dialogue. Therefore, in the event that edge devices lose connection with the cloud, offloading AI computing tasks to adjacent edge devices and achieving computational aggregation based on the mutual collaboration between devices, to complete computing tasks that traditionally require cloud-edge collaboration, has become an issue worth addressing. This project aims to use multiple heterogeneous computing units on the edge (such as personal mobile phones, tablets, bracelets, laptops, and other computing devices) for collaborative artificial intelligence neural network inference, enabling AI tasks to be completed with lower latency using devices that are closer to the edge, thereby enhancing the user experience.
 
@@ -140,3 +141,8 @@ The benchmarking job will use the vit-base-patch16-224 model and the ImageNet da
 **September**
 
 - Implement the multiedge inference benchmarking job based on the automatic scheduling and partitioning of the neural network computational graph and complete the demonstration example.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:23cca2d3c5bd6898b16721021117ddc61f0027bfc8faf93593e196aaa6a0eb58
+size 14830
+>>>>>>> 9676c3e (ya toh aar ya toh par)

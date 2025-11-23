@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,3 +21,8 @@ _MINOR_V = '1'
 _PATCH_V = '0'
 
 __version__ = '.'.join([_MAJOR_V, _MINOR_V, _PATCH_V])
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:c4b492e070ce296c6e9b1a4e28a8e86a77a51ac541a460b8ad9daf823d170fda
+size 771
+>>>>>>> 9676c3e (ya toh aar ya toh par)

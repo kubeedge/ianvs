@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """Common device configuration."""
 from typing import Tuple, Union
 import torch
@@ -22,3 +23,8 @@ def forward_hook_to_cpu(_module, _inputs, outputs) -> Union[torch.tensor, Tuple[
     assert isinstance(outputs, tuple)
     tensors_cpu = tuple(t.cpu() for t in outputs)
     return tensors_cpu[0] if len(tensors_cpu) == 1 else tensors_cpu
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:5327e31ed54abd01bd2def15ce1e17ea43c6d8cf021f665ab198b409eb593a28
+size 958
+>>>>>>> 9676c3e (ya toh aar ya toh par)

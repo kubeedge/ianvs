@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import time
 import shutil
@@ -66,3 +67,8 @@ class Saver(object):
         for key, val in p.items():
             log_file.write(key + ':' + str(val) + '\n')
         log_file.close()
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0b97c8d9791607be97f7b368cc9b66324020d93509f68a074826761f9d48228c
+size 2832
+>>>>>>> 9676c3e (ya toh aar ya toh par)

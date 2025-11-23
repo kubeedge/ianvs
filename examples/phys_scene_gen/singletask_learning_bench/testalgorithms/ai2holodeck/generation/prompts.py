@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 Holodeck, 2025 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -338,3 +339,8 @@ Here are the objects (with their sizes) that I want to place in the {room_type}:
 
 Remember, you only generate JSON code, nothing else. It's very important. Respond in markdown (```).
 """
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:33ac6b2b9dfa7fd5b097aab813b6a4aa4f7d21bcff42a2ac36b02de3b0f78f1c
+size 21857
+>>>>>>> 9676c3e (ya toh aar ya toh par)

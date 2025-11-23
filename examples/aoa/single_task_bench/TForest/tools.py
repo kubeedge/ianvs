@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import numpy as np
 import pandas as pd
@@ -63,3 +64,8 @@ def load_test(test_file='seq/seq83_new.txt'):
 if __name__ == '__main__':
     features, labels = load_test()
     print(features.shape)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:6be5755c4d89d6415df8f006166805e407f76e780f8626e3c8923de4bc4a747d
+size 2591
+>>>>>>> 9676c3e (ya toh aar ya toh par)

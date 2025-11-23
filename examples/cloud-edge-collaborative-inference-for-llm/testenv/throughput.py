@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,3 +40,8 @@ def throughput(_, y_pred):
     average_throughput = 1 / average_itl
 
     return round(average_throughput,2)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:133819723ba72dd120bf98378def7392a5fca74d528b6095900d96cf13d94f3e
+size 1318
+>>>>>>> 9676c3e (ya toh aar ya toh par)

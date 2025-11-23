@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   # paradigm name; string type;
   # The paradigm determines how to execute the test program,
@@ -35,3 +36,8 @@ algorithm:
         - resource_dir:
             values:
               - "examples/yaoba/singletask_learning_boost/resource"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:525ce1e6a9f687c059551e7e34bf8d648443f4a94904804020812916c7f2f0eb
+size 1781
+>>>>>>> 9676c3e (ya toh aar ya toh par)

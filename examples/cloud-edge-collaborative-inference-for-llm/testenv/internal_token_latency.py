@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,3 +40,8 @@ def internal_token_latency(_, y_pred):
     average_itl = sum([pred.result.internal_token_latency for pred in infer_res]) / len(infer_res)
 
     return round(average_itl,3)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:da680b84bc7ff496af3436fb35046d250162d56786a95f412d24193948787731
+size 1313
+>>>>>>> 9676c3e (ya toh aar ya toh par)

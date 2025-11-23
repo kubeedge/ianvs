@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   # paradigm type; string type;
   # currently the options of value are as follows:
@@ -67,3 +68,8 @@ algorithm:
         - model_path:
             values:
               - "./examples/scene-based-unknown-task-recognition//lifelong_learning_bench/testalgorithms/rfnet/results/Epochofprose17.pth"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:a7658e95ef66b6cd004d5c35b334aff55f02581c3e33726993aea543ebeb4b94
+size 3434
+>>>>>>> 9676c3e (ya toh aar ya toh par)

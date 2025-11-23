@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Federated Fine-Tuning for Large Language Models: Based on KubeEdge-Ianvs
 
 ## 1 Motivation
@@ -239,3 +240,8 @@ The project will be carried out from **July to September**, with bi-weekly miles
 3. Fan, T., Kang, Y., Ma, G., Chen, W., Wei, W., Fan, L., & Yang, Q. *FATE-LLM: A Industrial Grade Federated Learning Framework for Large Language Models.* In **Symposium on Advances and Open Problems in Large Language Models (LLM\@IJCAI’23)**, 2023.
 4. Liu, X., Ji, K., Fu, Y., *et al.* *P-Tuning v2: Prompt Tuning Can Be Comparable to Fine-tuning Universally Across Scales and Tasks.* arXiv:2110.07602, 2021.
 5. KubeEdge. *Ianvs: Distributed Synergy AI Benchmarking Framework.* GitHub repository: [https://github.com/kubeedge/ianvs](https://github.com/kubeedge/ianvs).
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:adf63879ca1f1ebeab6ee2d60e62f51a687b8a73852c01db7d23c4ba243f06eb
+size 17073
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 testenv:
   backend: "tensorflow"
   dataset:
@@ -36,3 +37,8 @@ testenv:
   incremental_rounds: 2
   round: 1
   client_number: 1 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:c0aa94b2ae7824f05ab98c24f63eff678d342e0d6335f65ed244e9a7fc58eb0c
+size 1348
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -194,3 +195,8 @@ class Module:
                     f"other hyperparameters config file({hp_config_file}) is unvild, "
                     f"error: {err}") from err
         return base_hps
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:c7bc0dbba91278b1ac82371e9d7eb55baf7fb7548f92d8d68b9603c911a67c76
+size 7599
+>>>>>>> 9676c3e (ya toh aar ya toh par)

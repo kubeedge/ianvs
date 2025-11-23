@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 class Path(object):
     @staticmethod
     def db_root_dir(dataset):
@@ -18,3 +19,8 @@ class Path(object):
         else:
             print('Dataset {} not available.'.format(dataset))
             raise NotImplementedError
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:25725384ce815afd321daac7c406d12a5a6fecc7c471b2d7b57cd836b05be0ec
+size 1049
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -231,3 +232,8 @@ class IncrementalLearning(ParadigmBase):
                                           dataset_types=("model_inference", "model_evaluation"),
                                           output_dir=self.dataset_output_dir(),
                                           times=splitting_dataset_times)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:fbd33b9783399e87de4ef836a0376c92e124412e18f51602b90c612ba464198d
+size 9645
+>>>>>>> 9676c3e (ya toh aar ya toh par)

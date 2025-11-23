@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Use Miniconda base image
 FROM continuumio/miniconda3:latest
 
@@ -43,3 +44,8 @@ RUN cd /ianvs && \
 
 # Set final working directory
 WORKDIR /ianvs
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0b48907232719800ca863b689995d2461128675d03c3cb111122c3a32c40d32f
+size 1398
+>>>>>>> 9676c3e (ya toh aar ya toh par)

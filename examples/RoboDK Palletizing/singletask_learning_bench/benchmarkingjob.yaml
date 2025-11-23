@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 benchmarkingjob:
   name: "palletizing_bench"
   workspace: "./workspace/palletizing_bench"
@@ -26,3 +27,8 @@ benchmarkingjob:
       metrics: [ "map50", "map90"]
 
     save_mode: "selected_and_all"
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:1a6b9538072bb61ddc48f297c29974fe51be82925ef3038c06c834c3b55489b4
+size 746
+>>>>>>> 9676c3e (ya toh aar ya toh par)

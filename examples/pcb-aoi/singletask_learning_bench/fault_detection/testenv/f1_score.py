@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,3 +53,8 @@ def f1_score(y_true, y_pred):
     print(f"f1_score_avg: {f1_score_avg}")
 
     return f1_score_avg
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:49adb1962a1ed2597181f1d5dcd5a6057cbbbb6e2277b04ab61f327cab0e9e51
+size 1913
+>>>>>>> 9676c3e (ya toh aar ya toh par)

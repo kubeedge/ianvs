@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # How to build simulation env
 
 This document introduces how to build a edge-cloud AI simulation environment(e.g. kubeedge sedna) with just one host.
@@ -117,3 +118,8 @@ See Pod status: kubectl -n sedna get pod
 ```
 
 In the end. You get an all-in-one environment of sedna.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:1b5a50d50fee5957e9afcd70ba2c39cb31228978fb05f24a4376cfdd55a97b6a
+size 5096
+>>>>>>> 9676c3e (ya toh aar ya toh par)

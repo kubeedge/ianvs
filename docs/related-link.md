@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 ### Release 
 [边缘智能还能怎么玩？KubeEdge AI SIG 带你飞](https://mp.weixin.qq.com/s/t10_ZrZW42AZoYnisVAbpg)  
@@ -13,3 +14,8 @@
 [支持边云协同终身学习特性，KubeEdge子项目Sedna 0.3.0版本发布！](https://mp.weixin.qq.com/s/kSFL_pf2BTyVvH5c9zv0Jg)  
 [体验边云协同AI框架！KubeEdge子项目Sedna 0.1版本发布](https://mp.weixin.qq.com/s/3Ei8ynSAxnfuoIWYdb7Gpg)  
 [加速AI边云协同创新！KubeEdge社区建立Sedna子项目](https://mp.weixin.qq.com/s/FX2DOsctS_Z7CKHndFByRw)  
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:5611b35d34bacd577e1337ac52662454c6823b7aae41d3be96759fa02d266237
+size 944
+>>>>>>> 9676c3e (ya toh aar ya toh par)

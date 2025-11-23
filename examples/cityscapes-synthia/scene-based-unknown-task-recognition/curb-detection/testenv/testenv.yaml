@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 testenv:
   # dataset configuration
   dataset:
@@ -32,3 +33,8 @@ testenv:
 
   # incremental rounds setting; int type; default value is 2;
   incremental_rounds: 2
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:17f351f26f4533f695280d9a07dbce4c7768ee4e79cfb06e452d9be73197be3a
+size 1265
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Read the Docs configuration file for Sphinx projects
 # See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
 # Note that the name of this file shall start with ".", i.e., ".readthedocs.yaml",
@@ -35,3 +36,8 @@ sphinx:
 # python:
 #   install:
 #     - requirements: docs/requirements.txt
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f8f0488c4939520d9ec7a1eb2b57d1f80ad6bd7bfb25e32a7e9b9f8d5f5d1715
+size 1168
+>>>>>>> 9676c3e (ya toh aar ya toh par)

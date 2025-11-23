@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -307,3 +308,8 @@ class FedCiMatch:
         pred = tf.argmax(prob, axis=1)
         pred = tf.cast(pred, dtype=tf.int32)
         return pred 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:8e31ed905eac8a8952f76949519271cb4ba321391e8c4cd430bcdeea373a268e
+size 12529
+>>>>>>> 9676c3e (ya toh aar ya toh par)

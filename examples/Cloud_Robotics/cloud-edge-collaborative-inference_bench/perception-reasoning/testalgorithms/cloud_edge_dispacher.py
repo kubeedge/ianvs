@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -221,3 +222,8 @@ class EdgeCLoudDispatcher(BaseFilter, abc.ABC):
             # Subtract 1 to exclude background in this class mask
             total_components += (num_labels - 1)
         return total_components
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:039bdaed990912d46e00e365e1134af0f9d4d468144394e52ea35c46f3e71f67
+size 8255
+>>>>>>> 9676c3e (ya toh aar ya toh par)

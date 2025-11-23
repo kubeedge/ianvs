@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Configuration file for the Sphinx documentation builder.
 # This script is only used for Ianvs documents maintainers,
 # who can use this script to configure the page display effect.
@@ -225,3 +226,8 @@ def setup(app):
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-source-read
     app.connect('source-read', ultimateReplace)
     app.add_css_file('css/custom.css')
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:055eb4d14ea6d206af03f97bcef7aeed4f4e992ece9d20e296ea90bbfdf0fc1d
+size 8173
+>>>>>>> 9676c3e (ya toh aar ya toh par)

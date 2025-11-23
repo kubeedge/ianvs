@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -71,3 +72,8 @@ def position_error(y_true, y_pred, **kwargs):
             
     except Exception:
         return 0.0 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f2db52dfdb97538727b3b43a9b2e2707a734961b183626d92a89f5bbbcfdb16c
+size 2495
+>>>>>>> 9676c3e (ya toh aar ya toh par)

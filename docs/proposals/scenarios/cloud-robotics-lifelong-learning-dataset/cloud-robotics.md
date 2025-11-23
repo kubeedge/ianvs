@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Cloud-Robotics Lifelong Learning Dataset
 
 Download link: [Kaggle](https://www.kaggle.com/datasets/kubeedgeianvs/cloud-robotics/)
@@ -124,3 +125,8 @@ The format of json annotation is as follows:
 Below are examples of high quality dense pixel annotations of 2500 real-world images. Overlayed colors encode semantic classes. Note that single instances of traffic participants are annotated individually.
 
 ![](./images/annotation.png)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:7e2ff74f3679c6b416d53364c44a4d078da42eb8ad4aeefe8fca66922905f164
+size 5084
+>>>>>>> 9676c3e (ya toh aar ya toh par)

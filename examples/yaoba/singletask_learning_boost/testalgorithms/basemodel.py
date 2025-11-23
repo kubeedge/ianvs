@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from __future__ import absolute_import, division, print_function
 import json
 from sedna.common.class_factory import ClassType, ClassFactory
@@ -229,3 +230,8 @@ class BaseModel:
             return self._JSONDataParse(data)
         else:
             raise Exception("Train data type is error.")
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:fa1f6a3c00c791be07e01ed157570fa85af7ab6f8f3cc951788b0477225f7f7e
+size 8506
+>>>>>>> 9676c3e (ya toh aar ya toh par)

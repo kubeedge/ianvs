@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 algorithm:
   paradigm_type: "singletasklearning"
   initial_model_url: "./models/530_exp3_2.pth"
@@ -20,3 +21,8 @@ algorithm:
               - 2
 
         
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:813b0d1c4e017f8f64333a4fece5c077f5e8529d71cf02d1738d07a7d06371cb
+size 482
+>>>>>>> 9676c3e (ya toh aar ya toh par)

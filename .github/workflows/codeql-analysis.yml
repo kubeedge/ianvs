@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # For most projects, this workflow file will not need changing; you simply need
 # to commit it to your repository.
 #
@@ -65,3 +66,8 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:edd0198dd8facfd2f79df051066d14960ff8ace3177d7952026279a32ddad03e
+size 2356
+>>>>>>> 9676c3e (ya toh aar ya toh par)

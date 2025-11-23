@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import json
 from tqdm import tqdm
 import os
@@ -79,3 +80,8 @@ if __name__ == '__main__':
     Convert_ZhouCheng_to_COCO(anno_dir=r"/media/huawei_YaoBa/Annotations",
                               name_txt=r"/home/wjj/wjj/Public/code/huawei/custom_code/instance_based/txt/merged_part/NG_test.txt",
                               output_dir=r'/custom_code/instance_based/json/NG_test.json')
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:1a21ee93be777395bce342135375e204bfe80b5d05887dee7037829b81a8d84e
+size 3029
+>>>>>>> 9676c3e (ya toh aar ya toh par)

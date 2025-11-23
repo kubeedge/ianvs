@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import argparse
 import os
 import numpy as np
@@ -245,3 +246,8 @@ def load_my_state_dict(model, state_dict):  # custom function to load model when
 #
 # if __name__ == "__main__":
 #     main()
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:c75d93dfbb61366b0a6a4ad203dc047281b6ee8af168fd5e711f4f4a93050c5e
+size 10736
+>>>>>>> 9676c3e (ya toh aar ya toh par)

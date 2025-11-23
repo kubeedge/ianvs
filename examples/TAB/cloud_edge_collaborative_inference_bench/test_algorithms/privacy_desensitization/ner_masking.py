@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import spacy
 import time
 import subprocess
@@ -86,3 +87,8 @@ class NERMasking:
     def get_supported_entities(self):
         
         return list(self.entity_mapping.keys())
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f56232af9e0a5eae75cfb8144664a2c5d1918a69ce530e70be93b485c6d080c9
+size 3385
+>>>>>>> 9676c3e (ya toh aar ya toh par)

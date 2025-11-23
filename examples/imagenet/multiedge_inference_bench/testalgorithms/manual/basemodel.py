@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Modified Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -152,3 +153,8 @@ class BaseModel:
                 return devices_info_dict
         else:
             raise RuntimeError('config file must be the yaml format')
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0e1a7bbe621902e9985121a433efbff2afdef218ecb41de11624b22a4ba8a2a6
+size 6371
+>>>>>>> 9676c3e (ya toh aar ya toh par)

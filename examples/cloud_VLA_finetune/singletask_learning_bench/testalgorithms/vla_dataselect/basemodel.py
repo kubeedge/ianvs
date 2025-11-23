@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -169,3 +170,8 @@ class OpenVLA_Finetune:
         logging.info(f"FinetuneConfig parameters: {self.gen_cfg}")
         result_path = run_inference(self.gen_cfg)
         return result_path
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:658ec1ed002e475d29de8a529074f40a50cb30e1195af4e97bdcef8f32ef26a6
+size 7882
+>>>>>>> 9676c3e (ya toh aar ya toh par)

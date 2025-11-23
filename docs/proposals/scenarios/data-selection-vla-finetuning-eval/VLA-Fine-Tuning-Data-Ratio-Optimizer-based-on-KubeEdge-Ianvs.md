@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # VLA Fine-Tuning Data Ratio Optimizer based on KubeEdge-Ianvs
 
 ## background
@@ -200,3 +201,8 @@ The roadmap would be as follows
   - Sep 21 - Sep 30
   1. Finalize Pull Request: Prepare all materials for the final pull request, including code, documentation, benchmark reports, and usage examples.
   2. Project Summary & Community Handover: Create a project summary report and prepare materials for the final community review and handover.
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:60adbfb5d15fe0f93687377e7ed587a2102eb47465063f82f1d34b5c022d22f3
+size 14067
+>>>>>>> 9676c3e (ya toh aar ya toh par)

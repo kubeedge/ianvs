@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,3 +54,8 @@ def accuracy(y_true, y_pred, **kwargs):
 
     print("CPA:{}, mIoU:{}, fwIoU: {}".format(CPA, mIoU, FWIoU))
     return CPA
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:53428167b4980617b395b9734e424fe10d8360996f89d088ce3b50e2fdb455ea
+size 1970
+>>>>>>> 9676c3e (ya toh aar ya toh par)

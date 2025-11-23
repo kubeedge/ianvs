@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -85,3 +86,8 @@ class TestCaseController:
                 new_algorithms.append(new_algorithm)
 
         return new_algorithms
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:cfee1bf764aeceedd8804a220d7eb8d6507eb413984081eafe2d0bf31e985abf
+size 3182
+>>>>>>> 9676c3e (ya toh aar ya toh par)

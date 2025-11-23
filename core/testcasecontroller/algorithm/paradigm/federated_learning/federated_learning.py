@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -351,3 +352,8 @@ class FederatedLearning(ParadigmBase):
         test_res = job.inference(data_input)
         LOGGER.info(" finish predict")
         return test_res
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:852641a2fcfb46d6b18760d038f8e648093c29f44afa384a2509c8ce7a0f7586
+size 13929
+>>>>>>> 9676c3e (ya toh aar ya toh par)

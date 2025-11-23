@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 testenv:
   backend: "tensorflow"
   dataset:
@@ -34,3 +35,8 @@ testenv:
   # incremental rounds setting of incremental learning; int type; default value is 2;
   incremental_rounds: 2
   round: 2
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:a76086ed09a4d98104a476a488cef7c7c5adf14756b6fdfbea417bd52d2b7baf
+size 1334
+>>>>>>> 9676c3e (ya toh aar ya toh par)

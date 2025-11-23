@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import numpy as np
 from PIL import Image
@@ -274,3 +275,8 @@ if __name__ == '__main__':
 
     plt.show(block=True)
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:3123611b2e611137a22f2304930ffc6ea2b8fff01ccf449fb79f31a3e8c57eb6
+size 9960
+>>>>>>> 9676c3e (ya toh aar ya toh par)

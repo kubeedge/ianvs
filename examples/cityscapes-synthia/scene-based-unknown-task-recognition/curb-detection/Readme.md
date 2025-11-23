@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Quick Start about Unknown task recognition
 
 Welcome to Ianvs! Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. Quick start helps you to test your algorithm on Ianvs with a simple example of industrial defect detection. You can reduce manual procedures to just a few steps so that you can build and start your distributed synergy AI solution development within minutes.
@@ -98,3 +99,8 @@ This ends the quick start experiment.
 If any problems happen, the user can refer to [the issue page on Github](https://github.com/kubeedge/ianvs/issues) for help and are also welcome to raise any new issue.
 
 Enjoy your journey on Ianvs!
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:01d8e723557fea5355f9582dae98015fbb80e34b9e51baf8d7500b7a8e21b5e2
+size 5840
+>>>>>>> 9676c3e (ya toh aar ya toh par)

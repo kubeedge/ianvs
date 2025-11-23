@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
     "per_device_train_batch_size":5,
     "logging_steps":50,
@@ -9,3 +10,8 @@
     "save_strategy":"epoch",
     "save_total_limit":10
 }
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:d5e980d998d933ebeba260c84f3bb1b6416b77c42d77934f5c1f745915103a11
+size 253
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # pylint: disable=C0114
 # pylint: disable=E0401
 # pylint: disable=C0115
@@ -104,3 +105,8 @@ class SingleTaskLearningTTA(SingleTaskLearning):
         ann_file = self.dataset.train_url
         checkpoint_path = job.train((img_prefix, ann_file))
         return checkpoint_path
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:ce00121c6b97c9835ba0ea6cab7adea992e8dcfc8038beb106f138cd2f0fddd5
+size 3994
+>>>>>>> 9676c3e (ya toh aar ya toh par)

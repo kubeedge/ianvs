@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # OpenCompass Tutorial
 
 Github Repo:
@@ -73,3 +74,8 @@ This will run the `configs/eval_demo.py` config file, and the outputs will be pu
 You can change the config to change the BenchMarks and the models. It is very simple to use.
 
 For more detailed document, you can click [official doc](https://opencompass.readthedocs.io/).
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:fecd165aab1f2ac8f71e6654bf8bf1f2ad71d1b74621fbda79abdb36113323db
+size 3579
+>>>>>>> 9676c3e (ya toh aar ya toh par)

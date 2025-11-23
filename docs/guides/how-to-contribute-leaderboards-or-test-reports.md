@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # How to contribute test reports or leaderboards
 
 This document helps you to contribute stories, i.e., test reports or leaderboards, for Ianvs.
@@ -69,3 +70,8 @@ For potential maintainers,
 [kubeedge-k8s-compatibility]: https://github.com/kubeedge/kubeedge#kubernetes-compatibility
 [Ianvs Setup]: how-to-install-ianvs.md
 [leaderboard]: ../leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning.md
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:45c256da2c6336ebfb60a3a92626866723acc9956d9945aeba7ceba98c98f8a7
+size 3660
+>>>>>>> 9676c3e (ya toh aar ya toh par)

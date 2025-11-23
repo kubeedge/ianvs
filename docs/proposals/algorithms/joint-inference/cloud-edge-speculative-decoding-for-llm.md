@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 - [Cloud-edge collaborative speculative decoding for LLM based on KubeEdge-Ianvs](#cloud-edge-collaborative-speculative-decoding-for-llm-based-on-kubeedge-ianvs)
   - [Motivation](#motivation)
     - [Goals](#goals)
@@ -163,3 +164,8 @@ The entire process is as follows:
 [8] Z. He, Z. Zhong, T. Cai, J. Lee, and D. He, “REST: Retrieval-Based Speculative Decoding,” in Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers), K. Duh, H. Gomez, and S. Bethard, Eds., Mexico City, Mexico: Association for Computational Linguistics, Jun. 2024, pp. 1582–1595. doi: 10.18653/v1/2024.naacl-long.88.
 
 [9] Y. Fu, P. Bailis, I. Stoica, and H. Zhang, “Break the Sequential Dependency of LLM Inference Using Lookahead Decoding,” in Proceedings of the 41st International Conference on Machine Learning, R. Salakhutdinov, Z. Kolter, K. Heller, A. Weller, N. Oliver, J. Scarlett, and F. Berkenkamp, Eds., in Proceedings of Machine Learning Research, vol. 235. PMLR, Jul. 2024, pp. 14060–14079. 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:ed88b90253c3c70431e9fb17e07ed2090023af4c145f75f7fe9d78fda4393b3e
+size 12127
+>>>>>>> 9676c3e (ya toh aar ya toh par)

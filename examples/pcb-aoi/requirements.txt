@@ -1,2 +1,8 @@
+<<<<<<< HEAD
 opencv-python~=3.4  # Must be under 4.0, otherwise it will build from source, which takes a long time
 onnx==1.9.0
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:8e461ab2b8c4c449d2aac1ced6143d904d857bb2b6525fdcc064988721a1cb41
+size 114
+>>>>>>> 9676c3e (ya toh aar ya toh par)

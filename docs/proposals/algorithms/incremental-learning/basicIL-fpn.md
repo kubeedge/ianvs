@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Incremental learning: BasicIL-FPN
 
 Initial model: [Huawei OBS](https://kubeedge.obs.cn-north-1.myhuaweicloud.com:443/ianvs/pcb-aoi/model.zip)
@@ -168,3 +169,8 @@ After registration, you only need to change the name of the basicIL and paramete
 [examples directory]: ../../../../examples
 [Sedna repository]: https://github.com/kubeedge/sedna
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:fd9f388737232696e02c24773e3ff9299e623c5c69847941295314d427e576e7
+size 7510
+>>>>>>> 9676c3e (ya toh aar ya toh par)

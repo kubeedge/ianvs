@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge
 
 With the accelerated evolution of intelligent industrial manufacturing, industrial robots, flexible production lines, and intelligent testing equipment are continuously being innovated. With its efficient data processing and real-time response capabilities, **cloud-edge collaboration technology** has become the core technology engine driving the application of **embodied intelligence** systems in complex industrial scenarios.  
@@ -257,3 +258,8 @@ Summarize the outcomes of the previous two stages, analyze areas for further imp
 2. *L Wang, H S Min. Dual Quaternion Hand eye Calibration Algorithm Based on LMI Optimization [J]. Machine Tool and Hydraulic, 2021, 49 (21): 8-14. DOI: 10.3969/j.issn.1001-3881.2021.002.*
 
 3. *J C Guo, Z M Zhu, Y F Yu, etc. Research and Application of Laser Structured Light Vision Sensing Technology in Welding Field [J]. China Laser, 2017, 44 (12): 1-10. DOI: 10.3788/CJL201744.1200001.*
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0f10fa3e3bb9fe49e749545e6834fd005bb67c860a9ac190a88fec7a9208986c
+size 25403
+>>>>>>> 9676c3e (ya toh aar ya toh par)

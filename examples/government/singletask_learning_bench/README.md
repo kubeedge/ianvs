@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Government BenchMark
 
 ## Introduction
@@ -102,3 +103,8 @@ Or you can replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site
 ### Subjective
 
 `ianvs -f examples/government/singletask_learning_bench/subjective/benchmarkingjob.yaml`
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:5b297ff270fe267de7cdd0801054c0d266e0a0b91c468e9e5044e764bb9434b5
+size 3598
+>>>>>>> 9676c3e (ya toh aar ya toh par)

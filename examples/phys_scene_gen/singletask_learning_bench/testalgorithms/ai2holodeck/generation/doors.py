@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 Holodeck.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -558,3 +559,8 @@ class DoorGenerator:
             return random.choice(single_doors)
         else:
             return random.choice(double_doors + single_doors)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:beb0292a8910e2dd65370dc4707638f9d0e351fe66e11a16203024769c64f758
+size 20665
+>>>>>>> 9676c3e (ya toh aar ya toh par)

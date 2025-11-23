@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from mmdet.datasets.builder import PIPELINES
 from mmdet.datasets.pipelines.loading import LoadAnnotations
 
@@ -44,3 +45,8 @@ class TRLoadAnnotations(LoadAnnotations):
         if self.with_seg:
             results = self._load_semantic_seg(results)
         return results
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:4aa6e08f393b11e6268c0aee082ba9f072aaf5eb5103d01b63ed8170930b8399
+size 1525
+>>>>>>> 9676c3e (ya toh aar ya toh par)

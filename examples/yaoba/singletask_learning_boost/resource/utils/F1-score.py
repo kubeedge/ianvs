@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import json
 import os
 import cv2
@@ -135,3 +136,8 @@ if __name__ == '__main__':
         img_path='/media/huawei_YaoBa/Images',
         anno_path='/custom_code/instance_based/json/known_test.json',
         out_path='/custom_code/instance_based/txt/known_part/f1score.txt')
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f8d583bb644b36b93e2cb313886a81fa16230f74e5f492d6831515793141835a
+size 4728
+>>>>>>> 9676c3e (ya toh aar ya toh par)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -78,3 +79,8 @@ class TestEnv:
             self.dataset.process_dataset()
         except Exception as err:
             raise RuntimeError(f"prepare dataset failed, error: {err}.") from err
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f773f99afc49d5c22816f0ae2637a89e865b9a0be234b1c82b1d0110f67f5653
+size 2528
+>>>>>>> 9676c3e (ya toh aar ya toh par)

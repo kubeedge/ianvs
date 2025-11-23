@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Embodied Intelligence Industrial Assembly:Implementation on KubeEdge-lanvs 
 
 ---
@@ -349,3 +350,8 @@ The proposed embodied intelligence benchmarking framework for intelligent indust
 This framework is designed as a complete example implementation that can be contributed to the ianvs repository, providing a valuable resource for the robotics and AI community. The impact of this project is significant, as it will serve as a foundation for developing the next generation of reliable and efficient autonomous systems for industrial manufacturing.
 
 ---
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:dea487bfc061c830f13d4f7385da240fa46683bdb85b133f57d9165bfe02a47c
+size 25502
+>>>>>>> 9676c3e (ya toh aar ya toh par)

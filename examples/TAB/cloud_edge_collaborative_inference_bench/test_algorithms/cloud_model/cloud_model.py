@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # cloud_model.py
 import time
 import json
@@ -251,3 +252,8 @@ class CloudModelAPI:
     def infer(self, data, context=None):
         privacy_method = context.get("privacy_method") if context else None
         return self.inference(data, privacy_method=privacy_method)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:062370c0e5cfa8052efb014062b3287caae7d398e0efb51b546fb38c25319d6a
+size 8712
+>>>>>>> 9676c3e (ya toh aar ya toh par)

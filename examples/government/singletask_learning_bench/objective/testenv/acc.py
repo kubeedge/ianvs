@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,3 +38,8 @@ def acc(y_true, y_pred):
     acc = sum(same_elements) / len(same_elements)
     
     return acc
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:1eeb5633d6cc6854b1641963c4a5ed8706da2ab2b809e2d737d833779b2a2dae
+size 1265
+>>>>>>> 9676c3e (ya toh aar ya toh par)

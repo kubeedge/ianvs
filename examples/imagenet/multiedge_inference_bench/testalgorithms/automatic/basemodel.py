@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Modified Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -203,3 +204,8 @@ class BaseModel:
                 return info_dict
         else:
             raise RuntimeError('config file must be the yaml format')
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:cecc11737a09d29d382933d3a186cb43361533f9db47d0fe67490725cbd84e96
+size 8918
+>>>>>>> 9676c3e (ya toh aar ya toh par)

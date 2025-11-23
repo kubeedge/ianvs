@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Open-set recognition: Learning Placeholders
 
 This is based on the 2021 CVPR paper *Learning Placeholders for Open-Set Recognition* . The basic information as followed.
@@ -65,3 +66,8 @@ It is clear that the formulation in the paper does not consume additional time c
 
 
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:07150c65ced34d4d3961d844ef8fdc0fe01e52497fd14fa6bd65425115931d7e
+size 6009
+>>>>>>> 9676c3e (ya toh aar ya toh par)

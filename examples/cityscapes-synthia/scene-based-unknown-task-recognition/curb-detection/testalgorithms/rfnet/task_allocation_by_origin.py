@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from sedna.datasources import BaseDataSource
 from sedna.common.class_factory import ClassFactory, ClassType
 
@@ -63,3 +64,8 @@ class TaskAllocationByOrigin:
                        for sample_origin in sample_origins]
 
         return samples, allocations
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:d335f19aa2f99ed3840e061acdf4089f7ae44921c7eaa080de009b2816d80d7e
+size 1824
+>>>>>>> 9676c3e (ya toh aar ya toh par)

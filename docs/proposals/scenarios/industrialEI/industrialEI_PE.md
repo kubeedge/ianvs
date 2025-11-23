@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Embodied Intelligence Benchmarking for Pose Estimation in Industrial Environments
 
 Embodied intelligence in industrial settings represents the integration of autonomous systems, robotics, and AI technologies to create intelligent processes that can perceive, reason, and act in complex environments. Pose estimation serves as a fundamental enabling technology for embodied intelligence, providing the spatial awareness and localization capabilities required for autonomous operation in dynamic industrial settings.
@@ -254,3 +255,8 @@ The proposed embodied intelligence benchmarking framework for pose estimation pr
 The framework serves as a foundation for advancing embodied intelligence technology, enabling the next generation of reliable and efficient autonomous systems. Through continuous development and community collaboration, it will enable the transformation of traditional processes into intelligent, adaptive, and efficient systems.
 
 The framework is designed as a comprehensive example implementation that can be contributed to distributed synergy AI benchmarking repositories, ensuring compatibility with existing AI benchmarking infrastructure and making it accessible to researchers and developers working on industrial applications and smart factory implementations. The contribution of a new dataset will address the current gap in warehouse automation datasets and provide valuable resources for the broader SLAM and robotics community. 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:7ff94abf2baa60d3595e2b5ce0a1be57b3dfacd4377fbd3a9f468b58e96b4324
+size 14571
+>>>>>>> 9676c3e (ya toh aar ya toh par)

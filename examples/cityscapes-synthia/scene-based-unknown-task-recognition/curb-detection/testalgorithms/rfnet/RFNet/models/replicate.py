@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 # File   : replicate.py
 # Author : Jiayuan Mao
@@ -86,3 +87,8 @@ def patch_replication_callback(data_parallel):
         return modules
 
     data_parallel.replicate = new_replicate
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:b0ef534c558612943a5891b2ef0987267036a1b19dc72ab0018691dc409a90d2
+size 3218
+>>>>>>> 9676c3e (ya toh aar ya toh par)

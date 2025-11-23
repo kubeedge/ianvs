@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -312,3 +313,8 @@ class ResourceSensitiveRouterFilter(BaseFilter, abc.ABC):
             "cpu": random.uniform(10, 100),
             "memory": random.uniform(10, 100)
         }
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:56e604d9e7c7179c997258d19e79ddfee57248f262db2ef1776585564d701723
+size 10513
+>>>>>>> 9676c3e (ya toh aar ya toh par)

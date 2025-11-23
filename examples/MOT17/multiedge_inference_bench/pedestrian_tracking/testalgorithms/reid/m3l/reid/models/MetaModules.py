@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -421,3 +422,8 @@ class MixUpBatchNorm1d(MetaBatchNorm1d):
             input = input * self.weight[None, :] + self.bias[None, :]
 
         return input
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0fc95793a35706f4066214e34ad13051569f5576e39fa36dc3d769dd72e9d97d
+size 17282
+>>>>>>> 9676c3e (ya toh aar ya toh par)

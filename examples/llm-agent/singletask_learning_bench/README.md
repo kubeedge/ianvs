@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Quick Start about Personalized LLM Agent 
 
 Welcome to Ianvs! Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. Quick start helps you to test your algorithm on Ianvs with a simple example of industrial defect detection. You can reduce manual procedures to just a few steps so that you can build and start your distributed synergy AI solution development within minutes.
@@ -113,3 +114,8 @@ Enjoy your journey on Ianvs!
 
 
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:ceb34f7475730eae33f0e2538a29955d63e63804a2b8b628f1d2cdfe3628ff6e
+size 5304
+>>>>>>> 9676c3e (ya toh aar ya toh par)

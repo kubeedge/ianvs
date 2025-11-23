@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from dataloaders.datasets import cityscapes, citylostfound, cityrand, target, xrlab, e1, mapillary
 from torch.utils.data import DataLoader
 
@@ -117,3 +118,8 @@ def make_data_loader(args, train_data=None, valid_data=None, test_data=None, **k
     else:
         raise NotImplementedError
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:0f73f0380a3100e3600af935781a52042772c140573a2658eb9d0fecf8987fdb
+size 7370
+>>>>>>> 9676c3e (ya toh aar ya toh par)

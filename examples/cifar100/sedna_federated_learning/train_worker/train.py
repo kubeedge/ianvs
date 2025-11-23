@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2021 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,3 +60,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:65df80bc0d3dd99bf0e4ddee4bddbce3cc7abe481910f72c53b99993c7d6b1d6
+size 1821
+>>>>>>> 9676c3e (ya toh aar ya toh par)

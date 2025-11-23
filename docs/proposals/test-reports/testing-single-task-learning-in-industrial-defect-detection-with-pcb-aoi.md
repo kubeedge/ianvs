@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Testing single task learning in industrial defect detection
 
 ## About Industrial Defect Detection
@@ -89,3 +90,8 @@ algorithm:
 
 We release the
 leaderboard [here](../leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning.md).
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:acb553b84bbb6f0039c1b85856a7be49a36442a97999c650397f82ee5b356367
+size 6753
+>>>>>>> 9676c3e (ya toh aar ya toh par)

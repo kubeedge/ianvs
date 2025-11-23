@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # edge_model.py
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import time
@@ -111,3 +112,8 @@ class EdgeModel:
     def infer(self, data, context=None):
         "" "ianvs Standard Reasoning Interface" ""
         return self.predict(data)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:03965aff4f0674b69fdbda199fd7e8d368952620a528ddabac579fd27cc31493
+size 3540
+>>>>>>> 9676c3e (ya toh aar ya toh par)

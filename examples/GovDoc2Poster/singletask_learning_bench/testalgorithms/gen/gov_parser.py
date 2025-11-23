@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 New Government Agent Project
 # New Government Document Parser - Based on PyPDF2 and LLM
 
@@ -232,3 +233,8 @@ class NewGovernmentDocumentParser:
             self.logger.warning(f"Failed to generate summary: {str(e)}")
             return content
  
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:f0d984270bf7bf6e8621b44a7cde70da01896fa8f001684613d7bb153faa7b09
+size 8870
+>>>>>>> 9676c3e (ya toh aar ya toh par)

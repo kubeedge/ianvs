@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -110,3 +111,8 @@ class EdgeModel:
             self.model.cleanup()
         except Exception as e:
             LOGGER.warning(f"Cleanup failed: {e}")
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:fdfa7019f428aa1a3834e29697742df8f8a1c4656148c50cd0741f5fa6d86fc4
+size 4097
+>>>>>>> 9676c3e (ya toh aar ya toh par)

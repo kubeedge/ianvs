@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 Holodeck, 2025 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -1028,3 +1029,8 @@ class ObjectSelector:
                     i += 1
 
         return initial_state
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:53fb19dc58171ce130750aeddaa5a0acd79cfe9d7936c3951116665f44cc821c
+size 41272
+>>>>>>> 9676c3e (ya toh aar ya toh par)

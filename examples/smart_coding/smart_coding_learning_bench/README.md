@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Smart_coding BenchMark
 
 ## Introduction
@@ -112,3 +113,8 @@ Or you can replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site
 ### Issue
 
 `ianvs -f examples/smart_coding/smart_coding_learning_bench/issue/benchmarkingjob.yaml`
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:085160bf8055a0dd97f88a9529730633b69c28b111c7cdb2f7b28411710a4c41
+size 4157
+>>>>>>> 9676c3e (ya toh aar ya toh par)

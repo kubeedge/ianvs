@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Physically Consistent and Interactable Indoor Simulation Scene Generation: Implementation Based on KubeEdge-Ianvs
 
 ## About the Project
@@ -152,3 +153,8 @@ ianvs/
 [^1]: Yang, Y., Sun, F.-Y., Weihs, L., VanderBilt, E., Herrasti, A., Han, W., Wu, J., Haber, N., Krishna, R., Liu, L., Callison-Burch, C., Yatskar, M., Kembhavi, A., & Clark, C. (2024). Holodeck: Language Guided Generation of 3D Embodied AI Environments. Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 16227–16237. Code available at: [https://github.com/allenai/Holodeck](https://github.com/allenai/Holodeck)
 
 [^2]: Yang, Y., Jia, B., Zhi, P., & Huang, S. (2024). PhyScene: Physically Interactable 3D Scene Synthesis for Embodied AI. Proceedings of Conference on Computer Vision and Pattern Recognition (CVPR). Code available at: [https://github.com/PhyScene/PhyScene](https://github.com/PhyScene/PhyScene)
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:71f9764b6509ba42072ce2c07bf0c06c9f08f49a565041c17825b1f6a3b538d4
+size 7353
+>>>>>>> 9676c3e (ya toh aar ya toh par)

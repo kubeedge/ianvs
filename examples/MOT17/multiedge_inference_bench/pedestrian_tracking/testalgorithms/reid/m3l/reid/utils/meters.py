@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,3 +36,8 @@ class AverageMeter(object):
         self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:9b65e5f43b817ea5561db3aa9204f9fbba35b681e82c6417aa0829959630b10f
+size 1083
+>>>>>>> 9676c3e (ya toh aar ya toh par)

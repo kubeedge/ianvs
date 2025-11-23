@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 New Government Agent Project
 # New Government Poster Painter
 
@@ -409,3 +410,8 @@ class NewGovernmentPosterPainter:
             return ""
 
    
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:7b247f9a912b2f9927f86efead7bb4ea7a648ff5edc0cb3567fbee27b85c760d
+size 16655
+>>>>>>> 9676c3e (ya toh aar ya toh par)

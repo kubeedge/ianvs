@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -108,3 +109,8 @@ class IBTFilter(BaseFilter, abc.ABC):
             if float(box_score) <= self.threshold_box]
         return (len(confidence_score_list) / len(infer_result)
                 >= (1 - self.threshold_img))
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:5b04d6ea5c3f74cb8ee8fed1f410d490a996266ce7ca4b010c8d96ad53f50c45
+size 3492
+>>>>>>> 9676c3e (ya toh aar ya toh par)

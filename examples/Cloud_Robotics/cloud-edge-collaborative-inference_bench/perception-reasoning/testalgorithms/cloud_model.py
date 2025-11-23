@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -127,3 +128,8 @@ class CloudModel:
         return response 
     
 
+=======
+version https://git-lfs.github.com/spec/v1
+oid sha256:3440026eb6bb552a6c5e7968f2b9144aad6d458f7e24d7b8673647747232ac72
+size 5222
+>>>>>>> 9676c3e (ya toh aar ya toh par)
