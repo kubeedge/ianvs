@@ -1,0 +1,72 @@
+name: Failure Notifications
+
+on:
+  workflow_run:
+    workflows: ["Lifelong Learning Example Validation", "Multi-Python Version Compatibility"]
+    types: [completed]
+
+jobs:
+  notify:
+    name: Send Failure Notifications
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Get Workflow Info
+        id: workflow_info
+        run: |
+          echo "workflow_name=${{ github.event.workflow_run.name }}" >> $GITHUB_OUTPUT
+          echo "run_id=${{ github.event.workflow_run.id }}" >> $GITHUB_OUTPUT
+          echo "run_url=${{ github.event.workflow_run.html_url }}" >> $GITHUB_OUTPUT
+
+      - name: Create Issue on Failure
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const workflowName = '${{ steps.workflow_info.outputs.workflow_name }}';
+            const runUrl = '${{ steps.workflow_info.outputs.run_url }}';
+            const runId = '${{ steps.workflow_info.outputs.run_id }}';
+
+            const issueBody = `## CI/CD Pipeline Failure
+
+            **Workflow**: ${workflowName}
+            **Run ID**: ${runId}
+            **URL**: ${runUrl}
+
+            ### What happened?
+            The automated validation workflow has failed. This could indicate:
+            - Dependency conflicts
+            - Code compatibility issues
+            - Test failures
+
+            ### Next steps:
+            1. Review the workflow logs at the URL above
+            2. Identify the specific error messages
+            3. Fix the issues locally
+            4. Push the fixes to trigger re-validation
+
+            ### Resources:
+            - [Workflow Run](${runUrl})
+            - [CI/CD Documentation](.github/workflows/README.md)
+            - [Troubleshooting Guide](.github/workflows/README.md#troubleshooting)
+            `;
+
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['ci-failure'],
+              state: 'open'
+            });
+
+            if (issues.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `CI/CD Failure: ${workflowName}`,
+                body: issueBody,
+                labels: ['ci-failure', 'automated']
+              });
+            }

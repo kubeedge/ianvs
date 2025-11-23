@@ -1,0 +1,47 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-checks:
+    name: PR Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Check PR Title
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          echo "PR Title: $TITLE"
+          if [[ ! "$TITLE" =~ ^(feat|fix|docs|refactor|test|chore|ci): ]]; then
+            echo "ERROR: Invalid title format"
+            echo "Use format: type: description"
+            echo "Valid types: feat, fix, docs, refactor, test, chore, ci"
+            exit 1
+          fi
+          echo "Title format valid"
+
+      - name: Install Flake8
+        run: pip install flake8
+
+      - name: Check Python Code Quality
+        run: |
+          FILES=$(git diff --name-only --diff-filter=AM origin/${{ github.base_ref }}...HEAD | grep '\.py$' || true)
+          if [ -z "$FILES" ]; then
+            echo "No Python files changed"
+            exit 0
+          fi
+          echo "Checking Python files"
+          echo "$FILES" | xargs flake8 --select=E9,F63,F7,F82 --show-source
+          echo "Quality check passed"

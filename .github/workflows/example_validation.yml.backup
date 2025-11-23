@@ -1,0 +1,171 @@
+name: Lifelong Learning Example Validation
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'examples/robot/lifelong_learning_bench/**'
+      - '.github/workflows/**'
+
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'examples/robot/lifelong_learning_bench/**'
+
+  workflow_dispatch:
+
+jobs:
+  validate-example:
+    name: Validate on Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10']
+      fail-fast: false
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-py${{ matrix.python-version }}-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-py${{ matrix.python-version }}-
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3-dev git
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip wheel setuptools
+
+          if [-f requirements.txt]; then
+            pip install -r requirements.txt
+          fi
+
+          if [-f examples/robot/lifelong_learning_bench/semantic-segmentation/requirements.txt]; then
+            pip install -r examples/robot/lifelong_learning_bench/semantic-segmentation/requirements.txt
+          fi
+
+      - name: Validate Dependencies
+        run: |
+          python .github/scripts/check_dependencies.py
+
+      - name: Upload Dependency Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: dependency-report-py${{ matrix.python-version }}
+          path: dependency_report.json
+
+      - name: Install Sedna
+        run: |
+          git clone https://github.com/kubeedge/sedna.git /tmp/sedna
+          pip install -e /tmp/sedna/lib
+
+      - name: Create Minimal Test Dataset
+        run: |
+          mkdir -p /tmp/ianvs_test_data/train/rgb
+          mkdir -p /tmp/ianvs_test_data/train/labels
+          mkdir -p /tmp/ianvs_test_data/test/rgb
+          mkdir -p /tmp/ianvs_test_data/test/labels
+
+          python -c "
+          import numpy as np
+          from PIL import Image
+
+          img = Image.fromarray(np.random.randint(0, 255, (480, 640, 3), dtype=np.uint8))
+          img.save('/tmp/ianvs_test_data/train/rgb/test_001.png')
+          img.save('/tmp/ianvs_test_data/test/rgb/test_001.png')
+
+          label = Image.fromarray(np.zeros((480, 640), dtype=np.uint8))
+          label.save('/tmp/ianvs_test_data/train/labels/test_001.png')
+          label.save('/tmp/ianvs_test_data/test/labels/test_001.png')
+
+          print('Test dataset created successfully')
+          "
+
+      - name: Modify Config for CI Environment
+        run: |
+          cd examples/robot/lifelong_learning_bench/semantic-segmentation
+
+          cp benchmarkingjob.yaml benchmarkingjob-ci.yaml
+
+          python -c "
+          import yaml
+
+          with open('benchmarkingjob-ci.yaml', 'r') as f:
+              config = yaml.safe_load(f)
+
+          if 'testenv' in config:
+              config['testenv'] = config['testenv'].replace('epochs: 50', 'epochs: 2')
+
+          with open('benchmarkingjob-ci.yaml', 'w') as f:
+              yaml.dump(config, f)
+
+          print('CI configuration created')
+          "
+
+      - name: Run Example
+        id: run_example
+        continue-on-error: true
+        run: |
+          cd examples/robot/lifelong_learning_bench/semantic-segmentation
+
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/testalgorithms/rfnet/RFNet
+
+          python -m ianvs -f benchmarkingjob-ci.yaml 2>&1 | tee run.log
+
+      - name: Check for Errors
+        run: |
+          cd examples/robot/lifelong_learning_bench/semantic-segmentation
+
+          if grep -qi "error\|exception\|failed" run.log; then
+            echo "ERROR: Critical errors detected in execution log"
+            grep -i "error\|exception\|failed" run.log
+            exit 1
+          fi
+
+          echo "No critical errors detected"
+
+      - name: Validate Metrics
+        run: |
+          cd examples/robot/lifelong_learning_bench/semantic-segmentation
+
+          if grep -qi "nan" run.log; then
+            echo "ERROR: NaN metrics detected in output"
+            exit 1
+          fi
+
+          echo "Metrics validation passed"
+
+      - name: Upload Logs and Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: results-python-${{ matrix.python-version }}
+          path: |
+            examples/robot/lifelong_learning_bench/semantic-segmentation/run.log
+            examples/robot/lifelong_learning_bench/semantic-segmentation/workspace/
+          retention-days: 7
+
+      - name: Report Status
+        if: always()
+        run: |
+          if ["${{ steps.run_example.outcome }}" == "success"]; then
+            echo "PASS: Example validation successful on Python ${{ matrix.python-version }}"
+          else
+            echo "FAIL: Example validation failed on Python ${{ matrix.python-version }}"
+            exit 1
+          fi

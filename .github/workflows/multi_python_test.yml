@@ -1,0 +1,123 @@
+name: Multi-Python Version Compatibility
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+
+  workflow_dispatch:
+    inputs:
+      python_versions:
+        description: 'Python versions to test (comma-separated)'
+        required: false
+        default: '3.8,3.9,3.10'
+
+jobs:
+  compatibility-matrix:
+    name: Test Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04]
+        python-version: ['3.8', '3.9', '3.10']
+      fail-fast: false
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Display Environment Info
+        run: |
+          echo "Python Version:"
+          python --version
+          echo ""
+          echo "OS Information:"
+          cat /etc/os-release
+          echo ""
+          echo "Pip Version:"
+          pip --version
+
+      - name: Install Core Dependencies
+        run: |
+          python -m pip install --upgrade pip wheel setuptools
+          pip install pytest pytest-cov pylint flake8
+
+      - name: Install Ianvs Dependencies
+        run: |
+          if [-f requirements.txt]; then
+            pip install -r requirements.txt
+          fi
+
+      - name: Run Dependency Check
+        run: |
+          pip list
+          pip check || echo "WARNING: Dependency conflicts detected"
+
+      - name: Test Import Compatibility
+        run: |
+          python -c "
+          import sys
+          print(f'Python version: {sys.version}')
+
+          try:
+              import torch
+              print(f'PyTorch version: {torch.__version__}')
+          except ImportError as e:
+              print(f'PyTorch import failed: {e}')
+
+          try:
+              import numpy
+              print(f'NumPy version: {numpy.__version__}')
+          except ImportError as e:
+              print(f'NumPy import failed: {e}')
+
+          try:
+              import cv2
+              print(f'OpenCV version: {cv2.__version__}')
+          except ImportError as e:
+              print(f'OpenCV import failed: {e}')
+          "
+
+      - name: Test Example Imports
+        run: |
+          cd examples/robot/lifelong_learning_bench/semantic-segmentation/testalgorithms/rfnet
+
+          python -c "
+          import sys
+          sys.path.insert(0, 'RFNet')
+
+          try:
+              from basemodel import BaseModel
+              print('BaseModel import successful')
+          except Exception as e:
+              print(f'BaseModel import failed: {e}')
+              sys.exit(1)
+          "
+
+      - name: Generate Compatibility Report
+        if: always()
+        run: |
+          cat > compatibility_report.md << EOF
+          # Compatibility Report
+
+          - OS: ${{ matrix.os }}
+          - Python: ${{ matrix.python-version }}
+          - Status: ${{ job.status }}
+
+          ## Installed Packages
+          \`\`\`
+          $(pip list)
+          \`\`\`
+          EOF
+
+      - name: Upload Compatibility Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: compat-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: compatibility_report.md
