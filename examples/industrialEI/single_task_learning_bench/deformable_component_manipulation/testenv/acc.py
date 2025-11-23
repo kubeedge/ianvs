@@ -518,7 +518,7 @@ def extract_ground_truth(label) -> Optional[Dict]:
              label_path_str = label_path_str.replace('Drive/', '/content/drive/My Drive/')
         possible_paths = [
             Path(label_path_str.lstrip('./')),
-            base_dir / 'dataset' / 'deformable_assembly_dataset' / label_path_str.lstrip('./'), Path(label_path_str)
+            base_dir / 'dataset' / 'deformable_assembly_dataset' / label_path_str.lstrip('./'), Path(label_path_str),
             base_dir / label_path_str.lstrip('./')
         ]
         

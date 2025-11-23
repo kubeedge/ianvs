@@ -83,7 +83,7 @@ python -m pip install -r requirements.txt
 Install benchmark-specific requirements:
 
 ```shell
-pip install -r examples/industrialEI/single_task_learning_bench/deformable_assembly/requirements.txt
+pip install -r examples/industrialEI/single_task_learning_bench/deformable_component_manipulation/requirements.txt
 ```
 
 Install Ianvs:
@@ -246,7 +246,7 @@ The benchmark output includes:
 ╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                        🎯 EVALUATION COMPLETE                                                            ║
 ║                                                                                                                           ║
-║  ► Overall Accuracy Score: 64%Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge-Ianvs Embodied Intelligence Benchmarking Framework for Industrial Manufacturing with KubeEdge-Ianvs .6400                                                                                  ║
+║  ► Overall Accuracy Score: 6400                                                                                  ║
 ║  ► Overall Accuracy Percentage:  64.00%                                                                             ║
 ║  ► Detection mAP50:  91.19%                                                                                           ║
 ║  ► Assembly Success Rate:  83.33%                                                                                  ║
