@@ -67,10 +67,11 @@ class SingleTaskLearning(ParadigmBase):
 
         """
 
+        self._preprocess()
         job = self.build_paradigm_job(ParadigmType.SINGLE_TASK_LEARNING.value)
 
         trained_model = self._train(job, self.initial_model)
-
+        
         if trained_model is None:
             trained_model = self.initial_model
 
@@ -117,6 +118,12 @@ class SingleTaskLearning(ParadigmBase):
         trained_model_path = job.save(train_output_dir)
         return trained_model_path
 
+    def _preprocess(self):
+        """
+        Optional preprocessing step before training or inference.
+        Can be overridden by subclasses (e.g., to initialize a knowledge base).
+        """
+        pass
     def _inference(self, job, trained_model):
         inference_dataset = self.dataset.load_data(self.dataset.test_url, "inference")
         inference_output_dir = os.path.join(self.workspace, "output/inference/")
