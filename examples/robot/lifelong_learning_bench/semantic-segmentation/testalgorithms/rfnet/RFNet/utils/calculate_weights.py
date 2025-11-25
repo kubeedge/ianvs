@@ -2,13 +2,14 @@ import os
 from tqdm import tqdm
 import numpy as np
 from mypath import Path
+from logger import logger
 
 def calculate_weigths_labels(dataset, dataloader, num_classes):
     # Create an instance from the data loader
     z = np.zeros((num_classes,))
     # Initialize tqdm
     tqdm_batch = tqdm(dataloader)
-    print('Calculating classes weights')
+    logger.info('Calculating classes weights')
     for sample in tqdm_batch:
         y = sample['label']
         y = y.detach().cpu().numpy()

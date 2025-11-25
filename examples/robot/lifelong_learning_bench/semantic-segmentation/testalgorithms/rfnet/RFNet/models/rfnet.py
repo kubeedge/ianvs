@@ -1,6 +1,6 @@
 import torch.nn as nn
 from itertools import chain # 串联多个迭代对象
-
+from logger import logger
 from .util import _BNReluConv, upsample
 
 
@@ -9,7 +9,7 @@ class RFNet(nn.Module):
         super(RFNet, self).__init__()
         self.backbone = backbone
         self.num_classes = num_classes
-        print(self.backbone.num_features)
+        logger.info(self.backbone.num_features)
         self.logits = _BNReluConv(self.backbone.num_features, self.num_classes, batch_norm=use_bn)
 
     def forward(self, rgb_inputs, depth_inputs = None):

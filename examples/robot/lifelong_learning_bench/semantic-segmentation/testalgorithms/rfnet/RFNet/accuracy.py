@@ -3,6 +3,7 @@ from utils.metrics import Evaluator
 from tqdm import tqdm
 from dataloaders import make_data_loader
 from sedna.common.class_factory import ClassType, ClassFactory
+from logger import logger
 
 __all__ = ('accuracy')
 
@@ -34,5 +35,5 @@ def accuracy(y_true, y_pred, **kwargs):
     mIoU = evaluator.Mean_Intersection_over_Union()
     FWIoU = evaluator.Frequency_Weighted_Intersection_over_Union()
 
-    print("CPA:{}, mIoU:{}, fwIoU: {}".format(CPA, mIoU, FWIoU))
+    logger.info("CPA:{}, mIoU:{}, fwIoU: {}".format(CPA, mIoU, FWIoU))
     return CPA
