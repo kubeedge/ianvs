@@ -15,15 +15,19 @@
 import tensorflow as tf
 import numpy as np
 import os
-
+from config import TRAIN_DIR, TEST_DIR, TRAIN_INDEX_FILE, TEST_INDEX_FILE
 
 def process_cifar100():
-    if not os.path.exists("/home/wyd/ianvs/project/data/cifar100"):
-        os.makedirs("/home/wyd/ianvs/project/data/cifar100")
-    train_txt = "/home/wyd/ianvs/project/data/cifar100/cifar100_train.txt"
+    # create train and test directories if they don't exist
+    if not os.path.exists(TRAIN_DIR):
+        os.makedirs(TRAIN_DIR)
+    if not os.path.exists(TEST_DIR):
+        os.makedirs(TEST_DIR)
+
+    train_txt = TRAIN_INDEX_FILE
     with open(train_txt, "w") as f:
         pass
-    test_txt = "/home/wyd/ianvs/project/data/cifar100/cifar100_test.txt"
+    test_txt = TEST_INDEX_FILE
     with open(test_txt, "w") as f:
         pass
     # load CIFAR-100 dataset
@@ -46,25 +50,25 @@ def process_cifar100():
         data = np.array(imgs)
         print(data.shape)
         np.save(
-            f"/home/wyd/ianvs/project/data/cifar100/cifar100_train_index_{label}.npy",
+            os.path.join(TRAIN_DIR, f"cifar100_train_index_{label}.npy"),
             data,
         )
         with open(train_txt, "a") as f:
             f.write(
-                f"/home/wyd/ianvs/project/data/cifar100/cifar100_train_index_{label}.npy\t{label}\n"
+                f"{os.path.join(TRAIN_DIR, f'cifar100_train_index_{label}.npy')}\t{label}\n"
             )
-    #  save test data to local file
+
+    # save test data to local file
     for label, imgs in test_class_dict.items():
         np.save(
-            f"/home/wyd/ianvs/project/data/cifar100/cifar100_test_index_{label}.npy",
+            os.path.join(TEST_DIR, f"cifar100_test_index_{label}.npy"),
             np.array(imgs),
         )
         with open(test_txt, "a") as f:
             f.write(
-                f"/home/wyd/ianvs/project/data/cifar100/cifar100_test_index_{label}.npy\t{label}\n"
+                f"{os.path.join(TEST_DIR, f'cifar100_test_index_{label}.npy')}\t{label}\n"
             )
     print(f"CIFAR-100 have saved as ianvs format")
-
 
 if __name__ == "__main__":
     process_cifar100()
