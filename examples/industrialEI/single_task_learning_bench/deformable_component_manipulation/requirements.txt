@@ -1,8 +1,0 @@
-numpy>=1.19.0
-pyyaml>=5.4.0
-pillow>=8.0.0
-opencv-python>=4.5.0
-ultralytics>=8.0.0
-torch==2.4.1
-torchvision>=0.10.0
-sedna

@@ -7,10 +7,10 @@ import torch
 from torchvision.transforms import ToPILImage
 from PIL import Image
 
-from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
-import mmcv
+#from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
+#import mmcv
 import pycocotools.mask as maskUtils
-from mmdet.visualization.image import imshow_det_bboxes
+#from mmdet.visualization.image import imshow_det_bboxes
 import pickle
 
 from dataloaders import make_data_loader
@@ -23,7 +23,7 @@ from models.resnet import resnet_single_scale_single_attention_unseen
 import torch.backends.cudnn as cudnn
 from cityscapes_id2label import CONFIG as CONFIG_CITYSCAPES_ID2LABEL
 import torch.nn.functional as F
-from transformers import SegformerFeatureExtractor, SegformerForSemanticSegmentation
+#from transformers import SegformerFeatureExtractor, SegformerForSemanticSegmentation
 
 os.environ["OMP_NUM_THREADS"] = "1" 
 os.environ["MKL_NUM_THREADS"] = "1"
@@ -348,7 +348,7 @@ class Validator(object):
 
             output_path = os.environ["OUTPUT_URL"]
             id2label = CONFIG_CITYSCAPES_ID2LABEL
-            self.draw_picture(image_name[0], torch.from_numpy(pred[0]), id2label, output_path, "_origin.png")
+            #self.draw_picture(image_name[0], torch.from_numpy(pred[0]), id2label, output_path, "_origin.png")
             
         #print("start validating 120")
         return predictions, scores
