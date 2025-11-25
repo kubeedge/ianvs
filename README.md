@@ -91,6 +91,12 @@ Follow the [Ianvs installation document](docs/guides/how-to-install-ianvs.md) to
 
   - Example Cloud-Robotics-3: [Lifelong learning in sam annotation](examples/robot/lifelong_learning_bench/sam_annotation/tutorial.md)
 
+
+- Scenario MOT-17: [Pedestrian Tracking on Multiple Object Tracking](docs/proposals/scenarios/multiple-object-tracking/mot_17.md)
+
+  - Example MOT-17: [Benchmarking of pedestrian tracking](examples/MOT17/multiedge_inference_bench/pedestrian_tracking/README.md)
+
+
 ## Roadmap
 
 - [2022 H2 Roadmap](docs/roadmap.md)
