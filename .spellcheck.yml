@@ -1,0 +1,8 @@
+matrix:
+  sources:
+    - '**/*.md'
+  spelling:
+    dictionary: en_US
+    filters:
+      - comments
+      - code
