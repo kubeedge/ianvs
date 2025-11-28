@@ -76,7 +76,7 @@ The relationship between the algorithm and the Ianvs lifelong learning architect
 
 ## 5. High-Level Architecture
 
-The system runs as an ongoing loop for annotation and training feedback. It sits inside Ianvs Lifelong Learning. Automatic segmentation happens with SAM/SSA there. People review it through Label Studio. Then they retrain the whole thing in the cloud. All this helps build a model that keeps evolving. It handles all kinds of road anomalies in open-world settings.
+The system operates as a continuous feedback loop for annotation and model training within the Ianvs Lifelong Learning framework. It utilizes SAM/SSA for automatic segmentation, with human-in-the-loop review and refinement performed via Label Studio. The model is then retrained in the cloud, enabling it to evolve and better handle various road anomalies in open-world settings.
 
 ### 📊 System Architecture Overview
 A closed-loop edge-to-cloud learning pipeline where SAM and SSA generate automatic annotations, humans refine only edge cases, and Ianvs retrains and redeploys the improved model continuously.
