@@ -47,7 +47,7 @@ The system operates as a continuous feedback loop for annotation and model train
 ###  System Architecture Overview
 A closed-loop edge-to-cloud learning pipeline where SAM and SSA generate automatic annotations, humans refine only edge cases, and Ianvs retrains and redeploys the improved model continuously.
 
-![High_Level_Architecture](images/High_Level_Architecture_SAM.jpeg)
+![High_Level_Architecture](images/High_Level_Architecture_SAM.png)
 
 
 ## 5 Datasets
