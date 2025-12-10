@@ -6,14 +6,14 @@ With the evolution of large model technology, the importance of data in machine 
 Based on the lifelong learning system framework built by KubeEdge's edgecloud collaborative AI paradigm, this project aims to reproduce the Segment Anything Model(SAM) model and try to apply this algorithm to open domain data annotation. By embedding the auxiliary data annotation system based on SAM into the framework of lifelong learning, it can help users realize corner case annotation, etc., so that new models can be trained on the basis of retaining old knowledge to quickly adapt to tasks in the new environment.
 
 # 2. Goals
-1. reproduce segment anything model based on open world segmentation dataset
-2. achieve >0.45 accuracy for open-world object segmentation (e.g., AP, mIoU).
-3. use the reproduced algorithms to build a data annotation tool, which is integrated into the Sedna and Ianvs lifelong learning modules based on the Ianvs architecture for practical application.
+1. Reproduce segment anything model based on open world segmentation dataset
+2. Achieve >0.45 accuracy for open-world object segmentation (e.g., AP, mIoU).
+3. Use the reproduced algorithms to build a data annotation tool, which is integrated into the Sedna and Ianvs lifelong learning modules based on the Ianvs architecture for practical application.
 
 # 3. Proposal
 Open world object segmentation is the core task of this project, and various basic computer vision tasks can be solved by fine-tuning the pre-trained large-scale open world segmentation model **SAM**.
 
-This project reproduces the open world segmentation algorithm **Segment Anything Model** based on sedna and Ianvs lifelong learning, and chooses to fine-tune it on the Autopilot Small Obstacle Detection dataset according to the actual situation. This project tries to use **SAM and its related models** to realize the automatic annotation of open domain data supporting local and cloud deployment, users can send the demanded data to the cloud for processing through the annotation tool at the edge end, and then realize the complete data annotation process through the reasoning module based on SAM and its related algorithms in the cloud.
+This project reproduces the open world segmentation algorithm **Segment Anything Model** based on sedna and Ianvs lifelong learning, and chooses to fine-tune it on the Autopilot Small Obstacle Detection dataset according to the actual situation. This project tries to use **SAM and its related models** to realize the automatic annotation of open domain data supporting local and cloud deployment, Users can send the demanded data to the cloud for processing through the annotation tool at the edge end, and then realize the complete data annotation process through the reasoning module based on SAM and its related algorithms in the cloud.
 
 ## 3.1 Algorithm architecture
 The overall algorithm process is illustrated in the following diagram.
@@ -28,6 +28,8 @@ In the first step, images are automatically annotated using the SSA model. Next,
 The relationship between the algorithm and the Ianvs lifelong learning architecture is depicted in the figure above, with its primary location in the unknown task processing module.
 
 ## 3.2 User flow
+The workflow consists of two stages: The first stage involves the collection of raw road image data from the testing scenario and an automatic generation of the associated annotations by processing the raw data at the edge via the SAM and SSA algorithms. After this stage is completed, annotation corrections related to edge cases are made by the user through Label Studio (refinement of annotation correction). Once the annotation corrections have been made, the refined data will be sent for cloud upload and will be retrained and evaluated using Ianvs. After the improved model has been retrained and evaluated, it will be redeployed. The entire workflow forms a continuous closed loop between annotation, training, and inference.
+
 ![sam_annotation_user_flow](images/sam_annotation_user_flow.png)
 
 1. Deploy distributed synergy AI benchmarking Ianvs
@@ -164,7 +166,7 @@ These metrics ensure objective tracking of segmentation progress and annotation 
 # 8. Future Work & Extension Possibilities
 
 - **Fully Automatic Annotation:**  
-  Our Future work will focus on reducing or completely removing human intervention by improving semantic accuracy and confidence-based filtering, enabling fully automatic large-scale dataset .
+  Our Future work will focus on reducing or completely removing human intervention by improving semantic accuracy and confidence-based filtering, enabling fully automatic large-scale dataset annotation.
 
 - **Real-Time Edge Deployment Optimization:**  
   Model compression, quantization, and hardware-aware optimization can be explored to enable real-time SAM/SSA inference on resource-constrained edge devices.
