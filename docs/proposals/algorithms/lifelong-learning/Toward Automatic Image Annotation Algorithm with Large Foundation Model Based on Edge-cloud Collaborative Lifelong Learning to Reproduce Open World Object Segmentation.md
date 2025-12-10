@@ -44,7 +44,7 @@ The workflow consists of two stages: The first stage involves the collection of 
 
 The system operates as a continuous feedback loop for annotation and model training within the Ianvs Lifelong Learning framework. It utilizes SAM/SSA for automatic segmentation, with human-in-the-loop review and refinement performed via Label Studio. The model is then retrained in the cloud, enabling it to evolve and better handle various road anomalies in open-world settings.
 
-### 📊 System Architecture Overview
+###  System Architecture Overview
 A closed-loop edge-to-cloud learning pipeline where SAM and SSA generate automatic annotations, humans refine only edge cases, and Ianvs retrains and redeploys the improved model continuously.
 
 ![High_Level_Architecture](images/High_Level_Architecture_SAM.jpeg)
