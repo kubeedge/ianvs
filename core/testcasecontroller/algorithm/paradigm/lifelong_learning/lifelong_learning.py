@@ -106,9 +106,10 @@ class LifelongLearning(ParadigmBase):
                 for j in range(1, rounds+1):
                     _, eval_dataset_file = dataset_files[j]
                     res = self.my_eval(
-                                                    self.cloud_task_index,
-                                                    eval_dataset_file,
-                                                    r)
+                        self.cloud_task_index,
+                        eval_dataset_file,
+                        r
+                    )
                     LOGGER.info(f"train from round {r}")
                     LOGGER.info(f"test round {j}")
                     LOGGER.info(f"all scores: {res}")
@@ -117,7 +118,11 @@ class LifelongLearning(ParadigmBase):
                     tmp_dict["all"] = score_list
                     task_avg_score = {'accuracy': 0.0}
                     # `res` should be a metrics dict returned by the job evaluate method
-                    task_avg_score['accuracy'] = res.get('accuracy', 0.0) if isinstance(res, dict) else 0.0
+                    if isinstance(res, dict):
+                        acc_val = res.get('accuracy', 0.0)
+                    else:
+                        acc_val = 0.0
+                    task_avg_score['accuracy'] = acc_val
                     score_list = tmp_dict.get("task_avg", [{'accuracy':0.0} for i in range(rounds)])
                     score_list[j-1] = task_avg_score
                     tmp_dict["task_avg"] = score_list
@@ -128,15 +133,24 @@ class LifelongLearning(ParadigmBase):
                     my_dict[key] = scores_list
                     LOGGER.info(f"{key} scores: {scores_list}")
 
-            res = self.my_eval(self.cloud_task_index,
-                                                      self.dataset.test_url,
-                                                      r)
-            task_avg_score = {'accuracy': res.get('accuracy', 0.0) if isinstance(res, dict) else 0.0}
+            res = self.my_eval(
+                self.cloud_task_index,
+                self.dataset.test_url,
+                r
+            )
+            if isinstance(res, dict):
+                acc_val = res.get('accuracy', 0.0)
+            else:
+                acc_val = 0.0
+            task_avg_score = {'accuracy': acc_val}
             self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value] = task_avg_score
             LOGGER.info(task_avg_score)
             job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
-            inference_dataset = self.dataset.load_data(self.dataset.test_url, "eval",
-                                                   feature_process=_data_feature_process)
+            inference_dataset = self.dataset.load_data(
+                self.dataset.test_url,
+                "eval",
+                feature_process=_data_feature_process,
+            )
             kwargs = {}
             test_res = job.my_inference(inference_dataset, **kwargs)
             del job
@@ -162,9 +176,10 @@ class LifelongLearning(ParadigmBase):
                                                     r)
 
                     res = self.my_eval(
-                                                    self.cloud_task_index,
-                                                    eval_dataset_file,
-                                                    r)
+                        self.cloud_task_index,
+                        eval_dataset_file,
+                        r
+                    )
 
                 else:
                     infer_dataset_file, eval_dataset_file = dataset_files[r]
@@ -187,16 +202,21 @@ class LifelongLearning(ParadigmBase):
                 for j in range(1, rounds+1):
                     _, eval_dataset_file = dataset_files[j]
                     res = self.my_eval(
-                                                    self.cloud_task_index,
-                                                    eval_dataset_file,
-                                                    r)
+                        self.cloud_task_index,
+                        eval_dataset_file,
+                        r
+                    )
                     LOGGER.info(f"train from round {r}")
                     LOGGER.info(f"test round {j}")
                     LOGGER.info(f"all scores: {res}")
                     score_list = tmp_dict.get("all", ['' for i in range(rounds)])
                     score_list[j-1] = res
                     tmp_dict["all"] = score_list
-                    task_avg_score = {'accuracy': res.get('accuracy', 0.0) if isinstance(res, dict) else 0.0}
+                    if isinstance(res, dict):
+                        acc_val = res.get('accuracy', 0.0)
+                    else:
+                        acc_val = 0.0
+                    task_avg_score = {'accuracy': acc_val}
                     score_list = tmp_dict.get("task_avg", [{'accuracy':0.0} for i in range(rounds)])
                     score_list[j-1] = task_avg_score
                     tmp_dict["task_avg"] = score_list
@@ -208,15 +228,23 @@ class LifelongLearning(ParadigmBase):
                     LOGGER.info(f"{key} scores: {scores_list}")
 
 
-            res = self.my_eval(self.cloud_task_index,
-                                                      self.dataset.test_url,
-                                                      rounds + 1)
-            task_avg_score = {'accuracy': res.get('accuracy', 0.0) if isinstance(res, dict) else 0.0}
+            res = self.my_eval(
+                self.cloud_task_index,
+                self.dataset.test_url,
+                rounds + 1
+            )
+            if isinstance(res, dict):
+                acc_val = res.get('accuracy', 0.0)
+            else:
+                acc_val = 0.0
+            task_avg_score = {'accuracy': acc_val}
             self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value] = task_avg_score
             LOGGER.info(task_avg_score)
-            test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
-                                                              self.dataset.test_url,
-                                                              "test")
+            test_res, unseen_task_train_samples = self._inference(
+                self.edge_task_index,
+                self.dataset.test_url,
+                "test",
+            )
             for key in my_dict.keys():
                 LOGGER.info(f"{key} scores: {my_dict[key]}")
             for key in my_dict.keys():
