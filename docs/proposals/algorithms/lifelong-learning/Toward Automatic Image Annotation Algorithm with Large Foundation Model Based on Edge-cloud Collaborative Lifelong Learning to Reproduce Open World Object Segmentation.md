@@ -6,19 +6,22 @@ With the evolution of large model technology, the importance of data in machine 
 Based on the lifelong learning system framework built by KubeEdge's edgecloud collaborative AI paradigm, this project aims to reproduce the Segment Anything Model(SAM) model and try to apply this algorithm to open domain data annotation. By embedding the auxiliary data annotation system based on SAM into the framework of lifelong learning, it can help users realize corner case annotation, etc., so that new models can be trained on the basis of retaining old knowledge to quickly adapt to tasks in the new environment.
 
 # 2. Goals
-1. Reproduce segment anything model based on open world segmentation dataset
-2. Achieve >0.45 accuracy for open-world object segmentation (e.g., AP, mIoU).
-3. Use the reproduced algorithms to build a data annotation tool, which is integrated into the Sedna and Ianvs lifelong learning modules based on the Ianvs architecture for practical application.
+1. reproduce segment anything model based on open world segmentation dataset
+2. achieve >0.45 accuracy for open-world object segmentation (e.g., AP, mIoU).
+3. use the reproduced algorithms to build a data annotation tool, which is integrated into the Sedna and Ianvs lifelong learning modules based on the Ianvs architecture for practical application.
 
 # 3. Proposal
 Open world object segmentation is the core task of this project, and various basic computer vision tasks can be solved by fine-tuning the pre-trained large-scale open world segmentation model **SAM**.
 
-This project reproduces the open world segmentation algorithm **Segment Anything Model** based on sedna and Ianvs lifelong learning, and chooses to fine-tune it on the Autopilot Small Obstacle Detection dataset according to the actual situation. This project tries to use **SAM and its related models** to realize the automatic annotation of open domain data supporting local and cloud deployment, Users can send the demanded data to the cloud for processing through the annotation tool at the edge end, and then realize the complete data annotation process through the reasoning module based on SAM and its related algorithms in the cloud.
+This project reproduces the open world segmentation algorithm **Segment Anything Model** based on sedna and Ianvs lifelong learning, and chooses to fine-tune it on the Autopilot Small Obstacle Detection dataset according to the actual situation. This project tries to use **SAM and its related models** to realize the automatic annotation of open domain data supporting local and cloud deployment, users can send the demanded data to the cloud for processing through the annotation tool at the edge end, and then realize the complete data annotation process through the reasoning module based on SAM and its related algorithms in the cloud.
 
 ## 3.1 Algorithm architecture
 The overall algorithm process is illustrated in the following diagram.
 
+
+
 <div align = center><image width = 400 src = "images/sam_annotation_algorithm_architecture.png"></image></div>
+
 
 
 In the first step, images are automatically annotated using the SSA model. Next, the SSA-generated JSON data is converted into a format compatible with Label Studio. The pre-annotated results are imported into Label Studio for manual correction. Finally, the annotated results are exported and transformed into segmentation images suitable for training.
@@ -28,8 +31,6 @@ In the first step, images are automatically annotated using the SSA model. Next,
 The relationship between the algorithm and the Ianvs lifelong learning architecture is depicted in the figure above, with its primary location in the unknown task processing module.
 
 ## 3.2 User flow
-The workflow consists of two stages: The first stage involves the collection of raw road image data from the testing scenario and an automatic generation of the associated annotations by processing the raw data at the edge via the SAM and SSA algorithms. After this stage is completed, annotation corrections related to edge cases are made by the user through Label Studio (refinement of annotation correction). Once the annotation corrections have been made, the refined data will be sent for cloud upload and will be retrained and evaluated using Ianvs. After the improved model has been retrained and evaluated, it will be redeployed. The entire workflow forms a continuous closed loop between annotation, training, and inference.
-
 ![sam_annotation_user_flow](images/sam_annotation_user_flow.png)
 
 1. Deploy distributed synergy AI benchmarking Ianvs
@@ -40,25 +41,33 @@ The workflow consists of two stages: The first stage involves the collection of 
 6. The cloud further trains and updates the model to achieve a closed loop of annotation-train-reasoning-evaluation
 7. Derive the final model that meets the requirements of the actual task for further application
 
-## 4. High-Level Architecture
+# 4. Design Details
+This section mainly introduces the algorithm model used in the system, the small obstacle detection dataset for automatic driving, and the principle of algorithm-assisted labeling.
 
-The system operates as a continuous feedback loop for annotation and model training within the Ianvs Lifelong Learning framework. It utilizes SAM/SSA for automatic segmentation, with human-in-the-loop review and refinement performed via Label Studio. The model is then retrained in the cloud, enabling it to evolve and better handle various road anomalies in open-world settings.
+## 4.1 Segment Model
+### 4.1.1 Segment Anything Model（SAM）
 
-###  System Architecture Overview
-A closed-loop edge-to-cloud learning pipeline where SAM and SSA generate automatic annotations, humans refine only edge cases, and Ianvs retrains and redeploys the improved model continuously.
+The paper presents the [Segment Anything](https://arxiv.org/abs/2304.02643) (SA) project: a new task, a new model and a new dataset for image segmentation. Its use of the proposed SAM model in a data collection loop builds the largest segmentation dataset to date **SA-1B**, generating more than 1 billion masks on top of 11 million image data.Since the model is designed and trained to be promptable, it can be migrated to new image tasks in a ZERO-shot fashion.
 
-![High_Level_Architecture](images/High_Level_Architecture_SAM.png)
+The authors, influenced by pre-trained large language models in NLP, used the prompt engineering mechanism to create a similar large-scale vision base model with strong zero-shot (zero samples), few-shot (fewer samples) generalization capabilities to flexibly solve a variety of downstream tasks.The SAM has three main modules: the image encoder, Flexible Cue Encoder and Fast Mask Decoder.
 
+![sam_model](images/sam_model.png)
 
-## 5 Datasets
+### 4.1.2  Semantic Segment Anything Model
+![ssa_model](images/ssa_model.png)
+ While SAM is a powerful model capable of segmenting anything in images, it lacks the ability to predict the semantic categories of each mask. To address this limitation, [Semantic Segment Anything (SSA)](https://github.com/fudan-zvg/Semantic-Segment-Anything) was introduced. 
+ Prior to the introduction of SAM, most semantic segmentation applications already had their own models. These models could provide rough category classifications for regions but with fuzzy and imprecise edges, lacking accurate masks. To overcome this issue, we proposed an open framework called SSA, which leverages SAM to enhance the performance of existing models. Specifically, the original semantic segmentation model provides category predictions, while the powerful SAM provides masks. 
+ Additionally, the authors introduced an SSA engine, an open-vocabulary automatic annotation engine that benefits from the combined architecture of dense segmentation and open-vocabulary segmentation. This provides satisfactory annotations for most samples and can offer more detailed annotations using image captioning techniques.
+
+## 4.2 Datasets
 The dataset used in this project is mainly a small obstacle detection dataset within the field of autonomous driving.
 
-### 5.1 StreetHazards
+### 4.2.1 StreetHazards
 StreetHazards is a component of the 2019 CAOS benchmark. The training set includes three towns from CARLA and the dataset provides a variety of scenarios.
 
 ![dataset_sh](images/dataset_sh.png)
 
-### 5.2 Lost and Found
+### 4.2.2 Lost and Found
 The Lost and Found dataset was introduced in 2016 by Pinggera et al. and is the first dataset focusing on small road hazard detection with binocular camera acquisition.
 
 ![dataset_laf](images/dataset_laf.png)
@@ -69,7 +78,7 @@ It provides stereo masks for semantic segmentation tasks allowing pixel-level an
 
 Blum et al. introduced it to the Fishyscapes (FS) benchmark, the FS Lost and Found dataset, in 2019.
 
-### 5.3 RoadAnomaly
+### 4.2.3 RoadAnomaly
 RoadAnomaly21 is a part of the SegmentMeIfYouCan benchmark, whose previous version was released in 2019 by Lis et al. It is designed for general anomaly detection scenarios in full street scenes, where the anomalies can be categorized as animals, unknown vehicles and tents, pianos or roadblocks. These anomalies can appear anywhere in the image, even in the sky.
 
 ![dataset_ra](images/dataset_ra.png)
@@ -82,45 +91,7 @@ RoadAnomaly21 is a part of the SegmentMeIfYouCan benchmark, whose previous versi
 | Lost and Found <br> FS Lost and Found | 2016 <br> 2019 | 2104 <br> 275/100 | 2048×1024 |
 | RoadAnomaly21 | 2021 | 100/10 | 2048×1024 <br> 1280×720 |
 
-### 5.4 Justification for Using and Selecting Datasets
-
-- **StreetHazards Dataset** is primarily used to assess the ability to **generalize in open-world settings**. It was created using **CARLA** and includes many **environmental conditions**, allowing for the demonstration of how the method can adapt to different scenarios.
-
-- **Lost and Found / Fishyscapes Dataset** is critical for evaluating the **performance of the system in detecting small and medium obstacles**. This dataset provides **real-world examples of road hazards**, fully annotated, which makes it suitable for evaluating **small, rare, and unusual obstacle detection**.
-  - It helps **fine-tune the proposed method for real-world driving scenes**.  
-  - It allows the **evaluation of performance on small, rare, and unusual obstacles**.  
-  - The **high-quality annotations** support evaluation for **safety-critical applications**.
-
-- **RoadAnomaly21 Dataset** is used to evaluate the **performance of the proposed method in identifying true open-world anomalies**. It supports evaluation in terms of:
-  - Unknown object classes  
-  - Rare and unusual obstacles  
-  - Open-set generalization related to segmentation
-
-Together, all three datasets enable evaluation of the effectiveness of the proposed method across:
-- Synthetic vs. real-world environments
-- Known vs. unknown object categories
-- Large vs. small obstacles
-- Standard segmentation vs. anomaly-based open-world perception
-
-
-# 6. Design Details
-This section mainly introduces the algorithm model used in the system, the small obstacle detection dataset for automatic driving, and the principle of algorithm-assisted labeling.
-## 6.1 Segment Model
-### 6.1.1 Segment Anything Model（SAM）
-
-The paper presents the [Segment Anything](https://arxiv.org/abs/2304.02643) (SA) project: a new task, a new model and a new dataset for image segmentation. Its use of the proposed SAM model in a data collection loop builds the largest segmentation dataset to date **SA-1B**, generating more than 1 billion masks on top of 11 million image data.Since the model is designed and trained to be promptable, it can be migrated to new image tasks in a ZERO-shot fashion.
-
-The authors, influenced by pre-trained large language models in NLP, used the prompt engineering mechanism to create a similar large-scale vision base model with strong zero-shot (zero samples), few-shot (fewer samples) generalization capabilities to flexibly solve a variety of downstream tasks.The SAM has three main modules: the image encoder, Flexible Cue Encoder and Fast Mask Decoder.
-
-![sam_model](images/sam_model.png)
-
-### 6.1.2  Semantic Segment Anything Model
-![ssa_model](images/ssa_model.png)
- While SAM is a powerful model capable of segmenting anything in images, it lacks the ability to predict the semantic categories of each mask. To address this limitation, [Semantic Segment Anything (SSA)](https://github.com/fudan-zvg/Semantic-Segment-Anything) was introduced. 
- Prior to the introduction of SAM, most semantic segmentation applications already had their own models. These models could provide rough category classifications for regions but with fuzzy and imprecise edges, lacking accurate masks. To overcome this issue, we proposed an open framework called SSA, which leverages SAM to enhance the performance of existing models. Specifically, the original semantic segmentation model provides category predictions, while the powerful SAM provides masks. 
- Additionally, the authors introduced an SSA engine, an open-vocabulary automatic annotation engine that benefits from the combined architecture of dense segmentation and open-vocabulary segmentation. This provides satisfactory annotations for most samples and can offer more detailed annotations using image captioning techniques.
-
-## 6.2 Ancillary labeling
+## 4.3 Ancillary labeling
 
 The principle of assisted annotation is to use the existing model for reasoning, and save the reasoning information into the label file format of the annotation software. Then the labeling software is manually operated to load the generated label file, and it only needs to check whether the target of each picture is standardized, and whether there are missed or wrongly labeled targets. This project plans to build a visualized auxiliary annotation tool through **SAM and its related models** to realize semi-automatic annotation or automatic annotation of image data, and try to realize manual adjustment of the annotation results.
 
@@ -130,51 +101,7 @@ The principle of assisted annotation is to use the existing model for reasoning,
 
 Since the segmentation result of SAM does not include semantic labels, it hinders the achievement of fully automated labeling. Semantic segmentation is an image segmentation algorithm whose goal is to assign a semantic category label to each pixel in the input image, thereby segmenting the image into regions with semantic information. This segmentation provides an automated method for data annotation, making the process more efficient and accurate. The project plans to integrate an automatic annotation module through SAM-related semantic segmentation algorithms (such as SSA).
 
-
-## 7. Outcomes
-
-To evaluate how well the open-world segmentation framework performs and functions overall, we will apply the quantitative and qualitative metrics that come next.
-
-
-### 7.1 Segmentation Quality
-
-| Metric | Target | Description |
-|--------|--------|-------------|
-| **mIoU (Mean Intersection over Union)** | ≥ **0.45** | It looks at how much the predicted masks match up with the actual ground-truth ones for every class involved. |
-| **AP (Average Precision)** | ≥ **0.45** | This setup checks precision and recall in object segmentation tasks. That matters a lot for spotting small obstacles. |
-| **Boundary Accuracy** | Qualitative tracking | It also verifies the smoothness along with the accuracy of those segmentation edges. |
-
-
-### 7.2 Annotation Efficiency
-
-| Metric | Expected Effect | Description |
-|--------|----------------|-------------|
-| **Reduction in Manual Annotation Workload** | Significant improvement | SAM and SSA help out with annotations. They cut down human effort by quite a bit. |
-| **Practical Annotation Usability** | ≥ **70% usable output** | The approach gauges how usable the annotations from SAM really are in practice. |
-| **Correction Requirement** | Only needed for difficult cases | Just the tricky corner cases or mistakes need hands-on fixes — no need to redo everything from scratch. |
-
-These metrics ensure objective tracking of segmentation progress and annotation efficiency throughout model development.
-
-### 7.3 System Performance
-
-| Metric | Expected Result |
-|--------|-----------------|
-| Stable long-batch annotation support | ✔ |
-| Edge + Cloud inference compatibility | ✔ |
-| Scalable integration with Ianvs Lifelong Learning | ✔ |
-
-# 8. Future Work & Extension Possibilities
-
-- **Fully Automatic Annotation:**  
-  Our Future work will focus on reducing or completely removing human intervention by improving semantic accuracy and confidence-based filtering, enabling fully automatic large-scale dataset annotation.
-
-- **Real-Time Edge Deployment Optimization:**  
-  Model compression, quantization, and hardware-aware optimization can be explored to enable real-time SAM/SSA inference on resource-constrained edge devices.
-
-These future extensions aim to make the proposed system more autonomous, efficient, and capable of handling true open-world perception challenges.
-
-
-# 9. Road Map
+# 5. Road Map
 
 The route map is as follows:
 
