@@ -18,6 +18,7 @@ import abc
 import torch
 import random
 from transformers import pipeline
+import psutil
 from sedna.common.class_factory import ClassFactory, ClassType
 from core.common.log import LOGGER
 
@@ -281,7 +282,7 @@ class ResourceSensitiveRouterFilter(BaseFilter, abc.ABC):
         self.memory_threshold = kwargs.get("memory_threshold", 85)            # in %
 
         # These can be real checks in production; here we simulate/mock for demonstration
-        self.resource_monitor = kwargs.get("resource_monitor", self.mock_resource_monitor)
+        self.resource_monitor = kwargs.get("resource_monitor", self.real_resource_monitor)
 
     def __call__(self, data=None) -> bool:
         """
@@ -304,11 +305,17 @@ class ResourceSensitiveRouterFilter(BaseFilter, abc.ABC):
 
         return is_overloaded  # True means cloud (hard), False means edge (easy)
 
-    def mock_resource_monitor(self):
-        """Mock resource monitor that simulates device conditions."""
+    def real_resource_monitor(self):
+        """Real resource monitor that fetches device conditions."""
+        try:
+            battery_info = psutil.sensors_battery()
+            battery = battery_info.percent if battery_info else 100
+        except Exception:
+            battery = 100 # Assume full battery if not available
+
         return {
-            "temperature": random.uniform(40, 140),
-            "battery": random.uniform(5, 100),
-            "cpu": random.uniform(10, 100),
-            "memory": random.uniform(10, 100)
+            "temperature": 0, # psutil often cannot read temperature on all OSes without root or specific drivers
+            "battery": battery,
+            "cpu": psutil.cpu_percent(interval=None),
+            "memory": psutil.virtual_memory().percent
         }

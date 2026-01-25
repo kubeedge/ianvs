@@ -5,3 +5,4 @@ accelerate
 datamodel_code_generator
 kaggle
 groq
+psutil
