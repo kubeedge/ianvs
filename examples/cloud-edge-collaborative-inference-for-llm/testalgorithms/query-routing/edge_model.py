@@ -44,9 +44,10 @@ class EdgeModel:
         self.kwargs = kwargs
         self.model_name = kwargs.get("model", None)
         self.backend = kwargs.get("backend", "huggingface")
-        if self.backend not in ["huggingface", "vllm", "api", "EagleSpecDec"]:
+        supported_backends = ["huggingface", "vllm", "api", "EagleSpecDec"]
+        if self.backend not in supported_backends:
             raise ValueError(
-                f"Unsupported backend: {self.backend}. Supported options are: 'huggingface', 'vllm', 'api', 'EagleSpecDec'."
+                f"Unsupported backend: {self.backend}. Supported options are: {', '.join(map(repr, supported_backends))}."
             )
         self._set_config()
 

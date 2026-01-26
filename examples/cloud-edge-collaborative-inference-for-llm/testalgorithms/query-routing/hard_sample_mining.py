@@ -310,12 +310,12 @@ class ResourceSensitiveRouterFilter(BaseFilter, abc.ABC):
         try:
             battery_info = psutil.sensors_battery()
             battery = battery_info.percent if battery_info else 100
-        except Exception:
-            battery = 100 # Assume full battery if not available
+        except (AttributeError, NotImplementedError):
+            battery = 100 #Assume full battery if not available
 
         return {
-            "temperature": 0, # psutil often cannot read temperature on all OSes without root or specific drivers
+            "temperature": 0, #psutil often cannot read temperature on all OSes without root or specific drivers
             "battery": battery,
-            "cpu": psutil.cpu_percent(interval=None),
+            "cpu": psutil.cpu_percent(interval=0.1),
             "memory": psutil.virtual_memory().percent
         }
