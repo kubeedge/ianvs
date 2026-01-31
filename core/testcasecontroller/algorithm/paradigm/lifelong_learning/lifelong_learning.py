@@ -137,7 +137,7 @@ class LifelongLearning(ParadigmBase):
                     my_dict[key] = scores_list
                     LOGGER.info(f"{key} scores: {scores_list}")
 
-            self.edge_task_index, tasks_detail, res = self.my_eval(self.cloud_task_index,
+            self.edge_task_index, tasks_detail, test_res = self.my_eval(self.cloud_task_index,
                                                       self.dataset.test_url,
                                                       r)
             task_avg_score = {'accuracy':0.0}
@@ -151,12 +151,12 @@ class LifelongLearning(ParadigmBase):
             task_avg_score['accuracy'] = task_avg_score['accuracy']/i
             self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value] = task_avg_score
             LOGGER.info(task_avg_score)
-            job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
-            inference_dataset = self.dataset.load_data(self.dataset.test_url, "eval",
-                                                   feature_process=_data_feature_process)
-            kwargs = {}
-            test_res = job.my_inference(inference_dataset, **kwargs)
-            del job
+            # job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
+            # inference_dataset = self.dataset.load_data(self.dataset.test_url, "eval",
+            #                                        feature_process=_data_feature_process)
+            # kwargs = {}
+            # test_res = job.my_inference(inference_dataset, **kwargs)
+            #del job
             for key in my_dict.keys():
                 LOGGER.info(f"{key} scores: {my_dict[key]}")
             for key in my_dict.keys():
@@ -296,7 +296,7 @@ class LifelongLearning(ParadigmBase):
                                                               self.dataset.test_url,
                                                               "test")
 
-        return test_res, self.system_metric_info
+        return None, self.system_metric_info
 
     def _inference(self, edge_task_index, data_index_file, rounds):
         # pylint:disable=duplicate-code
@@ -353,9 +353,9 @@ class LifelongLearning(ParadigmBase):
         train_output_dir = os.path.join(self.workspace, f"output/train/{rounds}")
         if not is_local_dir(train_output_dir):
             os.makedirs(train_output_dir)
-
-        os.environ["CLOUD_KB_INDEX"] = cloud_task_index
-        os.environ["OUTPUT_URL"] = train_output_dir
+        if rounds < 1:
+            os.environ["CLOUD_KB_INDEX"] = cloud_task_index
+            os.environ["OUTPUT_URL"] = train_output_dir
         if rounds < 1:
             os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'False'
         else:
