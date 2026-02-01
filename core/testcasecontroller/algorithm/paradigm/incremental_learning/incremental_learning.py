@@ -167,7 +167,7 @@ class IncrementalLearning(ParadigmBase):
             os.makedirs(train_output_dir)
 
         os.environ["MODEL_URL"] = train_output_dir
-        os.environ["BASE_MODEL_URL"] = model
+        os.environ["INITIAL_MODEL_URL"] = model
 
         job = self.build_paradigm_job(ParadigmType.INCREMENTAL_LEARNING.value)
         train_dataset = self.dataset.load_data(data_index_file, "train")

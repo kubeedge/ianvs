@@ -72,9 +72,9 @@ class BaseModel:
         self.model = YOLO(model_name)
         
         # Load pretrained model if specified
-        base_model_url = Context.get_parameters("base_model_url")
-        if base_model_url:
-            self.load(base_model_url)
+        initial_model_url = Context.get_parameters("initial_model_url")
+        if initial_model_url:
+            self.load(initial_model_url)
         
         logging.info(f"YOLOv8n initialized with {self.num_classes} classes")
     
