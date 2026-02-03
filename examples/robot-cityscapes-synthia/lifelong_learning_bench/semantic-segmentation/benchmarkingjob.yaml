@@ -1,5 +1,5 @@
 benchmarkingjob:
-  # job name of bechmarking; string type;
+  # job name of benchmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
   workspace: "./ianvs-workspace/mdil-ss/lifelong_learning_bench"
