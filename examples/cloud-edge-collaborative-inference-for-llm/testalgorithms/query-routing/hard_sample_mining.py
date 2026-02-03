@@ -199,7 +199,7 @@ class RandomRouterFilter(BaseFilter, abc.ABC):
 
 @ClassFactory.register(ClassType.HEM, alias="OracleRouter")
 class OracleRouterFilter(BaseFilter, abc.ABC):
-    """The Opitmal Router, which routes the queries to edge or cloud based on the models' prediction.
+    """The Optimal Router, which routes the queries to edge or cloud based on the models' prediction.
     """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

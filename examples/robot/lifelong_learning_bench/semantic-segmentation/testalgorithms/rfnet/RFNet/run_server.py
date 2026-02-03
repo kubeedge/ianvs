@@ -161,7 +161,7 @@ class InferenceServer(BaseServer):  # pylint: disable=too-many-arguments
     async def predict(self, image: UploadFile = File(...), depth: Optional[UploadFile] = None) -> ResultResponse:
         contents = await image.read()
         recieve_img_time = time.time()
-        print("Recieve image from the robo:", recieve_img_time)
+        print("Receive image from the robo:", recieve_img_time)
 
         image = Image.open(BytesIO(contents)).convert('RGB')
 

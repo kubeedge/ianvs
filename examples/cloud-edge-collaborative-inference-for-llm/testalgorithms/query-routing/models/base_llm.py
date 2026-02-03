@@ -228,13 +228,13 @@ class BaseLLM:
             "throughput": throughput
         }
 
-        resposne = {
+        response = {
             "completion": text,
             "usage":usage,
             "perf":perf
         }
 
-        return resposne
+        return response
 
     def _load_cache(self):
         """Load cached Responses from `$RESULT_SAVED_URL/cache.json`.
