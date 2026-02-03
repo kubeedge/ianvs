@@ -12,11 +12,11 @@ The models in `simulation controller` are as follows:
 
 - The `Simulation System Administrator` is used to
   1. parse the system config(simulation)
-  2. check the host enviroment, e.g. check if the host has installed docker, kind, and whether memory > 4GB
-  3. build the simulation enviroment
-  4. create and deploy the moudles needed in simulation enviroment
-  5. close and delete the simulation enviroment
-- The `Simulation Job Administrator` is the core module for manage the simulation job, and provides the following funcitons:
+  2. check the host environment, e.g. check if the host has installed docker, kind, and whether memory > 4GB
+  3. build the simulation environment
+  4. create and deploy the modules needed in simulation environment
+  5. close and delete the simulation environment
+- The `Simulation Job Administrator` is the core module for manage the simulation job, and provides the following functions:
   1. build the docker images of algorithms to be tested
   2. generate the YAML file of `simulation job`
   3. deploy and delete the `simulation job` in K8s
@@ -113,7 +113,7 @@ See GM status: kubectl -n sedna get deploy
 See LC status: kubectl -n sedna get ds lc
 See Pod status: kubectl -n sedna get pod
 [I1029 01:16:56.974] Mini Sedna is created successfully
-[2022-10-29 01:17:12,880] simulation_system_admin.py(170) [INFO] - Congratulation! The simulation enviroment build successful!
+[2022-10-29 01:17:12,880] simulation_system_admin.py(170) [INFO] - Congratulation! The simulation environment build successful!
 ```
 
 In the end. You get an all-in-one environment of sedna.
