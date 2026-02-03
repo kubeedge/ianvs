@@ -143,3 +143,8 @@ dmypy.json
 .idea/misc.xml
 .idea/workspace.xml
 .idea/vcs.xml
+# Virtual environment
+ianvs-env/
+
+# Local verification script
+test_vllm_import.py
