@@ -43,7 +43,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
           e.g., basemodel.py, hard_example_mining.py.
 
     Parameters
-    ---------
+    ----------
     workspace: string
         the output required for Federated Class-Incremental Learning paradigm.
     kwargs: dict
@@ -93,7 +93,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         return train_datasets, task_size
 
     def get_task_size(self, train_datasets):
-        """get the task size for each task
+        """Get the task size for each task
 
         Args:
             train_datasets (list): train dataset for each client
@@ -105,7 +105,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         return np.unique(train_datasets[0][1]).shape[0]
 
     def split_label_unlabel_data(self, train_datasets):
-        """split train dataset into label and unlabel data for semi-supervised learning
+        """Split train dataset into label and unlabel data for semi-supervised learning
 
         Args:
             train_datasets (list): train dataset for each client
@@ -137,7 +137,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         ]
 
     def run(self):
-        """run the Federated Class-Incremental Learning paradigm
+        """Run the Federated Class-Incremental Learning paradigm
             This function will run the Federated Class-Incremental Learning paradigm.
             1. initialize the clients
             2. split the dataset into several tasks
@@ -177,7 +177,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         return test_res, self.system_metric_info
 
     def _split_test_dataset(self, split_time):
-        """split test dataset
+        """Split test dataset
             This function will split a test dataset from test_url into several parts.
             Each part will be used for the evaluation of the model after each round.
         Args:
@@ -204,7 +204,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         return test_datasets_files
 
     def client_train(self, client_idx, train_datasets, validation_datasets, **kwargs):
-        """client train function that will be called by the thread
+        """Client train function that will be called by the thread
 
         Args:
             client_idx (int): client index
@@ -218,7 +218,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             self.train_infos.append(train_info)
 
     def helper_function(self, train_infos):
-        """helper function for FCI Method
+        """Helper function for FCI Method
            Many of the FCI algorithms need server to perform some operations
            after the training of each round e.g data generation, model update etc.
         Args:
@@ -233,7 +233,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
     # pylint: disable=too-many-locals
     # pylint: disable=C0200
     def evaluation(self, testdataset_files, incremental_round):
-        """evaluate the model performance on old classes
+        """Evaluate the model performance on old classes
 
         Args:
             testdataset_files (list): the test dataset for each round
@@ -249,10 +249,8 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         if isinstance(testdataset_files, str):
             testdataset_files = [testdataset_files]
         job = self.get_global_model()
-        # caculate the seen class accuracy
-        old_class_acc_list = (
-            []
-        )  # for current round [class_0: acc_0, class_1: acc1, ....]
+        # calculate the seen class accuracy
+        old_class_acc_list = []  # for current round [class_0: acc_0, class_1: acc1, ....]
         for index in range(len(testdataset_files)):
             acc_list = []
             for data_index in range(len(testdataset_files[index]["x"])):
@@ -272,7 +270,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value]["accuracy"] = (
             np.mean(old_class_acc_list)
         )
-        # caculate the forget rate
+        # calculate the forget rate
         for i in range(len(old_class_acc_list)):
             max_acc_diff = 0
             for j in range(incremental_round):

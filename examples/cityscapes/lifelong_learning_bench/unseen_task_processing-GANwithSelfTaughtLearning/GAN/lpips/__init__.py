@@ -77,7 +77,7 @@ def tensor2np(tensor_obj):
 
 
 def np2tensor(np_obj):
-    # change dimenion of np array into tensor array
+    # change dimension of np array into tensor array
     return torch.Tensor(np_obj[:, :, :, np.newaxis].transpose((3, 2, 0, 1)))
 
 

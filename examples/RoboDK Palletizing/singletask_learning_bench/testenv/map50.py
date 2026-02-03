@@ -121,7 +121,7 @@ def map50(y_true_paths, y_pred, **kwargs):
                     correct[j] = True
                     ious[:, i] = 0
 
-        # convert correct to array of 2 dimentions, make sure ap_per_class not crossing boundaries
+        # convert correct to array of 2 dimensions, make sure ap_per_class not crossing boundaries
         stats.append((correct[:, None], pconf, pcls, tcls))
 
     # merge stats and compute AP

@@ -82,7 +82,7 @@ class BaseLLM:
             - `top_p`: float, default 0.8. Top p for sampling
             - `repetition_penalty`: float, default 1.05. Repetition penalty
             - `max_tokens`: int, default 512. Maximum tokens to generate
-            - `use_cache`: bool, default True. Whether to use reponse cache
+            - `use_cache`: bool, default True. Whether to use response cache
         """
 
         self.model_name = kwargs.get("model", None)

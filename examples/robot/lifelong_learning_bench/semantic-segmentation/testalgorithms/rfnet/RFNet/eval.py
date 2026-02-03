@@ -55,7 +55,7 @@ class Validator(object):
         if args.cuda:
             #self.model = torch.nn.DataParallel(self.model, device_ids=self.args.gpu_ids)
             self.model = self.model.cuda(args.gpu_ids)
-            cudnn.benchmark = True  # accelarate speed
+            cudnn.benchmark = True  # accelerate speed
         print('Model loaded successfully!')
 
         # # Load weights

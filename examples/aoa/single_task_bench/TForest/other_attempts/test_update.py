@@ -107,7 +107,7 @@ def TForest_tree_initial():
 
 
 def tforest_main():
-    logging.info("Tree Initializating")
+    logging.info("Tree Initializing")
     tree_list = TForest_tree_initial()
     joblib.dump(tree_list, 'initial_tree.joblib')
 

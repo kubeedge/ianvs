@@ -165,25 +165,25 @@ def tree_update(tree_list):
 
 
 def tforest_main():
-    logging.info("Tree Initializating")
+    logging.info("Tree Initializing")
     tree_list = TForest_tree_initial()
     joblib.dump(tree_list, '1_tree.joblib')
     tree_list = joblib.load('1_tree.joblib')
     # tree_final_list = tree_update(tree_list)
     # joblib.dump(tree_final_list, 'final_tree.joblib')
     #
-    # logging.info("STP Tree Initializating")
+    # logging.info("STP Tree Initializing")
     # stp_list = stp_tree()
     # joblib.dump(stp_list, 'stp_tree.joblib')
     #
-    # logging.info("MTP Tree Initializating")
+    # logging.info("MTP Tree Initializing")
     # mtp_list = mtp_tree()
     # joblib.dump(mtp_list, 'mtp_tree.joblib')
     #
-    # logging.info('Fcp Tree Initializating')
+    # logging.info('Fcp Tree Initializing')
     # fcp_list = fcp_tree()
     # joblib.dump(fcp_list, 'fcp_tree.joblib')
-    # logging.info('Fcp Tree Initializating')
+    # logging.info('Fcp Tree Initializing')
     # fcp_list = fcp_tree()
     # joblib.dump(fcp_list,'fcp_tree.joblib')
 
