@@ -68,9 +68,36 @@ class Dataset:
             self._check_dataset_url(self.test_data_info)
 
     def _parse_config(self, config):
+        if not isinstance(config, dict):
+            raise ValueError(f"dataset config expected dict, got {type(config).__name__}.")
+
+        # Mapping of config keys to instance attributes
+        fields_mapping = {
+            "train_url": str,
+            "test_url": str,
+            "train_index": str,
+            "test_index": str,
+            "train_data": str,
+            "test_data": str,
+            "train_data_info": str,
+            "test_data_info": str,
+            "label": str,
+        }
+
         for attr, value in config.items():
-            if attr in self.__dict__:
-                self.__dict__[attr] = value
+            if attr in fields_mapping:
+                expected_type = fields_mapping[attr]
+                if not isinstance(value, expected_type):
+                    try:
+                        casted_v = expected_type(value)
+                        setattr(self, attr, casted_v)
+                    except (ValueError, TypeError) as err:
+                        raise ValueError(
+                            f"dataset field '{attr}' expected {expected_type.__name__}, "
+                            f"got {type(value).__name__} (value={value}). Error: {err}"
+                        ) from err
+                else:
+                    setattr(self, attr, value)
 
         self._check_fields()
 
