@@ -59,12 +59,13 @@ class TestEnv:
                 f" must be int type and not less than 2."
             )
 
-        if not isinstance(self.round, int) or self.round < 1:
-            raise ValueError(f"testenv round(value={self.round}) must be int type and not less than 1.")
-
-        if not isinstance(self.client_number, int) or self.client_number < 1:
+        round_val = getattr(self, "round", None)
+        if not isinstance(round_val, int) or round_val < 1:
+            raise ValueError(f"testenv round(value={round_val}) must be int type and not less than 1.")
+        client_number_val = getattr(self, "client_number", None)
+        if not isinstance(client_number_val, int) or client_number_val < 1:
             raise ValueError(
-                f"testenv client_number(value={self.client_number}) must be int type and not less than 1."
+                f"testenv client_number(value={client_number_val}) must be int type and not less than 1."
             )
 
     def _parse_config(self, config):
@@ -85,20 +86,17 @@ class TestEnv:
                 self.dataset = Dataset(v)
             elif k in fields_mapping:
                 expected_type = fields_mapping[k]
-                if not isinstance(v, expected_type):
-                    try:
-                        if expected_type == bool:
-                            casted_v = str(v).lower() in ("true", "1", "yes")
-                        else:
-                            casted_v = expected_type(v)
-                        setattr(self, k, casted_v)
-                    except (ValueError, TypeError) as err:
-                        raise ValueError(
-                            f"testenv field '{k}' expected {expected_type.__name__}, "
-                            f"got {type(v).__name__} (value={v}). Error: {err}"
-                        ) from err
-                else:
-                    setattr(self, k, v)
+                try:
+                    if expected_type == bool:
+                        casted_v = str(v).lower() in ("true", "1", "yes")
+                    else:
+                        casted_v = expected_type(v)
+                    setattr(self, k, casted_v)
+                except (ValueError, TypeError) as err:
+                    raise ValueError(
+                        f"testenv field '{k}' expected {expected_type.__name__}, "
+                        f"got {type(v).__name__} (value={v}). Error: {err}"
+                    ) from err
 
         self._check_fields()
 

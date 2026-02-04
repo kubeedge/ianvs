@@ -87,17 +87,14 @@ class Dataset:
         for attr, value in config.items():
             if attr in fields_mapping:
                 expected_type = fields_mapping[attr]
-                if not isinstance(value, expected_type):
-                    try:
-                        casted_v = expected_type(value)
-                        setattr(self, attr, casted_v)
-                    except (ValueError, TypeError) as err:
-                        raise ValueError(
-                            f"dataset field '{attr}' expected {expected_type.__name__}, "
-                            f"got {type(value).__name__} (value={value}). Error: {err}"
-                        ) from err
-                else:
-                    setattr(self, attr, value)
+                try:
+                    casted_v = expected_type(value)
+                    setattr(self, attr, casted_v)
+                except (ValueError, TypeError) as err:
+                    raise ValueError(
+                        f"dataset field '{attr}' expected {expected_type.__name__}, "
+                        f"got {type(value).__name__} (value={value}). Error: {err}"
+                    ) from err
 
         self._check_fields()
 
