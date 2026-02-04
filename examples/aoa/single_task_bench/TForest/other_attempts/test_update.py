@@ -107,7 +107,7 @@ def TForest_tree_initial():
 
 
 def tforest_main():
-    logging.info("Tree Initializating")
+    logging.info("Tree Initializing")
     tree_list = TForest_tree_initial()
     joblib.dump(tree_list, 'initial_tree.joblib')
 
@@ -129,11 +129,11 @@ def check_fusion_type(score1, score2, tree1, tree2):
     # score2 = tree2.predict_score(tree_fused.model)
 
     if (score1 > tree1.r2) and (score2 > tree2.r2):
-        return 0  # entire benefical
+        return 0  # entire beneficial
     elif score1 > tree1.r2:
-        return 1  # self benefical on tree1
+        return 1  # self beneficial on tree1
     elif score2 > tree2.r2:
-        return 2  # self benefical on tree2
+        return 2  # self beneficial on tree2
     else:
         return 3
 

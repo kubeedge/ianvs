@@ -1478,7 +1478,7 @@ class DFS_Solver_Floor:
                     len(constraints[object_name]),
                 ]
 
-            # remove all elemnts in objects_list from all_objects_list
+            # remove all elements in objects_list from all_objects_list
             self.milp_dfs(
                 room_poly,
                 [x for x in all_objects_list if x not in objects_list],

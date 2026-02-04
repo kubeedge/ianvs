@@ -42,7 +42,7 @@ algorithm:
 
         - temperature:
             # What sampling temperature to use, between 0 and 2; float type;
-            # For reproducable results, the temperature should be set to 0;
+            # For reproducible results, the temperature should be set to 0;
             values:
               - 0.0000001
         - top_p:
@@ -58,7 +58,7 @@ algorithm:
             values:
               - 1
         -  use_cache:
-            # Whether to use reponse cache; boolean type;
+            # Whether to use response cache; boolean type;
             values:
               - true
               

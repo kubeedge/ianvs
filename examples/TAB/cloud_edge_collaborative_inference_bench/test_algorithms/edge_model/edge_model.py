@@ -62,7 +62,7 @@ class EdgeModel:
         if self.backend == "huggingface":
             self.model = HuggingfaceLLM(**self.kwargs)
         else:
-            raise ValueError(f"unsupport: {self.backend}")
+            raise ValueError(f"Unsupported: {self.backend}")
     
     def _load_cache(self):
 
