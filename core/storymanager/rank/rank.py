@@ -51,9 +51,24 @@ class Rank:
         self._parse_config(config)
 
     def _parse_config(self, config):
+        fields_mapping = {
+            "sort_by": list,
+            "visualization": dict,
+            "selected_dataitem": dict,
+            "save_mode": str,
+        }
+
         for attribute, value in config.items():
-            if attribute in self.__dict__:
-                self.__dict__[attribute] = value
+            if attribute in fields_mapping:
+                expected_type = fields_mapping[attribute]
+                try:
+                    casted_v = expected_type(value)
+                    setattr(self, attribute, casted_v)
+                except (ValueError, TypeError) as err:
+                    raise ValueError(
+                        f"rank field '{attribute}' expected {expected_type.__name__}, "
+                        f"got {type(value).__name__} (value={value}). Error: {err}"
+                    ) from err
 
         self._check_fields()
 
