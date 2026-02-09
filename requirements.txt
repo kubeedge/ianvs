@@ -5,3 +5,5 @@ pandas
 tqdm
 matplotlib
 onnx
+colorlog>=6.10.0  
+./examples/resources/third_party/sedna-0.6.0.1-py3-none-any.whl
