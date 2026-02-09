@@ -18,7 +18,7 @@ import os
 
 from core.common.log import LOGGER
 from sedna.common.class_factory import ClassType, ClassFactory
-from models import HuggingfaceLLM, APIBasedLLM, VllmLLM, EagleSpecDecModel, LadeSpecDecLLM
+from models import HuggingfaceLLM, APIBasedLLM, VllmLLM, EagleSpecDecModel
 
 os.environ['BACKEND_TYPE'] = 'TORCH'
 
