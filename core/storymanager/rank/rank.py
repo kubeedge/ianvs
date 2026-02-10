@@ -58,18 +58,18 @@ class Rank:
         self._check_fields()
 
     def _check_fields(self):
-        if not self.sort_by and not isinstance(self.sort_by, list):
+        if not self.sort_by or not isinstance(self.sort_by, list):
             raise ValueError(
                 f"rank's sort_by({self.sort_by}) must be provided and be list type."
             )
 
-        if not self.visualization and not isinstance(self.visualization, dict):
+        if not self.visualization or not isinstance(self.visualization, dict):
             raise ValueError(
                 f"rank's visualization({self.visualization}) "
                 f"must be provided and be dict type."
             )
 
-        if not self.selected_dataitem and not isinstance(self.selected_dataitem, dict):
+        if not self.selected_dataitem or not isinstance(self.selected_dataitem, dict):
             raise ValueError(
                 f"rank's selected_dataitem({self.selected_dataitem}) "
                 f"must be provided and be dict type."
@@ -84,7 +84,7 @@ class Rank:
         if not self.selected_dataitem.get("metrics"):
             raise ValueError("not found metrics of selected_dataitem in rank.")
 
-        if not self.save_mode and not isinstance(self.save_mode, list):
+        if not self.save_mode or not isinstance(self.save_mode, list):
             raise ValueError(
                 f"rank's save_mode({self.save_mode}) "
                 f"must be provided and be list type."

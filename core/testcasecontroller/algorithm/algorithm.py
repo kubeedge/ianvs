@@ -130,10 +130,10 @@ class Algorithm:
         return None
 
     def _check_fields(self):
-        if not self.name and not isinstance(self.name, str):
+        if not self.name or not isinstance(self.name, str):
             raise ValueError(f"algorithm name({self.name}) must be provided and be string type.")
 
-        if not self.paradigm_type and not isinstance(self.paradigm_type, str):
+        if not self.paradigm_type or not isinstance(self.paradigm_type, str):
             raise ValueError(
                 f"algorithm paradigm({self.paradigm_type}) must be provided and be string type.")
 
