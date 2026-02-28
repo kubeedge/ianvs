@@ -162,14 +162,14 @@ class Validator(object):
         return sum_3
     
     def sam_predict_ssa(self, image_name, pred):
-        with open('/home/hsj/ianvs/project/cache.pickle', 'rb') as file:
+        with open('/ianvs/project/cache.pickle', 'rb') as file:
             cache = pickle.load(file)
         img = mmcv.imread(image_name)
         if image_name in cache.keys():
             mask = cache[image_name]
             print("load cache")
         else:
-            sam = sam_model_registry["vit_h"](checkpoint="/home/hsj/ianvs/project/segment-anything/sam_vit_h_4b8939.pth").to('cuda:1')
+            sam = sam_model_registry["vit_h"](checkpoint="/ianvs/project/segment-anything/sam_vit_h_4b8939.pth").to('cuda:1')
             mask_branch_model = SamAutomaticMaskGenerator(
                 model=sam,
                 #points_per_side=64,
@@ -184,7 +184,7 @@ class Validator(object):
             print('[Model loaded] Mask branch (SAM) is loaded.')
             mask = mask_branch_model.generate(img)
             cache[image_name] = mask
-            with open('/home/hsj/ianvs/project/cache.pickle', 'wb') as file:
+            with open('/ianvs/project/cache.pickle', 'wb') as file:
                 pickle.dump(cache, file)
                 print("save cache")
 
@@ -234,14 +234,14 @@ class Validator(object):
         return semantc_mask, mask
 
     def sam_predict(self, image_name, pred):
-        with open('/home/hsj/ianvs/project/cache.pickle', 'rb') as file:
+        with open('/ianvs/project/cache.pickle', 'rb') as file:
             cache = pickle.load(file)
         img = mmcv.imread(image_name)
         if image_name in cache.keys():
             mask = cache[image_name]
             print("load cache")
         else:
-            sam = sam_model_registry["vit_h"](checkpoint="/home/hsj/ianvs/project/segment-anything/sam_vit_h_4b8939.pth").to('cuda:1')
+            sam = sam_model_registry["vit_h"](checkpoint="/ianvs/project/segment-anything/sam_vit_h_4b8939.pth").to('cuda:1')
             mask_branch_model = SamAutomaticMaskGenerator(
                 model=sam,
                 #points_per_side=64,
@@ -256,7 +256,7 @@ class Validator(object):
             print('[Model loaded] Mask branch (SAM) is loaded.')
             mask = mask_branch_model.generate(img)
             cache[image_name] = mask
-            with open('/home/hsj/ianvs/project/cache.pickle', 'wb') as file:
+            with open('/ianvs/project/cache.pickle', 'wb') as file:
                 pickle.dump(cache, file)
                 print("save cache")
 
