@@ -46,7 +46,7 @@ class BaseModel:
             train_loss = self.trainer.my_training(epoch)
             #train_loss = self.trainer.training(epoch)
             loss_all.append(train_loss)
-        with open('/home/shijing.hu/ianvs/project/ianvs/train_loss_2.txt', 'a+') as file:
+        with open('/ianvs/project/ianvs/train_loss_2.txt', 'a+') as file:
             np.savetxt(file, loss_all)
         file.close
 
@@ -83,7 +83,7 @@ class BaseModel:
                 }, is_best)
 
         self.trainer.writer.close()
-        with open('/home/shijing.hu/ianvs/project/ianvs/train_loss.txt', 'a+') as file:
+        with open('/ianvs/project/ianvs/train_loss.txt', 'a+') as file:
             np.savetxt(file, loss_all)
         file.close
         return self.train_model_url

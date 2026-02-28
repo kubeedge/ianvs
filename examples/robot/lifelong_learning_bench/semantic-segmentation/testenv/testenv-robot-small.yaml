@@ -13,8 +13,7 @@ testenv:
       # metric name; string type;
       name: "accuracy"
       # the url address of python file
-      url: "./examples/robot/lifelong_learning_bench/testenv/accuracy.py"
-      #mode: "no-inference"
+      url: "./examples/robot/lifelong_learning_bench/semantic-segmentation/testenv/accuracy.py"
       mode: "hard-example-mining"
 
     # condition of triggering inference model to update
@@ -29,7 +28,7 @@ testenv:
       # metric name; string type;
     - name: "accuracy"
       # the url address of python file
-      url: "./examples/robot/lifelong_learning_bench/testenv/accuracy.py"
+      url: "./examples/robot/lifelong_learning_bench/semantic-segmentation/testenv/accuracy.py"
     - name: "samples_transfer_ratio"
     - name: "task_avg_acc"
     - name: "BWT"

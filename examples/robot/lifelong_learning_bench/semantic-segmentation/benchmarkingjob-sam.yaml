@@ -3,13 +3,9 @@ benchmarkingjob:
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
   workspace: "/ianvs/sam_bench/robot-workspace"
-  #workspace: "/home/hsj/ianvs/sam_bench/cloud-robot-workspace"
-
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/robot/lifelong_learning_bench/testenv/testenv-robot-small.yaml"
-  #testenv: "./examples/robot/lifelong_learning_bench/testenv/testenv-robot.yaml"
-
+  testenv: "./examples/robot/lifelong_learning_bench/semantic-segmentation/testenv/testenv-robot-small.yaml"
   # the configuration of test object
   test_object:
     # test type; string type;
@@ -18,19 +14,10 @@ benchmarkingjob:
     # test algorithm configuration files; list type;
     algorithms:
       # algorithm name; string type;
-      #- name: "rfnet_lifelong_learning"
       - name: "sam_rfnet_lifelong_learning"
-      #- name: "vit_lifelong_learning"
-      #- name: "sam_vit_lifelong_learning"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
-        #url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml"
-        url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/sam_algorithm.yaml"
-        #url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/vit_algorithm.yaml"
-        #url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/sam_vit_algorithm.yaml"
-        # the url address of test algorithm configuration file; string type;
-        # the file format supports yaml/yml
-
+        url: "./examples/robot/lifelong_learning_bench/semantic-segmentation/testalgorithms/rfnet/sam_algorithm.yaml"
   # the configuration of ranking leaderboard
   rank:
     # rank leaderboard with metric of test case's evaluation and order ; list type;
