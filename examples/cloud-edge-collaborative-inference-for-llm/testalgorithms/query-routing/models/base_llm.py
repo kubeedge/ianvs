@@ -83,6 +83,7 @@ class BaseLLM:
             - `repetition_penalty`: float, default 1.05. Repetition penalty
             - `max_tokens`: int, default 512. Maximum tokens to generate
             - `use_cache`: bool, default True. Whether to use reponse cache
+            - `quantization`: str, default None. Quantization method (e.g., 'bitsandbytes', 'awq', 'gptq')
         """
 
         self.model_name = kwargs.get("model", None)
@@ -91,7 +92,8 @@ class BaseLLM:
         self.repetition_penalty = kwargs.get("repetition_penalty", 1.05)
         self.max_tokens = kwargs.get("max_tokens", 512)
         self.use_cache = kwargs.get("use_cache", True)
-
+        self.quantization = kwargs.get("quantization", None)
+    
     def inference(self, data):
         """Inference the model
 

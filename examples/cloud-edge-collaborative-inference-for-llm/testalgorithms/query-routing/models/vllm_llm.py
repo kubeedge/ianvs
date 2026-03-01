@@ -53,16 +53,19 @@ class VllmLLM(BaseLLM):
         model : str
             Hugging Face style model name. Example: `Qwen/Qwen2.5-0.5B-Instruct`
         """
-        self.model = LLM(
-            model=model,
-            trust_remote_code=True,
-            dtype="float16",
-            tensor_parallel_size=self.tensor_parallel_size,
-            gpu_memory_utilization=self.gpu_memory_utilization,
-            max_model_len = 8192
-            #quantization=self.quantization # TODO need to align with vllm API
-        )
-
+        llm_kwargs = {
+            "model": model,
+            "trust_remote_code": True,
+            "dtype": "float16",
+            "tensor_parallel_size": self.tensor_parallel_size,
+            "gpu_memory_utilization": self.gpu_memory_utilization,
+            "max_model_len": 8192
+        }
+        
+        if self.quantization:
+            llm_kwargs["quantization"] = self.quantization
+        
+        self.model = LLM(**llm_kwargs)
         self.sampling_params = SamplingParams(
             temperature=self.temperature,
             top_p=self.top_p,
