@@ -29,14 +29,6 @@ user-reported issues from confused contributors, untested PRs breaking core
 functionality, and severely outdated documentation misaligning with actual
 capabilities.
 
-I have been actively working on restoring Ianvs examples since **December
-2025**, documenting all errors encountered and their resolutions in a
-[dedicated repository](https://github.com/NishantSinghhhhh/test). The
-repository contains `.md` files for multiple examples, each recording issues
-faced along with resolutions and execution videos demonstrating successful
-runs. Progress can also be verified through the commit history, with active
-contributions since December 24, 2025.
-
 This proposal focuses on the complete restoration of four examples that
 collectively expose bugs spanning the example layer, the Sedna core library,
 and the Ianvs paradigm core controller:
