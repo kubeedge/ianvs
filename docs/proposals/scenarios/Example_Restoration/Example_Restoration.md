@@ -91,28 +91,6 @@ and optimize the contributor experience.
   - Create separate algorithm YAML configurations for each model
   - Update the benchmarking job to register and compare multiple algorithms
   - Deliver updated documentation demonstrating multi-model benchmarking
-
-- **Establish CI/CD pipeline infrastructure for automated validation**
-  - GitHub Actions workflows for automated testing of all four restored
-    examples
-  - Multi-Python version compatibility testing (3.8, 3.9, 3.10) and
-    dependency validation
-  - Failure detection, reporting, and clear feedback mechanisms for
-    contributors
-  - Pipeline designed with extensibility to accommodate future examples
-
-### Optional Goals (Time Permitting - Maintenance Layer)
-
-- **Advanced maintenance automation tools** for contributors
-  - Automated dependency checking and conflict resolution tools
-  - Example health monitoring dashboard and alert systems
-  - Documentation synchronization and auto-generation capabilities
-
-- **Systematic maintenance framework** for maintainers
-  - Template framework for extending restoration to additional examples
-  - Automated maintenance task scheduling and execution tracking
-  - Community contribution guidelines and validation standards
-
 ---
 
 ## Proposal
@@ -154,26 +132,6 @@ and optimize the contributor experience.
   - Update `benchmarkingjob.yaml` to register multiple algorithms
   - Add guard against division by zero in metric logic
   - Update documentation to demonstrate multi-model comparison
-
-- **CI/CD pipeline development** to support ongoing example sustainability:
-  - Automated testing pipeline covering all four restored examples
-  - Integration with GitHub Actions for PR validation
-  - Framework extensible to other examples in the future
-
-### Optional Scope (Maintenance Layer - Time Permitting)
-
-- **Automated maintenance tools** in a separate maintenance directory:
-  - Advanced dependency management and health monitoring systems
-  - Automated documentation generation and synchronization tools
-  - Example health dashboards and alerting mechanisms
-
-**Target users:**
-- **Contributors**: Submit working examples and modifications with confidence
-  through CI/CD validation
-- **Maintainers**: Monitor example health efficiently through automated
-  pipeline reports
-- **Newcomers**: Use restored examples and comprehensive documentation as
-  reliable reference implementations
 
 **Out of scope:**
 - Complete restoration of all 25+ examples (additional examples are
@@ -260,16 +218,6 @@ All changes are configuration-driven with no core modifications:
 | `benchmarkingjob.yaml` | Register multiple algorithms for comparison | Example |
 | `testenv/acc.py` | Guard against division by zero | Example |
 | `README.md` | Updated to demonstrate multi-model benchmarking | Example |
-
-
-#### Optional Maintenance Layer (Time Permitting)
-
-- **Health Monitoring System**: Automated example health tracking and
-  alerting
-- **Dependency Management Tools**: Advanced conflict resolution and
-  compatibility checking
-- **Auto-Documentation Generator**: Synchronized documentation and tutorial
-  automation
 
 ---
 
@@ -392,31 +340,6 @@ ianvs/
 - **Week 7**: Validate end-to-end execution of both LLM examples.
   Finalize README updates and execution guides for both examples.
 
-#### Phase 4: CI/CD Pipeline Development (Weeks 8-9)
-
-- **Week 8**: Implement GitHub Actions workflows for automated testing of
-  all four restored examples. Create multi-Python version compatibility
-  testing framework covering Python 3.8, 3.9, and 3.10.
-- **Week 9**: Develop failure detection, reporting, and clear feedback
-  systems. Create contribution templates and guidelines based on the
-  established restoration methodology.
-
-#### Phase 5: Documentation and Validation (Weeks 10-11)
-
-- **Week 10**: Finalize the complete documentation package and community
-  guidelines. Consolidate restoration methodology and debugging playbooks
-  across all four examples into a unified contributor reference.
-- **Week 11**: Validate the complete workflow with community feedback and
-  real-world testing. Ensure CI/CD pipeline integration works seamlessly
-  with the existing repository and all PRs pass end-to-end.
-
-#### Phase 6: Optional Maintenance Layer (Week 12 - Time Permitting)
-
-- **Week 12**: Implement automated dependency management and health
-  monitoring tools. Create a maintenance dashboard for advanced example
-  health tracking. Document the framework for extension to additional
-  examples beyond the four restored here.
-
 ---
 
 ### Success Metrics
@@ -431,17 +354,5 @@ ianvs/
 - LLM-Agent new user setup time reduced from 5+ hours to under 30 minutes
 - LLM-Edge-Benchmark-Suite successfully comparing multiple models
   (Qwen 0.5B vs Qwen 1.5B) in a single benchmarking run
-- Working CI/CD pipeline with automated testing across Python 3.8, 3.9,
-  and 3.10
 - Complete documentation package including restoration methodology and
   debugging playbooks for all four examples
-- Standardized contribution framework ready for community adoption
-
-#### Optional Success Metrics (Time Permitting)
-
-- Functional maintenance layer with automated health monitoring and
-  dependency management
-- Advanced dashboard for maintainer efficiency and automated maintenance
-  workflows
-- Template framework validated and ready for systematic extension to
-  additional examples 
