@@ -1,5 +1,8 @@
-# opencv-python pinned to >=4.5 for Python 3.9+ compatibility
-# version ~=3.4 has no wheels for modern Python and builds from source
-opencv-python>=4.5.0,<4.10.0
+# opencv-python-headless preferred over opencv-python for server/edge/container deployments
+# (no X11/GUI dependencies needed; code only uses imread/imwrite)
+opencv-python-headless>=4.5.0
+# onnx updated from 1.9.0 (2021) for modern Python compatibility
 onnx>=1.12.0
-numpy>=1.21.0
+# numpy pinned below 1.20 due to TensorFlow 1.x compatibility
+# TensorFlow 1.x uses deprecated np.object/np.bool aliases removed in numpy 1.20+
+numpy>=1.16.0,<1.20.0
