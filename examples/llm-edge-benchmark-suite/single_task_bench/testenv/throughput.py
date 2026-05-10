@@ -26,5 +26,8 @@ def throughput(y_true, y_pred):
     total_latency = 0.0
     for result in results_list:
         total_latency += result['total_time']
-    avg_throughput = num_requests /total_latency
+    if total_latency <= 0:
+        return 0.0
+    # total_latency currently in milliseconds -> convert to seconds
+    avg_throughput = num_requests / (total_latency / 1000.0)
     return avg_throughput
