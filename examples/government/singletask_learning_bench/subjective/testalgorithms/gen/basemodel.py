@@ -14,22 +14,16 @@
 
 from __future__ import absolute_import, division
 
-import os
-import tempfile
-import time
-import zipfile
 import logging
+import os
 
-import numpy as np
-import random
+import torch
 from tqdm import tqdm
-from sedna.common.config import Context
 from sedna.common.class_factory import ClassType, ClassFactory
 from core.common.log import LOGGER
 from openai import OpenAI
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
-device = "cuda" # the device to load the model onto
 
 
 logging.disable(logging.WARNING)
@@ -43,12 +37,21 @@ os.environ['BACKEND_TYPE'] = 'TORCH'
 class BaseModel:
 
     def __init__(self, **kwargs):
-        self.model = AutoModelForCausalLM.from_pretrained(
-            "/home/icyfeather/models/Qwen2-0.5B-Instruct",
-            torch_dtype="auto",
-            device_map="auto"
+        self.model_name_or_path = os.getenv(
+            "GOVERNMENT_BENCH_MODEL",
+            "Qwen/Qwen2-0.5B-Instruct",
         )
-        self.tokenizer = AutoTokenizer.from_pretrained("/home/icyfeather/models/Qwen2-0.5B-Instruct")
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        model_kwargs = {"torch_dtype": "auto"}
+        if torch.cuda.is_available():
+            model_kwargs["device_map"] = "auto"
+        self.model = AutoModelForCausalLM.from_pretrained(
+            self.model_name_or_path,
+            **model_kwargs,
+        )
+        if not torch.cuda.is_available():
+            self.model.to(self.device)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name_or_path)
 
     def train(self, train_data, valid_data=None, **kwargs):
         LOGGER.info("BaseModel train")
@@ -65,17 +68,20 @@ class BaseModel:
         LOGGER.info(f"Data Level 2 Dim: {data.level_2_dim}")
         
         answer_list = []
-        for line in tqdm(data.x, desc="Processing", unit="question"):
+        questions = list(data.x)
+        for line in tqdm(questions, desc="Processing", unit="question"):
             history = []
             history.append({"role": "user", "content": line})
             response = self._infer(history)
             answer_list.append(response)
 
         judgement_list = []
+        judge_prompts = getattr(data, "judge_prompts", None)
+        if judge_prompts is None:
+            raise ValueError("subjective benchmark data must be loaded from metadata.json")
 
-        # evaluate by llm
         for index in tqdm(range(len(answer_list)), desc="Evaluating", ascii=False, ncols=75):
-            prompt = data.judge_prompts[index] + answer_list[index]
+            prompt = judge_prompts[index] + answer_list[index]
             judgement = self._openai_generate(prompt)
             judgement_list.append(judgement)
 
@@ -93,7 +99,7 @@ class BaseModel:
             tokenize=False,
             add_generation_prompt=True
         )
-        model_inputs = self.tokenizer([text], return_tensors="pt").to(device)
+        model_inputs = self.tokenizer([text], return_tensors="pt").to(self.device)
         
         generated_ids = self.model.generate(
             model_inputs.input_ids,
@@ -113,7 +119,10 @@ class BaseModel:
         key = os.getenv("DEEPSEEK_API_KEY")
         if not key:
             raise ValueError("You should set DEEPSEEK_API_KEY in your env.")
-        client = OpenAI(api_key=key, base_url="https://api.deepseek.com")
+        client = OpenAI(
+            api_key=key,
+            base_url=os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
+        )
 
         messages = []
         if system:
@@ -121,7 +130,7 @@ class BaseModel:
         messages.append({"role": "user", "content": user_question})
 
         response = client.chat.completions.create(
-            model="deepseek-chat",
+            model=os.getenv("DEEPSEEK_MODEL", "deepseek-chat"),
             messages=messages,
             stream=False
         )
