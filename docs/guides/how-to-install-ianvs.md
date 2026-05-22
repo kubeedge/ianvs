@@ -82,3 +82,31 @@ If the version information is printed, Ianvs is installed successfully.
 At the time being, the package requirements of Ianvs are only applicable for Linux, to ensure comprehensive support from the Linux ecosystem and to ease the burden of manual installation for users in Windows.
 
 If you are more used to developing on Windows, you can still do so with remote connections like SSH from Windows connecting to a Linux machine with ianvs installed. Such remote connection is already supported in common Python coding tools like VScode, Pycharm, etc. By doing so, it helps to provide efficient installation and robust functionality of Ianvs.
+
+## Troubleshooting: Dependency Issues on Modern Python (macOS/Linux)
+
+Fresh installs may encounter the following `ModuleNotFoundError` errors not covered by `requirements.txt`:
+
+### 1. Missing `colorlog`
+ModuleNotFoundError: No module named 'colorlog'
+Fix: `pip install colorlog>=4.7.2`
+
+### 2. Missing `PyYAML`
+ModuleNotFoundError: No module named 'yaml'
+Fix: `pip install PyYAML>=6.0`
+
+### 3. `sedna` installation
+The `sedna` package on PyPI (`pip install sedna`) installs version 0.1.2 which is outdated and missing required modules like `JsonlDataParse`. The GitHub version (0.4.1) fails on `pip>=24.1` due to an invalid `uvicorn~=0.14.0` metadata pin.
+
+**Correct install:** use the bundled wheel that ships with ianvs:
+pip install ./examples/resources/third_party/sedna-*.whl
+This installs sedna 0.6.0.1 which is the version compatible with ianvs core.
+
+### Recommended full install sequence (macOS)
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install ./examples/resources/third_party/*
+pip install -r requirements.txt
+pip install -e .
+python benchmarking.py --help
