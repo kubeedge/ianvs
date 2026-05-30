@@ -1,7 +1,9 @@
-prettytable~=2.5.0 # BSD
-scikit-learn
-numpy
-pandas
-tqdm
+colorlog
 matplotlib
+numpy
 onnx
+pandas
+prettytable~=2.5.0
+PyYAML
+scikit-learn
+tqdm
