@@ -14,7 +14,7 @@ benchmarkingjob:
     # currently the option of value is "algorithms",the others will be added in succession.
     type: "algorithms"
     # test algorithm configuration files; list type;
-    algorithms:conda
+    algorithms:
       # algorithm name; string type;
       - name: "basic-fedavg"
         # the url address of test algorithm configuration file; string type;

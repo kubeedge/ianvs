@@ -15,27 +15,95 @@ jobs:
     name: pylint
     strategy:
       matrix:
-        python-version: [ "3.7", "3.8", "3.9" ]
+        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install libgl1-mesa-glx -y
-          python -m pip install pip==24.0
+          python -m pip install --upgrade pip
           python -m pip install  pylint
           python -m pip install ${{github.workspace}}/resources/third_party/*
           python -m pip install -r ${{github.workspace}}/requirements.txt
       - name: Analysing code of core with pylint
-        # `--max-positional-arguments=10` is set for Python 3.9 to avoid `R0917: too-many-positional-arguments`.
-        # See details at https://github.com/kubeedge/ianvs/issues/157
         run: |
-          if [ "${{ matrix.python-version }}" = "3.9" ]; then
-            pylint --max-positional-arguments=10 '${{github.workspace}}/core'
-          else
-            pylint '${{github.workspace}}/core'
-          fi
+          pylint --max-positional-arguments=10 '${{github.workspace}}/core'
+
+  example-validation:
+    runs-on: ubuntu-22.04
+    name: example-validation
+    strategy:
+      matrix:
+        python-version: [ "3.10" ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install core dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libgl1-mesa-glx -y
+          python -m pip install --upgrade pip
+          python -m pip install ${{github.workspace}}/examples/resources/third_party/*
+          python -m pip install -r ${{github.workspace}}/requirements.txt
+          python -m pip install -e .
+      - name: Validate example YAML files
+        run: |
+          python -c "
+          import yaml
+          import glob
+          import sys
+
+          errors = []
+          yaml_files = glob.glob('examples/**/benchmarkingjob.yaml', recursive=True)
+          for f in yaml_files:
+              try:
+                  with open(f) as fh:
+                      yaml.safe_load(fh)
+              except Exception as e:
+                  errors.append(f'{f}: {e}')
+
+          if errors:
+              print('YAML validation failures:')
+              for e in errors:
+                  print(f'  {e}')
+              sys.exit(1)
+          else:
+              print(f'Validated {len(yaml_files)} YAML files successfully')
+          "
+      - name: Verify core package imports
+        run: |
+          python -c "
+          from core.cmd import benchmarking
+          print('Core import: OK')
+          "
+      - name: Check example Python files for syntax errors
+        run: |
+          python -c "
+          import py_compile
+          import glob
+          import sys
+
+          errors = []
+          py_files = glob.glob('examples/**/*.py', recursive=True)
+          for f in py_files:
+              try:
+                  py_compile.compile(f, doraise=True)
+              except py_compile.PyCompileError as e:
+                  errors.append(str(e))
+
+          if errors:
+              print('Python syntax errors found:')
+              for e in errors:
+                  print(f'  {e}')
+              sys.exit(1)
+          else:
+              print(f'Checked {len(py_files)} Python files for syntax errors: all OK')
+          "

@@ -18,7 +18,8 @@ import os
 
 from setuptools import setup, find_packages
 
-assert sys.version_info >= (3, 6), "Sorry, Python < 3.6 is not supported."
+if sys.version_info < (3, 9):
+    sys.exit("Sorry, Python < 3.9 is not supported.")
 
 
 class InstallPrepare:
@@ -104,7 +105,7 @@ setup(
     entry_points={
         "console_scripts": ["ianvs = core.cmd.benchmarking:main"]
     },
-    python_requires=">=3.6",
+    python_requires=">=3.9",
     long_description=_infos.long_desc,
     long_description_content_type="text/markdown",
     license="Apache License 2.0",
