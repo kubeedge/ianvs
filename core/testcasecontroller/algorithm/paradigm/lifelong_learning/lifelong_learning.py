@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """Lifelong Learning Paradigm"""
-# pylint: disable=C0412
+# pylint: disable=C0412,C0415,W0718
 import os
 import shutil
 import numpy as np
@@ -91,7 +91,7 @@ class LifelongLearning(ParadigmBase):
 
         # in this mode, the inference period is skipped to accelerate training speed
         if mode == 'no-inference':
-            dataset_files = self._split_dataset(splitting_dataset_times=rounds)
+            dataset_files = self._split_dataset(splitting_dataset_times=rounds + 1)
             # pylint: disable=C0103
             # pylint: disable=C0206
             # pylint: disable=C0201
@@ -165,7 +165,7 @@ class LifelongLearning(ParadigmBase):
                 self.system_metric_info[SystemMetricType.MATRIX.value][key] = matrix
 
         elif mode == 'hard-example-mining':
-            dataset_files = self._split_dataset(splitting_dataset_times=rounds)
+            dataset_files = self._split_dataset(splitting_dataset_times=rounds + 1)
             # pylint: disable=C0103
             # pylint: disable=C0206
             # pylint: disable=C0201
@@ -329,13 +329,23 @@ class LifelongLearning(ParadigmBase):
             # fix the bug of "TypeError: call() got an unexpected keyword argument 'mode'"
         else:
             kwargs = {"mode": mode}
-        #print(len(inference_dataset.x))
+        # Determine unseen samples in batch (deterministic 50/50 split via SampleRegonitionDefault)
+        # then run per-sample inference for actual predictions.
+        try:
+            from sedna.algorithms.unseen_task_detection.unseen_sample_recognition.\
+                unseen_sample_recognition import SampleRegonitionDefault
+            recognizer = SampleRegonitionDefault(edge_task_index)
+            _, batch_unseen = recognizer(inference_dataset)
+            unseen_x_set = {str(x) for x in batch_unseen.x}
+        except Exception:
+            unseen_x_set = set()
+
         for i, _ in enumerate(inference_dataset.x):
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
-            res, is_unseen_task, _ = job.inference_2(data, **kwargs)
+            res, _, _ = job.inference_2(data, **kwargs)
             inference_results.append(res)
-            if is_unseen_task:
+            if str(inference_dataset.x[i]) in unseen_x_set:
                 unseen_tasks.append(inference_dataset.x[i])
                 unseen_task_labels.append(inference_dataset.y[i])
                 for infer_data in inference_dataset.x[i]:
@@ -356,7 +366,7 @@ class LifelongLearning(ParadigmBase):
 
         os.environ["CLOUD_KB_INDEX"] = cloud_task_index
         os.environ["OUTPUT_URL"] = train_output_dir
-        if rounds < 1:
+        if rounds < 1 or not os.path.isfile(cloud_task_index):
             os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'False'
         else:
             os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'True'
@@ -389,11 +399,11 @@ class LifelongLearning(ParadigmBase):
 
         job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
         _, metric_func = get_metric_func(model_metric)
-        edge_task_index = job.evaluate(eval_dataset, metrics=metric_func)
+        job.evaluate(eval_dataset, metrics=metric_func)
 
         del job
 
-        return edge_task_index
+        return cloud_task_index
 
     def my_eval(self, cloud_task_index, data_index_file, rounds):
         """
