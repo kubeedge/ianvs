@@ -32,7 +32,46 @@ against the 0.4.x API and has not been ported to 0.6.x.
 
 ---
 
-## Wheel-by-wheel summary
+## Which wheel to install for each example
+
+> **Note:** `sedna-0.6.0.2` is a strict superset of `0.6.0.1` — all API changes are
+> additive. Installing `0.6.0.2` will not break any example that worked with `0.6.0.1`.
+> When in doubt, always install `0.6.0.2`.
+
+| Example path | Paradigm | Sedna wheel |
+|---|---|---|
+| `cityscapes-synthia/lifelong_learning_bench/semantic-segmentation` | Lifelong learning | `third_party/sedna-0.6.0.2-py3-none-any.whl` |
+| `cityscapes-synthia/lifelong_learning_bench/curb-detection` | Lifelong learning | `third_party/sedna-0.6.0.2-py3-none-any.whl` |
+| `bdd/lifelong_learning_bench/curb-detection` | Lifelong learning | `third_party/sedna-0.6.0.2-py3-none-any.whl` |
+| `robot/lifelong_learning_bench/semantic-segmentation` | Lifelong learning | `third_party/sedna-0.6.0.2-py3-none-any.whl` |
+| `robot-cityscapes-synthia/lifelong_learning_bench/semantic-segmentation` | Lifelong learning | `third_party/sedna-0.6.0.2-py3-none-any.whl` |
+| `cityscapes/lifelong_learning_bench/unseen_task_processing-GANwithSelfTaughtLearning` | Lifelong learning | `third_party/sedna-0.6.0.2-py3-none-any.whl` |
+| `TAB/cloud_edge_collaborative_inference_bench` | Joint inference | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `cloud-edge-collaborative-inference-for-llm` | Joint inference | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `cloud-edge-speculative-decoding-benchmark` | Joint inference | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `Cloud_Robotics/cloud-edge-collaborative-inference_bench` | Joint inference | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `phys_scene_gen/singletask_learning_bench` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `cifar100/**` | Federated learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `federated-llm/fedllm-peft` | Federated learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `MOT17/multiedge_inference_bench/pedestrian_tracking` | Multi-edge inference | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `imagenet/multiedge_inference_bench` | Multi-edge inference | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `PIPL/edge-cloud_collaborative_learning_bench` | Incremental learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `GovDoc2Poster/singletask_learning_bench` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `government/singletask_learning_bench` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` (README also references `sedna-llm.zip` — a separate patch) |
+| `llm-agent/singletask_learning_bench` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `llm_simple_qa` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` (README also references `sedna-with-jsonl.zip` patch) |
+| `llm-edge-benchmark-suite/single_task_bench` | Single-task learning | **`third_party-bk/sedna-0.4.1-py3-none-any.whl`** (0.4.x API — not ported to 0.6.x) |
+| `llm-edge-benchmark-suite/single_task_bench_with_compression` | Single-task learning | **`third_party-bk/sedna-0.4.1-py3-none-any.whl`** |
+| `smart_coding/smart_coding_learning_bench` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` (README also references `sedna-llm.zip` patch) |
+| `cloud_VLA_finetune/singletask_learning_bench` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `government_rag` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `industrialEI/pose-estimation-llio` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `industrialEI/single_task_learning_bench/deformable_component_manipulation` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `pcb-aoi/singletask_learning_bench/fault_detection` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `RoboDK Palletizing/singletask_learning_bench` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `yaoba/singletask_learning_boost` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `yaoba/singletask_learning_yolox_tta` | Single-task learning | `third_party/sedna-0.6.0.1-py3-none-any.whl` |
+| `aoa/single_task_bench/TForest` | Single-task learning | No sedna dependency |
 
 ### `sedna-0.4.1-py3-none-any.whl`
 
@@ -95,18 +134,3 @@ with lifelong-learning benchmarks despite being a higher version number than 0.4
 | Log level for missing LC server | `error` | `debug` (less noise in local mode) |
 
 ---
-
-## Which wheel to install for each example
-
-| Example | Install |
-|---------|---------|
-| `cityscapes-synthia/lifelong_learning_bench/**` | `third_party/sedna-0.6.0.2-py3-none-any.whl` |
-| `bdd/lifelong_learning_bench/**` | `third_party/sedna-0.6.0.2-py3-none-any.whl` |
-| `robot/lifelong_learning_bench/**` | `third_party/sedna-0.6.0.2-py3-none-any.whl` |
-| `cityscapes/lifelong_learning_bench/**` | `third_party/sedna-0.6.0.2-py3-none-any.whl` |
-| `llm-edge-benchmark-suite/**` | `third_party-bk/sedna-0.4.1-py3-none-any.whl` |
-| `TAB/**`, `cloud-edge-*`, `phys_scene_gen/**` | `third_party/sedna-0.6.0.1-py3-none-any.whl` or `0.6.0.2` |
-| `cifar100/**`, `MOT17/**`, `GovDoc2Poster/**` | Either 0.6.x (only use `sedna.common.*`, `sedna.datasources`) |
-
-> **Note:** `sedna-0.6.0.2` is a strict superset of `0.6.0.1` — all API changes are
-> additive. Installing `0.6.0.2` will not break any example that worked with `0.6.0.1`.
