@@ -43,7 +43,33 @@ For each region's evaluation, we have four experimental designs (Type 1, 2, 3, 4
 
 ## Usage
 
-1. Prepare data:
+1. Install dependencies:
+
+   ```bash
+   # from the ianvs repo root, with ianvs already installed (see docs/guides/how-to-install-ianvs.md)
+   pip install -r examples/government_rag/singletask_learning_bench/requirements.txt
+   ```
+
+2. Configure the LLM backend:
+
+   The benchmark queries an LLM over an API. Pick a backend and export its key:
+
+   ```bash
+   export GOV_RAG_BACKEND=qianfan        # qianfan (default) | deepseek | siliconflow
+   export QIANFAN_API_KEY=...            # for qianfan
+   export QIANFAN_SECRET_KEY=...
+   # export DEEPSEEK_API_KEY=...         # for deepseek
+   # export SILICONFLOW_API_KEY=...      # for siliconflow
+   ```
+
+   Optional settings:
+
+   ```bash
+   export GOV_RAG_DATA_DIR=./dataset/gov_rag        # where the dataset lives (default shown)
+   export GOV_RAG_EMBED_MODEL=BAAI/bge-large-zh-v1.5  # embedding model (default shown)
+   ```
+
+3. Prepare data:
 
    The datasets are in [kaggle](https://www.kaggle.com/datasets/kubeedgeianvs/the-government-affairs-dataset-govaff?select=RAG-multi-edges-QA) now. The knowledge base (policy documents for each province), its vector store, and the benchmark (Question and Answer) are all in this link.
 
@@ -70,7 +96,7 @@ For each region's evaluation, we have four experimental designs (Type 1, 2, 3, 4
    {"query": "In Shanghai's notice on data asset management, which approach is advocated to promote the compliant and efficient circulation of data assets?{\"A\": \"Rely entirely on government regulation\", \"B\": \"Combination of market leadership and government guidance\", \"C\": \"Enterprise-independent development\", \"D\": \"Unconditional data sharing\"}\nPlease answer directly with A/B/C/D, no explanation.", "response": "B", "level_1_dim": "single-modal", "level_2_dim": "text", "level_3_dim": "government", "level_4_dim": "Shanghai"}
    ```
 
-2. Run the test:
+4. Run the test:
    ```bash
    ianvs -f examples/government_rag/singletask_learning_bench/benchmarkingjob.yaml
    ```

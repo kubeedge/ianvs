@@ -1,22 +1,29 @@
 import os
 from typing import List, Optional, Union
 from langchain_community.document_loaders import DirectoryLoader, TextLoader, UnstructuredWordDocumentLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.chains import RetrievalQA
-from langchain_community.llms import HuggingFacePipeline
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_chroma import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from tqdm import tqdm
+
+
+def default_device() -> str:
+    """Pick the best available torch device."""
+    if torch.cuda.is_available():
+        return "cuda"
+    if torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
+
 
 class GovernmentRAG:
     def __init__(
         self,
-        base_path: str = "/path/ianvs/dataset/gov_rag",
+        base_path: str = "./dataset/gov_rag",
         provinces: Optional[Union[str, List[str]]] = None,
         model_name: str = "BAAI/bge-large-zh-v1.5",
-        device: str = "cuda" if torch.cuda.is_available() else "cpu",
+        device: Optional[str] = None,
         persist_directory: str = "./chroma_db"
     ):
         """
@@ -30,11 +37,18 @@ class GovernmentRAG:
             persist_directory: Directory to persist the vector database
         """
         self.base_path = base_path
+        if not os.path.isdir(os.path.join(self.base_path, "dataset")):
+            raise FileNotFoundError(
+                f"Knowledge base not found at {os.path.join(self.base_path, 'dataset')}. "
+                "Download the GovAff dataset from "
+                "https://www.kaggle.com/datasets/kubeedgeianvs/the-government-affairs-dataset-govaff "
+                "and place it as described in examples/government_rag/README.md"
+            )
         self.provinces = self._validate_provinces(provinces)
         self.persist_directory = persist_directory
         self.embeddings = HuggingFaceEmbeddings(
             model_name=model_name,
-            model_kwargs={'device': device}
+            model_kwargs={'device': device or default_device()}
         )
         self.vector_store = None
         self._initialize_knowledge_base()
@@ -121,8 +135,6 @@ class GovernmentRAG:
             embedding=self.embeddings,
             persist_directory=self.persist_directory
         )
-
-        self.vector_store.persist()
         print(f"Vector database saved to {self.persist_directory}")
     
     def query(self, query: str, k: int = 4) -> str:
@@ -144,7 +156,7 @@ class GovernmentRAG:
         )
         
         # Get relevant documents
-        docs = retriever.get_relevant_documents(query)
+        docs = retriever.invoke(query)
         
         # Format the response
         response = "Relevant information:\n\n"

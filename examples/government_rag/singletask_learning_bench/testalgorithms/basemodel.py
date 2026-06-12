@@ -15,28 +15,16 @@
 from __future__ import absolute_import, division, print_function
 
 import os
-import tempfile
-import time
-import zipfile
 import logging
 import concurrent.futures
 import threading
-from typing import List, Tuple
 
-import numpy as np
 import torch
-from sedna.common.config import Context
 from sedna.common.class_factory import ClassType, ClassFactory
 from core.common.log import LOGGER
 from tqdm import tqdm
 
-
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
 from gov_rag import GovernmentRAG
-
-device = "cuda" # the device to load the model onto
-
 
 logging.disable(logging.WARNING)
 
@@ -45,21 +33,50 @@ __all__ = ["BaseModel"]
 os.environ['BACKEND_TYPE'] = 'TORCH'
 
 
+def require_env(name):
+    value = os.environ.get(name)
+    if not value:
+        raise EnvironmentError(
+            f"{name} is not set. Export it before running the benchmark, "
+            "see examples/government_rag/README.md"
+        )
+    return value
+
+
 @ClassFactory.register(ClassType.GENERAL, alias="gen")
 class BaseModel:
 
     def __init__(self, **kwargs):
         self.gpu_lock = threading.Lock()
         self.rag = None
-        self.get_model_response = self.get_model_response_qianfan
-        pass
+        backend = os.environ.get("GOV_RAG_BACKEND", "qianfan")
+        backends = {
+            "qianfan": self.get_model_response_qianfan,
+            "deepseek": self.get_model_response_deepseek,
+            "siliconflow": self.get_model_response_siliconflow,
+        }
+        if backend not in backends:
+            raise ValueError(
+                f"Unknown GOV_RAG_BACKEND '{backend}', expected one of {sorted(backends)}"
+            )
+        self.get_model_response = backends[backend]
+        self.embed_model = os.environ.get("GOV_RAG_EMBED_MODEL", "BAAI/bge-large-zh-v1.5")
+        self.data_dir = os.environ.get("GOV_RAG_DATA_DIR", "./dataset/gov_rag")
+
+    def _make_rag(self, provinces=None):
+        return GovernmentRAG(
+            base_path=self.data_dir,
+            model_name=self.embed_model,
+            persist_directory="./chroma_db",
+            provinces=provinces,
+        )
 
     def get_model_response_deepseek(self, prompt):
         # Please install OpenAI SDK first: `pip3 install openai`
 
         from openai import OpenAI
 
-        client = OpenAI(api_key="<DeepSeek API Key>", base_url="https://api.deepseek.com")
+        client = OpenAI(api_key=require_env("DEEPSEEK_API_KEY"), base_url="https://api.deepseek.com")
 
         response = client.chat.completions.create(
             model="deepseek-chat",
@@ -99,7 +116,7 @@ class BaseModel:
             "response_format": {"type": "text"}
         }
         headers = {
-            "Authorization": "Bearer <token>",  # Replace with your actual token
+            "Authorization": "Bearer " + require_env("SILICONFLOW_API_KEY"),
             "Content-Type": "application/json"
         }
 
@@ -119,7 +136,11 @@ class BaseModel:
         import json
 
         def get_access_token():
-            url = "https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=[应用API Key]&client_secret=[应用Secret Key]"
+            url = (
+                "https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials"
+                f"&client_id={require_env('QIANFAN_API_KEY')}"
+                f"&client_secret={require_env('QIANFAN_SECRET_KEY')}"
+            )
             
             payload = json.dumps("")
             headers = {
@@ -156,8 +177,7 @@ class BaseModel:
 
     def preprocess(self, **kwargs):
         print("BaseModel preprocess")
-        # input('stop here preprocess')
-        self.rag = GovernmentRAG(model_name="/home/icyfeather/models/bge-m3", device="cuda", persist_directory="./chroma_db")
+        self.rag = self._make_rag()
         LOGGER.info("RAG initialized")
 
     def train(self, train_data, valid_data=None, **kwargs):
@@ -176,12 +196,12 @@ class BaseModel:
                 with self.gpu_lock:
                     if rag_type == "[global]":
                         if self.rag is None:
-                            self.rag = GovernmentRAG(model_name="/home/icyfeather/models/bge-m3", device="cuda", persist_directory="./chroma_db")
+                            self.rag = self._make_rag()
                     elif rag_type == "[local]":
-                        self.rag = GovernmentRAG(model_name="/home/icyfeather/models/bge-m3", device="cuda", persist_directory="./chroma_db", provinces=[location])
+                        self.rag = self._make_rag(provinces=[location])
                     else:  # [other]
                         all_locations = set(self.all_locations)
-                        self.rag = GovernmentRAG(model_name="/home/icyfeather/models/bge-m3", device="cuda", persist_directory="./chroma_db", provinces=list(all_locations - set([location])))
+                        self.rag = self._make_rag(provinces=list(all_locations - set([location])))
                     
                     relevant_docs = self.rag.query(query, k=1)
                     
