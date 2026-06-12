@@ -54,8 +54,8 @@ class BaseModel:
                     lora_dropout = 0.05
                     )
         model=get_peft_model(self.model,config_lora)
-        half = self.train_config["half_lora"]
-        if half==True:
+        half = str(self.train_config["half_lora"]).lower() == "true"
+        if half:
             model=model.half()
         del self.train_config["half_lora"]
         args=TrainingArguments(adam_epsilon=(1e-4 if half else 1e-8)
