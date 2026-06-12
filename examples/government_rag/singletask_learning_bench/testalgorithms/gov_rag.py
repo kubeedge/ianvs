@@ -66,7 +66,7 @@ class GovernmentRAG:
         else:
             raise ValueError("provinces must be 'all', a string, or a list of strings")
     
-    def _load_documents(self, province_path: str) -> List:
+    def _load_documents(self, province_path: str, province: str) -> List:
         """Load documents from a specific province directory."""
         loaders = []
         
@@ -93,7 +93,12 @@ class GovernmentRAG:
                 documents.extend(loader.load())
             except Exception as e:
                 print(f"Error loading documents from {province_path}: {str(e)}")
-                
+
+        # Tag each document so retrieval can be restricted by province even
+        # when the full persisted store is reloaded later.
+        for doc in documents:
+            doc.metadata["province"] = province
+
         return documents
     
     def _initialize_knowledge_base(self):
@@ -114,7 +119,7 @@ class GovernmentRAG:
         for province in tqdm(self.provinces, desc="Processing provinces"):
             province_path = os.path.join(self.base_path, "dataset", province)
             if os.path.exists(province_path):
-                documents = self._load_documents(province_path)
+                documents = self._load_documents(province_path, province)
                 all_documents.extend(documents)
         
         if not all_documents:
@@ -150,9 +155,15 @@ class GovernmentRAG:
         """
         if not self.vector_store:
             raise ValueError("Knowledge base not initialized")
-            
+
+        # Restrict retrieval to the selected provinces. The persisted store
+        # may contain documents from all provinces, so relying on what was
+        # ingested is not enough.
         retriever = self.vector_store.as_retriever(
-            search_kwargs={"k": k}
+            search_kwargs={
+                "k": k,
+                "filter": {"province": {"$in": self.provinces}},
+            }
         )
         
         # Get relevant documents

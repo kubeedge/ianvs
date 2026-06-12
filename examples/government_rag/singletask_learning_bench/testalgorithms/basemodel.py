@@ -49,6 +49,9 @@ class BaseModel:
     def __init__(self, **kwargs):
         self.gpu_lock = threading.Lock()
         self.rag = None
+        self._deepseek_client = None
+        self._qianfan_token = None
+        self._token_lock = threading.Lock()
         backend = os.environ.get("GOV_RAG_BACKEND", "qianfan")
         backends = {
             "qianfan": self.get_model_response_qianfan,
@@ -76,7 +79,12 @@ class BaseModel:
 
         from openai import OpenAI
 
-        client = OpenAI(api_key=require_env("DEEPSEEK_API_KEY"), base_url="https://api.deepseek.com")
+        if self._deepseek_client is None:
+            self._deepseek_client = OpenAI(
+                api_key=require_env("DEEPSEEK_API_KEY"),
+                base_url="https://api.deepseek.com",
+            )
+        client = self._deepseek_client
 
         response = client.chat.completions.create(
             model="deepseek-chat",
@@ -151,7 +159,13 @@ class BaseModel:
             response = requests.request("POST", url, headers=headers, data=payload)
             return response.json().get("access_token")
 
-        url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie_speed?access_token=" + get_access_token()
+        # Token fetch hits Baidu's OAuth endpoint; cache it across the many
+        # parallel queries of a benchmark run.
+        with self._token_lock:
+            if self._qianfan_token is None:
+                self._qianfan_token = get_access_token()
+
+        url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie_speed?access_token=" + self._qianfan_token
         
         payload = json.dumps({
             "messages": [

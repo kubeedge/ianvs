@@ -89,7 +89,7 @@ For each region's evaluation, we have four experimental designs (Type 1, 2, 3, 4
    └── metadata.json
    ```
    
-   And you can put the knowledge base embedding directory in `./chroma_db` path to avoid re-generate the knowledge base embedding.
+   And you can put the knowledge base embedding directory in `./chroma_db` path to avoid re-generate the knowledge base embedding. Note: the store now tags every document with its province so retrieval can be restricted per test mode — embedding directories generated before this change lack those tags and must be regenerated.
    
    Data example:
    ```json
