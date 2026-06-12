@@ -70,7 +70,7 @@ class BaseModel:
         results = []
         for text in data:
             prompt="\n".join(["user: ", str(text)])+"\n\nassistant: "
-            inputs=self.tokenizer(prompt, return_tensors="pt", truncation=True, max_length=self.MAX_LENGTH)
+            inputs=self.tokenizer(prompt, return_tensors="pt", truncation=True, max_length=self.MAX_LENGTH).to(self.model.device)
             input_len=inputs["input_ids"].shape[1]
             with torch.no_grad():
                 outputs=self.model.generate(**inputs, max_new_tokens=8, pad_token_id=self.tokenizer.eos_token_id)
