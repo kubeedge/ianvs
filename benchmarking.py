@@ -14,7 +14,6 @@
 
 """main"""
 
-import os
 import sys
 import argparse
 
@@ -23,31 +22,7 @@ from core.common import utils
 from core.cmd.obj import BenchmarkingJob
 from core.__version__ import __version__
 
-
-try:
-    import sedna.service.client
-    original_http_request = sedna.service.client.http_request
-    LOGGER.info("Bypassing Sedna network timeouts is active.")
-
-    def patched_http_request(url, *args, **kwargs):
-        """Bypass local/invalid HTTP endpoints to speed up offline runs."""
-        should_bypass = os.getenv("BYPASS_TIMEOUTS", "1") == "1"
-        is_local_endpoint = (
-            not url
-            or url.startswith("None")
-            or "127.0.0.1" in url
-            or "localhost" in url
-        )
-        if should_bypass and is_local_endpoint:
-            raise ConnectionError("Connection refused.")
-        return original_http_request(url, *args, **kwargs)
-
-    sedna.service.client.http_request = patched_http_request
-except ImportError:
-    pass
-
-
-
+utils.patch_sedna_timeouts()
 
 def main():
     """ main command-line interface to ianvs"""
