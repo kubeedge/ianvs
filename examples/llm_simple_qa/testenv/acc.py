@@ -29,6 +29,9 @@ def get_last_letter(input_string):
 
 @ClassFactory.register(ClassType.GENERAL, alias="acc")
 def acc(y_true, y_pred):
+    if not y_pred or len(y_pred) != len(y_true):
+        return 0
+
     y_pred = [get_last_letter(pred) for pred in y_pred]
     print(y_true)
     print(y_pred)
