@@ -75,7 +75,14 @@ class FederatedLearning(ParadigmBase):
         self.aggregate_clients = []
         self.clients_number = kwargs.get("client_number", 1)
         self.mode = kwargs.get("if_mode_llm", False)
-        _, self.aggregator = self.module_instances.get(ModuleType.AGGREGATION.value)
+        _aggregation = self.module_instances.get(ModuleType.AGGREGATION.value)
+        if _aggregation is None:
+            raise ValueError(
+                "FederatedLearning requires an 'aggregation' module but none "
+                "was found. Add an 'aggregation' entry under 'modules:' in "
+                "your algorithm YAML."
+            )
+        _, self.aggregator = _aggregation
         if self.mode:
             LOGGER.info("Using LLM multi GPU mode for Federated Learning")
             self.gpu_num = kwargs.get("gpu_num", 1)
