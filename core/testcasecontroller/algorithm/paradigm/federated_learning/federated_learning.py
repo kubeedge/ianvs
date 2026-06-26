@@ -76,11 +76,11 @@ class FederatedLearning(ParadigmBase):
         self.clients_number = kwargs.get("client_number", 1)
         self.mode = kwargs.get("if_mode_llm", False)
         _aggregation = self.module_instances.get(ModuleType.AGGREGATION.value)
-        if _aggregation is None:
+        if _aggregation is None or _aggregation[1] is None:
             raise ValueError(
                 "FederatedLearning requires an 'aggregation' module but none "
-                "was found. Add an 'aggregation' entry under 'modules:' in "
-                "your algorithm YAML."
+                "was found or successfully initialized. Add an 'aggregation' "
+                "entry under 'modules:' in your algorithm YAML."
             )
         _, self.aggregator = _aggregation
         if self.mode:
