@@ -356,7 +356,7 @@ class LifelongLearning(ParadigmBase):
 
         os.environ["CLOUD_KB_INDEX"] = cloud_task_index
         os.environ["OUTPUT_URL"] = train_output_dir
-        if rounds < 1:
+        if rounds <= 1:
             os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'False'
         else:
             os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'True'
