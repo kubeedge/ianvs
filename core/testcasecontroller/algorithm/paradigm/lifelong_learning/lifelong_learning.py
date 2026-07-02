@@ -356,10 +356,12 @@ class LifelongLearning(ParadigmBase):
 
         os.environ["CLOUD_KB_INDEX"] = cloud_task_index
         os.environ["OUTPUT_URL"] = train_output_dir
-        if rounds <= 1:
-            os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'False'
+        mode = (self.model_eval_config or {}).get('model_metric', {}).get('mode')
+        is_initial = rounds < 1 if mode in ('no-inference', 'hard-example-mining') else rounds <= 1
+        if is_initial:
+            os.environ['HAS_COMPLETED_INITIAL_TRAINING'] = 'False'
         else:
-            os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'True'
+            os.environ['HAS_COMPLETED_INITIAL_TRAINING'] = 'True'
 
         if isinstance(train_dataset, str):
             train_dataset = self.dataset.load_data(train_dataset, "train",
