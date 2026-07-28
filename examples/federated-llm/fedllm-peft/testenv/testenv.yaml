@@ -1,0 +1,38 @@
+testenv:
+  backend: "TORCH"
+  dataset:
+    name: 'medicalQA'
+    # the url address of train dataset index; string type;
+    train_data: "./project/data/fedllm/medicalQA/train_sub.jsonl"
+    # the url address of test dataset index; string type;
+    test_data: "./project/data/fedllm/medicalQA/test_sub.jsonl"
+    # train_data: "./project/data/fedllm/advertisegen/train_sub.jsonl"
+    # test_data: "./project/data/fedllm/advertisegen/test_sub.jsonl"
+
+  model_eval:
+    # metric used for network evaluation
+    model_metric:
+      # metric name; string type;
+      name: "rouge1_metric"
+      # the url address of python file
+      url: "./examples/federated-llm/fedllm-peft/testenv/rouge1_metric.py"
+
+  # metrics configuration for test case's evaluation; list type;
+  metrics:
+      # metric name; string type;
+    - name: "rouge1_metric"
+      # the url address of python file
+      url: "./examples/federated-llm/fedllm-peft/testenv/rouge1_metric.py"
+    - name: "rouge2_metric"
+      # the url address of python file
+      url: "./examples/federated-llm/fedllm-peft/testenv/rouge2_metric.py"
+    - name: "rougel_metric"
+      # the url address of python file
+      url: "./examples/federated-llm/fedllm-peft/testenv/rougel_metric.py"
+    - name: "bleu4_metric"
+      # the url address of python file
+      url: "./examples/federated-llm/fedllm-peft/testenv/bleu4_metric.py"
+  round: 5
+  gpu_num: 4
+  client_number: 4
+  if_mode_llm: true

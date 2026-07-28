@@ -1,0 +1,7 @@
+vllm
+transformers
+openai
+accelerate
+datamodel_code_generator
+kaggle
+groq

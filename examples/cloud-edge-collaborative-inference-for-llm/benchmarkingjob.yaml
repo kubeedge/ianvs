@@ -1,0 +1,70 @@
+benchmarkingjob:
+  # job name of bechmarking; string type;
+  name: "benchmarkingjob"
+  # the url address of job workspace that will reserve the output of tests; string type;
+  # "~/" cannot be identified, so must be relative path or absoulute path
+  workspace: "./workspace-gpqa"
+
+  hard_example_mining_mode: "mining-then-inference"
+
+  # the url address of test environment configuration file; string type;
+  # the file format supports yaml/yml;
+  testenv: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml"
+
+  # the configuration of test object
+  test_object:
+    # test type; string type;
+    # currently the option of value is "algorithms",the others will be added in succession.
+    type: "algorithms"
+    # test algorithm configuration files; list type;
+    algorithms:
+      # algorithm name; string type;
+      - name: "query-routing"
+        # the url address of test algorithm configuration file; string type;
+        # the file format supports yaml/yml;
+        url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml"
+
+  # the configuration of ranking leaderboard
+  rank:
+    # rank leaderboard with metric of test case's evaluation and order ; list type;
+    # the sorting priority is based on the sequence of metrics in the list from front to back;
+    sort_by: [ { "Accuracy": "descend" } ]
+
+    # visualization configuration
+    visualization:
+      # mode of visualization in the leaderboard; string type;
+      # There are quite a few possible dataitems in the leaderboard. Not all of them can be shown simultaneously on the screen.
+      # In the leaderboard, we provide the "selected_only" mode for the user to configure what is shown or is not shown.
+      mode: "selected_only"
+      # method of visualization for selected dataitems; string type;
+      # currently the options of value are as follows:
+      #  1> "print_table": print selected dataitems;
+      method: "print_table"
+
+    # selected dataitem configuration
+    # The user can add his/her interested dataitems in terms of "paradigms", "modules", "hyperparameters" and "metrics",
+    # so that the selected columns will be shown.
+    selected_dataitem:
+      # currently the options of value are as follows:
+      #   1> "all": select all paradigms in the leaderboard;
+      #   2> paradigms in the leaderboard, e.g., "singletasklearning"
+      paradigms: [ "all" ]
+      # currently the options of value are as follows:
+      #   1> "all": select all modules in the leaderboard;
+      #   2> modules in the leaderboard, e.g., "basemodel"
+      modules: [ "hard_example_mining" ]
+      # currently the options of value are as follows:
+      #   1> "all": select all hyperparameters in the leaderboard;
+      #   2> hyperparameters in the leaderboard, e.g., "momentum"
+      hyperparameters: [ "edgemodel-model", "edgemodel-backend", "cloudmodel-model"]
+      # currently the options of value are as follows:
+      #   1> "all": select all metrics in the leaderboard;
+      #   2> metrics in the leaderboard, e.g., "f1_score"
+      # metrics: [ "acc" , "edge-rate", "cloud-prompt", "cloud-completion", "edge-prompt", "edge-completion", "input-throughput", "output-throughput", "latency"]
+      metrics: ["Accuracy", "Edge Ratio", "Time to First Token", "Throughput", "Internal Token Latency", "Cloud Prompt Tokens", "Cloud Completion Tokens", "Edge Prompt Tokens", "Edge Completion Tokens"]
+
+    # model of save selected and all dataitems in workspace; string type;
+    # currently the options of value are as follows:
+    #  1> "selected_and_all": save selected and all dataitems;
+    #  2> "selected_only": save selected dataitems;
+    save_mode: "selected_and_all"

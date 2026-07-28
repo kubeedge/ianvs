@@ -1,0 +1,22 @@
+benchmarkingjob:
+  name: "Deformable_Assembly_Job"
+  workspace: "./ianvs_workspace" 
+  testenv: "./testenv/testenv.yaml"
+  
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "assembly_alg"
+        url: "testalgorithms/deformable_alg.yaml"
+  
+  rank:
+    sort_by: [ { "assembly_accuracy": "descend" } ]
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+    selected_dataitem:
+      paradigms: [ "all" ]
+      modules: [ "all" ]
+      hyperparameters: [ "all" ]
+      metrics: [ "assembly_accuracy" ]
+    save_mode: "selected_and_all"

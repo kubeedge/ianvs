@@ -1,0 +1,52 @@
+algorithm:
+  paradigm_type: "jointinference"
+
+  modules:
+    - type: "dataset_processor"
+      name: "SpeculativeDecodingDatasetProcessor"
+      url: "./examples/cloud-edge-speculative-decoding-benchmark/testalgorithms/speculative-decoding/data_processor.py"
+      hyperparameters:
+        - sample_size:
+            values:
+              - 5
+        - warmup_samples:
+            values:
+              - 1
+
+    - type: "drafter"
+      name: "SpeculativeBlockDraftModel"
+      url: "./examples/cloud-edge-speculative-decoding-benchmark/testalgorithms/speculative-decoding/algorithms/block/drafter.py"
+      hyperparameters:
+        - other_hyperparameters:
+            values:
+              - "./examples/cloud-edge-speculative-decoding-benchmark/testalgorithms/speculative-decoding/profiles/base.yaml"
+        - inference_mode:
+            values:
+              - "collaboration"
+              - "cloud-only"
+        - device:
+            values:
+              - "auto"
+        - draft_tokens_per_step:
+            values:
+              - 16
+        - model:
+            values:
+              - "z-lab/Qwen3-8B-DFlash-b16"
+
+    - type: "verifier"
+      name: "SpeculativeBlockVerifyModel"
+      url: "./examples/cloud-edge-speculative-decoding-benchmark/testalgorithms/speculative-decoding/algorithms/block/verifier.py"
+      hyperparameters:
+        - other_hyperparameters:
+            values:
+              - "./examples/cloud-edge-speculative-decoding-benchmark/testalgorithms/speculative-decoding/profiles/base.yaml"
+        - device:
+            values:
+              - "auto"
+        - draft_tokens_per_step:
+            values:
+              - 16
+        - model:
+            values:
+              - "Qwen/Qwen3-8B"

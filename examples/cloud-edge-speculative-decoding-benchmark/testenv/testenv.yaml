@@ -1,0 +1,22 @@
+testenv:
+  hard_example_mining_mode: "mining-free"
+
+  dataset:
+    train_data: "./examples/cloud-edge-speculative-decoding-benchmark/dataset/humaneval/train_data/data.jsonl"
+    test_data_info: "./examples/cloud-edge-speculative-decoding-benchmark/dataset/humaneval/test_data/metadata.json"
+
+  metrics:
+    - name: "Time to First Token"
+      url: "./examples/cloud-edge-speculative-decoding-benchmark/testenv/time_to_first_token.py"
+
+    - name: "Throughput"
+      url: "./examples/cloud-edge-speculative-decoding-benchmark/testenv/throughput.py"
+
+    - name: "Internal Token Latency"
+      url: "./examples/cloud-edge-speculative-decoding-benchmark/testenv/internal_token_latency.py"
+
+    - name: "End-to-End Latency"
+      url: "./examples/cloud-edge-speculative-decoding-benchmark/testenv/end_to_end_latency.py"
+
+    - name: "Acceptance Rate"
+      url: "./examples/cloud-edge-speculative-decoding-benchmark/testenv/acceptance_rate.py"

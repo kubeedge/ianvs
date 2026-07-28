@@ -1,0 +1,22 @@
+algorithm:
+  paradigm_type: "singletasklearning"
+  initial_model_url: "./models/530_exp3_2.pth"
+
+  modules:
+    - type: "basemodel"
+      name: "RFNet"
+      url: "./examples/cityscapes/singletask_learning_bench/testalgorithms/rfnet/basemodel.py"
+
+      hyperparameters:
+        - momentum:
+            values:
+              - 0.95
+              - 0.5
+        - learning_rate:
+            values:
+              - 0.1
+        - epochs:
+            values:
+              - 2
+
+        

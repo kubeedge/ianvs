@@ -1,0 +1,14 @@
+# Python >= 3.10 is recommended for the Qwen3 block path.
+# Install a PyTorch build compatible with your CUDA/driver environment.
+
+torch>=2.7.0
+transformers>=4.57.0
+accelerate>=0.33.0
+datasets>=2.20.0
+huggingface_hub>=0.24.0
+safetensors>=0.4.3
+sentencepiece>=0.2.0
+numpy>=1.24.0
+PyYAML>=6.0
+tqdm>=4.66.0
+typing_extensions>=4.10.0

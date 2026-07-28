@@ -1,0 +1,30 @@
+benchmarkingjob:
+  name: llio_pose_estimation_benchmark
+  rank:
+    save_mode: selected_and_all
+    selected_dataitem:
+      hyperparameters:
+      - all
+      metrics:
+      - position_error
+      - orientation_error
+      - trajectory_consistency
+      modules:
+      - all
+      paradigms:
+      - all
+    sort_by:
+    - position_error: ascend
+    - orientation_error: ascend
+    - trajectory_consistency: descend
+    visualization:
+      method: print_table
+      mode: selected_only
+  test_object:
+    algorithms:
+    - name: llio_fusion
+      url: examples/industrialEI/pose-estimation-llio/testalgorithms/llio_fusion/llio_algorithm.yaml
+    type: algorithms
+  testenv: examples/industrialEI/pose-estimation-llio/testenv/testenv.yaml
+  workspace: examples/industrialEI/pose-estimation-llio/workspace/llio_pose_estimation_results
+  data_root: examples/industrialEI/pose-estimation-llio/data_restructured

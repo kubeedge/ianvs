@@ -1,0 +1,35 @@
+benchmarkingjob:
+  name: "benchmarkingjob"
+  workspace: "./project/workspace/fedllm/"
+
+  testenv: "./examples/federated-llm/fedllm-peft/testenv/testenv.yaml"
+
+  # the configuration of test object
+  test_object:
+    # test type; string type;
+    # currently the option of value is "algorithms",the others will be added in succession.
+    type: "algorithms"
+    # test algorithm configuration files; list type;
+    algorithms:
+      # algorithm name; string type;
+      - name: "fedavgm-peft"
+        # the url address of test algorithm configuration file; string type;
+        # the file format supports yaml/yml
+        url: "./examples/federated-llm/fedllm-peft/algorithm/algorithm.yaml"
+
+  # the configuration of ranking leaderboard
+  rank:
+    sort_by: [ { "rouge1_metric": "descend" } ]
+
+    # visualization configuration
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+
+    selected_dataitem:
+      paradigms: [ "all" ]
+      modules: [ "all" ]
+      hyperparameters: [ "all" ]
+      metrics: [ "rouge1_metric", "rouge2_metric", "rougel_metric", "bleu4_metric" ]
+
+    save_mode: "selected_and_all"

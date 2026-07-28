@@ -1,0 +1,42 @@
+algorithm:
+  paradigm_type: "jointinference"
+
+  modules:
+    - type: "dataset_processor"
+      name: "SpeculativeDecodingDatasetProcessor"
+      url: "./examples/cloud-edge-speculative-decoding-benchmark/testalgorithms/speculative-decoding/data_processor.py"
+      hyperparameters:
+        - sample_size:
+            values:
+              - 50
+        - warmup_samples:
+            values:
+              - 3
+
+    - type: "drafter"
+      name: "SpeculativeDraftModel"
+      url: "./examples/cloud-edge-speculative-decoding-benchmark/testalgorithms/speculative-decoding/algorithms/ar/drafter.py"
+      hyperparameters:
+        - other_hyperparameters:
+            values:
+              - "./examples/cloud-edge-speculative-decoding-benchmark/testalgorithms/speculative-decoding/profiles/base.yaml"
+        - inference_mode:
+            values:
+              - "collaboration"
+        - draft_tokens_per_step:
+            values:
+              - 8
+        - model:
+            values:
+              - "Qwen/Qwen2.5-0.5B-Instruct"
+
+    - type: "verifier"
+      name: "SpeculativeVerifyModel"
+      url: "./examples/cloud-edge-speculative-decoding-benchmark/testalgorithms/speculative-decoding/algorithms/ar/verifier.py"
+      hyperparameters:
+        - other_hyperparameters:
+            values:
+              - "./examples/cloud-edge-speculative-decoding-benchmark/testalgorithms/speculative-decoding/profiles/base.yaml"
+        - model:
+            values:
+              - "Qwen/Qwen2.5-7B-Instruct"

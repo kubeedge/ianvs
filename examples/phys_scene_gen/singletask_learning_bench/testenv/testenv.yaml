@@ -1,0 +1,12 @@
+# testenv/testenv.yaml
+
+testenv:
+  dataset:
+    train_data: "./examples/phys_scene_gen/singletask_learning_bench/dataset/queries.jsonl"
+    test_data: "./examples/phys_scene_gen/singletask_learning_bench/dataset/queries.jsonl"
+  
+  metrics:
+    - name: "semantic_conformance"
+      url: "./examples/phys_scene_gen/singletask_learning_bench/testenv/metrics/semantic_conformance.py"
+    - name: "navigation_validity"
+      url: "./examples/phys_scene_gen/singletask_learning_bench/testenv/metrics/navigation_validity.py"

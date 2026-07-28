@@ -1,0 +1,49 @@
+algorithm:
+  # paradigm name; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  paradigm_type: "federatedclassincrementallearning"
+  fl_data_setting:
+    # ratio of training dataset; float type;
+    # the default value is 0.8.
+    train_ratio: 1.0
+    # the method of splitting dataset; string type; optional;
+    # currently the options of value are as follows:
+    #   1> "default": the dataset is evenly divided based train_ratio;
+    splitting_method: "default"
+    label_data_ratio: 1.0
+    data_partition: "iid"
+    # the url address of initial network for network pre-training; string url;
+  # the url address of initial network; string type; optional;
+  initial_model_url: "/home/wyd/ianvs/project/init_model/cnn.pb"
+  # algorithm module configuration in the paradigm; list type;
+  # incremental rounds setting of incremental learning; int type; default value is 2;
+
+  modules:
+    # kind of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel"
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "GLFCMatch-Client"
+      # the url address of python module; string type;
+      url: "./examples/cifar100/fci_ssl/glfc/algorithm/basemodel.py"
+
+      # hyperparameters configuration for the python module; list type;
+      hyperparameters:
+        # name of the hyperparameter; string type;
+        - batch_size:
+            values:
+              - 64
+        - learning_rate:
+            values:
+              - 0.001
+        - epochs:
+            values:
+              - 20
+    - type: "aggregation"
+      name: "FedAvg"
+      url: "./examples/cifar100/fci_ssl/glfc/algorithm/aggregation.py"
+

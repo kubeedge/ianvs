@@ -1,0 +1,59 @@
+benchmarkingjob:
+  name: "benchmarkingjob"
+  workspace: "./workspace-cloud-edge-speculative-decoding-benchmark-ar"
+
+  hard_example_mining_mode: "mining-free"
+
+  testenv: "./examples/cloud-edge-speculative-decoding-benchmark/testenv/testenv.yaml"
+
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "speculative-decoding"
+        url: "./examples/cloud-edge-speculative-decoding-benchmark/testalgorithms/speculative-decoding/test_speculative_decoding.yaml"
+
+  rank:
+    sort_by:
+      - { "Time to First Token": "ascend" }
+      - { "Throughput": "descend" }
+
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+
+    selected_dataitem:
+      paradigms: [ "all" ]
+      modules: [ "all" ]
+      hyperparameters:
+        [
+          "dataset_processor-sample_size",
+          "drafter-inference_mode",
+          "drafter-model",
+          "verifier-model",
+          "drafter-draft_tokens_per_step"
+        ]
+      metrics:
+        [
+          "Time to First Token",
+          "Throughput",
+          "Internal Token Latency",
+          "End-to-End Latency",
+          "Acceptance Rate"
+        ]
+
+    selected_output_columns:
+      [
+        "algorithm",
+        "Time to First Token",
+        "Throughput",
+        "Internal Token Latency",
+        "End-to-End Latency",
+        "Acceptance Rate",
+        "dataset_processor-sample_size",
+        "drafter-inference_mode",
+        "drafter-model",
+        "verifier-model",
+        "drafter-draft_tokens_per_step"
+      ]
+
+    save_mode: "selected_and_all"

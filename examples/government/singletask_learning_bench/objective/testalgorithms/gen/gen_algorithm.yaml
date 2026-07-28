@@ -1,0 +1,18 @@
+algorithm:
+  # paradigm name; string type;
+  # currently the options of value are as follows:
+  #   1> "singletasklearning"
+  #   2> "incrementallearning"
+  paradigm_type: "singletasklearning"
+
+  # algorithm module configuration in the paradigm; list type;
+  modules:
+    # kind of algorithm module; string type;
+    # currently the options of value are as follows:
+    #   1> "basemodel"
+    - type: "basemodel"
+      # name of python module; string type;
+      # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
+      name: "gen"
+      # the url address of python module; string type;
+      url: "./examples/government/singletask_learning_bench/objective/testalgorithms/gen/basemodel.py"
