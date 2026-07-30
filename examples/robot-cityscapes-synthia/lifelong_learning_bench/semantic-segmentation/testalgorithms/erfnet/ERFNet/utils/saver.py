@@ -10,7 +10,8 @@ class Saver(object):
 
     def __init__(self, args):
         self.args = args
-        self.directory = os.path.join('/tmp', args.dataset, args.checkname)
+        output_url = os.environ.get("OUTPUT_URL", tempfile.mkdtemp())
+        self.directory = os.path.join(output_url, args.dataset, args.checkname)
         self.runs = sorted(glob.glob(os.path.join(self.directory, 'experiment_*')))
         run_id = int(self.runs[-1].split('_')[-1]) + 1 if self.runs else 0
 
