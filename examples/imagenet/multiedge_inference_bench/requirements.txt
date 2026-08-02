@@ -24,7 +24,7 @@ h11==0.14.0
 h5py==3.8.0
 huggingface-hub==0.16.4
 humanfriendly==10.0
-ianvs==0.1.0
+ianvs>=0.3.0
 idna==3.7
 imageio==2.31.2
 importlib-metadata==6.7.0

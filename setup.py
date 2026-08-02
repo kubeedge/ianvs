@@ -42,7 +42,7 @@ class InstallPrepare:
 
     @property
     def version(self):
-        default_version = "0.1.0"
+        default_version = "0.3.0"
         return default_version
 
     @property

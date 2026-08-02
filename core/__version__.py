@@ -16,7 +16,7 @@
 
 # follow Semantic Versioning (https://semver.org/)
 _MAJOR_V = '0'
-_MINOR_V = '1'
+_MINOR_V = '3'
 _PATCH_V = '0'
 
 __version__ = '.'.join([_MAJOR_V, _MINOR_V, _PATCH_V])

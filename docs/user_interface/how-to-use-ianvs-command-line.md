@@ -27,7 +27,7 @@ For example:
 
 ```shell
 $ ianvs -v
-0.1.0
+0.3.0
 ```
 
 ### Run a benchmarking job
