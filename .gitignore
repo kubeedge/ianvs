@@ -147,3 +147,6 @@ dmypy.json
 .idea/misc.xml
 .idea/workspace.xml
 .idea/vcs.xml
+
+# test venv
+.test_venv/
