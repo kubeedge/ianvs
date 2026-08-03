@@ -60,7 +60,7 @@ train_dataset = dict(
         type='CocoDataset',
         classes=('yanse', 'huahen', 'mosun'),
         ann_file=
-        '/home/wjj/wjj/Public/code/huawei/experiments/23-02-18_yaoba/yolox/train.json',
+        './experiments/23-02-18_yaoba/yolox/train.json',
         img_prefix='/media/huawei_YaoBa/Images',
         pipeline=[
             dict(type='LoadImageFromFile'),
@@ -122,7 +122,7 @@ data = dict(
             type='CocoDataset',
             classes=('yanse', 'huahen', 'mosun'),
             ann_file=
-            '/home/wjj/wjj/Public/code/huawei/experiments/23-02-18_yaoba/yolox/train.json',
+            './experiments/23-02-18_yaoba/yolox/train.json',
             img_prefix='/media/huawei_YaoBa/Images',
             pipeline=[
                 dict(type='LoadImageFromFile'),
@@ -163,7 +163,7 @@ data = dict(
         type='CocoDataset',
         classes=('yanse', 'huahen', 'mosun'),
         ann_file=
-        '/home/wjj/wjj/Public/code/huawei/experiments/23-02-18_yaoba/yolox/val.json',
+        './experiments/23-02-18_yaoba/yolox/val.json',
         img_prefix='/media/huawei_YaoBa/Images',
         pipeline=[
             dict(type='LoadImageFromFile'),
@@ -210,6 +210,6 @@ num_last_epochs = 15
 interval = 10
 evaluation = dict(
     save_best='auto', interval=50, dynamic_intervals=[(285, 1)], metric='bbox')
-work_dir = '/home/wjj/wjj/Public/code/huawei/experiments/23-02-18_yaoba/yolox'
+work_dir = './experiments/23-02-18_yaoba/yolox'
 auto_resume = False
 gpu_ids = range(0, 4)

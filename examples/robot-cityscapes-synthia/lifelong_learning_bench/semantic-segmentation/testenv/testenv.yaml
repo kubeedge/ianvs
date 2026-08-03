@@ -2,9 +2,9 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_url: "/home/QXY/dataset/mdil-ss/train/mdil-ss-train-index-small.txt"
+    train_url: "./dataset/mdil-ss/train/mdil-ss-train-index-small.txt"
     # the url address of test dataset index; string type;
-    test_url: "/home/QXY/dataset/mdil-ss/test/mdil-ss-test-index-small.txt"
+    test_url: "./dataset/mdil-ss/test/mdil-ss-test-index-small.txt"
 
   # model eval configuration of incremental learning;
   model_eval:

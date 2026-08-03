@@ -6,7 +6,7 @@ from sedna.common.class_factory import ClassType, ClassFactory
 # set backend
 os.environ['BACKEND_TYPE'] = 'PYTORCH'
 
-yolo_hub_path = '/home/shifan/.cache/torch/hub/ultralytics_yolov5_master'
+yolo_hub_path = './.cache/torch/hub/ultralytics_yolov5_master'
 
 @ClassFactory.register(ClassType.GENERAL, alias="BaseModel")
 class BaseModel:

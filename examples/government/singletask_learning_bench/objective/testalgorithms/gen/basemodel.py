@@ -44,11 +44,11 @@ class BaseModel:
 
     def __init__(self, **kwargs):
         self.model = AutoModelForCausalLM.from_pretrained(
-            "/home/icyfeather/models/Qwen2-0.5B-Instruct",
+            "./models/Qwen2-0.5B-Instruct",
             torch_dtype="auto",
             device_map="auto"
         )
-        self.tokenizer = AutoTokenizer.from_pretrained("/home/icyfeather/models/Qwen2-0.5B-Instruct")
+        self.tokenizer = AutoTokenizer.from_pretrained("./models/Qwen2-0.5B-Instruct")
 
     def train(self, train_data, valid_data=None, **kwargs):
         LOGGER.info("BaseModel train")

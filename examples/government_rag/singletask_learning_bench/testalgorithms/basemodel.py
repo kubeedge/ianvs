@@ -157,7 +157,7 @@ class BaseModel:
     def preprocess(self, **kwargs):
         print("BaseModel preprocess")
         # input('stop here preprocess')
-        self.rag = GovernmentRAG(model_name="/home/icyfeather/models/bge-m3", device="cuda", persist_directory="./chroma_db")
+        self.rag = GovernmentRAG(model_name="./models/bge-m3", device="cuda", persist_directory="./chroma_db")
         LOGGER.info("RAG initialized")
 
     def train(self, train_data, valid_data=None, **kwargs):
@@ -176,12 +176,12 @@ class BaseModel:
                 with self.gpu_lock:
                     if rag_type == "[global]":
                         if self.rag is None:
-                            self.rag = GovernmentRAG(model_name="/home/icyfeather/models/bge-m3", device="cuda", persist_directory="./chroma_db")
+                            self.rag = GovernmentRAG(model_name="./models/bge-m3", device="cuda", persist_directory="./chroma_db")
                     elif rag_type == "[local]":
-                        self.rag = GovernmentRAG(model_name="/home/icyfeather/models/bge-m3", device="cuda", persist_directory="./chroma_db", provinces=[location])
+                        self.rag = GovernmentRAG(model_name="./models/bge-m3", device="cuda", persist_directory="./chroma_db", provinces=[location])
                     else:  # [other]
                         all_locations = set(self.all_locations)
-                        self.rag = GovernmentRAG(model_name="/home/icyfeather/models/bge-m3", device="cuda", persist_directory="./chroma_db", provinces=list(all_locations - set([location])))
+                        self.rag = GovernmentRAG(model_name="./models/bge-m3", device="cuda", persist_directory="./chroma_db", provinces=list(all_locations - set([location])))
                     
                     relevant_docs = self.rag.query(query, k=1)
                     

@@ -20,6 +20,6 @@ if __name__ == '__main__':
     random.seed(5)
     random_select("/custom_code/instance_based/txt/merged_part/NG.txt",
                   139,
-                  "/home/wjj/wjj/Public/code/huawei/custom_code/instance_based/txt/merged_part",
+                  "./instance_based/txt/merged_part",
                   select_name="NG_test.txt",
                   rest_name="NG_labeled.txt")

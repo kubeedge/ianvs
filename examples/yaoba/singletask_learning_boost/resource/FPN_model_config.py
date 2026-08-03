@@ -124,7 +124,7 @@ data = dict(
         ann_file=
         '/custom_ianvs/singletask_learning_yolox_boost/exp/ac_bosst/tmp_folder/new_training_weight.json',
         img_prefix=
-        '/home/wjj/wjj/Public/code/ianvs/custom_ianvs/singletask_learning_yolox_boost/work_dir/tmp_folder/aug_img_folder',
+        './custom_ianvs/singletask_learning_yolox_boost/work_dir/tmp_folder/aug_img_folder',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='TRLoadAnnotations', with_bbox=True, with_weight=True),
@@ -150,7 +150,7 @@ data = dict(
         ann_file=
         '/custom_ianvs/singletask_learning_boost/resource/json/NG_test.json',
         img_prefix=
-        '/home/wjj/wjj/Public/code/ianvs/custom_ianvs/singletask_learning_yolox_boost/work_dir/tmp_folder/aug_img_folder',
+        './custom_ianvs/singletask_learning_yolox_boost/work_dir/tmp_folder/aug_img_folder',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -176,7 +176,7 @@ data = dict(
         ann_file=
         '/custom_ianvs/singletask_learning_boost/resource/json/NG_test.json',
         img_prefix=
-        '/home/wjj/wjj/Public/code/ianvs/custom_ianvs/singletask_learning_yolox_boost/work_dir/tmp_folder/aug_img_folder',
+        './custom_ianvs/singletask_learning_yolox_boost/work_dir/tmp_folder/aug_img_folder',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -217,6 +217,6 @@ workflow = [('train', 1)]
 opencv_num_threads = 0
 mp_start_method = 'fork'
 auto_scale_lr = dict(enable=True, base_batch_size=16)
-work_dir = '/home/wjj/wjj/Public/code/huawei/custom_code/instance_based/model/weight_fpn/cls'
+work_dir = './instance_based/model/weight_fpn/cls'
 auto_resume = False
 gpu_ids = [0]

@@ -130,7 +130,7 @@ self.api_key = 'your_api_key_here'
 ### Step 2: Enter Ianvs Directory
 
 ```bash
-cd /home/linux/Desktop/ianvs
+cd .
 ```
 
 ---
