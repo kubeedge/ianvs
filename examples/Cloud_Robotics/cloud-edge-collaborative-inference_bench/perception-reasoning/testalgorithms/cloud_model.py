@@ -20,8 +20,7 @@ from core.common.log import LOGGER
 from sedna.common.class_factory import ClassFactory, ClassType
 
 os.environ['BACKEND_TYPE'] = 'TORCH'
-__all__ = ["QwenSemanticSegmentation"]
-
+__all__ = ["CloudModel"]
 # Image resolution settings based on risk levels
 RISK_LEVELS = {
     "low": "640x480",
