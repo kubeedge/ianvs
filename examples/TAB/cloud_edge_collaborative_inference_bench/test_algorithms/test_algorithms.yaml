@@ -45,9 +45,12 @@ algorithm:
         - model:
             values:
               - "deepseek-chat"
+        # Name of the environment variable that holds the cloud API key.
+        # cloud_model.py resolves it with os.getenv(api_key_env), so this must be
+        # the variable NAME -- never the key itself.
         - api_key_env:
             values:
-              - "sk-zk267c3f794bd6c34bbf3b8613ce16aa54667dfb4ea1447a"
+              - "OPENAI_API_KEY"
         - api_base_url:
             values:
               - "https://api.zhizengzeng.com/v1"
