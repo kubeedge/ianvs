@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Time to first token metric for cloud-edge LLM benchmark."""
 
 from sedna.common.class_factory import ClassType, ClassFactory
 from result_parser import JointInferenceResult
@@ -34,6 +35,9 @@ def time_to_first_token(_, y_pred):
 
     infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
 
-    average_ttft = sum([pred.result.time_to_first_token for pred in infer_res]) / len(infer_res)
+    if not infer_res:
+        return 0.0
+
+    average_ttft = sum(pred.result.time_to_first_token for pred in infer_res) / len(infer_res)
 
     return round(average_ttft, 3)
