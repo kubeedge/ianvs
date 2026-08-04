@@ -124,8 +124,10 @@ class Module:
             try:
                 utils.load_module(self.url)
 
-                if class_factory_type == ClassType.HEM:
-                    func = {"method": self.name, "param":self.hyperparameters}
+                if class_factory_type in [ClassType.HEM, ClassType.STP, ClassType.KM, ClassType.UTP, ClassType.UTD]:
+                    func = {"method": self.name}
+                    if self.hyperparameters:
+                        func["param"] = self.hyperparameters
                 else:
                     func = ClassFactory.get_cls(
                         type_name=class_factory_type,

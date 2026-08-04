@@ -155,7 +155,7 @@ class LifelongLearning(ParadigmBase):
             inference_dataset = self.dataset.load_data(self.dataset.test_url, "eval",
                                                    feature_process=_data_feature_process)
             kwargs = {}
-            test_res = job.my_inference(inference_dataset, **kwargs)
+            test_res, _, _ = job.inference(inference_dataset, **kwargs)
             del job
             for key in my_dict.keys():
                 LOGGER.info(f"{key} scores: {my_dict[key]}")
@@ -333,7 +333,7 @@ class LifelongLearning(ParadigmBase):
         for i, _ in enumerate(inference_dataset.x):
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
-            res, is_unseen_task, _ = job.inference_2(data, **kwargs)
+            res, is_unseen_task, _ = job.inference(data, **kwargs)
             inference_results.append(res)
             if is_unseen_task:
                 unseen_tasks.append(inference_dataset.x[i])
@@ -366,8 +366,13 @@ class LifelongLearning(ParadigmBase):
                                                    feature_process=_data_feature_process)
 
         job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
-        cloud_task_index = job.train(train_dataset)
+        res = job.train(train_dataset)
         del job
+
+        if isinstance(res, str) and res:
+            cloud_task_index = res
+        else:
+            cloud_task_index = os.path.join(train_output_dir, "index.pkl")
 
         return cloud_task_index
 
@@ -389,9 +394,14 @@ class LifelongLearning(ParadigmBase):
 
         job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
         _, metric_func = get_metric_func(model_metric)
-        edge_task_index = job.evaluate(eval_dataset, metrics=metric_func)
+        eval_res = job.evaluate(eval_dataset, metrics=metric_func)
 
         del job
+
+        if isinstance(eval_res, str) and eval_res:
+            edge_task_index = eval_res
+        else:
+            edge_task_index = os.path.join(eval_output_dir, "index.pkl")
 
         return edge_task_index
 
@@ -416,9 +426,16 @@ class LifelongLearning(ParadigmBase):
 
         job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
         _, metric_func = get_metric_func(model_metric)
-        edge_task_index, tasks_detail, res = job.my_evaluate(eval_dataset, metrics=metric_func)
+        eval_result = job.evaluate(eval_dataset, metrics=metric_func)
 
         del job
+
+        if isinstance(eval_result, (tuple, list)) and len(eval_result) == 2:
+            tasks_detail, res = eval_result
+        else:
+            tasks_detail, res = [], eval_result
+
+        edge_task_index = os.path.join(eval_output_dir, "index.pkl")
 
         return edge_task_index, tasks_detail, res
 
