@@ -6,7 +6,7 @@ from RFNet.dataloaders import make_data_loader
 import RFNet.eval_config as valid_cfgs
 from RFNet.utils.metrics import Evaluator
 
-__all__ = ('accuracy')
+__all__ = ["accuracy"]
 
 
 @ClassFactory.register(ClassType.GENERAL, alias="map")
