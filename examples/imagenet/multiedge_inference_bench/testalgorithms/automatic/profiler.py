@@ -172,6 +172,15 @@ def validate_profile_results(profile_results, args, inputs, model_layers, layer_
         for _pd in profile_results['profile_data']:
             assert _layer != _pd['layer'], "layer to be profiled already in existing results"
 
+def generate_inputs(file_path="bert_input.npz", batch_size=32):
+    """Generates a bert_input.npz file containing raw text strings."""
+    
+    # Create a list of raw dummy strings
+    dummy_sentences = ["This is a sample sentence used for profiling the BERT model's performance."] * max(batch_size, 32)
+    
+    # Save as standard string array
+    np.savez(file_path, input=np.array(dummy_sentences, dtype=str))
+    print(f"Successfully generated {file_path}")
 
 def main():
     """Main function."""
@@ -212,8 +221,12 @@ def main():
             # single tensor
             inputs = torch.randn(args.batch_size, *shapes[0])
     elif args.model_name in ['bert-base-uncased', 'bert-large-uncased']:
-        with np.load("bert_input.npz") as bert_inputs:
-            inputs_sentence = list(bert_inputs['input'][0: args.batch_size])
+        input_file = "bert_input.npz"
+        # checking for input file and generating if not present
+        if not os.path.exists(input_file):
+            generate_inputs(file_path="input_file", batch_size=args.batch_size)
+        with np.load(input_file) as bert_inputs:
+            inputs_sentence = [str(text) for text in bert_inputs['input'][0: args.batch_size]]
         tokenizer = BertTokenizer.from_pretrained(args.model_name)
         inputs = tokenizer(inputs_sentence, padding=True, truncation=True, return_tensors="pt")['input_ids']
     else:
