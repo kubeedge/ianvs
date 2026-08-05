@@ -64,7 +64,7 @@ When Ianvs starts the benchmarking job, the Test Env Manager will first pass the
 
 Joint Inference supports multiple modes, including `mining-then-inference`, `inference-then-mining`, and `self-design`. Among them, `mining-then-inference` is suitable for LLM scenarios, `inference-then-mining` is suitable for CV scenarios, and `self-design` allows you to implement more complex collaborative inference strategies on your own.
 
-In this example, we will rely on Ianvs' Joint Inference Paradigm using the `inference-then-mining` mode to implement a Query Routing strategy. First, we call your custom Hard Example Mining module to determine if it is a hard case. If it is, we call the inference interface of the Edge Model to complete the inference; if not, we call the inference interface of the Cloud Model to complete it.
+In this example, we will rely on Ianvs' Joint Inference Paradigm using the `mining-then-inference` mode to implement a Query Routing strategy. First, we call your custom Hard Example Mining module to determine if it is a hard case. If it is, we call the inference interface of the Cloud Model to complete the inference; if not, we call the inference interface of the Edge Model to complete it.
 
 To save API calls during multi-round testing, this example has designed a result caching mechanism in both EdgeModel and Cloud Model. For questions that have already been tested, cached results will be read and returned.
 
@@ -88,7 +88,7 @@ Before using this example, you need to have the device ready:
 
 - Internet connection for GitHub, PyPI,  HuggingFace, etc
 
-- Python 3.8+ environment
+- Python 3.10+ environment
 
 ### Methods for Benchmarking with Ianvs
 
@@ -158,8 +158,8 @@ ianvs -f examples/cloud-edge-collaborative-inference-for-llm/benchmarkingjob.yam
 git clone https://github.com/kubeedge/ianvs.git
 cd ianvs
 
-# Create a new conda environment with Python>=3.8 and rust(venv users can do it in their own way).
-conda create -n ianvs-experiment python=3.8 rust -c conda-forge
+# Create a new conda environment with Python>=3.10 and rust(venv users can do it in their own way).
+conda create -n ianvs-experiment python=3.10 rust -c conda-forge
 
 # Activate our environment
 conda activate ianvs-experiment
