@@ -35,6 +35,9 @@ def edge_prompt_tokens(_, y_pred):
 
     infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
 
+    if not infer_res:
+        return 0
+
     edge_prompt_tokens = sum([pred.edge_result.prompt_tokens for pred in infer_res])
 
     return edge_prompt_tokens
