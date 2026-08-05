@@ -172,7 +172,7 @@ def validate_profile_results(profile_results, args, inputs, model_layers, layer_
         for _pd in profile_results['profile_data']:
             assert _layer != _pd['layer'], "layer to be profiled already in existing results"
 
-def generate_inputs(file_path="bert_input.npz", batch_size=32):
+def generate_dummy_bert_inputs(file_path="bert_input.npz", batch_size=32):
     """Generates a bert_input.npz file containing raw text strings."""
     
     # Create a list of raw dummy strings
@@ -224,7 +224,7 @@ def main():
         input_file = "bert_input.npz"
         # checking for input file and generating if not present
         if not os.path.exists(input_file):
-            generate_inputs(file_path="input_file", batch_size=args.batch_size)
+            generate_dummy_bert_inputs(file_path="input_file", batch_size=args.batch_size)
         with np.load(input_file) as bert_inputs:
             inputs_sentence = [str(text) for text in bert_inputs['input'][0: args.batch_size]]
         tokenizer = BertTokenizer.from_pretrained(args.model_name)
