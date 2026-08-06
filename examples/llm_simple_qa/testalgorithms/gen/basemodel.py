@@ -26,8 +26,8 @@ from sedna.common.class_factory import ClassType, ClassFactory
 
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
-device = "cuda" # the device to load the model onto
-
+import torch
+device = "cuda" if torch.cuda.is_available() else "mps" if (hasattr(torch.backends, "mps") and torch.backends.mps.is_available()) else "cpu"
 
 logging.disable(logging.WARNING)
 
@@ -40,12 +40,17 @@ os.environ['BACKEND_TYPE'] = 'TORCH'
 class BaseModel:
 
     def __init__(self, **kwargs):
+        model_id = "Qwen/Qwen2.5-0.5B-Instruct"
         self.model = AutoModelForCausalLM.from_pretrained(
-            "/home/icyfeather/models/Qwen2-0.5B-Instruct",
+            model_id,
             torch_dtype="auto",
             device_map="auto"
         )
-        self.tokenizer = AutoTokenizer.from_pretrained("/home/icyfeather/models/Qwen2-0.5B-Instruct")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_id)
+
+    def preprocess(self, data=None, **kwargs):
+        print("BaseModel doesn't need to preprocess")
+        return data
 
     def train(self, train_data, valid_data=None, **kwargs):
         print("BaseModel doesn't need to train")

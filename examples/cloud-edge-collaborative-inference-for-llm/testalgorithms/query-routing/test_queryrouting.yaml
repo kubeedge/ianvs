@@ -32,7 +32,7 @@ algorithm:
             #  5> "LadeSepcDec": Lookahead Decoding framework;
             values:
               - "huggingface"
-              - "vllm"
+              # - "vllm"  # Uncomment for Linux + CUDA environments only
               # - "EagleSpecDec"
 
         # If you're using speculative models, uncomment the following lines:
