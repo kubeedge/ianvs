@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from logger import logger
 
 class SegmentationLosses(object):
     def __init__(self, weight=None, size_average=True, batch_average=True, ignore_index=255, cuda=False, gpu_ids=0): # ignore_index=255
@@ -56,9 +57,9 @@ if __name__ == "__main__":
     loss = SegmentationLosses(cuda=True)
     a = torch.rand(1, 3, 7, 7).cuda()
     b = torch.rand(1, 7, 7).cuda()
-    print(loss.CrossEntropyLoss(a, b).item())
-    print(loss.FocalLoss(a, b, gamma=0, alpha=None).item())
-    print(loss.FocalLoss(a, b, gamma=2, alpha=0.5).item())
+    logger.info(loss.CrossEntropyLoss(a, b).item())
+    logger.info(loss.FocalLoss(a, b, gamma=0, alpha=None).item())
+    logger.info(loss.FocalLoss(a, b, gamma=2, alpha=0.5).item())
 
 
 

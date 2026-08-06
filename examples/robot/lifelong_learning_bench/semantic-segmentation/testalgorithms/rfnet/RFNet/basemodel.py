@@ -17,6 +17,7 @@ from sedna.datasources import TxtDataParse
 from torch.utils.data import DataLoader
 from sedna.common.file_ops import FileOps
 from utils.lr_scheduler import LR_Scheduler
+from logger import logger
 
 def preprocess(image_urls):
     transformed_images = []
@@ -61,7 +62,7 @@ class Model:
 
     def train(self, train_data, valid_data=None, **kwargs):        
         self.trainer = Trainer(self.train_args, train_data=train_data)
-        print("Total epoches:", self.trainer.args.epochs)
+        logger.info("Total epoches:", self.trainer.args.epochs)
         for epoch in range(self.trainer.args.start_epoch, self.trainer.args.epochs):
             if epoch == 0 and self.trainer.val_loader:
                 self.trainer.validation(epoch)
@@ -188,7 +189,7 @@ def train_args():
 
     args = parser.parse_args()
     args.cuda = not args.no_cuda and torch.cuda.is_available()
-    print(torch.cuda.is_available())
+    logger.info(torch.cuda.is_available())
     if args.cuda:
         try:
             args.gpu_ids = [int(s) for s in args.gpu_ids.split(',')]
@@ -218,7 +219,7 @@ def train_args():
 
     if args.checkname is None:
         args.checkname = 'RFNet'
-    print(args)
+    logger.info(args)
     torch.manual_seed(args.seed)
 
     return args
@@ -302,7 +303,7 @@ def accuracy(y_true, y_pred, **kwargs):
     mIoU = evaluator.Mean_Intersection_over_Union()
     FWIoU = evaluator.Frequency_Weighted_Intersection_over_Union()
 
-    print("CPA:{}, mIoU:{}, fwIoU: {}".format(CPA, mIoU, FWIoU))
+    logger.info("CPA:{}, mIoU:{}, fwIoU: {}".format(CPA, mIoU, FWIoU))
     return CPA
 
 if __name__ == '__main__':

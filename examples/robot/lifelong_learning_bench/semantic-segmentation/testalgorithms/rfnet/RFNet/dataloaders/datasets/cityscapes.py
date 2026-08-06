@@ -7,6 +7,7 @@ from torch.utils import data
 from mypath import Path
 from torchvision import transforms
 from dataloaders import custom_transforms as tr
+from logger import logger
 
 class CityscapesSegmentation(data.Dataset):
     NUM_CLASSES = 30 # 25
@@ -50,8 +51,8 @@ class CityscapesSegmentation(data.Dataset):
         if len(self.disparities[split]) == 0:
             raise Exception("No depth images for split=[%s] found in %s" % (split, self.disparities_base))
 
-        print("Found %d %s RGB images" % (len(self.images[split]), split))
-        print("Found %d %s disparity images" % (len(self.disparities[split]), split))
+        logger.info("Found %d %s RGB images" % (len(self.images[split]), split))
+        logger.info("Found %d %s disparity images" % (len(self.disparities[split]), split))
 
 
     def __len__(self):

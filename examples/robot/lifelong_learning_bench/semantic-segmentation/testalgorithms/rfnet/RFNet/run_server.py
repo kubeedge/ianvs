@@ -15,7 +15,7 @@
 import os
 from io import BytesIO
 from typing import Optional, Any
-
+from logger import logger
 import cv2
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)
@@ -161,7 +161,7 @@ class InferenceServer(BaseServer):  # pylint: disable=too-many-arguments
     async def predict(self, image: UploadFile = File(...), depth: Optional[UploadFile] = None) -> ResultResponse:
         contents = await image.read()
         recieve_img_time = time.time()
-        print("Recieve image from the robo:", recieve_img_time)
+        logger.info("Recieve image from the robo:", recieve_img_time)
 
         image = Image.open(BytesIO(contents)).convert('RGB')
 
@@ -181,7 +181,7 @@ class InferenceServer(BaseServer):  # pylint: disable=too-many-arguments
         results = sedna_predict.predict(self.job, data=sample, validator=self.detection_validator)
 
         predict_finish_time = time.time()
-        print(f"Prediction costs {predict_finish_time - recieve_img_time} seconds")
+        logger.info(f"Prediction costs {predict_finish_time - recieve_img_time} seconds")
 
         post_process = True
         if results["result"]["box"] is None:
@@ -192,12 +192,12 @@ class InferenceServer(BaseServer):  # pylint: disable=too-many-arguments
             results["result"]["curr"] = curr
             results["result"]["future"] = future
             results["result"]["box"] = None
-            print("Post process cost at worker:", (time.time()-predict_finish_time))
+            logger.info("Post process cost at worker:", (time.time()-predict_finish_time))
         else:
             results["result"]["curr"] = None
             results["result"]["future"] = None
 
-        print("Result transmit to robo time:", time.time())
+        logger.info("Result transmit to robo time:", time.time())
         return results
 
 def parse_result(label, count):

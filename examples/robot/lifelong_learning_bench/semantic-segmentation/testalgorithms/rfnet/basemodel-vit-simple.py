@@ -15,7 +15,7 @@ from RFNet.eval import Validator, load_my_state_dict
 from RFNet.dataloaders import custom_transforms as tr
 from RFNet.dataloaders import make_data_loader
 from RFNet.utils.args import TrainArgs, ValArgs
-
+from logger import logger
 # set backend
 os.environ['BACKEND_TYPE'] = 'PYTORCH'
 
@@ -43,7 +43,7 @@ class BaseModel:
 
     def train(self, train_data, valid_data=None, **kwargs):
         self.trainer = Trainer(self.train_args, train_data=train_data)
-        print("Total epoches:", self.trainer.args.epochs)
+        logger.info("Total epoches:", self.trainer.args.epochs)
         loss_all = []
         for epoch in range(
                 self.trainer.args.start_epoch,
@@ -137,7 +137,7 @@ class BaseModel:
 
     def load(self, model_url, **kwargs):
         if model_url:
-            print("load model url: ",model_url)
+            logger.info("load model url: ",model_url)
             self.validator.new_state_dict = torch.load(model_url, map_location=torch.device("cpu"))
             self.train_args.resume = model_url
         else:
