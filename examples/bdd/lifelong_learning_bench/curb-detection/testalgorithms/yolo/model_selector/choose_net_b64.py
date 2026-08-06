@@ -45,7 +45,7 @@ data = dict(
         type='BDD_Performance',
         data_prefix='',
         ann_file=
-        '/home/liyunzhe/Mobile-Inference/algorithm/labels/0129_real_world_multi_label_remo_xyxy_bdd_train.txt',
+        './algorithm/labels/0129_real_world_multi_label_remo_xyxy_bdd_train.txt',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='Resize', size=(256, -1)),
@@ -62,7 +62,7 @@ data = dict(
         type='BDD_Performance',
         data_prefix='',
         ann_file=
-        '/home/liyunzhe/Mobile-Inference/algorithm/labels/0129_real_world_multi_label_remo_xyxy_bdd_val.txt',
+        './algorithm/labels/0129_real_world_multi_label_remo_xyxy_bdd_val.txt',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='Resize', size=(256, -1)),
@@ -78,7 +78,7 @@ data = dict(
         type='BDD_Performance',
         data_prefix='',
         ann_file=
-        '/home/liyunzhe/Mobile-Inference/algorithm/labels/0129_real_world_multi_label_remo_xyxy_bdd_val.txt',
+        './algorithm/labels/0129_real_world_multi_label_remo_xyxy_bdd_val.txt',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='Resize', size=(256, -1)),

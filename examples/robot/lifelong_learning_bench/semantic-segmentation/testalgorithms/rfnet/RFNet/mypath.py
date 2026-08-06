@@ -2,19 +2,19 @@ class Path(object):
     @staticmethod
     def db_root_dir(dataset):
         if dataset == 'cityscapes':
-            return '/home/robo/m0063/project/RFNet-master/Data/cityscapes/'      # folder that contains leftImg8bit/
+            return './dataset/cityscapes/'      # folder that contains leftImg8bit/
         elif dataset == 'citylostfound':
-            return '/home/robo/m0063/project/RFNet-master/Data/cityscapesandlostandfound/'  # folder that mixes Cityscapes and Lost and Found
+            return './dataset/cityscapesandlostandfound/'  # folder that mixes Cityscapes and Lost and Found
         elif dataset == 'cityrand':
-            return '/home/robo/m0063/project/RFNet-master/Data/cityrand/'
+            return './dataset/cityrand/'
         elif dataset == 'target':
-            return '/home/robo/m0063/project/RFNet-master/Data/target/'
+            return './dataset/target/'
         elif dataset == 'xrlab':
-            return '/home/robo/m0063/project/RFNet-master/Data/xrlab/'
+            return './dataset/xrlab/'
         elif dataset == 'e1':
-            return '/home/robo/m0063/project/RFNet-master/Data/e1/'
+            return './dataset/e1/'
         elif dataset == 'mapillary':
-            return '/home/robo/m0063/project/RFNet-master/Data/mapillary/'
+            return './dataset/mapillary/'
         else:
             print('Dataset {} not available.'.format(dataset))
             raise NotImplementedError

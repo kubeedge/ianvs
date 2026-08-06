@@ -12,10 +12,10 @@ import numpy as np
 
 model_id = "13_2_2_2"
 
-with open("/home/fregu856/exjobb/training_logs/multitask/model_" + model_id + "/epoch_losses_train.pkl", "rb") as file:
+with open("./training_logs/multitask/model_" + model_id + "/epoch_losses_train.pkl", "rb") as file:
     train_loss = pickle.load(file)
 
-with open("/home/fregu856/exjobb/training_logs/multitask/model_" + model_id + "/epoch_losses_val.pkl", "rb") as file:
+with open("./training_logs/multitask/model_" + model_id + "/epoch_losses_val.pkl", "rb") as file:
     val_loss = pickle.load(file)
 
 print ("train loss min:", np.argmin(np.array(train_loss)), np.min(np.array(train_loss)))

@@ -77,5 +77,5 @@ def Convert_ZhouCheng_to_COCO(anno_dir, name_txt, output_dir):
 
 if __name__ == '__main__':
     Convert_ZhouCheng_to_COCO(anno_dir=r"/media/huawei_YaoBa/Annotations",
-                              name_txt=r"/home/wjj/wjj/Public/code/huawei/custom_code/instance_based/txt/merged_part/NG_test.txt",
+                              name_txt=r"./instance_based/txt/merged_part/NG_test.txt",
                               output_dir=r'/custom_code/instance_based/json/NG_test.json')

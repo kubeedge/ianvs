@@ -116,7 +116,7 @@ data = dict(
         classes=('yanse', 'huahen', 'mosun'),
         ann_file=
         '/custom_ianvs/singletask_learning_yolox_boost/exp/ac_bosst/tmp_folder/aug_unknown.json',
-        img_prefix='/home/wjj/wjj/Public/code/ianvs/custom_ianvs/singletask_learning_yolox_boost/work_dir/tmp_folder/aug_img_folder',
+        img_prefix='./custom_ianvs/singletask_learning_yolox_boost/work_dir/tmp_folder/aug_img_folder',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='LoadAnnotations', with_bbox=True),
@@ -135,7 +135,7 @@ data = dict(
         type='CocoDataset',
         classes=('yanse', 'huahen', 'mosun'),
         ann_file=
-        '/home/wjj/wjj/Public/code/huawei/custom_code/instance_based/json/NG_test.json',
+        './instance_based/json/NG_test.json',
         img_prefix='/media/huawei_YaoBa/Images',
         pipeline=[
             dict(type='LoadImageFromFile'),
@@ -160,7 +160,7 @@ data = dict(
         type='CocoDataset',
         classes=('yanse', 'huahen', 'mosun'),
         ann_file=
-        '/home/wjj/wjj/Public/code/huawei/custom_code/instance_based/json/NG_test.json',
+        './instance_based/json/NG_test.json',
         img_prefix='/media/huawei_YaoBa/Images',
         pipeline=[
             dict(type='LoadImageFromFile'),
@@ -203,6 +203,6 @@ workflow = [('train', 1)]
 opencv_num_threads = 0
 mp_start_method = 'fork'
 auto_scale_lr = dict(enable=True, base_batch_size=16)
-work_dir = '/home/wjj/wjj/Public/code/huawei/custom_code/instance_based/model/fpn/known'
+work_dir = './instance_based/model/fpn/known'
 auto_resume = False
 gpu_ids = range(0, 4)

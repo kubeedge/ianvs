@@ -12,7 +12,7 @@ class CityscapesSegmentation(data.Dataset):
     def __init__(self, args, root=Path.db_root_dir('cityscapes'), data=None, split="train"):
 
         # self.root = root
-        self.root = "/home/lsq/Dataset/"
+        self.root = "./dataset/"
         self.split = split
         self.args = args
         self.images = {}

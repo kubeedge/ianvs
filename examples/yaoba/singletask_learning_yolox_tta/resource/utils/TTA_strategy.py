@@ -6,7 +6,7 @@ from .general_TTA_v5 import *
 from itertools import zip_longest, combinations, permutations
 import sys
 
-sys.path.append("/home/wjj/wjj/Public/code/huawei")
+sys.path.append(".")
 
 augment_list = TTA_Aug_List()
 

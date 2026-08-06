@@ -2,9 +2,9 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_url: "/home/aryan/ianvs/dataset/train-index.txt"
+    train_url: "./dataset/train-index.txt"
     # the url address of test dataset index; string type;
-    test_url: "/home/aryan/ianvs/dataset/test-index.txt"
+    test_url: "./dataset/test-index.txt"
 
   # model eval configuration of incremental learning;
   model_eval:

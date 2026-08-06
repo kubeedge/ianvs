@@ -35,7 +35,7 @@ class Task:
 
 __all__ = ('InferenceIntegrate', )
 
-yolo_hub_path = '/home/shifan/.cache/torch/hub/ultralytics_yolov5_master'
+yolo_hub_path = './.cache/torch/hub/ultralytics_yolov5_master'
 
 @ClassFactory.register(ClassType.STP)
 class InferenceIntegrate:

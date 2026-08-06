@@ -94,8 +94,8 @@ train_dirs = ["jena/", "zurich/", "weimar/", "ulm/", "tubingen/", "stuttgart/",
 val_dirs = ["frankfurt/", "munster/", "lindau/"]
 test_dirs = ["berlin", "bielefeld", "bonn", "leverkusen", "mainz", "munich"]
 
-cityscapes_data_path = "/home/nailtu/data/cityscapes"
-cityscapes_meta_path = "/home/nailtu/data/cityscapes/meta"
+cityscapes_data_path = "./dataset/cityscapes"
+cityscapes_meta_path = "./dataset/cityscapes/meta"
 
 if not os.path.exists(cityscapes_meta_path):
     os.makedirs(cityscapes_meta_path)

@@ -86,7 +86,7 @@ pip install -r requirements.txt  # install
 3. We modify the yolo_hub_path in `basemodel.py` 
 
 ```
-yolo_hub_path= '/home/yourname/.cache/torch/hub/ultralytics_yolov5_master'
+yolo_hub_path= './.cache/torch/hub/ultralytics_yolov5_master'
 ```
 
 4. We replace the `model/commom.py ` under yolo_hub_path with `examples/resources/algorithms/common.py`
