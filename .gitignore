@@ -3,10 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Model weights (too large for git)
-*.gguf
-models/qwen/
-
 # C extensions
 *.so
 
@@ -139,11 +135,17 @@ dmypy.json
 .pyre/
 
 # generated files by MacOS
-.DS_Store 
+.DS_Store
 */.DS_Store
+
+# runtime-generated knowledge base index files
+index.pkl
+*.pkl
 
 # pycharm
 .idea
 .idea/misc.xml
 .idea/workspace.xml
 .idea/vcs.xml
+
+

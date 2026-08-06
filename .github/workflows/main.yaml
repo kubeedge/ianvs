@@ -28,7 +28,7 @@ jobs:
           sudo apt-get install libgl1-mesa-glx -y
           python -m pip install pip==24.0
           python -m pip install  pylint
-          python -m pip install ${{github.workspace}}/resources/third_party/*
+          python -m pip install ${{github.workspace}}/resources/third_party/sedna-0.6.0.2-py3-none-any.whl
           python -m pip install -r ${{github.workspace}}/requirements.txt
       - name: Analysing code of core with pylint
         # `--max-positional-arguments=10` is set for Python 3.9 to avoid `R0917: too-many-positional-arguments`.
