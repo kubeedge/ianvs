@@ -16,7 +16,7 @@ algorithm:
     data_partition: "iid"
     # the url address of initial network for network pre-training; string url;
   # the url address of initial network; string type; optional;
-  initial_model_url: "/home/wyd/ianvs/project/init_model/cnn.pb"
+  initial_model_url: "{{MODEL_DIR}}"
   # algorithm module configuration in the paradigm; list type;
   # incremental rounds setting of incremental learning; int type; default value is 2;
 

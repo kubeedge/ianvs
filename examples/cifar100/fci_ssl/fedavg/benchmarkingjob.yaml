@@ -2,7 +2,7 @@ benchmarkingjob:
   # job name of bechmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  workspace: "/home/wyd/ianvs/federated_class_incremental_learning/workspace"
+  workspace: "{{OUTPUT_DIR}}"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
@@ -14,7 +14,8 @@ benchmarkingjob:
     # currently the option of value is "algorithms",the others will be added in succession.
     type: "algorithms"
     # test algorithm configuration files; list type;
-    algorithms:conda
+    algorithms: 
+      conda:
       # algorithm name; string type;
       - name: "basic-fedavg"
         # the url address of test algorithm configuration file; string type;

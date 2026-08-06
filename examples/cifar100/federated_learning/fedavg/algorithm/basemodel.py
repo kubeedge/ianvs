@@ -147,12 +147,12 @@ class BaseModel:
         result = {}
         mean = np.array((0.5071, 0.4867, 0.4408), np.float32).reshape(1, 1, -1)
         std = np.array((0.2675, 0.2565, 0.2761), np.float32).reshape(1, 1, -1)
-        for data in data.x:
-            x = np.load(data)
+        for image in data:
+            x = np.load(image)
             x = (tf.cast(x, dtype=tf.float32) / 255.0 - mean) / std
             logits = self.model(x, training=False)
             pred = tf.cast(tf.argmax(logits, axis=1), tf.int32)
-            result[data] = pred.numpy()
+            result[image] = pred.numpy()
         print("finish predict")
         return result
 
