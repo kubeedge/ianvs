@@ -19,6 +19,7 @@ import os
 import sys
 import time
 
+import importlib.util
 from importlib import import_module
 from inspect import getfullargspec
 import yaml
@@ -61,18 +62,23 @@ def get_local_time():
 def py2dict(url):
     """Convert py file to the dict."""
     if url.endswith('.py'):
-        module_name = os.path.basename(url)[:-3]
-        config_dir = os.path.dirname(url)
-        sys.path.insert(0, config_dir)
-        mod = import_module(module_name)
-        sys.path.pop(0)
+        abs_path = os.path.abspath(url)
+        if not os.path.isfile(abs_path):
+            raise RuntimeError(f"config file ({url}) does not exist")
+
+        module_name = f"ianvs_dynamic_{os.path.basename(url)[:-3]}_{abs(hash(abs_path))}"
+        spec = importlib.util.spec_from_file_location(module_name, abs_path)
+        if spec is None or spec.loader is None:
+            raise RuntimeError(f"Cannot load module spec from {url}")
+
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+
         raw_dict = {
             name: value
             for name, value in mod.__dict__.items()
             if not name.startswith('__')
         }
-        sys.modules.pop(module_name)
-
         return raw_dict
 
     raise RuntimeError('config file must be the py format')
@@ -91,13 +97,19 @@ def yaml2dict(url):
 
 def load_module(url):
     """Load python module."""
-    module_path, module_name = os.path.split(url)
-    if os.path.isfile(url):
-        module_name = module_name.split(".")[0]
+    abs_path = os.path.abspath(url)
+    if not os.path.isfile(abs_path):
+        raise RuntimeError(f"load module(url={url}) failed, error: not found module file ({url})")
 
-    sys.path.insert(0, module_path)
+    file_basename = os.path.basename(abs_path).split(".")[0]
+    module_name = f"ianvs_dynamic_{file_basename}_{abs(hash(abs_path))}"
     try:
-        importlib.import_module(module_name)
-        sys.path.pop(0)
+        spec = importlib.util.spec_from_file_location(module_name, abs_path)
+        if spec is None or spec.loader is None:
+            raise RuntimeError(f"Cannot load spec from {url}")
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = mod
+        spec.loader.exec_module(mod)
+        return mod
     except Exception as err:
         raise RuntimeError(f"load module(url={url}) failed, error: {err}") from err
