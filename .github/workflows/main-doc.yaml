@@ -1,4 +1,4 @@
-name: CI
+name: CI-docs-spell
 
 on:
   push:
@@ -6,15 +6,43 @@ on:
       - main
     tags:
     paths:
-      - '**.md'
+      - '**/*.md'
   pull_request:
+    paths:
+      - '**/*.md'
 
 jobs:
-  pylint:
+  spell-check:
     runs-on: ubuntu-22.04
-    name: pylint
-    strategy:
-      matrix:
-        python-version: [ "3.7", "3.8", "3.9" ]
+    name: Soft Spell Check on Docs
+
     steps:
-      - run: 'echo "only docs modified, no need to trigger CI"'
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Changed Markdown Files
+        id: files
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -E '\.md$' || true)
+          elif [ "${{ github.event_name }}" == "push" ]; then
+            FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -E '\.md$' || true)
+          fi
+          echo "files<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$FILES" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Install pyspelling
+        run: pip install pyspelling
+
+      - name: Run Spell Check (non-blocking)
+        run: |
+          if [ -n "${{ steps.files.outputs.files }}" ]; then
+            echo " Running spell check on changed files:"
+            echo "${{ steps.files.outputs.files }}"
+            echo "${{ steps.files.outputs.files }}" | xargs pyspelling -c .spellcheck.yml || echo "⚠️ Spell check completed with warnings (non-blocking)."
+          else
+            echo "✅ No markdown files changed. Skipping spell check."
+          fi
