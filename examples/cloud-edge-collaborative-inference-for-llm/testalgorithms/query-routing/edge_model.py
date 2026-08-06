@@ -1,5 +1,5 @@
 """Edge model servable module for LLM collaborative inference."""
-# pylint: disable=line-too-long,attribute-defined-outside-init,wrong-import-order,broad-exception-caught
+# pylint: disable=line-too-long,attribute-defined-outside-init,wrong-import-order,broad-exception-caught,duplicate-code
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -75,17 +75,25 @@ class EdgeModel:
             if self.backend == "huggingface":
                 self.model = HuggingfaceLLM(**self.kwargs)
             elif self.backend == "vllm":
-                self.model = VllmLLM(**self.kwargs)
+                if VllmLLM is not None:
+                    self.model = VllmLLM(**self.kwargs)
+                else:
+                    LOGGER.warning("vLLM is not available on this platform. Falling back to HuggingfaceLLM.")
+                    self.model = HuggingfaceLLM(**self.kwargs)
             elif self.backend == "api":
                 self.model = APIBasedLLM(**self.kwargs)
             elif self.backend == "EagleSpecDec":
-                self.model = EagleSpecDecModel(**self.kwargs)
+                if EagleSpecDecModel is not None:
+                    self.model = EagleSpecDecModel(**self.kwargs)
+                else:
+                    LOGGER.warning("EagleSpecDec is not available on this platform. Falling back to HuggingfaceLLM.")
+                    self.model = HuggingfaceLLM(**self.kwargs)
             elif self.backend == "LadeSpecDec":
-                if LadeSpecDecLLM is None:
-                    raise NotImplementedError(
-                        "LadeSpecDecLLM backend is not implemented in this version."
-                    )
-                self.model = LadeSpecDecLLM(**self.kwargs)
+                if LadeSpecDecLLM is not None:
+                    self.model = LadeSpecDecLLM(**self.kwargs)
+                else:
+                    LOGGER.warning("LadeSpecDec is not available on this platform. Falling back to HuggingfaceLLM.")
+                    self.model = HuggingfaceLLM(**self.kwargs)
         except Exception as e:
             LOGGER.error(f"Failed to initialize model backend `{self.backend}`: {str(e)}")
             raise RuntimeError(f"Model loading failed for backend `{self.backend}`.") from e
@@ -105,6 +113,9 @@ class EdgeModel:
         dict
             Formatted Response. See `model._format_response()` for more details.
         """
+
+        if not isinstance(data, dict):
+            data = {"query": str(data)}
 
         try:
             return self.model.inference(data)

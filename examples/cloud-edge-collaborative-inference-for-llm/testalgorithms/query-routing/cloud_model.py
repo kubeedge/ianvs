@@ -1,3 +1,5 @@
+"""Cloud model serving class definition for LLM query routing."""
+# pylint: disable=line-too-long,wrong-import-order,broad-exception-caught,protected-access,duplicate-code,C0115,C0116
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +24,7 @@ from models import APIBasedLLM
 
 os.environ['BACKEND_TYPE'] = 'TORCH'
 
-__all__ = ["BaseModel"]
+__all__ = ["CloudModel"]
 
 @ClassFactory.register(ClassType.GENERAL, alias="CloudModel")
 class CloudModel:
@@ -41,7 +43,7 @@ class CloudModel:
         if not model_name:
             LOGGER.warning("No 'model' specified in kwargs. Falling back to default 'gpt-4o-mini'.")
             model_name = "gpt-4o-mini"
-        
+
         self.load(model_name)
 
     def load(self, model):
@@ -54,7 +56,7 @@ class CloudModel:
         """
         if not model or not isinstance(model, str):
             raise ValueError("Model name must be a non-empty string.")
-        
+
         try:
             self.model._load(model=model)
             LOGGER.info("Model '%s' loaded successfully.", model)
@@ -78,7 +80,7 @@ class CloudModel:
             Formatted Response. See `model._format_response()` for more details.
         """
         if not isinstance(data, dict):
-            raise ValueError("Input data for inference must be a dictionary.")
+            data = {"query": str(data)}
 
         try:
             return self.model.inference(data)
