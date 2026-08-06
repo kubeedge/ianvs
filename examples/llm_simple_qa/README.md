@@ -4,7 +4,13 @@
 
 ### Prepare Data
 
-The data of simple-qa example structure is:
+Generate the dataset by running the provided script from the repository root:
+
+```shell
+python examples/llm_simple_qa/prepare_data.py
+```
+
+This writes the following structure under `examples/llm_simple_qa/dataset/`:
 
 ```
 .
@@ -14,7 +20,8 @@ The data of simple-qa example structure is:
     └── data.jsonl
 ```
 
-`train_data/data.jsonl` is empty, and the `test_data/data.jsonl` is as follows:
+`train_data/data.jsonl` is empty, and the `test_data/data.jsonl` contains one
+JSON object per line (JSONL format). Its contents are as follows:
 
 ```
 {
@@ -63,14 +70,14 @@ The data of simple-qa example structure is:
 
 You need to install the changed-sedna package, which added `JsonlDataParse` in `sedna.datasources`
 
-Replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `examples/resources/sedna-with-jsonl.zip`
+Replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `examples/resources/sedna-llm.zip`
 
 
 ### Run Ianvs
 
 Run the following command:
 
-`ianvs -f examples/llm/singletask_learning_bench/simple_qa/benchmarkingjob.yaml`
+`ianvs -f examples/llm_simple_qa/benchmarkingjob.yaml`
 
 ## OpenCompass Evaluation
 
@@ -80,5 +87,5 @@ Run the following command:
 
 ### Run Evaluation
 
-`python run_op.py examples/llm/singletask_learning_bench/simple_qa/testalgorithms/gen/op_eval.py`
+`python run_op.py examples/llm_simple_qa/testalgorithms/gen/op_eval.py`
 

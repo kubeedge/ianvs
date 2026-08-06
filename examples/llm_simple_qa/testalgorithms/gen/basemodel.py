@@ -21,12 +21,17 @@ import zipfile
 import logging
 
 import numpy as np
+import torch
 from sedna.common.config import Context
 from sedna.common.class_factory import ClassType, ClassFactory
 
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
-device = "cuda" # the device to load the model onto
+
+# Select the device dynamically so the example runs on machines without an
+# Nvidia GPU instead of crashing: CUDA when available, then Apple Silicon
+# (MPS), and finally CPU.
+device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
 
 
 logging.disable(logging.WARNING)
@@ -40,12 +45,19 @@ os.environ['BACKEND_TYPE'] = 'TORCH'
 class BaseModel:
 
     def __init__(self, **kwargs):
+        model_name = "Qwen/Qwen2-0.5B-Instruct"
+        torch_dtype = torch.float32 if device == "cpu" else "auto"
         self.model = AutoModelForCausalLM.from_pretrained(
-            "/home/icyfeather/models/Qwen2-0.5B-Instruct",
-            torch_dtype="auto",
-            device_map="auto"
-        )
-        self.tokenizer = AutoTokenizer.from_pretrained("/home/icyfeather/models/Qwen2-0.5B-Instruct")
+            model_name,
+            torch_dtype=torch_dtype
+        ).to(device)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+    def preprocess(self, data, **kwargs):
+        # The singletasklearning paradigm calls preprocess before predict.
+        # No preprocessing is required for this example, so pass the data
+        # through unchanged.
+        return data
 
     def train(self, train_data, valid_data=None, **kwargs):
         print("BaseModel doesn't need to train")
