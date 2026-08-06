@@ -64,7 +64,7 @@ class JointInferenceResult:
     cloud_result: Response
 
     @classmethod
-    def from_list(cls, is_hard_example, result, edge_result, cloud_reslut):
+    def from_list(cls, is_hard_example, result, edge_result, cloud_result):
         """Create a JointInferenceResult object from a list
 
         Parameters
@@ -75,7 +75,7 @@ class JointInferenceResult:
             Formatted Response. See `BaseLLM._format_response()` for more details.
         edge_result : dict
             Formatted Response from the Edge Model. See `BaseLLM._format_response()` for more details.
-        cloud_reslut : dict
+        cloud_result : dict
             Formatted Response from the Cloud Model. See `BaseLLM._format_response()` for more details.
 
         Returns
@@ -88,5 +88,5 @@ class JointInferenceResult:
             is_hard_example,
             Response.from_dict(result),
             Response.from_dict(edge_result),
-            Response.from_dict(cloud_reslut),
+            Response.from_dict(cloud_result),
         )

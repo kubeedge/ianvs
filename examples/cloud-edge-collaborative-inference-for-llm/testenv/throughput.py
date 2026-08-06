@@ -34,8 +34,11 @@ def throughput(_, y_pred):
 
     infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
 
+    if not infer_res:
+        return 0.0
+
     average_itl = sum([pred.result.internal_token_latency for pred in infer_res]) / len(infer_res)
 
-    average_throughput = 1 / average_itl
+    average_throughput = 1 / average_itl if average_itl > 0 else 0.0
 
     return round(average_throughput,2)

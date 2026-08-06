@@ -147,3 +147,8 @@ dmypy.json
 .idea/misc.xml
 .idea/workspace.xml
 .idea/vcs.xml
+
+# Local dev artifacts
+venv311/
+workspace/
+sedna/

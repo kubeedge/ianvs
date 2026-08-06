@@ -21,7 +21,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStream
 
 from models.base_llm import BaseLLM
 
-device = "cuda"
+device = "cuda" if torch.cuda.is_available() else "mps" if hasattr(torch.backends, "mps") and torch.backends.mps.is_available() else "cpu"
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 
 class EagleSpecDecModel(BaseLLM):
@@ -65,7 +65,7 @@ class EagleSpecDecModel(BaseLLM):
         )
 
         input_ids=self.model.tokenizer([prompt]).input_ids
-        input_ids = torch.as_tensor(input_ids).cuda()
+        input_ids = torch.as_tensor(input_ids).to(device)
 
         time_to_first_token = 0
         internal_token_latency = []

@@ -20,7 +20,7 @@ from core.common.log import LOGGER
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 from models.base_llm import BaseLLM
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+device = "cuda" if torch.cuda.is_available() else "mps" if hasattr(torch.backends, "mps") and torch.backends.mps.is_available() else "cpu"
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 
 class HuggingfaceLLM(BaseLLM):

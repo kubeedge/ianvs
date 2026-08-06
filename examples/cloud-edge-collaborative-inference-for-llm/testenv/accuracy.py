@@ -54,6 +54,8 @@ def acc(y_true, y_pred):
     same_elements = [y_pred[i] == y_true[i] for i in range(len(y_pred))]
 
     # 计算相同元素的数量
+    if len(same_elements) == 0:
+        return 0.0
     acc = sum(same_elements) / len(same_elements)
 
     return round(acc * 100, 2)

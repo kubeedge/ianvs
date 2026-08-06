@@ -36,6 +36,9 @@ def internal_token_latency(_, y_pred):
 
     infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
 
+    if not infer_res:
+        return 0.0
+
     average_itl = sum([pred.result.internal_token_latency for pred in infer_res]) / len(infer_res)
 
     return round(average_itl,3)

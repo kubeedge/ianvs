@@ -1,7 +1,8 @@
-vllm
 transformers
 openai
 accelerate
-datamodel_code_generator
+datamodel-code-generator
 kaggle
 groq
+retry
+torch>=2.0.0
