@@ -37,7 +37,9 @@ rich>=12.0.0
 loguru>=0.6.0
 
 # Privacy Attack Simulation
-membership-inference-attacks>=0.1.0
+# (membership-inference-attacks removed: this package does not exist on PyPI
+# and was never actually imported anywhere in this example - MIA/LiRA/loss
+# attacks are implemented directly in testenv/privacy_metrics.py using numpy)
 
 # Chinese Language Processing
 jieba>=0.42.1
