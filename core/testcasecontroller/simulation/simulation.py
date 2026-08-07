@@ -26,7 +26,7 @@ class Simulation:
         number of the cloud worker.
     edge_number : int
         number of the edge nodes.
-    cluster_name : int
+    cluster_name : string
         name of the simulation cluster.
     kubeedge_version : string
         version of kubeedge, e.g. 1.8.0, latest.
@@ -49,6 +49,16 @@ class Simulation:
         for attribute, value in simulation_config.items():
             if attribute in self.__dict__:
                 self.__dict__[attribute] = value
+            else:
+                raise ValueError(f"simulation config has unknown attribute: {attribute}")
+
+        required_fields = [
+            "cloud_number", "edge_number", "cluster_name",
+            "kubeedge_version", "sedna_version"
+        ]
+        for field in required_fields:
+            if field not in simulation_config:
+                raise ValueError(f"simulation config missing required field: {field}")
 
         self._check_fields()
 
@@ -56,24 +66,24 @@ class Simulation:
         """
         check the fields of simulation config.
         """
-        if not isinstance(self.cloud_number, int):
+        if not isinstance(self.cloud_number, int) or isinstance(self.cloud_number, bool):
             raise ValueError(
                 f"simulation cloud_number"
-                f"({self.cloud_number} must be int type.")
+                f"({self.cloud_number}) must be int type.")
 
-        if not isinstance(self.edge_number, int):
+        if not isinstance(self.edge_number, int) or isinstance(self.edge_number, bool):
             raise ValueError(
                 f"simulation edge_number"
-                f"({self.edge_number} must be int type.")
+                f"({self.edge_number}) must be int type.")
 
         if not isinstance(self.cluster_name, str):
             raise ValueError(
-                f"simulation ({self.cluster_name}) must be string type.")
+                f"simulation cluster_name ({self.cluster_name}) must be string type.")
 
         if not isinstance(self.kubeedge_version, str):
             raise ValueError(
-                f"simulation ({self.kubeedge_version}) must be string type.")
+                f"simulation kubeedge_version ({self.kubeedge_version}) must be string type.")
 
         if not isinstance(self.sedna_version, str):
             raise ValueError(
-                f"simulation ({self.sedna_version}) must be string type.")
+                f"simulation sedna_version ({self.sedna_version}) must be string type.")
