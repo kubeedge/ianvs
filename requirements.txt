@@ -5,3 +5,8 @@ pandas
 tqdm
 matplotlib
 onnx
+colorlog
+PyYAML
+tenacity
+pydantic
+fastapi
