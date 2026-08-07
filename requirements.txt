@@ -10,3 +10,4 @@ PyYAML
 tenacity
 pydantic
 fastapi
+watchdog

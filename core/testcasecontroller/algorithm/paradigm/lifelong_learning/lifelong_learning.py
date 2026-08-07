@@ -25,6 +25,20 @@ from core.testcasecontroller.metrics import get_metric_func
 from core.common.utils import get_file_format, is_local_dir
 
 
+# Register default knowledge management strategy if not registered
+try:
+    from sedna.common.class_factory import ClassFactory, ClassType
+    from sedna.algorithms.seen_task_learning.task_update_decision.\
+        task_update_decision_finetune import UpdateStrategyByFinetune
+    if not ClassFactory.is_exists(ClassType.KM, "UpdateStrategyDefault"):
+        ClassFactory.register_cls(
+            UpdateStrategyByFinetune,
+            ClassType.KM,
+            alias="UpdateStrategyDefault"
+        )
+except ImportError:
+    pass
+
 
 class LifelongLearning(ParadigmBase):
     # pylint: disable=too-many-locals
