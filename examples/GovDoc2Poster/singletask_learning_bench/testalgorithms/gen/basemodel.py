@@ -875,12 +875,21 @@ class NewGovernmentPosterAgent:
         total_processing_time = sum(r.get('processing_time', 0) for r in results)
         
         # Calculate average evaluation score
+        results_missing_evaluation = [r for r in results if 'evaluation' not in r]
+        if results_missing_evaluation:
+            self.logger.warning(
+                f"{len(results_missing_evaluation)} of {len(results)} results have no 'evaluation' "
+                f"key and will be excluded from avg_scores. This may indicate upstream evaluation failures."
+            )
+
         evaluation_scores = [r.get('evaluation', {}) for r in results if 'evaluation' in r]
         avg_scores = {}
         if evaluation_scores:
             for key in evaluation_scores[0].keys():
                 if isinstance(evaluation_scores[0][key], (int, float)):
                     avg_scores[f'avg_{key}'] = sum(e.get(key, 0) for e in evaluation_scores) / len(evaluation_scores)
+        avg_scores['evaluated_count'] = len(evaluation_scores)
+        avg_scores['skipped_count'] = len(results_missing_evaluation)
         
         # Calculate optimization statistics
         optimization_stats = self._calculate_optimization_stats(results)
