@@ -1,26 +1,13 @@
 #!/usr/bin/env python3
 """Static validator for Ianvs example configs.
 
-Walks every benchmarkingjob.yaml under examples/, and for each one:
-  - confirms it's valid YAML
-  - confirms the referenced testenv.yaml exists
-  - confirms every algorithm config (algorithms[].config_file / url) exists
-  - confirms every module's `url:` (Python file) referenced in the
-    algorithm config actually exists on disk
-  - confirms testenv.yaml's dataset file references
-    (train_url/test_url/train_index/test_index/train_data/test_data/
-    train_data_info/test_data_info) exist on disk
+Walks every examples/*/benchmarkingjob.yaml and checks that its testenv,
+algorithm, and module (python `url`) references all point to files that
+exist. No torch/sedna/GPU needed, runs in seconds - built to catch the
+"stale/broken path" bug class before it reaches a user.
 
-This never imports torch/sedna/etc. and never executes example code, so it
-runs in seconds and needs no GPU, no network, no heavy dependencies —
-suitable as a fast CI gate to catch the class of "broken path / stale
-config" bugs that otherwise only surface when a user tries to run an
-example and hits a FileNotFoundError.
-
-Usage:
-    python3 scripts/validate_example_configs.py [--strict]
-
-Exit code is non-zero if any problems were found (useful for CI).
+Usage: python3 scripts/validate_example_configs.py [--baseline FILE] [--strict]
+Exit code is non-zero if any (non-baselined) problems were found.
 """
 import argparse
 import os
@@ -46,33 +33,19 @@ def load_yaml(path: Path):
 
 
 def oneline(msg: str) -> str:
-    """Collapse a possibly-multi-line message (e.g. a YAML parser error)
-    into a single line, so every entry in `problems`/`dataset_notes` is
-    exactly one line - required for the baseline file's one-problem-per-line
-    format to round-trip correctly.
-
-    Also strips the machine-specific absolute REPO_ROOT prefix that PyYAML
-    embeds directly in its error messages (e.g. 'in "/Users/you/ianvs/..."').
-    Without this, the exact same error produces a different string on every
-    contributor's machine and on the CI runner, permanently breaking
-    baseline comparison across environments.
-    """
+    """Collapse to one line and strip REPO_ROOT (PyYAML embeds the absolute
+    path in errors, which would otherwise differ per machine/CI runner and
+    break baseline matching)."""
     text = " ".join(str(msg).split())
     text = text.replace(str(REPO_ROOT), ".")
     return text
 
 
 def resolve(base: Path, ref: str) -> Path:
-    """Resolve a path referenced inside a config file.
-
-    Ianvs itself never resolves these paths relative to the referencing
-    config file - it resolves them relative to the process's current
-    working directory (see core/cmd/benchmarking.py -> utils.yaml2dict /
-    utils.is_local_file), and every README instructs running
-    `ianvs -f examples/.../benchmarkingjob.yaml` from the repo root.
-    So: absolute paths are used as-is, and everything else is resolved
-    relative to REPO_ROOT, not relative to `base`'s directory.
-    """
+    """Resolve relative to REPO_ROOT, not `base`'s directory - matches how
+    Ianvs itself resolves config paths (core/cmd/benchmarking.py ->
+    utils.yaml2dict/is_local_file), since every README runs `ianvs -f
+    examples/...` from the repo root."""
     ref = ref.strip()
     p = Path(ref)
     if p.is_absolute():
@@ -123,10 +96,8 @@ def check_benchmarkingjob(bj_path: Path, problems: list, dataset_notes: list, st
 
 
 def check_testenv(testenv_path: Path, dataset_notes: list):
-    """Dataset file references are checked separately from structural
-    problems: it's normal/expected for these to be absent in a fresh
-    clone (data is downloaded separately per each example's README), so
-    these are informational notes, not CI-blocking problems."""
+    """Dataset paths are reported separately, non-blocking: data is
+    downloaded per-README, not committed, so absence is expected."""
     prefix = str(testenv_path.relative_to(REPO_ROOT))
     try:
         cfg = load_yaml(testenv_path)
@@ -170,17 +141,10 @@ def main():
     parser.add_argument("--strict", action="store_true",
                          help="also flag missing-but-optional fields")
     parser.add_argument("--baseline", type=str, default=None,
-                         help="path to a baseline file listing currently-known "
-                              "problems (one exact problem string per line, "
-                              "'#'-prefixed lines and blank lines ignored). "
-                              "Problems in the baseline are reported but do not "
-                              "cause a non-zero exit; only NEW problems do. This "
-                              "lets the check be added to CI immediately without "
-                              "blocking on pre-existing, already-tracked breakage, "
-                              "while still catching new regressions right away.")
+                         help="known-problems file (one per line). Baselined "
+                              "problems don't fail the build; only new ones do.")
     parser.add_argument("--write-baseline", type=str, default=None,
-                         help="instead of validating, write every current "
-                              "problem to this path as a fresh baseline file.")
+                         help="write all current problems to this path as a baseline.")
     args = parser.parse_args()
 
     bj_files = sorted(EXAMPLES_DIR.rglob("benchmarkingjob*.yaml"))
@@ -193,10 +157,8 @@ def main():
 
     if args.write_baseline:
         with open(args.write_baseline, "w", encoding="utf-8") as f:
-            f.write("# Baseline of known structural problems as of the date this\n")
-            f.write("# file was generated. New problems not listed here will fail\n")
-            f.write("# CI; problems listed here are still reported but non-blocking\n")
-            f.write("# until fixed and removed from this file.\n")
+            f.write("# Known problems as of generation. New ones fail CI;\n")
+            f.write("# these don't, until fixed and removed from this file.\n")
             for p in problems:
                 f.write(p + "\n")
         print(f"Wrote {len(problems)} problem(s) to baseline file: {args.write_baseline}")
