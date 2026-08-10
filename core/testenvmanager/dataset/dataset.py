@@ -16,19 +16,37 @@
 
 import os
 import tempfile
+import json
 
 import pandas as pd
 from sedna.datasources import (
     CSVDataParse,
     TxtDataParse,
     JSONDataParse,
-    JsonlDataParse,
-    JSONMetaDataParse
 )
-
+from sedna.datasources import BaseDataSource
 from core.common import utils
 from core.common.constant import DatasetFormat
 
+class JsonlDataParse(BaseDataSource):
+    def __init__(self, data_type="train", func=None):
+        super().__init__(data_type=data_type, func=func)
+
+    def parse(self, filepath):
+        self.x = []
+        self.y = []
+        with open(filepath, "r", encoding="utf-8") as f:
+            for line in f:
+                if line.strip():
+                    raw_data = json.loads(line.strip())
+                    if isinstance(raw_data, dict):
+                        question = raw_data.get("question", raw_data.get("input", ""))
+                        answer = raw_data.get("answer", raw_data.get("output", ""))
+                        self.x.append(str(question))
+                        self.y.append(str(answer))
+                    else:
+                        self.x.append(str(raw_data))
+                        self.y.append("")
 # pylint: disable=too-many-instance-attributes
 class Dataset:
     """
@@ -588,7 +606,7 @@ class Dataset:
             data.parse(file)
 
         if data_format == DatasetFormat.JSONFORLLM.value:
-            data = JSONMetaDataParse(data_type=data_type, func=feature_process)
+            data = JSONDataParse(data_type=data_type, func=feature_process)
             data.parse(file, **kwargs)
 
         return data
