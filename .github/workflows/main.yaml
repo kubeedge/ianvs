@@ -57,19 +57,9 @@ jobs:
           python -m pip install pip==24.0
           python -m pip install pyyaml
       - name: Validate every example's benchmarkingjob/testenv/algorithm configs
-        # Statically checks that every config/code file referenced by each
-        # examples/*/benchmarkingjob*.yaml actually exists (testenv.yaml,
-        # algorithm.yaml, and each module's python `url`). This is a fast,
-        # dependency-free check (no torch/sedna/GPU needed) that catches
-        # the most common class of example-breaking regression: a stale or
-        # incorrect path, whether from a rename, a moved file, or a
-        # hardcoded developer-specific path. Dataset files are
-        # intentionally not blocking (data is downloaded separately per
-        # each example, not committed to the repo). Uses a baseline of
-        # currently-known problems (scripts/example_config_baseline.txt)
-        # so this can be enabled today without blocking on pre-existing
-        # breakage - only NEW regressions fail the build. As examples get
-        # fixed, remove their entries from the baseline file.
+        # Checks example config paths actually resolve (see scripts/ for
+        # details). Uses a baseline so only new regressions fail the build;
+        # remove an entry from scripts/example_config_baseline.txt once fixed.
         run: |
           python '${{github.workspace}}/scripts/validate_example_configs.py' \
             --baseline '${{github.workspace}}/scripts/example_config_baseline.txt'
