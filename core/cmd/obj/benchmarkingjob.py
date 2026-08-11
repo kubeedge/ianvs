@@ -1,4 +1,4 @@
-# pylint: disable=R0801
+﻿# pylint: disable=R0801
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,7 @@ from core.testenvmanager.testenv import TestEnv
 from core.storymanager.rank import Rank
 from core.testcasecontroller.simulation import Simulation
 from core.testcasecontroller.simulation_system_admin import build_simulation_enviroment
+from core.testcasecontroller.simulation_system_admin import destory_simulation_enviroment
 from core.testcasecontroller.testcasecontroller import TestCaseController
 
 
@@ -83,19 +84,26 @@ class BenchmarkingJob:
         """
         self.workspace = os.path.join(self.workspace, self.name)
 
+        simulation_built = False
         if self.simulation is not None:
             build_simulation_enviroment(self.simulation)
+            simulation_built = True
 
-        self.test_env.prepare()
+        try:
+            self.test_env.prepare()
 
-        self.testcase_controller.build_testcases(test_env=self.test_env,
-                                                 test_object=self.test_object)
+            self.testcase_controller.build_testcases(test_env=self.test_env,
+                                                     test_object=self.test_object)
 
-        succeed_testcases, test_results = self.testcase_controller.run_testcases(self.workspace)
+            succeed_testcases, test_results = self.testcase_controller.run_testcases(
+                self.workspace)
 
-        if test_results:
-            self.rank.save(succeed_testcases, test_results, output_dir=self.workspace)
-            self.rank.plot()
+            if test_results:
+                self.rank.save(succeed_testcases, test_results, output_dir=self.workspace)
+                self.rank.plot()
+        finally:
+            if simulation_built:
+                destory_simulation_enviroment(self.simulation)
 
     def _parse_config(self, config: dict):
         # pylint: disable=C0103
