@@ -39,3 +39,27 @@ jobs:
           else
             pylint '${{github.workspace}}/core'
           fi
+
+  validate-example-configs:
+    runs-on: ubuntu-22.04
+    name: validate example configs
+    strategy:
+      matrix:
+        python-version: [ "3.9", "3.10", "3.11" ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install pip==24.0
+          python -m pip install pyyaml
+      - name: Validate every example's benchmarkingjob/testenv/algorithm configs
+        # Checks example config paths actually resolve (see scripts/ for
+        # details). Uses a baseline so only new regressions fail the build;
+        # remove an entry from scripts/example_config_baseline.txt once fixed.
+        run: |
+          python '${{github.workspace}}/scripts/validate_example_configs.py' \
+            --baseline '${{github.workspace}}/scripts/example_config_baseline.txt'
