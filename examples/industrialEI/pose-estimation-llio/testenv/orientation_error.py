@@ -14,34 +14,9 @@
 
 import numpy as np
 from sedna.common.class_factory import ClassType, ClassFactory
+from pose_result import unpack_pose_result
 
 __all__ = ["orientation_error"]
-
-
-def rotation_matrix_to_euler_angles(R):
-    """
-    Convert rotation matrix to Euler angles (roll, pitch, yaw).
-    
-    Args:
-        R: 3x3 rotation matrix
-        
-    Returns:
-        tuple: (roll, pitch, yaw) in radians
-    """
-    sy = np.sqrt(R[0, 0] * R[0, 0] + R[1, 0] * R[1, 0])
-    
-    singular = sy < 1e-6
-    
-    if not singular:
-        x = np.arctan2(R[2, 1], R[2, 2])
-        y = np.arctan2(-R[2, 0], sy)
-        z = np.arctan2(R[1, 0], R[0, 0])
-    else:
-        x = np.arctan2(-R[1, 2], R[1, 1])
-        y = np.arctan2(-R[2, 0], sy)
-        z = 0
-    
-    return x, y, z
 
 
 @ClassFactory.register(ClassType.GENERAL, alias="orientation_error")
@@ -50,52 +25,20 @@ def orientation_error(y_true, y_pred, **kwargs):
     Calculate orientation error metric for pose estimation.
     
     Args:
-        y_true: Ground truth poses or sequence indices (from Ianvs)
-        y_pred: Predicted poses
+        y_true: Dataset labels supplied by Ianvs (unused by this example)
+        y_pred: LLIO inference result containing paired ground-truth and
+            estimated poses
         **kwargs: Additional arguments
         
     Returns:
         float: Average orientation error in degrees
     """
-    if len(y_pred) == 0:
-        return 0.0
-    
-    # Handle length mismatch by truncating to shorter length
-    min_length = min(len(y_true), len(y_pred))
-    if min_length == 0:
-        return 0.0
-    
-    y_true = y_true[:min_length]
-    y_pred = y_pred[:min_length]
-    
-    try:
-        # Check if y_pred contains pose matrices
-        if isinstance(y_pred[0], np.ndarray) and y_pred[0].shape == (4, 4):
-            if len(y_pred) > 1:
-                # Calculate relative orientation changes between consecutive frames
-                relative_errors = []
-                for i in range(1, len(y_pred)):
-                    # Calculate relative pose between frame i-1 and i
-                    prev_pose = y_pred[i-1]
-                    curr_pose = y_pred[i]
-                    
-                    # Relative rotation
-                    prev_rot = prev_pose[:3, :3]
-                    curr_rot = curr_pose[:3, :3]
-                    relative_rot = prev_rot.T @ curr_rot
-                    angle = np.arccos(np.clip((np.trace(relative_rot) - 1) / 2, -1, 1))
-                    relative_rotation = np.degrees(angle)
-                    
-                    relative_errors.append(relative_rotation)
-                
-                if relative_errors:
-                    return float(np.mean(relative_errors))
-                else:
-                    return 0.0
-            else:
-                return 0.0
-        else:
-            return 0.0
-            
-    except Exception:
-        return 0.0 
+    del y_true, kwargs
+    ground_truth, estimated = unpack_pose_result(y_pred)
+    relative_rotations = np.matmul(
+        np.transpose(ground_truth[:, :3, :3], (0, 2, 1)),
+        estimated[:, :3, :3],
+    )
+    traces = np.trace(relative_rotations, axis1=1, axis2=2)
+    angles = np.arccos(np.clip((traces - 1.0) / 2.0, -1.0, 1.0))
+    return float(np.mean(np.degrees(angles)))

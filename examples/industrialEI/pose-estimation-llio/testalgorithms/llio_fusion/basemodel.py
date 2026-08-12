@@ -541,7 +541,7 @@ class BaseModel:
             **kwargs: Additional test parameters
             
         Returns:
-            List of estimated poses for all test sequences
+            Dict containing aligned ground-truth and estimated poses
         """
         LOGGER.info("Starting LLIO prediction on all test sequences...")
         
@@ -555,7 +555,7 @@ class BaseModel:
             test_index_file = os.path.join(data_root, "test_index.txt")
             if not os.path.exists(test_index_file):
                 LOGGER.error(f"Test index file not found: {test_index_file}")
-                return [np.eye(4)]
+                return self._build_pose_result([], [])
             
             with open(test_index_file, 'r') as f:
                 all_sequences = [line.strip() for line in f if line.strip() and not line.startswith('#')]
@@ -602,7 +602,7 @@ class BaseModel:
             
             if total_frames == 0:
                 LOGGER.error("No valid sequences found")
-                return [np.eye(4)]
+                return self._build_pose_result([], [])
             
             print(f"Processing {total_frames} total frames across {len(all_sequences)} sequences...")
             
@@ -813,13 +813,23 @@ class BaseModel:
             
             print(f"Total poses processed: {len(all_estimated_poses)} from {len(all_sequences)} sequences")
             
-            return all_estimated_poses
+            return self._build_pose_result(
+                all_ground_truth_poses, all_estimated_poses
+            )
             
         except Exception as e:
             LOGGER.error(f"LLIO estimation failed: {e}")
             import traceback
             traceback.print_exc()
-            return [np.eye(4)]
+            return self._build_pose_result([], [])
+
+    @staticmethod
+    def _build_pose_result(ground_truth_poses, estimated_poses):
+        """Build the paired pose result consumed by the test metrics."""
+        return {
+            "ground_truth_poses": np.asarray(ground_truth_poses, dtype=float),
+            "estimated_poses": np.asarray(estimated_poses, dtype=float),
+        }
 
     def evaluate(self, data, model_path, **kwargs):
         """
@@ -838,7 +848,10 @@ class BaseModel:
         try:
             predictions = self.predict(data, **kwargs)
             LOGGER.info("Evaluation completed successfully")
-            return {"status": "completed", "predictions": len(predictions)}
+            return {
+                "status": "completed",
+                "predictions": len(predictions["estimated_poses"]),
+            }
             
         except Exception as e:
             LOGGER.error(f"Evaluation failed: {str(e)}")
@@ -920,4 +933,4 @@ class BaseModel:
             
         except Exception as e:
             LOGGER.error(f"Failed to load model: {str(e)}")
-            raise 
+            raise

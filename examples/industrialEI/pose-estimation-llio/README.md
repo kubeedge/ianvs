@@ -166,6 +166,10 @@ pose-estimation-llio/
 2. **Orientation Error**: Angular difference between estimated and ground truth orientations (target: < 1.0°)
 3. **Trajectory Consistency**: Smoothness and continuity of estimated trajectory (target: > 0.9)
 
+The inference result keeps each estimated pose paired with the ground-truth
+pose from the same frame. The position and orientation metrics use those
+pairs directly; they do not measure motion between consecutive predictions.
+
 ## Expected Performance
 
 - **Position Accuracy**: ~0.04m average translational error

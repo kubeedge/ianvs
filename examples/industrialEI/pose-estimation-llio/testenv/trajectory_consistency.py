@@ -14,6 +14,7 @@
 
 import numpy as np
 from sedna.common.class_factory import ClassType, ClassFactory
+from pose_result import unpack_pose_result
 
 __all__ = ["trajectory_consistency"]
 
@@ -25,25 +26,20 @@ def trajectory_consistency(y_true, y_pred, **kwargs):
     Evaluates trajectory smoothness and drift characteristics.
     
     Args:
-        y_true: Ground truth poses in format [N, 4, 4] (homogeneous transformation matrices)
-        y_pred: Predicted poses in format [N, 4, 4] (homogeneous transformation matrices)  
+        y_true: Dataset labels supplied by Ianvs (unused by this example)
+        y_pred: LLIO inference result containing paired ground-truth and
+            estimated poses
         **kwargs: Additional arguments
         
     Returns:
         float: Trajectory consistency score (higher is better, range 0-1)
     """
-    # Handle length mismatch by truncating to shorter length
-    min_length = min(len(y_true), len(y_pred))
-    if min_length < 3:
+    del y_true, kwargs
+    y_true, y_pred = unpack_pose_result(y_pred)
+
+    if len(y_true) < 3:
         # Need at least 3 poses to evaluate trajectory consistency
         return 1.0
-    
-    y_true = y_true[:min_length]
-    y_pred = y_pred[:min_length]
-    
-    # Convert to numpy arrays if they aren't already
-    y_true = np.array(y_true)
-    y_pred = np.array(y_pred)
     
     # Extract position components
     if y_true.ndim == 3 and y_true.shape[-2:] == (4, 4):
@@ -127,4 +123,4 @@ def trajectory_consistency(y_true, y_pred, **kwargs):
     # Clamp to [0, 1] range
     total_consistency = np.clip(total_consistency, 0.0, 1.0)
     
-    return float(total_consistency) 
+    return float(total_consistency)
