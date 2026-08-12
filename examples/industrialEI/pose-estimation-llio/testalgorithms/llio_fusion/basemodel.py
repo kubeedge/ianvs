@@ -159,6 +159,36 @@ class BaseModel:
         if current == total:
             print()  # New line when complete
 
+    @staticmethod
+    def _pose_at_window_end(data):
+        """Build the ground-truth pose at the end of a processed window."""
+        if not isinstance(data, dict):
+            raise ValueError(f"Frame data must be a dictionary, got {type(data)}")
+
+        for key in ("gt_pos", "gt_rot"):
+            value = data.get(key)
+            if not isinstance(value, (list, np.ndarray)) or len(value) == 0:
+                raise ValueError(f"Frame {key} is invalid: {type(value)}")
+
+        gt_pos = data["gt_pos"][-1]
+        gt_rot = data["gt_rot"][-1]
+        if not isinstance(gt_pos, (list, np.ndarray)) or len(gt_pos) < 3:
+            raise ValueError("Frame ground-truth position must have three values")
+
+        pose = np.eye(4)
+        if isinstance(gt_rot, np.ndarray) and gt_rot.shape == (3, 3):
+            pose[:3, :3] = gt_rot
+        elif isinstance(gt_rot, (list, np.ndarray)) and len(gt_rot) == 3:
+            from scipy.spatial.transform import Rotation
+            pose[:3, :3] = Rotation.from_euler('xyz', gt_rot).as_matrix()
+        else:
+            raise ValueError(
+                "Frame ground-truth rotation must be a 3x3 matrix "
+                "or three Euler angles"
+            )
+        pose[:3, 3] = gt_pos[:3]
+        return pose
+
     def train(self, train_data, valid_data=None, **kwargs):
         """
         Training phase - Learn optimal LLIO parameters using training data from train_index.txt.
@@ -321,14 +351,7 @@ class BaseModel:
                 
                 for i, data in enumerate(dataloader):
                     try:
-                        # Get ground truth pose for this frame - handle both Tensor and NumPy formats
-                        gt_pos = data["gt_pos"][0]  # First frame position (3,)
-                        gt_rot = data["gt_rot"][0]  # First frame rotation matrix
-                        
-                        # Create ground truth pose matrix
-                        gt_pose = np.eye(4)
-                        gt_pose[:3, :3] = gt_rot
-                        gt_pose[:3, 3] = gt_pos
+                        gt_pose = self._pose_at_window_end(data)
                         ground_truth_poses.append(gt_pose)
                         
                         # Process with LLIO estimator to get REAL pose estimates
@@ -555,7 +578,7 @@ class BaseModel:
             test_index_file = os.path.join(data_root, "test_index.txt")
             if not os.path.exists(test_index_file):
                 LOGGER.error(f"Test index file not found: {test_index_file}")
-                return self._build_pose_result([], [])
+                return self._build_pose_result([], [], [])
             
             with open(test_index_file, 'r') as f:
                 all_sequences = [line.strip() for line in f if line.strip() and not line.startswith('#')]
@@ -566,6 +589,7 @@ class BaseModel:
             all_estimated_poses = []
             all_ground_truth_poses = []
             all_sequence_paths = []
+            all_sequence_lengths = []
             
             # Single progress bar for all frames across all sequences
             total_frames = 0
@@ -602,7 +626,7 @@ class BaseModel:
             
             if total_frames == 0:
                 LOGGER.error("No valid sequences found")
-                return self._build_pose_result([], [])
+                return self._build_pose_result([], [], [])
             
             print(f"Processing {total_frames} total frames across {len(all_sequences)} sequences...")
             
@@ -690,71 +714,7 @@ class BaseModel:
                     
                     for i, data in enumerate(dataloader):
                         try:
-                            # Validate data structure before accessing
-                            if not isinstance(data, dict):
-                                LOGGER.warning(f"Frame {i} data is not a dict: {type(data)}")
-                                continue
-                            
-                            # Check if required keys exist
-                            required_keys = ["gt_pos", "gt_rot"]
-                            if not all(key in data for key in required_keys):
-                                LOGGER.warning(f"Frame {i} missing required keys: {list(data.keys())}")
-                                continue
-                            
-                            # Validate gt_pos data
-                            gt_pos_data = data["gt_pos"]
-                            if not isinstance(gt_pos_data, (list, np.ndarray)) or len(gt_pos_data) == 0:
-                                LOGGER.warning(f"Frame {i} gt_pos is invalid: {type(gt_pos_data)}")
-                                continue
-                            
-                            # Validate gt_rot data
-                            gt_rot_data = data["gt_rot"]
-                            if not isinstance(gt_rot_data, (list, np.ndarray)) or len(gt_rot_data) == 0:
-                                LOGGER.warning(f"Frame {i} gt_rot is invalid: {type(gt_rot_data)}")
-                                continue
-                            
-                            # Get ground truth pose with safe indexing
-                            try:
-                                gt_pos = gt_pos_data[0] if hasattr(gt_pos_data, '__getitem__') else gt_pos_data
-                                gt_rot = gt_rot_data[0] if hasattr(gt_rot_data, '__getitem__') else gt_rot_data
-                                
-                                # Ensure we have valid 3D position and rotation
-                                if (not isinstance(gt_pos, (list, np.ndarray)) or 
-                                    len(gt_pos) < 3 or 
-                                    not isinstance(gt_rot, (list, np.ndarray)) or 
-                                    len(gt_rot) < 3):
-                                    LOGGER.warning(f"Frame {i} invalid pose dimensions: pos={len(gt_pos) if hasattr(gt_pos, '__len__') else 'N/A'}, rot={len(gt_rot) if hasattr(gt_rot, '__len__') else 'N/A'}")
-                                    continue
-                                
-                            except (IndexError, TypeError) as e:
-                                LOGGER.warning(f"Frame {i} indexing error: {e}")
-                                continue
-                            
-                            # Create ground truth pose matrix
-                            gt_pose = np.eye(4)
-                            try:
-                                # Handle different rotation formats
-                                if isinstance(gt_rot, np.ndarray) and gt_rot.shape == (3, 3):
-                                    # Already a 3x3 rotation matrix
-                                    gt_pose[:3, :3] = gt_rot
-                                elif isinstance(gt_rot, (list, np.ndarray)) and len(gt_rot) == 3:
-                                    # Euler angles - convert to rotation matrix
-                                    from scipy.spatial.transform import Rotation as R
-                                    gt_pose[:3, :3] = R.from_euler('xyz', gt_rot).as_matrix()
-                                else:
-                                    LOGGER.warning(f"Frame {i} unsupported rotation format: {type(gt_rot)}, shape: {getattr(gt_rot, 'shape', 'N/A')}")
-                                    continue
-                                
-                                # Handle position
-                                if isinstance(gt_pos, (list, np.ndarray)):
-                                    gt_pose[:3, 3] = gt_pos[:3]  # Take first 3 elements
-                                else:
-                                    LOGGER.warning(f"Frame {i} unsupported position format: {type(gt_pos)}")
-                                    continue
-                                
-                            except Exception as e:
-                                LOGGER.warning(f"Frame {i} pose matrix creation failed: {e}")
-                                continue
+                            gt_pose = self._pose_at_window_end(data)
                             
                             # Process with LLIO estimator
                             try:
@@ -789,6 +749,8 @@ class BaseModel:
                     # Add to overall results
                     all_estimated_poses.extend(estimated_poses)
                     all_ground_truth_poses.extend(ground_truth_poses)
+                    if estimated_poses:
+                        all_sequence_lengths.append(len(estimated_poses))
                     
                     # Store sequence path for metrics
                     sequence_path_clean = f"{dataname}/{dataname}_drive_{datadrive}_sync"
@@ -814,21 +776,25 @@ class BaseModel:
             print(f"Total poses processed: {len(all_estimated_poses)} from {len(all_sequences)} sequences")
             
             return self._build_pose_result(
-                all_ground_truth_poses, all_estimated_poses
+                all_ground_truth_poses,
+                all_estimated_poses,
+                all_sequence_lengths,
             )
             
         except Exception as e:
             LOGGER.error(f"LLIO estimation failed: {e}")
             import traceback
             traceback.print_exc()
-            return self._build_pose_result([], [])
+            return self._build_pose_result([], [], [])
 
     @staticmethod
-    def _build_pose_result(ground_truth_poses, estimated_poses):
+    def _build_pose_result(
+            ground_truth_poses, estimated_poses, sequence_lengths):
         """Build the paired pose result consumed by the test metrics."""
         return {
             "ground_truth_poses": np.asarray(ground_truth_poses, dtype=float),
             "estimated_poses": np.asarray(estimated_poses, dtype=float),
+            "sequence_lengths": sequence_lengths,
         }
 
     def evaluate(self, data, model_path, **kwargs):

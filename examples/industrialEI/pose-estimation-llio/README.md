@@ -169,6 +169,8 @@ pose-estimation-llio/
 The inference result keeps each estimated pose paired with the ground-truth
 pose from the same frame. The position and orientation metrics use those
 pairs directly; they do not measure motion between consecutive predictions.
+It also records the number of poses in each KITTI sequence so trajectory
+consistency never compares poses across unrelated sequence boundaries.
 
 ## Expected Performance
 

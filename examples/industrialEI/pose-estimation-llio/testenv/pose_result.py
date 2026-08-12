@@ -44,5 +44,46 @@ def unpack_pose_result(result):
         )
     if not np.all(np.isfinite(ground_truth)) or not np.all(np.isfinite(estimated)):
         raise ValueError("LLIO poses must contain only finite values")
+    homogeneous_row = np.array([0.0, 0.0, 0.0, 1.0])
+    if (
+        not np.allclose(ground_truth[:, 3, :], homogeneous_row)
+        or not np.allclose(estimated[:, 3, :], homogeneous_row)
+    ):
+        raise ValueError("LLIO poses must have homogeneous bottom row [0, 0, 0, 1]")
+    identity = np.eye(3)
+    for poses in (ground_truth, estimated):
+        rotations = poses[:, :3, :3]
+        orthogonality = np.matmul(
+            np.transpose(rotations, (0, 2, 1)), rotations
+        )
+        if (
+            not np.allclose(orthogonality, identity, atol=1e-6)
+            or not np.allclose(np.linalg.det(rotations), 1.0, atol=1e-6)
+        ):
+            raise ValueError("LLIO poses must contain valid rotation matrices")
 
     return ground_truth, estimated
+
+
+def iter_pose_sequences(result):
+    """Yield aligned poses one sequence at a time."""
+    ground_truth, estimated = unpack_pose_result(result)
+    if "sequence_lengths" not in result:
+        raise ValueError("LLIO inference result is missing: sequence_lengths")
+
+    sequence_lengths = result["sequence_lengths"]
+    if not isinstance(sequence_lengths, (list, tuple)) or not sequence_lengths:
+        raise ValueError("LLIO sequence_lengths must be a non-empty list")
+    if any(not isinstance(length, int) or length <= 0 for length in sequence_lengths):
+        raise ValueError("LLIO sequence_lengths must contain positive integers")
+    if sum(sequence_lengths) != len(ground_truth):
+        raise ValueError(
+            "LLIO sequence_lengths must account for every pose, "
+            f"got {sum(sequence_lengths)} for {len(ground_truth)} poses"
+        )
+
+    start = 0
+    for length in sequence_lengths:
+        end = start + length
+        yield ground_truth[start:end], estimated[start:end]
+        start = end

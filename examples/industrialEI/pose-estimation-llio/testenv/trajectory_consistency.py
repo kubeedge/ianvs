@@ -14,7 +14,7 @@
 
 import numpy as np
 from sedna.common.class_factory import ClassType, ClassFactory
-from pose_result import unpack_pose_result
+from pose_result import iter_pose_sequences
 
 __all__ = ["trajectory_consistency"]
 
@@ -35,7 +35,17 @@ def trajectory_consistency(y_true, y_pred, **kwargs):
         float: Trajectory consistency score (higher is better, range 0-1)
     """
     del y_true, kwargs
-    y_true, y_pred = unpack_pose_result(y_pred)
+    sequence_scores = []
+    sequence_weights = []
+    for ground_truth, estimated in iter_pose_sequences(y_pred):
+        sequence_scores.append(_sequence_consistency(ground_truth, estimated))
+        sequence_weights.append(len(ground_truth))
+
+    return float(np.average(sequence_scores, weights=sequence_weights))
+
+
+def _sequence_consistency(y_true, y_pred):
+    """Calculate consistency for one continuous pose sequence."""
 
     if len(y_true) < 3:
         # Need at least 3 poses to evaluate trajectory consistency
@@ -95,7 +105,11 @@ def trajectory_consistency(y_true, y_pred, **kwargs):
         true_total_dist = true_distances[-1] if len(true_distances) > 0 else 0
         pred_total_dist = pred_distances[-1] if len(pred_distances) > 0 else 0
         
-        if true_total_dist > 0:
+        if true_total_dist == 0 and pred_total_dist == 0:
+            path_consistency = 1.0
+        elif true_total_dist == 0 or pred_total_dist == 0:
+            path_consistency = 0.0
+        else:
             path_length_ratio = min(pred_total_dist / true_total_dist, true_total_dist / pred_total_dist)
             path_consistency = path_length_ratio
     
