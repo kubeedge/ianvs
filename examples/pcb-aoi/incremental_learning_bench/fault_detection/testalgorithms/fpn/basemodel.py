@@ -23,7 +23,10 @@ import logging
 
 import numpy as np
 import tensorflow as tf
-import tensorflow.contrib.slim as slim
+try:
+    import tf_slim as slim
+except ImportError:
+    import tensorflow.contrib.slim as slim
 from sedna.common.config import Context
 from sedna.common.class_factory import ClassType, ClassFactory
 from FPN_TensorFlow.help_utils.help_utils import draw_box_cv
