@@ -28,6 +28,7 @@ from sedna.datasources import (
 
 from core.common import utils
 from core.common.constant import DatasetFormat
+from core.common.log import LOGGER
 
 # pylint: disable=too-many-instance-attributes
 class Dataset:
@@ -40,6 +41,11 @@ class Dataset:
     config : dict
          config of dataset, include: train url, test url and label, etc.
     """
+
+    _DEPRECATED_FIELDS = {
+        "train_url": "train_index, train_data or train_data_info",
+        "test_url": "test_index, test_data or test_data_info",
+    }
 
     def __init__(self, config):
         self.train_url: str = ""
@@ -69,8 +75,17 @@ class Dataset:
 
     def _parse_config(self, config):
         for attr, value in config.items():
+            if attr in self._DEPRECATED_FIELDS:
+                LOGGER.warning(
+                    "dataset field `%s` is not read by the dataset loader; "
+                    "use %s instead.",
+                    attr, self._DEPRECATED_FIELDS[attr]
+                )
+                continue
             if attr in self.__dict__:
                 self.__dict__[attr] = value
+            else:
+                LOGGER.warning("unknown dataset config field `%s` ignored.", attr)
 
         self._check_fields()
 
