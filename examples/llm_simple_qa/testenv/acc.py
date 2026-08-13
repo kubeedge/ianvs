@@ -33,8 +33,12 @@ def acc(y_true, y_pred):
     print(y_true)
     print(y_pred)
         
-    same_elements = [y_pred[i] == y_true[i] for i in range(len(y_pred))]
+    num_samples = min(len(y_pred), len(y_true))
+    if num_samples == 0:
+        return 0.0
 
-    acc = sum(same_elements) / len(same_elements)
+    same_elements = [y_pred[i] == y_true[i] for i in range(num_samples)]
+
+    accuracy = sum(same_elements) / num_samples
     
-    return acc
+    return accuracy

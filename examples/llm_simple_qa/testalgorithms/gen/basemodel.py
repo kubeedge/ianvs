@@ -40,12 +40,13 @@ os.environ['BACKEND_TYPE'] = 'TORCH'
 class BaseModel:
 
     def __init__(self, **kwargs):
+        model_name_or_path = os.getenv("MODEL_URL", kwargs.get("model_url", "Qwen/Qwen2-0.5B-Instruct"))
         self.model = AutoModelForCausalLM.from_pretrained(
-            "/home/icyfeather/models/Qwen2-0.5B-Instruct",
+            model_name_or_path,
             torch_dtype="auto",
             device_map="auto"
         )
-        self.tokenizer = AutoTokenizer.from_pretrained("/home/icyfeather/models/Qwen2-0.5B-Instruct")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
 
     def train(self, train_data, valid_data=None, **kwargs):
         print("BaseModel doesn't need to train")
