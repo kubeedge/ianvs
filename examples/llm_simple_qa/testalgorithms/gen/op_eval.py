@@ -1,5 +1,7 @@
 from mmengine.config import read_base
 from opencompass.models import HuggingFacewithChatTemplate
+import os
+import torch
 # import sys
 # sys.path.append('/home/icyfeather/project/ianvs')
 
@@ -12,10 +14,10 @@ models = [
     dict(
         type=HuggingFacewithChatTemplate,
         abbr='qwen1.5-1.8b-chat-hf',
-        path='/home/icyfeather/models/Qwen1.5-1.8B-Chat',
+        path=os.environ.get('QWEN_MODEL_PATH', './models/Qwen1.5-1.8B-Chat'),
         max_out_len=1024,
         batch_size=2,
-        run_cfg=dict(num_gpus=1),
+        run_cfg=dict(num_gpus=1 if torch.cuda.is_available() else 0),
         stop_words=['<|im_end|>', '<|im_start|>'],
     )
 ]

@@ -19,6 +19,7 @@ import tempfile
 import time
 import zipfile
 import logging
+import torch
 
 import numpy as np
 from sedna.common.config import Context
@@ -26,8 +27,7 @@ from sedna.common.class_factory import ClassType, ClassFactory
 
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
-device = "cuda" # the device to load the model onto
-
++device = "cuda" if torch.cuda.is_available() else "cpu"
 
 logging.disable(logging.WARNING)
 
@@ -40,12 +40,17 @@ os.environ['BACKEND_TYPE'] = 'TORCH'
 class BaseModel:
 
     def __init__(self, **kwargs):
+        model_path = os.environ.get("QWEN_MODEL_PATH", "./models/Qwen2-0.5B-Instruct")
         self.model = AutoModelForCausalLM.from_pretrained(
-            "/home/icyfeather/models/Qwen2-0.5B-Instruct",
-            torch_dtype="auto",
-            device_map="auto"
+            model_path,
+            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+            device_map=None if device == "cpu" else "auto"
         )
-        self.tokenizer = AutoTokenizer.from_pretrained("/home/icyfeather/models/Qwen2-0.5B-Instruct")
+        if device == "cuda":
+            self.model = self.model.to(device)
+        else:
+            self.model = self.model.to(device)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 
     def train(self, train_data, valid_data=None, **kwargs):
         print("BaseModel doesn't need to train")
