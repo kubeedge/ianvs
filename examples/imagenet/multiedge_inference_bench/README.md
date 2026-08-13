@@ -9,7 +9,7 @@ With Ianvs installed and related environment prepared, users is then able to run
 To setup the environment, run the following commands:
 ```shell
 cd <Ianvs_HOME>
-pip install ./examples/resources/third_party/*
+pip install ./resources/third_party/*
 pip install -r requirements.txt
 cd ./examples/imagenet/multiedge_inference_bench/
 pip install -r requirements.txt
