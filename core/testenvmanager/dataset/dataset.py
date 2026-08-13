@@ -67,9 +67,21 @@ class Dataset:
         if self.test_data_info:
             self._check_dataset_url(self.test_data_info)
 
+    # dataset config fields that hold filesystem paths and therefore need
+    # "~" expanded to the user's home directory before use; downstream code
+    # (open(), os.path.dirname(), os.path.isabs(), etc.) does not do this
+    # expansion itself, so a config value like "~/data/index.txt" would
+    # otherwise silently fail local-file checks and file opens.
+    _PATH_FIELDS = (
+        "train_url", "test_url", "train_index", "test_index",
+        "train_data", "test_data", "train_data_info", "test_data_info",
+    )
+
     def _parse_config(self, config):
         for attr, value in config.items():
             if attr in self.__dict__:
+                if attr in self._PATH_FIELDS and isinstance(value, str):
+                    value = os.path.expanduser(value)
                 self.__dict__[attr] = value
 
         self._check_fields()
