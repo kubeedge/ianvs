@@ -160,9 +160,8 @@ class Module:
         base_hps = {}
         hp_name_values_list = []
         for ele in config:
-            hp_config = ele.popitem()
-            hp_name = hp_config[0]
-            hp_values = hp_config[1].get("values")
+            hp_name, hp_config = next(iter(ele.items()))
+            hp_values = hp_config.get("values")
             if hp_name == "other_hyperparameters":
                 base_hps = self._parse_other_hyperparameters(hp_values)
             else:
