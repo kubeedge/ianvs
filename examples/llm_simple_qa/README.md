@@ -70,7 +70,7 @@ Replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/s
 
 Run the following command:
 
-`ianvs -f examples/llm/singletask_learning_bench/simple_qa/benchmarkingjob.yaml`
+`ianvs -f examples/llm_simple_qa/benchmarkingjob.yaml`
 
 ## OpenCompass Evaluation
 
@@ -80,5 +80,5 @@ Run the following command:
 
 ### Run Evaluation
 
-`python run_op.py examples/llm/singletask_learning_bench/simple_qa/testalgorithms/gen/op_eval.py`
+`python run_op.py examples/llm_simple_qa/testalgorithms/gen/op_eval.py`
 
