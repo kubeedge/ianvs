@@ -1,12 +1,15 @@
 testenv:
   # dataset configuration
   dataset:
+    # Dataset must be downloaded locally and this path updated accordingly.
+    # NOTE: use an absolute path (not "~/...") -- core/testenvmanager/dataset/dataset.py
+    # does not expand "~", so a home-relative path here fails Dataset's local-file check.
     # the url address of train dataset index; string type;
-    train_url: "/root/data/semantic_segmentation_dataset/train-small-3.txt"
-    #train_url: "/root/data/semantic_segmentation_dataset/train-index.txt"
+    train_index: "/data/datasets/semantic_segmentation_dataset/train-small-3.txt"
+    #train_index: "/data/datasets/semantic_segmentation_dataset/train-index.txt"
     # the url address of test dataset index; string type;
-    test_url: "/root/data/semantic_segmentation_dataset/test-small-3.txt"
-    #test_url: "/root/data/semantic_segmentation_dataset/test-index.txt"
+    test_index: "/data/datasets/semantic_segmentation_dataset/test-small-3.txt"
+    #test_index: "/data/datasets/semantic_segmentation_dataset/test-index.txt"
 
   # model eval configuration of incremental learning;
   model_eval:
@@ -15,7 +18,7 @@ testenv:
       # metric name; string type;
       name: "accuracy"
       # the url address of python file
-      url: "./examples/semantic_segmentation/lifelong_learning_bench/testenv/accuracy.py"
+      url: "./examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/testenv/accuracy.py"
       mode: "no-inference"
 
     # condition of triggering inference model to update
@@ -30,7 +33,7 @@ testenv:
       # metric name; string type;
     - name: "accuracy"
       # the url address of python file
-      url: "./examples/semantic_segmentation/lifelong_learning_bench/testenv/accuracy.py"
+      url: "./examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/testenv/accuracy.py"
     - name: "samples_transfer_ratio"
 
   # incremental rounds setting; int type; default value is 2;
