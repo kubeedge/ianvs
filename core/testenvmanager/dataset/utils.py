@@ -120,8 +120,10 @@ def partition_llm_data(data_source, client_number):
 
 def rename_keys_jsonl(path: str, encoding: str = "utf-8"):
     """
-    Rename the first two keys of each line in a JSONL file to "question" and "answer".
-    If the keys are already "question" and "answer", no changes are made.
+    Return a JSONL path whose first two keys are "question" and "answer".
+
+    Reuse an already normalized source; otherwise write a normalized sibling
+    file without modifying the source dataset.
     """
     src = Path(path)
     with src.open("r", encoding=encoding) as file_handle:
@@ -137,7 +139,9 @@ def rename_keys_jsonl(path: str, encoding: str = "utf-8"):
     key_one, key_two = keys[0], keys[1]
     if key_one == "question" and key_two == "answer":
         LOGGER.info("keys are already in the correct format, no need to rename")
-        return
+        return str(src)
+
+    normalized_path = src.with_name(f"{src.stem}.normalized{src.suffix}")
     file_descriptor, tmp_path = tempfile.mkstemp(suffix=".jsonl", dir=src.parent)
     os.close(file_descriptor)
     with src.open("r", encoding=encoding) as fin, \
@@ -151,4 +155,5 @@ def rename_keys_jsonl(path: str, encoding: str = "utf-8"):
             if key_two in obj:
                 obj["answer"] = obj.pop(key_two)
             fout.write(json.dumps(obj, ensure_ascii=False) + "\n")
-    os.replace(tmp_path, src)
+    os.replace(tmp_path, normalized_path)
+    return str(normalized_path)
