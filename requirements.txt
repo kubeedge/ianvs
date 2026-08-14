@@ -1,4 +1,5 @@
 prettytable~=2.5.0 # BSD
+colorlog # MIT
 scikit-learn
 numpy
 pandas
