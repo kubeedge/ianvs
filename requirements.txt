@@ -1,4 +1,6 @@
-prettytable~=2.5.0 # BSD
+colorlog>=4.7.2
+PyYAML>=6.0
+prettytable~=2.5.0
 scikit-learn
 numpy
 pandas
