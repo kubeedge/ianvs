@@ -98,6 +98,13 @@ class Rank:
                 f"must be provided and be string type."
             )
 
+        if self.save_mode not in self.VALID_SAVE_MODES:
+            raise ValueError(
+                f"rank's save_mode({self.save_mode}) is not supported. "
+                f"the supported save modes are "
+                f"{', '.join(self.VALID_SAVE_MODES)}."
+            )
+
     @classmethod
     def _get_all_metric_names(cls, test_results) -> list:
         metrics = set()
@@ -283,13 +290,20 @@ class Rank:
             self._save_all()
             self._save_selected(test_cases, test_results)
 
-        if self.save_mode == "selected_only":
+        elif self.save_mode == "selected_only":
             self._save_selected(test_cases, test_results)
 
-        if self.save_mode == "selected_and_all_and_picture":
+        elif self.save_mode == "selected_and_all_and_picture":
             self._save_all()
             self._save_selected(test_cases, test_results)
             self._draw_pictures(test_cases, test_results)
+
+        else:
+            raise ValueError(
+                f"rank's save_mode({self.save_mode}) is not supported. "
+                f"the supported save modes are "
+                f"{', '.join(self.VALID_SAVE_MODES)}."
+            )
 
     def plot(self):
         """
