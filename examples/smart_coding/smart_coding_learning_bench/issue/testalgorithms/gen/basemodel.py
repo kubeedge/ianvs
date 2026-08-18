@@ -56,6 +56,9 @@ class BaseModel:
     def save(self, model_path):
         LOGGER.info("BaseModel save")
 
+    def preprocess(self, data=None, **kwargs):
+        return None
+
     def predict(self, data, input_shape=None, **kwargs):
         LOGGER.info("BaseModel predict")
         LOGGER.info(f"Dataset: {data.dataset_name}")
