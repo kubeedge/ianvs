@@ -1,0 +1,51 @@
+# Known broken paths in example configs
+# Format: <benchmarkingjob_path>:<field>:<broken_path>
+# Lines starting with # are comments
+
+examples/bdd/lifelong_learning_bench/curb-detection/benchmarkingjob.yaml:testenv:./examples/bdd/lifelong_learning_bench/testenv/testenv.yaml
+examples/bdd/lifelong_learning_bench/curb-detection/benchmarkingjob.yaml:algorithms[0].url:./examples/bdd/lifelong_learning_bench/testalgorithms/yolo/yolo_algorithm.yaml
+examples/cifar100/fci_ssl/fed_ci_match/testenv/testenv.yaml:model_eval.model_metric.url:/home/wyd/ianvs/project/ianvs/examples/cifar100/fci_ssl/fed_ci_match/testenv/acc.py
+examples/cifar100/fci_ssl/fed_ci_match_v2/testenv/testenv.yaml:metrics[0].url:/home/wyd/ianvs/project/ianvs/examples/cifar100/fci_ssl/fed_ci_match_v2/testenv/acc.py
+examples/cifar100/fci_ssl/fed_ci_match_v2/testenv/testenv.yaml:model_eval.model_metric.url:/home/wyd/ianvs/project/ianvs/examples/cifar100/fci_ssl/fed_ci_match_v2/testenv/acc.py
+examples/cifar100/fci_ssl/glfc/testenv/testenv.yaml:model_eval.model_metric.url:/home/wyd/ianvs/project/ianvs/examples/cifar100/fci_ssl/glfc/testenv/acc.py
+examples/cifar100/federated_class_incremental_learning/fedavg/testenv/testenv.yaml:metrics[0].url:/home/wyd/ianvs/project/ianvs/examples/cifar100/federated_class_incremental_learning/fedavg/testenv/acc.py
+examples/cifar100/federated_class_incremental_learning/fedavg/testenv/testenv.yaml:model_eval.model_metric.url:/home/wyd/ianvs/project/ianvs/examples/cifar100/federated_class_incremental_learning/fedavg/testenv/acc.py
+examples/cifar100/federated_learning/fedavg/testenv/testenv.yaml:metrics[0].url:/home/wyd/ianvs/project/ianvs/examples/cifar100/federated_learning/fedavg/testenv/acc.py
+examples/cifar100/federated_learning/fedavg/testenv/testenv.yaml:model_eval.model_metric.url:/home/wyd/ianvs/project/ianvs/examples/cifar100/federated_learning/fedavg/testenv/acc.py
+examples/cityscapes/singletask_learning_bench/semantic-segmentation/benchmarkingjob.yaml:testenv:./examples/cityscapes/singletask_learning_bench/testenv/testenv.yaml
+examples/cityscapes/singletask_learning_bench/semantic-segmentation/benchmarkingjob.yaml:algorithms[0].url:./examples/cityscapes/singletask_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml
+examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/benchmarkingjob.yaml:testenv:./examples/curb-detection/lifelong_learning_bench/testenv/testenv.yaml
+examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/benchmarkingjob.yaml:algorithms[0].url:./examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml
+examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-fulltest.yaml:testenv:./examples/semantic_segmentation/lifelong_learning_bench/testenv/testenv-full.yaml
+examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-fulltest.yaml:algorithms[0].url:./examples/semantic_segmentation/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml
+examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-smalltest.yaml:testenv:./examples/semantic_segmentation/lifelong_learning_bench/testenv/testenv-small.yaml
+examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-smalltest.yaml:algorithms[0].url:./examples/semantic_segmentation/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml
+examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-traveltest.yaml:testenv:./examples/semantic_segmentation/lifelong_learning_bench/testenv/testenv-travel.yaml
+examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-traveltest.yaml:algorithms[0].url:./examples/semantic_segmentation/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm-new-split.yaml
+examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/benchmarkingjob.yaml:testenv:./examples/semantic_segmentation/lifelong_learning_bench/testenv/testenv.yaml
+examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/benchmarkingjob.yaml:algorithms[0].url:./examples/semantic_segmentation/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml
+examples/cityscapes-synthia/scene-based-unknown-task-recognition/curb-detection/benchmarkingjob.yaml:testenv:./examples/scene-based-unknown-task-recognition//lifelong_learning_bench/testenv/testenv.yaml
+examples/cityscapes-synthia/scene-based-unknown-task-recognition/curb-detection/benchmarkingjob.yaml:algorithms[0].url:./examples/scene-based-unknown-task-recognition//lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml
+examples/Cloud_Robotics/cloud-edge-collaborative-inference_bench/perception-reasoning/benchmarkingjob.yaml:testenv:./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testenv/testenv.yaml
+examples/Cloud_Robotics/cloud-edge-collaborative-inference_bench/perception-reasoning/benchmarkingjob.yaml:algorithms[0].url:./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testalgorithms/perception_reasoning.yaml
+examples/Cloud_Robotics/singletask_learning_bench/Semantic_Segmentation/benchmarkingjob.yaml:testenv:./examples/cloud_robot/single_task_learning/testenv/testenv.yaml
+examples/Cloud_Robotics/singletask_learning_bench/Semantic_Segmentation/benchmarkingjob.yaml:algorithms[0].url:./examples/cloud-robotics/single_task_learning/testalgorithm/rfnet/algorithm.yaml
+examples/cloud_VLA_finetune/singletask_learning_bench/benchmarkingjob.yaml:testenv:/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/singletask_learning_bench/testenv/testenv.yaml
+examples/cloud_VLA_finetune/singletask_learning_bench/benchmarkingjob.yaml:algorithms[0].url:/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/singletask_learning_bench/testalgorithms/vla_dataselect/vla_algorithm.yaml
+examples/industrialEI/single_task_learning_bench/deformable_component_manipulation/benchmarkingjob.yaml:testenv:./testenv/testenv.yaml
+examples/industrialEI/single_task_learning_bench/deformable_component_manipulation/benchmarkingjob.yaml:algorithms[0].url:testalgorithms/deformable_alg.yaml
+examples/llm_simple_qa/benchmarkingjob.yaml:testenv:./examples/llm/singletask_learning_bench/simple_qa/testenv/testenv.yaml
+examples/llm_simple_qa/benchmarkingjob.yaml:algorithms[0].url:./examples/llm/singletask_learning_bench/simple_qa/testalgorithms/gen/gen_algorithm.yaml
+examples/phys_scene_gen/singletask_learning_bench/testalgorithms/ai2holodeck/algorithmenv.yaml:modules[0].url:examples.phys_scene_gen.singletask_learning_bench.testalgorithms.ai2holodeck.phys_scene_generator
+examples/PIPL/edge-cloud_collaborative_learning_bench/benchmarkingjob.yaml:testenv:./testenv/testenv.yaml
+examples/PIPL/edge-cloud_collaborative_learning_bench/benchmarkingjob.yaml:algorithms[0].url:./test_algorithms/algorithm.yaml
+examples/RoboDK Palletizing/singletask_learning_bench/benchmarkingjob.yaml:testenv:/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testenv/testenv.yaml
+examples/RoboDK Palletizing/singletask_learning_bench/benchmarkingjob.yaml:algorithms[0].url:/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testalgorithms/algorithm.yaml
+examples/robot/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-sam.yaml:testenv:./examples/robot/lifelong_learning_bench/testenv/testenv-robot-small.yaml
+examples/robot/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-sam.yaml:algorithms[0].url:./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/sam_algorithm.yaml
+examples/robot/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-simple.yaml:testenv:./examples/robot/lifelong_learning_bench/testenv/testenv-robot.yaml
+examples/robot/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-simple.yaml:algorithms[0].url:./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm-simple.yaml
+examples/robot-cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/benchmarkingjob.yaml:testenv:./examples/class_increment_semantic_segmentation/lifelong_learning_bench/testenv/testenv.yaml
+examples/robot-cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/benchmarkingjob.yaml:algorithms[0].url:./examples/class_increment_semantic_segmentation/lifelong_learning_bench/testalgorithms/erfnet/test_algorithm.yaml
+examples/smart_coding/smart_coding_learning_bench/comment/benchmarkingjob.yaml:testenv:/home/xiebo/ianvs/examples/smart_coding/smart_coding_learning_bench/comment/testenv/testenv.yaml
+examples/smart_coding/smart_coding_learning_bench/comment/benchmarkingjob.yaml:algorithms[0].url:/home/xiebo/ianvs/examples/smart_coding/smart_coding_learning_bench/comment/testalgorithms/gen/gen_algorithm.yaml

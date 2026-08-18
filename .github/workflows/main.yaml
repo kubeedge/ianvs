@@ -39,3 +39,19 @@ jobs:
           else
             pylint '${{github.workspace}}/core'
           fi
+
+  check-example-paths:
+    runs-on: ubuntu-22.04
+    name: check-example-paths
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+      - name: Install PyYAML
+        run: pip install pyyaml
+      - name: Check example config paths
+        run: |
+          python scripts/check_example_paths.py \
+            --allowlist scripts/known_broken_paths.txt
