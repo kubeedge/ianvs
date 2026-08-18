@@ -33,6 +33,13 @@ class Rank:
 
     """
 
+    #: save modes supported by :meth:`save`.
+    VALID_SAVE_MODES = (
+        "selected_and_all",
+        "selected_only",
+        "selected_and_all_and_picture",
+    )
+
     def __init__(self, config):
         self.sort_by: list = []
         self.visualization: dict = {"mode": "selected_only", "method": "print_table"}
