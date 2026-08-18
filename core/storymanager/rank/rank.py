@@ -92,10 +92,10 @@ class Rank:
         if not self.selected_dataitem.get("metrics"):
             raise ValueError("not found metrics of selected_dataitem in rank.")
 
-        if not self.save_mode and not isinstance(self.save_mode, list):
+        if not isinstance(self.save_mode, str) or not self.save_mode:
             raise ValueError(
                 f"rank's save_mode({self.save_mode}) "
-                f"must be provided and be list type."
+                f"must be provided and be string type."
             )
 
     @classmethod
