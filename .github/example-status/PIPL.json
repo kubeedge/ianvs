@@ -1,0 +1,10 @@
+{
+  "color": "lightgrey",
+  "commit": "37a9c60a9747af0cfe3170f84249bc349c56e8d5",
+  "example": "PIPL",
+  "label": "status",
+  "message": "CI/CD onGoing",
+  "schemaVersion": 1,
+  "status": "CI/CD onGoing",
+  "validated_at": "2026-08-21T10:01:03.206619Z"
+}
