@@ -50,7 +50,7 @@ bash -s docker --mirror Aliyun"
 
 def check_host_kind():
     """
-    check whether Kind is installed on the host.
+    Check whether Kind is installed on the host.
     If Kind is not installed, try to install Kind with one-click installation script.
     """
 
@@ -78,7 +78,7 @@ chmod +x ./kind && mv ./kind /usr/local/bin/kind"
 
 def get_host_free_memory_size():
     """
-    return the current memory(free) on the host(in kB)
+    Return the current memory(free) on the host(in kB)
     """
     shell_cmd = "cat /proc/meminfo | grep MemFree"   # in kB
     with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_memory_info:
@@ -89,7 +89,7 @@ def get_host_free_memory_size():
 
 def check_host_memory():
     """
-    check whether the current memory is sufficient(>=4GB)
+    Check whether the current memory is sufficient(>=4GB)
 
     """
     memory_free = get_host_free_memory_size()
@@ -107,7 +107,7 @@ Current Memory Free: %s kB, Memory Require: %s kB",
 
 def get_host_number_of_cpus():
     """
-    return the number of cpus
+    Return the number of cpus
 
     """
     shell_cmd = "lscpu | grep CPU:"
@@ -120,7 +120,7 @@ def get_host_number_of_cpus():
 
 def check_host_cpu():
     """
-    check whether the number of CPUs is sufficient (>=4cores)
+    Check whether the number of CPUs is sufficient (>=4cores)
 
     """
     number_of_cpus = get_host_number_of_cpus()
@@ -137,7 +137,7 @@ def check_host_cpu():
 
 def check_host_enviroment():
     """
-    check the host enviroment, includes docker, kind, cpu and memory.
+    Check the host environment, includes docker, kind, cpu and memory.
 
     """
     check_host_docker()
@@ -148,38 +148,41 @@ def check_host_enviroment():
 
 def build_simulation_enviroment(simulation):
     """
-    build a simulation enviroment
+    Build a simulation environment
 
     """
+    check_host_enviroment()  # check the environment
 
-    check_host_enviroment()         # check the enviroment
-
-    shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
-/master/scripts/installation/all-in-one.sh | " \
-        f"NUM_CLOUD_WORKER_NODES={simulation.cloud_number} " \
-        f"NUM_EDGE_NODES={simulation.edge_number} " \
-        f"KUBEEDGE_VERSION={simulation.kubeedge_version} " \
-        f"SEDNA_VERSION={simulation.sedna_version} " \
+    shell_cmd = (
+        "curl https://raw.githubusercontent.com/kubeedge/sedna\
+/master/scripts/installation/all-in-one.sh | "
+        f"NUM_CLOUD_WORKER_NODES={simulation.cloud_number} "
+        f"NUM_EDGE_NODES={simulation.edge_number} "
+        f"KUBEEDGE_VERSION={simulation.kubeedge_version} "
+        f"SEDNA_VERSION={simulation.sedna_version} "
         f"CLUSTER_NAME={simulation.cluster_name} bash -"
+    )
 
     build_simulation_env_ret = subprocess.run(
         shell_cmd, shell=True, check=True)
 
     if build_simulation_env_ret.returncode == 0:
         LOGGER.info(
-            "Congratulation! The simulation enviroment build successful!")
+            "Congratulation! The simulation environment build successful!")
     else:
-        raise RuntimeError("The simulation enviroment build failed.")
+        raise RuntimeError("The simulation environment build failed.")
 
 
 def destory_simulation_enviroment(simulation):
     """
-    build the simulation enviroment
+    Build the simulation environment
 
     """
-    shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
-/main/scripts/installation/all-in-one.sh | " \
+    shell_cmd = (
+        "curl https://raw.githubusercontent.com/kubeedge/sedna\
+/main/scripts/installation/all-in-one.sh | "
         f"CLUSTER_NAME={simulation.cluster_name} bash /dev/stdin clean"
+    )
 
     retcode = subprocess.call(shell_cmd, shell=True)
 

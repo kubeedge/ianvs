@@ -75,7 +75,7 @@ class BaseModel:
         for model_name, device in map_info.items():
             model = models_dir + '/' + model_name
             if not os.path.exists(model):
-                raise ValueError("=> No modle found at '{}'".format(model))
+                raise ValueError("=> No model found at '{}'".format(model))
             if device == 'cpu':
                 session = ort.InferenceSession(model, providers=['CPUExecutionProvider'])
             elif 'gpu' in device:

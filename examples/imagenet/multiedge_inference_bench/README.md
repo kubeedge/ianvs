@@ -1,4 +1,4 @@
-# Benchmarking of Image Clasification for High Mobility Scenarios
+# Benchmarking of Image Classification for High Mobility Scenarios
 
 In high-mobility scenarios such as highways and high-speed railways, the connection between personal terminal devices and cloud servers is significantly weakened. However, in recent years, artificial intelligence technology has permeated every aspect of our lives, and we also need to use artificial intelligence technologies with high computational and storage demands and sensitive to latency in high-mobility scenarios. For example, even when driving through a tunnel with a weak network environment, we may still need to use AI capabilities such as image classification. Therefore, in the event that edge devices lose connection with the cloud, offloading AI computing tasks to adjacent edge devices and achieving computational aggregation based on the mutual collaboration between devices, to complete computing tasks that traditionally require cloud-edge collaboration, has become an issue worth addressing. This benchmarking job aims to simulate such scenario: using multiple heterogeneous computing units on the edge (such as personal mobile phones, tablets, bracelets, laptops, and other computing devices) for collaborative ViT inference, enabling image classification to be completed with lower latency using devices that are closer to the edge, thereby enhancing the user experience.After running benchmarking jobs, a report will be generated.
 
@@ -7,6 +7,7 @@ With Ianvs installed and related environment prepared, users is then able to run
 ## Prerequisites
 
 To setup the environment, run the following commands:
+
 ```shell
 cd <Ianvs_HOME>
 pip install ./examples/resources/third_party/*
@@ -16,12 +17,14 @@ pip install -r requirements.txt
 cd <Ianvs_HOME>
 mkdir dataset initial_model
 ```
+
 Please refer to [this link](https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html) and ensure that the versions of CUDA and cuDNN are compatible with the version of ONNX Runtime.
 
 Note that it is advisable to avoid using lower versions of the ONNX library, as they are very time-consuming when performing computational graph partitioning. The version of onnx-cuda-cudnn we used in our tests is as follows:
 ![onnx_version](images/onnx_version.png)
 
 ## Step 1. Prepare Dataset
+
 Download [ImageNet 2012 dataset](https://image-net.org/download.php) and put it under <Ianvs_HOME>/dataset in the following structure:
 
 ```
@@ -29,6 +32,7 @@ dataset
    |------ILSVRC2012_devkit_t12.tar.gz
    |------ILSVRC2012_img_val.tar
 ```
+
 Then, you need to process the dataset and generate the _train.txt_ and _val.txt_:
 
 ```shell
@@ -41,6 +45,7 @@ python ./examples/imagenet/multiedge_inference_bench/testalgorithms/manual/datas
 Next, download pretrained model via [[huggingface]](https://huggingface.co/optimum/vit-base-patch16-224/tree/main), rename it to vit-base-patch16-224.onnx and put it under <Ianvs_HOME>/initial_model/
 
 ## Step 3. Run Benchmarking Job - Manual
+
 We are now ready to run the ianvs for benchmarking image classification for high mobility scenarios on the ImageNet dataset.
 
 ```python
@@ -62,9 +67,11 @@ You can view the graphical representation of relevant metrics in /ianvs/multiedg
 To compare the running conditions of the model with and without parallelism in the multiedge inference scenario, you can modify the value of --devices_info in base_model.py to devices_one.yaml to view the relevant metrics when the model runs on a single device.
 
 ## Step 5. Run Benchmarking Job - Automatic
+
 We offer a profiling-based and memory matching partition algorithm to compare with the method of manually specifying partitioning points. This method prioritizes the memory matching between the computational subgraph and the device. First, we profile the initial model on the CPU to collect memory usage, the number of parameters, computational cost, and the input and output data shapes for each layer, as well as the total number of layers and their names in the entire model. To facilitate subsequent integration, we have implemented profiling for three types of transformer models: vit, bert, and deit. Secondly, based on the results of the profiling and the device information provided in devices.yaml, we can identify the partitioning point that matches the device memory through a single traversal and perform model partitioning.
 
 You should first run the following command to generate a profiling result:
+
 ```shell
 cd <Ianvs_HOME>
 python ./examples/imagenet/multiedge_inference_bench/testalgorithms/automatic/profiler.py
@@ -74,6 +81,7 @@ Then you will find a profiler_results.yml file in the <Ianvs_HOME>/examples/imag
 ![profiler_result](images/profiler_results.png)
 
 Then you can run the following command to perform benchmarking:
+
 ```shell
 ianvs -f ./examples/imagenet/multiedge_inference_bench/classification_job_auto.yaml
 ```
@@ -92,7 +100,7 @@ How to partition an ONNX model based on device information is an interesting que
 More partitioning algorithms will be added in the future and you can customize their own partition methods in basemodel.py, they only need to comply with the input and output specifications defined by the interface as follows:
 
 ```
-def partiton(self, initial_model):
+def partition(self, initial_model):
     ## 1. parsing
     ## 2. modeling
     ## 3. partition
@@ -100,5 +108,3 @@ def partiton(self, initial_model):
 ```
 
 Hope you have a perfect journey in solving this problem!
-
-

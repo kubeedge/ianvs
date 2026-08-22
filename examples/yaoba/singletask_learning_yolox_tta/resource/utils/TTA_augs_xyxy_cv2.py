@@ -444,7 +444,7 @@ def topleftxywh_to_xyxy(boxes):
     args:
         boxes:list of topleft_x,topleft_y,width,height,
     return:
-        boxes:list of x,y,x,y,cooresponding to top left and bottom right
+        boxes:list of x,y,x,y,corresponding to top left and bottom right
     """
     x_top_left = boxes[0]
     y_top_left = boxes[1]

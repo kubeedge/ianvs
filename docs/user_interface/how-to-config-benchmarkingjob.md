@@ -163,10 +163,10 @@ selected_dataitem:
 ```yaml
 # benchmarking.yaml
 benchmarkingjob:
-  # job name of bechmarking; string type;
+  # job name of benchmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  # "~/" cannot be identified, so must be relative path or absoulute path
+  # "~/" cannot be identified, so must be relative path or absolute path
   workspace: "./workspace-mmlu"
 
   hard_example_mining_mode: "mining-then-inference"

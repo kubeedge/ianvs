@@ -30,7 +30,7 @@
 
 ### Introduction
 
-This example aims to implement benchmarks for **LLM in cloud-edge collaborative inference scenario**. 
+This example aims to implement benchmarks for **LLM in cloud-edge collaborative inference scenario**.
 
 ### Why LLM need cloud-edge collaborative inference?
 
@@ -41,18 +41,17 @@ Currently, such LLMs have billions or even trillions of parameters, requiring ma
 - Calling APIs of the most advanced models (GPT-4o *et.al*) is often very expensive.
 - Not all tasks require high-performance models to complete.
 
-These issues can be addressed by introducing Edge Computing, which is an architecture featured by low-latency, privacy security, energy-efficient. 
+These issues can be addressed by introducing Edge Computing, which is an architecture featured by low-latency, privacy security, energy-efficient.
 
-By deploying small-scale LLMs on edge devices like mobile phones, PCs and communication base station, users will have low-latency and privacy-secure services. Empirically, models with fewer than 3B parameters are possible to be deployed on the aforementioned edge devices. However, due to Scaling Law, smaller models perform worse than larger models, so they can only maintain good performance on certain tasks. 
+By deploying small-scale LLMs on edge devices like mobile phones, PCs and communication base station, users will have low-latency and privacy-secure services. Empirically, models with fewer than 3B parameters are possible to be deployed on the aforementioned edge devices. However, due to Scaling Law, smaller models perform worse than larger models, so they can only maintain good performance on certain tasks.
 
 Thus, smaller models on edge should collaborate with larger models on cloud to achieve better performance on other tasks.
 
-### Possible Collaborative Inference Strategy 
+### Possible Collaborative Inference Strategy
 
 There are several cloud-edge collaborative inference strategy, one of which is Query Routing $^{[1, 2]}$, which routes query to smaller-scale model on edge or larger-scale model on cloud based on its difficulty.
 
 Additionally, Speculative Decoding $^{[3]}$ is another promising strategy to further improve the performance of collaborative inference, where smaller-scale models predicting future multiple words quickly during decoding followed by parallel validation via larger-scale models; if validation fails then re-generation by larger-scale occurs.
-
 
 ### Details of Design
 
@@ -70,7 +69,7 @@ To save API calls during multi-round testing, this example has designed a result
 
 After all tests are completed, the Test Env Manager will calculate relevant metrics based on selected Metrics and hand over to Story Manager for printing test reports and generating Leader Board.
 
-## Quick Start Guide 
+## Quick Start Guide
 
 ### Required Resources
 
@@ -99,8 +98,9 @@ Before using this example, you need to have the device ready:
 
 The Docker-based setup assumes you have Docker installed on your system and are using an Ubuntu-based Linux distribution.
 
-**Note**: 
-- If you don't have Docker installed, follow the Docker Engine installation guide [here](https://docs.docker.com/engine/install/ubuntu/). 
+**Note**:
+
+- If you don't have Docker installed, follow the Docker Engine installation guide [here](https://docs.docker.com/engine/install/ubuntu/).
 - To enable Docker to download datasets from Kaggle within your docker container, you need to configure the Kaggle CLI authentication token. Please follow the [official Kaggle API documentation](https://www.kaggle.com/docs/api#:~:text=is%20%24PYTHON_HOME/Scripts.-,Authentication,-In%20order%20to) to download your `kaggle.json` token. Once downloaded, move the file to the `~/ianvs/examples/cloud-edge-collaborative-inference-for-llm/` directory after doing step 1(cloning the ianvs repo):
 
 ```bash
@@ -108,45 +108,50 @@ mv /path/to/kaggle.json ~/ianvs/examples/cloud-edge-collaborative-inference-for-
 ```
 
 1. Clone Ianvs Repo
+
 ```
 git clone https://github.com/kubeedge/ianvs.git
 cd ianvs
 ```
 
-2. From the root directory of Ianvs, build the `cloud-edge-collaborative-inference-for-llm` Docker image:
+1. From the root directory of Ianvs, build the `cloud-edge-collaborative-inference-for-llm` Docker image:
 
-**Note**: If you have already build the image, then move on to the second step directly. 
+**Note**: If you have already build the image, then move on to the second step directly.
 
-```bash 
+```bash
 docker build -t ianvs-experiment-image ./examples/cloud-edge-collaborative-inference-for-llm/
 ```
 
-3. Run the image in an interactive shell:
-```bash 
+1. Run the image in an interactive shell:
+
+```bash
 docker run -it ianvs-experiment-image /bin/bash 
 ```
 
-4. Activate the ianvs-experiment Conda environment:
-```bash 
+1. Activate the ianvs-experiment Conda environment:
+
+```bash
 conda activate ianvs-experiment
 ```
 
-5. Set the required environment variables for the API (use either OpenAI or GROQ credentials):
-```bash 
+1. Set the required environment variables for the API (use either OpenAI or GROQ credentials):
+
+```bash
 export OPENAI_BASE_URL="https://api.openai.com/v1"
 export OPENAI_API_KEY=sk_xxxxxxxx
 ```
 
 `Alternatively, for GROQ, use GROQ_BASE_URL and GROQ_API_KEY.`
 
-6. Run the Ianvs benchmark:
-```bash 
+1. Run the Ianvs benchmark:
+
+```bash
 ianvs -f examples/cloud-edge-collaborative-inference-for-llm/benchmarkingjob.yaml
 ```
 
 *Note: To help you get results quickly, we have provided a workspace folder with cached results for `Qwen/Qwen2.5-1.5B-Instruct`, `Qwen/Qwen2.5-3B-Instruct`,`Qwen/Qwen2.5-7B-Instruct` and `gpt-4o-mini`.*
 
-- If you want to create a custom dataset, proceed to the next section. 
+- If you want to create a custom dataset, proceed to the next section.
 
 ### Detailed Setup Guide
 
@@ -186,14 +191,15 @@ If you want to use speculative decoding models like [EAGLE](https://github.com/S
 Here, we provide `MMLU-5-shot` dataset and `GPQA-diamond` dataset for testing. The following  instruction for dataset preparation for `MMLU-5-shot`, `GPQA-diamond` follows the same progress.
 
 1. Download `mmlu-5-shot` in the root directory of ianvs from [Ianvs-MMLU-5-shot](https://www.kaggle.com/datasets/kubeedgeianvs/ianvs-mmlu-5shot), which is a transformed MMLU-5-shot dataset formatted to fit Ianvs's requirements.
-**Note**: To enable Docker to download datasets from Kaggle within your docker container, you need to configure the Kaggle CLI authentication token. Please follow the [official Kaggle API documentation](https://www.kaggle.com/docs/api#:~:text=is%20%24PYTHON_HOME/Scripts.-,Authentication,-In%20order%20to) to download your `kaggle.json` token. 
+**Note**: To enable Docker to download datasets from Kaggle within your docker container, you need to configure the Kaggle CLI authentication token. Please follow the [official Kaggle API documentation](https://www.kaggle.com/docs/api#:~:text=is%20%24PYTHON_HOME/Scripts.-,Authentication,-In%20order%20to) to download your `kaggle.json` token.
+
 ```bash
 kaggle datasets download -d kubeedgeianvs/ianvs-mmlu-5shot
 unzip -o ianvs-mmlu-5shot.zip
 rm -rf ianvs-mmlu-5shot.zip
 ```
 
-2. Then, check the path of `train_data` and `test_data` in 
+1. Then, check the path of `train_data` and `test_data` in
 `examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml`.
 
     - If you created the `dataset` folder inside `ianvs/` as mentioned earlier, then the relative path is correct and does not need to be modified.
@@ -224,9 +230,9 @@ Here is an example:
 ```json
 {"query": "Question: Find the degree for the given field extension Q(sqrt(2), sqrt(3), sqrt(18)) over Q.\nA. 0\nB. 4\nC. 2\nD. 6", "response": "B", "explanation": "", "level_1_dim": "single-modal", "level_2_dim": "text", "level_3_dim": "knowledge Q&A", "level_4_dim": "abstract_algebra"}
 {"query": "Question: Let p = (1, 2, 5, 4)(2, 3) in S_5 . Find the index of <p> in S_5.\nA. 8\nB. 2\nC. 24\nD. 120", "response": "C", "explanation": "", "level_1_dim": "single-modal", "level_2_dim": "text", "level_3_dim": "knowledge Q&A", "level_4_dim": "abstract_algebra"}
-``` 
+```
 
-The `metadata.jsonl` stores information about the data, including `dataset`, `description`, `level_1_dim`, `level_2_dim`, `level_3_dim`, `level_4_dim`. 
+The `metadata.jsonl` stores information about the data, including `dataset`, `description`, `level_1_dim`, `level_2_dim`, `level_3_dim`, `level_4_dim`.
 
 Here is an example:
 
@@ -277,7 +283,7 @@ The `EdgeModel` is designed to be deployed on your local machine, offering suppo
 
 For both `EdgeModel`, the arguments are:
 
-| Parameter Name         | Type  | Description                                                  | Defalut                  |
+| Parameter Name         | Type  | Description                                                  | Default                  |
 | :---: | :-----: | :---: | :---:|
 | model                  | str   | model name                                                   | Qwen/Qwen2-1.5B-Instruct |
 | backend                | str   | model serving framework                                      | huggingface              |
@@ -291,7 +297,6 @@ For both `EdgeModel`, the arguments are:
 
 ##### CloudModel Configuration
 
-
 The `CloudModel` represents the model on cloud, it will call LLM API via OpenAI API format. You need to set your OPENAI_BASE_URL and OPENAI_API_KEY in the environment variables yourself, for example.
 
 ```bash
@@ -303,7 +308,7 @@ export OPENAI_API_KEY=sk_xxxxxxxx
 
 For `CloudModel`, the open parameters are:
 
-| Parameter Name     | Type | Description                                                  | Defalut     |
+| Parameter Name     | Type | Description                                                  | Default     |
 | :---: | :---: | :---: | :---: |
 | model              | str  | model name                                                   | gpt-4o-mini |
 | temperature        | float  | What sampling temperature to use, between 0 and 2            | 0.8         |
@@ -330,6 +335,7 @@ You can modify the `router` parameter in `test_queryrouting.yaml` to select the 
 For BERT router, you can use [routellm/bert](https://huggingface.co/routellm/bert) or [routellm/bert_mmlu_augmented](https://huggingface.co/routellm/bert_mmlu_augmented) or your own BERT model.
 
 ##### Data Processor Configuration
+
 The Data Processor allows you to custom your own data format after the dataset loaded.
 
 Currently, supported routers include:
@@ -341,11 +347,13 @@ Currently, supported routers include:
 #### Step 3. Run Ianvs
 
 ##### Provided Response Cache
+
 The testing process may take much time, depending on the number of test cases and the inference speed of the model.
 
 To enable you directly get the results, here we provide a workspace folder with cached results of `Qwen/Qwen2.5-1.5B-Instruct`, `Qwen/Qwen2.5-3B-Instruct`,`Qwen/Qwen2.5-7B-Instruct` and `gpt-4o-mini`.
 
 You can download `workspace-mmlu` folder from [Ianvs-MMLU-5-shot](https://www.kaggle.com/datasets/kubeedgeianvs/ianvs-mmlu-5shot) and put it under your `ianvs` folder.
+
 - Since we have already downloaded the `Ianvs-MMLU-5-shot` folder. There is no need to do this again.
 
 ##### Run Joint Inference example
@@ -423,7 +431,6 @@ Since MMLU-5-shot has a large amount of data, we recommend using the GPQA datase
 +------+---------------+----------+------------+---------------------+------------+------------------------+---------------------+-------------------------+--------------------+------------------------+----------------+---------------------+---------------------------------+-------------------+------------------+---------------------+-------------------------------------------------------------------------------------+
 ```
 
-
 ## Discussion
 
 ### Query Routing's Application Scenario
@@ -432,7 +439,7 @@ Query Routing is a very useful cloud-edge collaboration strategy based on two fa
 
 - Calling top-tier large language models is expensive: For GPT-4o, the pricing is \$5.00 / 1M input tokens and \$15.00 / 1M output tokens.
 
--  Not all tasks require calling top-tier models: For tasks like translation, organization, summarization, data formatting,and casual conversation, small models with 3B parameters or less can achieve satisfactory results.
+- Not all tasks require calling top-tier models: For tasks like translation, organization, summarization, data formatting,and casual conversation, small models with 3B parameters or less can achieve satisfactory results.
 
 These two facts suggest that if we can call different models based on the difficulty of the task, it will help save unnecessary API calls and thus reduce costs. Additionally, if edge device prformance is sufficient, locally deployed small models can also demonstrate excellent latency and throughput metrics, further enhancing user experience.
 
@@ -442,11 +449,11 @@ Our Oracle Router is the ideal router that can route problems where the actual p
 
 You can modify and run `performance-cost-plot.py` to get your Performance-Cost figure.
 
-Some related research $^{[1]}$ has trained pratical routers that can save up to 40% of GPT-4 API calls while maintaining essentially unchanged accuracy on the test set.
+Some related research $^{[1]}$ has trained practical routers that can save up to 40% of GPT-4 API calls while maintaining essentially unchanged accuracy on the test set.
 
 ## Future
 
-This example builds an architecture for testing query routing strategies, but the provided dataset has some drawbacks such as being one-sided and singular, making it difficult to reflect effects in real-world scenarios. 
+This example builds an architecture for testing query routing strategies, but the provided dataset has some drawbacks such as being one-sided and singular, making it difficult to reflect effects in real-world scenarios.
 
 Besides, Speculative Decoding is another promising cloud-edge collaborative inference strategy, we should also implement it.
 

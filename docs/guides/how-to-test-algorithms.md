@@ -1,7 +1,6 @@
 [Quick Start]: ./quick-start.md
 [Links of scenarios]: ../proposals/scenarios/cloud-edge-collaborative-inference-for-llm/mmlu-5-shot.md
 [Ianvs-MMLU-5-shot dataset]: https://www.kaggle.com/datasets/kubeedgeianvs/ianvs-mmlu-5shot
-[Details of Ianvs-MMLU-5-shot dataset]: ../proposals/scenarios/cloud-edge-collaborative-inference-for-llm/mmlu-5-shot.md
 
 # How to test algorithms with Ianvs
 
@@ -175,8 +174,8 @@ class BERTFilter(BaseFilter, abc.ABC):
         res = {item["label"]:item["score"] for item in result}
         scaled_score = res["LABEL_0"] / (res["LABEL_0"] + res["LABEL_1"])
 
-        thresold = self.kwargs.get("threshold", 0.5)
-        label = "LABEL_0" if scaled_score >= thresold else "LABEL_1"
+        threshold = self.kwargs.get("threshold", 0.5)
+        label = "LABEL_0" if scaled_score >= threshold else "LABEL_1"
         return False if label == "LABEL_0" else True
 
     def _predict(self, data):
@@ -268,7 +267,7 @@ class RandomRouterFilter(BaseFilter, abc.ABC):
 
 @ClassFactory.register(ClassType.HEM, alias="OracleRouter")
 class OracleRouterFilter(BaseFilter, abc.ABC):
-    """The Opitmal Router, which routes the queries to edge or cloud based on the models' prediction.
+    """The Optimal Router, which routes the queries to edge or cloud based on the models' prediction.
     """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -351,14 +350,14 @@ algorithm:
       url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/hard_sample_mining.py"
 ```
 
-The URL address of this algorithm then should be filled in the configuration file of ``benchmarkingJob.yaml`` in the following Step 3. Example:- 
+The URL address of this algorithm then should be filled in the configuration file of ``benchmarkingJob.yaml`` in the following Step 3. Example:-
 
 ```yaml
 benchmarkingjob:
-  # job name of bechmarking; string type;
+  # job name of benchmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  # "~/" cannot be identified, so must be relative path or absoulute path
+  # "~/" cannot be identified, so must be relative path or absolute path
   workspace: "./workspace-mmlu"
 
   hard_example_mining_mode: "mining-then-inference"
@@ -417,7 +416,7 @@ def Threshold-based-HEM(infer_result=None):
 ### Example 3: Testing a neural-network-based modeling algorithm in incremental learning
 
 As the third example, we describe how to test a neural network `FPN` for HEM (Hard Example Mining) module in incremental learning.
-For this new algorithm in `ClassType.GENERAL`, the code in the algorithm file is as follows: 
+For this new algorithm in `ClassType.GENERAL`, the code in the algorithm file is as follows:
 
 ```python
 
@@ -632,7 +631,7 @@ algorithm:
               - 0.9
 ```
 
-The URL address of this algorithm then should be filled in the configuration file of ``benchmarkingJob.yaml`` in the following Step 3. Two examples are as follows: 
+The URL address of this algorithm then should be filled in the configuration file of ``benchmarkingJob.yaml`` in the following Step 3. Two examples are as follows:
 
 ``` yaml
   # the configuration of test object
@@ -677,7 +676,7 @@ First, the user can configure the workspace to reserve the output of tests.
   workspace: "./workspace-mmlu"
 ```
 
-Then, the user fill in the test environment and algorithm configured in previous steps. 
+Then, the user fill in the test environment and algorithm configured in previous steps.
 
 ``` yaml
 # benchmarkingJob.yaml
@@ -750,14 +749,14 @@ There are quite a few possible data items in the leaderboard. Not all of them ca
     save_mode: "selected_and_all"
 ```
 
-Hence, the final `benchmarking.yaml` file will look like:- 
+Hence, the final `benchmarking.yaml` file will look like:-
 
 ```yaml
 benchmarkingjob:
-  # job name of bechmarking; string type;
+  # job name of benchmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  # "~/" cannot be identified, so must be relative path or absoulute path
+  # "~/" cannot be identified, so must be relative path or absolute path
   workspace: "./workspace-mmlu"
 
   hard_example_mining_mode: "mining-then-inference"
@@ -824,6 +823,7 @@ benchmarkingjob:
     #  2> "selected_only": save selected dataitems;
     save_mode: "selected_and_all"
 ```
+
 ## Step 4. Execution and Presentation
 
 Finally, the user can run ianvs for benchmarking.

@@ -16,7 +16,7 @@ The `EdgeModel` is the model that will be deployed on your local machine, suppor
 
 For `EdgeModel`, the open parameters are:
 
-| Parameter Name         | Type  | Description                                                  | Defalut                  |
+| Parameter Name         | Type  | Description                                                  | Default                  |
 | ---------------------- | ----- | ------------------------------------------------------------ | ------------------------ |
 | model                  | str   | model name                                                   | Qwen/Qwen2-1.5B-Instruct |
 | backend                | str   | model serving framework                                      | huggingface              |
@@ -29,11 +29,11 @@ For `EdgeModel`, the open parameters are:
 
 #### CloudModel Configuration
 
-The `CloudModel` represents the model on cloud, it will call LLM API via OpenAI API format. 
+The `CloudModel` represents the model on cloud, it will call LLM API via OpenAI API format.
 
 For `CloudModel`, the open parameters are:
 
-| Parameter Name     | Type | Description                                                  | Defalut     |
+| Parameter Name     | Type | Description                                                  | Default     |
 | ------------------ | ---- | ------------------------------------------------------------ | ----------- |
 | model              | str  | model name                                                   | gpt-4o-mini |
 | temperature        | float  | What sampling temperature to use, between 0 and 2            | 0.8         |
@@ -60,6 +60,7 @@ You can modify the `router` parameter in `test_queryrouting.yaml` to select the 
 For BERT router, you can use [routellm/bert](https://huggingface.co/routellm/bert) or [routellm/bert_mmlu_augmented](https://huggingface.co/routellm/bert_mmlu_augmented) or your own BERT model.
 
 #### Data Processor Configuration
+
 The Data Processor allows you to customize your own data format after the dataset gets loaded.
 
 Currently, supported routers include:
@@ -108,7 +109,7 @@ algorithm:
               - "vllm"
         - temperature:
             # What sampling temperature to use, between 0 and 2; float type;
-            # For reproducable results, the temperature should be set to 0;
+            # For reproducible results, the temperature should be set to 0;
             values:
               - 0
         - top_p:
@@ -132,7 +133,7 @@ algorithm:
             values:
               - 0.9
         -  use_cache:
-            # Whether to use reponse cache; boolean type;
+            # Whether to use response cache; boolean type;
             values:
               - true
 

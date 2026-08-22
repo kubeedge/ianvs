@@ -2,7 +2,7 @@
 # 新版政府代理海报生成基准测试
 
 benchmarkingjob:
-  # job name of bechmarking; string type;
+  # job name of benchmarking; string type;
   name: "new_government_agent_benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
   # workspace: "/home/linux/Desktop/government_agent/ianvs/workspace"

@@ -103,8 +103,8 @@ class BERTFilter(BaseFilter, abc.ABC):
         res = {item["label"]:item["score"] for item in result}
         scaled_score = res["LABEL_0"] / (res["LABEL_0"] + res["LABEL_1"])
 
-        thresold = self.kwargs.get("threshold", 0.5)
-        label = "LABEL_0" if scaled_score >= thresold else "LABEL_1"
+        threshold = self.kwargs.get("threshold", 0.5)
+        label = "LABEL_0" if scaled_score >= threshold else "LABEL_1"
         return False if label == "LABEL_0" else True
 
     def _predict(self, data):
@@ -199,7 +199,7 @@ class RandomRouterFilter(BaseFilter, abc.ABC):
 
 @ClassFactory.register(ClassType.HEM, alias="OracleRouter")
 class OracleRouterFilter(BaseFilter, abc.ABC):
-    """The Opitmal Router, which routes the queries to edge or cloud based on the models' prediction.
+    """The Optimal Router, which routes the queries to edge or cloud based on the models' prediction.
     """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

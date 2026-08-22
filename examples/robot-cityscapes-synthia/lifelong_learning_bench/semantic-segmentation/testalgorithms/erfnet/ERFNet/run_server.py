@@ -78,8 +78,8 @@ class BaseServer:
         self.certfile = ssl_cert
         self.ws_size = int(ws_size)
         self.timeout = int(timeout)
-        protocal = "https" if self.certfile else "http"
-        self.url = f"{protocal}://{self.host}:{self.http_port}"
+        protocol = "https" if self.certfile else "http"
+        self.url = f"{protocol}://{self.host}:{self.http_port}"
 
     def run(self, app, **kwargs):
         if hasattr(app, "add_middleware"):

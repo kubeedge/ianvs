@@ -229,7 +229,7 @@ def get_pascal_voc_metrics(gold_standard: List[BoundingBox],
                     tps[i] = 1  # count as true positive
                     counter[preds[i].image_name][mas_idx] = 1  # flag as already 'seen'
                 else:
-                    # - A detected "cat" is overlaped with a GT "cat" with IOU >= IOUThreshold.
+                    # - A detected "cat" is overlapped with a GT "cat" with IOU >= IOUThreshold.
                     fps[i] = 1  # count as false positive
             else:
                 fps[i] = 1  # count as false positive

@@ -50,7 +50,7 @@ class Validator(object):
         args.next_domain += 1
         if args.cuda:
             self.model = self.model.cuda(args.gpu_ids)
-            cudnn.benchmark = True  # accelarate speed
+            cudnn.benchmark = True  # accelerate speed
         print('Model loaded successfully!')
 
     def validate(self):

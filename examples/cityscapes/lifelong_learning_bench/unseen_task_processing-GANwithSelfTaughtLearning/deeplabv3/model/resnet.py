@@ -15,7 +15,7 @@ def make_layer(block, in_channels, channels, num_blocks, stride=1, dilation=1):
         blocks.append(block(in_channels=in_channels, channels=channels, stride=stride, dilation=dilation))
         in_channels = block.expansion*channels
 
-    layer = nn.Sequential(*blocks) # (*blocks: call with unpacked list entires as arguments)
+    layer = nn.Sequential(*blocks) # (*blocks: call with unpacked list entries as arguments)
 
     return layer
 

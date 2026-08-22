@@ -44,7 +44,7 @@ class Simulation:
 
     def _parse_config(self, simulation_config):
         """
-        parse the simulation config.
+        Parse the simulation config.
         """
         for attribute, value in simulation_config.items():
             if attribute in self.__dict__:
@@ -54,7 +54,7 @@ class Simulation:
 
     def _check_fields(self):
         """
-        check the fields of simulation config.
+        Check the fields of simulation config.
         """
         if not isinstance(self.cloud_number, int):
             raise ValueError(

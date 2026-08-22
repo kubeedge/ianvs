@@ -42,6 +42,7 @@ This implementation leverages PEFT methods to address these challenges:
 - **P-Tuning**: Learns continuous prompt vectors in the embedding layer, modifying only inputs while keeping the base model frozen
 
 By combining federated learning with PEFT, this framework enables:
+
 - Privacy-preserving collaborative LLM training without raw data exchange
 - Reduced communication overhead (only adapter weights are shared)
 - Efficient training with limited computational resources
@@ -79,6 +80,7 @@ Due to the computational constraints of LLM training, a **GPU-aware task schedul
 - Ensures peak memory usage equals the footprint of a single LoRA-augmented model
 
 This design guarantees:
+
 - Fixed memory ceiling regardless of the number of clients
 - Balanced GPU utilization through FIFO scheduling
 - Linear scalability with additional GPUs
@@ -106,15 +108,18 @@ fedllm-peft/
 ## Supported Models
 
 ### Base Models
+
 - **ChatGLM-6B**: `THUDM/chatglm-6b`
 - **LLaMA**: Various sizes supported
 - **Other HuggingFace models**: Any transformer-based LLM with adapter support
 
 ### PEFT Methods
+
 - **LoRA (Low-Rank Adaptation)**: Efficient fine-tuning through low-rank matrix decomposition; few extra parameters, no merge at inference
 - **P-Tuning**: Continuous prompt learning in embedding space; modifies only inputs, flexible across tasks
 
 ### Aggregation Algorithms
+
 - **FedAvg**: Weighted average of client models
 - **FedAvgM**: FedAvg with server-side momentum for stabler convergence
 
@@ -123,6 +128,7 @@ fedllm-peft/
 The framework has been test on public dataset:
 
 ### MedQuad (English)
+
 - **Task**: Medical question-answering
 - **Language**: English
 - **Source**: [HuggingFace - keivalya/MedQuad-MedicalQnADataset](https://huggingface.co/datasets/keivalya/MedQuad-MedicalQnADataset)
@@ -134,6 +140,7 @@ The framework has been test on public dataset:
 ### Algorithm Configuration (`algorithm.yaml`)
 
 #### Paradigm Settings
+
 - `paradigm_type`: Set to `"federatedlearning"` for federated learning paradigm
 - `fl_data_setting`:
   - `train_ratio`: Proportion of data used for training (default: 1.0)
@@ -141,6 +148,7 @@ The framework has been test on public dataset:
   - `label_data_ratio`: Ratio of labeled data (default: 1.0)
 
 #### Base Model Module
+
 - `batch_size`: Training batch size per client (default: 1)
 - `learning_rate`: Local learning rate (default: 1e-4)
 - `local_epochs`: Number of local training epochs (default: 2)
@@ -153,12 +161,14 @@ The framework has been test on public dataset:
 **Important**: Please change the path to `modules_url`, `initial_model_url`, `save_dir` and `aggregation` as per your setup.
 
 #### Aggregation Module (FedAvgM-PEFT)
+
 - `beta`: Momentum factor for server-side momentum (default: 0.7)
 - `server_lr`: Server learning rate for aggregation (default: 1.0)
 
 ### Test Environment Configuration (`testenv.yaml`)
 
 #### General Settings
+
 - `backend`: Deep learning framework (set to "TORCH")
 - `round`: Number of federated learning rounds
 - `gpu_num`: Number of available GPUs
@@ -166,12 +176,14 @@ The framework has been test on public dataset:
 - `if_mode_llm`: Enable LLM mode (must be true for FedLLM-PEFT)
 
 #### Dataset Configuration
+
 - `train_data`: Path to training dataset (JSONL format)
 - `test_data`: Path to test dataset (JSONL format)
 
 **Important**: Please change the path to datasets as per your setup. Datasets must be in JSONL format with two fields (question and answer, or similar instruction-response pairs).
 
 #### Evaluation Metrics
+
 - `rouge1_metric`: ROUGE-1 score for text generation quality (unigram overlap)
 - `rouge2_metric`: ROUGE-2 score (bigram overlap)
 - `rougel_metric`: ROUGE-L score (longest common subsequence)
@@ -194,6 +206,7 @@ The framework has been test on public dataset:
 ## Installation and Setup
 
 ### Prerequisites
+
 - Python 3.8.18
 - PyTorch 2.4.1+cu118
 - CUDA-compatible GPU (tested on A100 80GB×4)
@@ -202,18 +215,21 @@ The framework has been test on public dataset:
 ### Installation Steps
 
 1. **Clone Ianvs Repository**
+
    ```bash
    cd ~
    git clone https://github.com/kubeedge/ianvs.git
    ```
 
 2. **Install System Dependencies**
+
    ```bash
    sudo apt update
    sudo apt install libgl1-mesa-glx -y
    ```
 
 3. **Install Ianvs Core Dependencies**
+
    ```bash
    cd ~/ianvs
    python -m pip install third_party/*
@@ -221,11 +237,13 @@ The framework has been test on public dataset:
    ```
 
 4. **Install Ianvs**
+
    ```bash
    python setup.py install
    ```
 
 5. **Install Additional PEFT Dependencies**
+
    ```bash
    pip install peft transformers datasets rouge_score nltk
    ```
@@ -235,6 +253,7 @@ The framework has been test on public dataset:
 ### Data Preparation
 
 Prepare your dataset in JSONL format with the following structure:
+
 ```json
 {"question": "What are the treatments for Abdominal Adhesions?", "answer": "Abdominal adhesions that do not cause symptoms generally do not require treatment. Surgery is ..."}
 ```
@@ -254,6 +273,7 @@ ianvs -f ./examples/federated-llm/fedllm-peft/benchmarkingjob.yaml
 ### Monitoring Progress
 
 The framework provides detailed logging including:
+
 - GPU assignment for each client
 - Training progress per communication round
 - Evaluation metrics on test data
@@ -280,16 +300,19 @@ The framework provides detailed logging including:
    - Update `testenv.yaml` to include your new metric
 
 ## Experimental Results
-We conducted comprehensive benchmarking experiments to evaluate the performance of different combinations of aggregation methods and PEFT techniques. The experiments were performed on sub datasets of MedQuad (50 smaples) with the following setup:
 
-   - Model: ChatGLM-6B
-   - Number of Clients: 4
-   - Communication Rounds: 5
-   - Local Epochs: 2
-   - Learning Rate: 1e-4
+We conducted comprehensive benchmarking experiments to evaluate the performance of different combinations of aggregation methods and PEFT techniques. The experiments were performed on sub datasets of MedQuad (50 samples) with the following setup:
+
+- Model: ChatGLM-6B
+- Number of Clients: 4
+- Communication Rounds: 5
+- Local Epochs: 2
+- Learning Rate: 1e-4
 
 ### Performance Comparison
+
 The following rank table generated by ianvs shows the ranking of different algorithm combinations based on multiple evaluation metrics:
+
 | rank | algorithm   | rouge1_metric | rouge2_metric | rougel_metric | bleu4_metric | paradigm          | basemodel   | aggregation  | basemodel-batch_size | basemodel-learning_rate | basemodel-local_epochs | basemodel-model_name | basemodel-save_dir                              | basemodel-initial_model_url           | basemodel-peft_method | time               | url                                                                                          |
 |------|--------------|---------------|---------------|---------------|---------------|-------------------|-------------|--------------|----------------------|-------------------------|------------------------|----------------------|-----------------------------------------------|--------------------------------------|-----------------------|--------------------|----------------------------------------------------------------------------------------------|
 | 1    | fedavg-peft | 0.3283        | 0.0965        | 0.1907        | 0.0525        | federatedlearning | fedllm-peft | FedAvg-PEFT  | 1                    | 1e-4                    | 2                      | THUDM/chatglm-6b     | ./project/save_model/fedllm/chatglm_lora      | ./project/init_model/fedllm/chatglm  | lora                  | 2025-10-10 00:08:45 | ./project/workspace/fedllm/benchmarkingjob/fedavgm-peft/d1f549a8-a527-11f0-b394-3cecefaf07e1 |
@@ -298,6 +321,7 @@ The following rank table generated by ianvs shows the ranking of different algor
 | 4    | fedavg-peft  | 0.2892        | 0.0719        | 0.1669        | 0.0437        | federatedlearning | fedllm-peft | FedAvg-PEFT  | 1                    | 0.0001                  | 2                      | THUDM/chatglm-6b     | ./project/save_model/fedllm/chatglm_ptuning   | ./project/init_model/fedllm/chatglm  | ptuning               | 2025-10-09 23:26:09 | ./project/workspace/fedllm/benchmarkingjob/fedavg-peft/48d694de-a521-11f0-b42c-3cecefaf07e1  |
 
 ### Key Observations
+
 The evaluation results demonstrate that FedAvg-PEFT with LoRA consistently outperforms other algorithmic configurations (including FedAvgM-PEFT and P-Tuning) across all metrics—ROUGE-1, ROUGE-2, ROUGE-L, and BLEU-4. This superiority stems from LoRA’s design, which injects low-rank adaptation matrices into the attention and feedforward layers, enabling the model to capture domain-specific knowledge efficiently without overfitting or destabilizing global updates. In this setup, LoRA transmits only about 3.67M trainable parameters out of 6.18B total, compared to P-Tuning’s 4.59M parameters, making it both parameter- and communication-efficient.
 
 In contrast, P-Tuning relies on continuous prompt embeddings that primarily influence the model’s input representation rather than deeper layers, which can limit adaptation capacity in complex medical-language distributions. The larger number of trainable parameters and embedding-level updates may also introduce higher gradient variance across clients, leading to slower or less stable convergence under federated settings.
@@ -307,11 +331,13 @@ Furthermore, FedAvg-PEFT benefits from its simple averaging scheme that works we
 ## Target Users
 
 ### Researchers
+
 - Benchmark federated LLM learning methods
 - Compare different PEFT techniques and aggregation strategies
 - Conduct reproducible experiments with controlled parameters
 
 ### End Users
+
 - View and compare federated AI capabilities of different solutions
 - Evaluate privacy-preserving LLM fine-tuning for production deployment
 - Access pre-configured benchmarks for common use cases

@@ -85,10 +85,10 @@ class BaseModel:
         self.model = tf.saved_model.load(extra_model_path)
 
     def _initialize(self):
-        print(f"initialize finished")
+        print("initialize finished")
 
     def get_weights(self):
-        print(f"get_weights")
+        print("get_weights")
         weights = [layer.tolist() for layer in self.model.get_weights()]
         print(len(weights))
         return weights

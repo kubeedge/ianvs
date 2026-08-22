@@ -78,8 +78,8 @@ class BaseServer:
         self.certfile = ssl_cert
         self.ws_size = int(ws_size)
         self.timeout = int(timeout)
-        protocal = "https" if self.certfile else "http"
-        self.url = f"{protocal}://{self.host}:{self.http_port}"
+        protocol = "https" if self.certfile else "http"
+        self.url = f"{protocol}://{self.host}:{self.http_port}"
 
     def run(self, app, **kwargs):
         if hasattr(app, "add_middleware"):
@@ -161,7 +161,7 @@ class InferenceServer(BaseServer):  # pylint: disable=too-many-arguments
     async def predict(self, image: UploadFile = File(...), depth: Optional[UploadFile] = None) -> ResultResponse:
         contents = await image.read()
         recieve_img_time = time.time()
-        print("Recieve image from the robo:", recieve_img_time)
+        print("Receive image from the robo:", recieve_img_time)
 
         image = Image.open(BytesIO(contents)).convert('RGB')
 
