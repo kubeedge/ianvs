@@ -15,6 +15,7 @@
 
 """simulation system admin"""
 
+import os
 import subprocess
 
 from core.common.log import LOGGER
@@ -76,15 +77,42 @@ chmod +x ./kind && mv ./kind /usr/local/bin/kind"
             raise RuntimeError(f"install kind failed, error: {err}.") from err
 
 
+def _read_first_line(path):
+    """return the stripped first line of path, or None if it cannot be read"""
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            return handle.readline().strip()
+    except OSError:
+        return None
+
+
 def get_host_free_memory_size():
     """
-    return the current memory(free) on the host(in kB)
+    return the memory this process may actually still use(in kB)
+
+    /proc/meminfo is not namespaced by cgroups, so in a container it reports
+    the host's memory rather than the container's limit. Read the cgroup
+    limit first and fall back to /proc/meminfo only when no limit applies.
     """
-    shell_cmd = "cat /proc/meminfo | grep MemFree"   # in kB
-    with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_memory_info:
-        memory_info = get_memory_info.stdout.read()
-        memory_free = int(str(memory_info).split(":")[1].strip().split(" ")[0])
-        return memory_free
+    # cgroup v2: "max" means no limit is set
+    limit = _read_first_line("/sys/fs/cgroup/memory.max")
+    usage = _read_first_line("/sys/fs/cgroup/memory.current")
+    if limit and limit != "max" and usage:
+        return max(0, (int(limit) - int(usage)) // 1024)
+
+    # cgroup v1: an unset limit is a very large sentinel rather than a flag
+    limit = _read_first_line("/sys/fs/cgroup/memory/memory.limit_in_bytes")
+    usage = _read_first_line("/sys/fs/cgroup/memory/memory.usage_in_bytes")
+    if limit and usage and int(limit) < 2 ** 62:
+        return max(0, (int(limit) - int(usage)) // 1024)
+
+    # no cgroup limit applies, so the host figure is the effective one.
+    # MemAvailable, not MemFree: MemFree excludes reclaimable page cache and
+    # therefore understates what is usable on any warm host.
+    with subprocess.Popen("grep MemAvailable /proc/meminfo", shell=True,
+                          stdout=subprocess.PIPE) as get_memory_info:
+        memory_info = get_memory_info.stdout.read().decode("utf-8")
+        return int(memory_info.split(":")[1].strip().split(" ")[0])
 
 
 def check_host_memory():
@@ -107,15 +135,27 @@ Current Memory Free: %s kB, Memory Require: %s kB",
 
 def get_host_number_of_cpus():
     """
-    return the number of cpus
+    return the number of cpus this process may actually use
 
+    lscpu reports the host's cpus regardless of any cgroup cpu quota, so in a
+    container it overstates what is available. Prefer the cgroup quota, then
+    the scheduler affinity mask, then the host cpu count.
     """
-    shell_cmd = "lscpu | grep CPU:"
-    with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_cpu_info:
-        cpu_info = get_cpu_info.stdout.read()
-        number_of_cpus = int(str(cpu_info).split(":")[
-                             1].strip().split("\\")[0])
-        return number_of_cpus
+    # cgroup v2: "<quota> <period>", or "max <period>" when no quota is set
+    cpu_max = _read_first_line("/sys/fs/cgroup/cpu.max")
+    if cpu_max:
+        quota, _, period = cpu_max.partition(" ")
+        if quota != "max" and period:
+            return max(1, int(int(quota) / int(period)))
+
+    # cgroup v1: a quota of -1 means unlimited
+    quota = _read_first_line("/sys/fs/cgroup/cpu/cpu.cfs_quota_us")
+    period = _read_first_line("/sys/fs/cgroup/cpu/cpu.cfs_period_us")
+    if quota and period and int(quota) > 0:
+        return max(1, int(int(quota) / int(period)))
+
+    # no quota applies, so the affinity mask is the next most accurate figure
+    return len(os.sched_getaffinity(0))
 
 
 def check_host_cpu():
