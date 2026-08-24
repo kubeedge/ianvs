@@ -14,7 +14,9 @@
 
 """This script contains some common tools."""
 
+import hashlib
 import importlib
+import importlib.util
 import os
 import sys
 import time
@@ -90,14 +92,46 @@ def yaml2dict(url):
 
 
 def load_module(url):
-    """Load python module."""
+    """Load a local Python module without basename-based module collisions."""
     module_path, module_name = os.path.split(url)
+
     if os.path.isfile(url):
-        module_name = module_name.split(".")[0]
+        module_path = os.path.dirname(os.path.abspath(url))
+        module_name = os.path.splitext(os.path.basename(url))[0]
+
+        # Give each local file a deterministic module identity based on its
+        # absolute path, so different files with the same basename do not
+        # collide in sys.modules.
+        module_key = (
+            f"_ianvs_dynamic_{module_name}_"
+            f"{hashlib.sha256(os.path.abspath(url).encode()).hexdigest()[:16]}"
+        )
+
+        sys.path.insert(0, module_path)
+        try:
+            spec = importlib.util.spec_from_file_location(module_key, url)
+            if spec is None or spec.loader is None:
+                raise ImportError(f"unable to create module spec for {url}")
+
+            module = importlib.util.module_from_spec(spec)
+            sys.modules[module_key] = module
+
+            try:
+                spec.loader.exec_module(module)
+            except Exception:
+                sys.modules.pop(module_key, None)
+                raise
+        except Exception as err:
+            raise RuntimeError(f"load module(url={url}) failed, error: {err}") from err
+        finally:
+            sys.path.pop(0)
+
+        return
 
     sys.path.insert(0, module_path)
     try:
         importlib.import_module(module_name)
-        sys.path.pop(0)
     except Exception as err:
         raise RuntimeError(f"load module(url={url}) failed, error: {err}") from err
+    finally:
+        sys.path.pop(0)
