@@ -27,6 +27,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Mapping, Optional, Sequence
 
+from services.result_contract import RESULT_SCHEMA_VERSION
+
 
 PASS = "PASS"
 FAIL = "FAIL"
@@ -288,6 +290,7 @@ def render_json(report: StaticValidationReport) -> str:
         return example.passed and example_executed(example)
 
     payload = {
+        "schema_version": RESULT_SCHEMA_VERSION,
         "passed": report.passed and all(
             example_passed(example) for example in report.reports
         ),
