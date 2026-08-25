@@ -15,7 +15,7 @@ from torchvision.transforms import ToPILImage
 from torchvision import transforms
 from torch.utils.data import DataLoader
 
-from sedna.datasources import IndexDataParse
+from sedna.datasources import IndexDataParse, BaseDataSource
 from sedna.core.lifelong_learning import LifelongLearning
 from sedna.common.config import Context
 

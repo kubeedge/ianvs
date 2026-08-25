@@ -185,8 +185,8 @@ class ProxyServer:
 
                             grad_diff = 0
                             for gx, gy in zip(dummy_dy_dx, grad_true_temp):
-                                gx = tf.cast(gx, tf.double)
-                                gy = tf.cast(gy, tf.double)
+                                gx = tf.cast(gx, tf.float32)
+                                gy = tf.cast(gy, tf.float32)
                                 sub_value = tf.subtract(gx, gy)
                                 pow_value = tf.pow(sub_value, 2)
                                 grad_diff += tf.reduce_sum(pow_value)

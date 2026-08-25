@@ -19,6 +19,7 @@ import keras
 # Input--conv2D--BN--ReLU--conv2D--BN--ReLU--Output
 #      \                              /
 #       ------------------------------
+@keras.saving.register_keras_serializable()
 class BasicBlock(keras.layers.Layer):
     def __init__(self, filter_num, stride=1):
         super(BasicBlock, self).__init__()
@@ -55,6 +56,7 @@ class BasicBlock(keras.layers.Layer):
         return output
 
 
+@keras.saving.register_keras_serializable()
 class ResNet(keras.Model):
     def __init__(self, layer_dims, num_classes=10):  # [2, 2, 2, 2]
         super(ResNet, self).__init__()

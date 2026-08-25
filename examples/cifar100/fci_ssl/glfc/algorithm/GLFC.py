@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import copy
 import numpy as np
 import tensorflow as tf
@@ -77,7 +78,7 @@ class GLFC_Client:
         self.feature_extractor.build(input_shape=(None, 32, 32, 3))
         self.feature_extractor.call(keras.Input(shape=(32, 32, 3)))
         self.feature_extractor.load_weights(
-            "examples/cifar100/fci_ssl/glfc/algorithm/feature_extractor.weights.h5"
+            os.path.join(os.path.dirname(__file__), "feature_extractor.weights.h5")
         )
 
     def _initialize_classifier(self):
