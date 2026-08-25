@@ -147,6 +147,6 @@ dmypy.json
 .idea/misc.xml
 .idea/workspace.xml
 .idea/vcs.xml
-data/
-workspace/
-init_model/
+
+# test venv
+.test_venv/
