@@ -140,7 +140,7 @@ pose-estimation-llio/
 
 5. **Run Benchmarking**:
    ```bash
-   ianvs -f examples/industrialEI/pose-estimation-llio/benchmarkingjob.yaml
+   python benchmarking.py -f examples/industrialEI/pose-estimation-llio/benchmarkingjob.yaml
    ```
 
 ## Configuration

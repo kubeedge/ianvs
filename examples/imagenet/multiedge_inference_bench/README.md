@@ -44,7 +44,7 @@ Next, download pretrained model via [[huggingface]](https://huggingface.co/optim
 We are now ready to run the ianvs for benchmarking image classification for high mobility scenarios on the ImageNet dataset.
 
 ```python
-ianvs -f ./examples/imagenet/multiedge_inference_bench/classification_job_manual.yaml
+python benchmarking.py -f ./examples/imagenet/multiedge_inference_bench/classification_job_manual.yaml
 ```
 
 The benchmarking process takes a few minutes and varies depending on devices.
@@ -75,7 +75,7 @@ Then you will find a profiler_results.yml file in the <Ianvs_HOME>/examples/imag
 
 Then you can run the following command to perform benchmarking:
 ```shell
-ianvs -f ./examples/imagenet/multiedge_inference_bench/classification_job_auto.yaml
+python benchmarking.py -f ./examples/imagenet/multiedge_inference_bench/classification_job_auto.yaml
 ```
 
 After running, you will see the profit from the automatic method compared with the manual method.

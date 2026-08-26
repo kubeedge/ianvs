@@ -246,7 +246,7 @@ Each line should be a valid JSON object with at least two fields representing th
 Execute the federated LLM fine-tuning benchmark:
 
 ```bash
-ianvs -f ./examples/federated-llm/fedllm-peft/benchmarkingjob.yaml
+python benchmarking.py -f ./examples/federated-llm/fedllm-peft/benchmarkingjob.yaml
 ```
 
 **Important**: Please change the path to `benchmarkingjob.yaml` as per your setup.

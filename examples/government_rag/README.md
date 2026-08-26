@@ -72,7 +72,7 @@ For each region's evaluation, we have four experimental designs (Type 1, 2, 3, 4
 
 2. Run the test:
    ```bash
-   ianvs -f examples/government_rag/singletask_learning_bench/benchmarkingjob.yaml
+   python benchmarking.py -f examples/government_rag/singletask_learning_bench/benchmarkingjob.yaml
    ```
 
 ## Test Results

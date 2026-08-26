@@ -173,7 +173,7 @@ during pipeline execution.
 From `$REPO_ROOT`:
 
 ```bash
-ianvs -f examples/llm-edge-benchmark-suite/single_task_bench/benchmarkingjob.yaml
+python benchmarking.py -f examples/llm-edge-benchmark-suite/single_task_bench/benchmarkingjob.yaml
 ```
 
 Ianvs loads the configs, instantiates `LlamaCppModel`, streams inference over

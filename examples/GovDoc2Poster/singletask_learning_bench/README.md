@@ -138,7 +138,7 @@ cd /home/linux/Desktop/ianvs
 ### Step 3: Run the System
 
 ```bash
-ianvs -f examples/GovDoc2Poster/singletask_learning_bench/testalgorithms/gen/government_data_source.yaml
+python benchmarking.py -f examples/GovDoc2Poster/singletask_learning_bench/testalgorithms/gen/government_data_source.yaml
 ```
 
 ✅ Done! The system will automatically parse the government documents from the dataset and generate visual posters.

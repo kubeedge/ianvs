@@ -130,7 +130,7 @@ To run the basic lifelong learning process:
 
 ```shell
 cd /ianvs/project/ianvs
-ianvs -f examples/robot/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-simple.yaml
+python benchmarking.py -f examples/robot/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-simple.yaml
 ```
 
 Finally, the user can check the result of benchmarking on the console and also in the output path(
@@ -148,7 +148,7 @@ To run the large vision model based cloud-edge collaboration process:
 
 ```shell
 cd /ianvs/project/ianvs
-ianvs -f examples/robot/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-sam.yaml
+python benchmarking.py -f examples/robot/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-sam.yaml
 ```
 
 Finally, the user can check the result of benchmarking on the console and also in the output path(

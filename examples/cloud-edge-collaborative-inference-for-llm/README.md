@@ -141,7 +141,7 @@ export OPENAI_API_KEY=sk_xxxxxxxx
 
 6. Run the Ianvs benchmark:
 ```bash 
-ianvs -f examples/cloud-edge-collaborative-inference-for-llm/benchmarkingjob.yaml
+python benchmarking.py -f examples/cloud-edge-collaborative-inference-for-llm/benchmarkingjob.yaml
 ```
 
 *Note: To help you get results quickly, we have provided a workspace folder with cached results for `Qwen/Qwen2.5-1.5B-Instruct`, `Qwen/Qwen2.5-3B-Instruct`,`Qwen/Qwen2.5-7B-Instruct` and `gpt-4o-mini`.*
@@ -352,7 +352,7 @@ You can download `workspace-mmlu` folder from [Ianvs-MMLU-5-shot](https://www.ka
 
 Run the following command:
 
-`ianvs -f examples/cloud-edge-collaborative-inference-for-llm/benchmarkingjob.yaml`
+`python benchmarking.py -f examples/cloud-edge-collaborative-inference-for-llm/benchmarkingjob.yaml`
 
 After the process finished, you will see output like this:
 

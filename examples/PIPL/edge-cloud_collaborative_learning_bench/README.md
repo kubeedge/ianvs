@@ -115,7 +115,8 @@ export CLOUD_API_KEY="your_cloud_model_api_key"
 
 3. Run benchmark:
 ```bash
-ianvs -f benchmarkingjob.yaml
+cd examples/PIPL/edge-cloud_collaborative_learning_bench
+python ../../../benchmarking.py -f benchmarkingjob.yaml
 ```
 
 ## Evaluation Methods

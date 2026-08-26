@@ -86,7 +86,7 @@ We are now ready to run the ianvs for benchmarking.
 
 ``` shell
 cd /ianvs/project/ianvs
-ianvs -f examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-smalltest.yaml
+python benchmarking.py -f examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/benchmarkingjob-smalltest.yaml
 ```
 
 Finally, the user can check the result of benchmarking on the console and also in the output path(

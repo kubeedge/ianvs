@@ -50,7 +50,7 @@ dataset:
 Once all paths are absolute and the script is updated, execute the benchmark:
 
 ```bash
-ianvs -f ianvs/examples/llm-edge-benchmark-suite/single_task_bench_with_compression/benchmarkingjob.yaml
+python benchmarking.py -f ianvs/examples/llm-edge-benchmark-suite/single_task_bench_with_compression/benchmarkingjob.yaml
 ```
 
 ### Expected Output

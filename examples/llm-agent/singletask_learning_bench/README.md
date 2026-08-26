@@ -36,7 +36,7 @@ pip install -r examples/llm-agent/singletask_learning_bench/requirements.txt
 #    pipeline works.
 
 # 5. Run the benchmark
-ianvs -f examples/llm-agent/singletask_learning_bench/benchmarkingjob.yaml
+python benchmarking.py -f examples/llm-agent/singletask_learning_bench/benchmarkingjob.yaml
 ```
 
 First run is slow because HuggingFace downloads `Langboat/bloom-1b4-zh` (~3 GB) into `~/.cache/huggingface`. Subsequent runs use the cache and start immediately.

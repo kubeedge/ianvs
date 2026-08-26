@@ -47,7 +47,7 @@ Next, download pretrained model via [[google]](https://drive.google.com/file/d/1
 We are now ready to run the ianvs for benchmarking pedestrian tracking on the MOT17 dataset.
 
 ```python
-ianvs -f ./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/tracking_job.yaml
+python benchmarking.py -f ./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/tracking_job.yaml
 ```
 
 The benchmarking process takes a few minutes and varies depending on devices.
@@ -78,7 +78,7 @@ Next, download pretrained model via [[google]](https://drive.google.com/drive/fo
 We are now ready to run the ianvs for benchmarking pedestrian re-identification on the MOT17 dataset.
 
 ```python
-ianvs -f ./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/reid_job.yaml
+python benchmarking.py -f ./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/reid_job.yaml
 ```
 
 The benchmarking process takes a few minutes and varies depending on devices.

@@ -224,7 +224,7 @@ Execute the benchmark:
 
 ```shell
 cd /ianvs
-ianvs -f examples/industrialEI/single_task_learning_bench/deformable_assembly/benchmarkingjob.yaml
+python benchmarking.py -f examples/industrialEI/single_task_learning_bench/deformable_assembly/benchmarkingjob.yaml
 ```
 
 

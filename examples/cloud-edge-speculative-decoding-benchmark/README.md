@@ -182,13 +182,13 @@ Common options include:
 Run the `AR` benchmark:
 
 ```bash
-ianvs -f examples/cloud-edge-speculative-decoding-benchmark/benchmarkingjob.yaml
+python benchmarking.py -f examples/cloud-edge-speculative-decoding-benchmark/benchmarkingjob.yaml
 ```
 
 Run the `Block` benchmark:
 
 ```bash
-ianvs -f examples/cloud-edge-speculative-decoding-benchmark/benchmarkingjob_block.yaml
+python benchmarking.py -f examples/cloud-edge-speculative-decoding-benchmark/benchmarkingjob_block.yaml
 ```
 
 Benchmark outputs are written under the workspace configured in each benchmarking job file:

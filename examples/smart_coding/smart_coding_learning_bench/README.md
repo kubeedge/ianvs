@@ -107,8 +107,8 @@ Or you can replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site
 
 ### Comment
 
-`ianvs -f examples/smart_coding/smart_coding_learning_bench/comment/benchmarkingjob.yaml`
+`python benchmarking.py -f examples/smart_coding/smart_coding_learning_bench/comment/benchmarkingjob.yaml`
 
 ### Issue
 
-`ianvs -f examples/smart_coding/smart_coding_learning_bench/issue/benchmarkingjob.yaml`
+`python benchmarking.py -f examples/smart_coding/smart_coding_learning_bench/issue/benchmarkingjob.yaml`

@@ -31,11 +31,11 @@ python setup.py install
 
 
 ```shell
-ianvs -f examples/llm-edge-benchmark-suite/single_task_bench/benchmarkingjob.yaml
+python benchmarking.py -f examples/llm-edge-benchmark-suite/single_task_bench/benchmarkingjob.yaml
 ```
 
 
 ```shell
-ianvs -f examples/llm-edge-benchmark-suite/single_task_bench_with_compression/benchmarkingjob.yaml
+python benchmarking.py -f examples/llm-edge-benchmark-suite/single_task_bench_with_compression/benchmarkingjob.yaml
 ```
 

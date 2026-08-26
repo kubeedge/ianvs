@@ -97,8 +97,8 @@ Or you can replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site
 
 ### Objective
 
-`ianvs -f examples/government/singletask_learning_bench/objective/benchmarkingjob.yaml`
+`python benchmarking.py -f examples/government/singletask_learning_bench/objective/benchmarkingjob.yaml`
 
 ### Subjective
 
-`ianvs -f examples/government/singletask_learning_bench/subjective/benchmarkingjob.yaml`
+`python benchmarking.py -f examples/government/singletask_learning_bench/subjective/benchmarkingjob.yaml`

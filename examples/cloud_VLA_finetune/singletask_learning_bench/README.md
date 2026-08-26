@@ -310,7 +310,7 @@ Run the following command:
 
 ```
 cd ianvs
-ianvs -f /examples/cloud_VLA_finetune/singletask_learning_bench/benchmarkingjob.yaml
+python benchmarking.py -f /examples/cloud_VLA_finetune/singletask_learning_bench/benchmarkingjob.yaml
 ```
 
 After the process finished, you will see output like this:

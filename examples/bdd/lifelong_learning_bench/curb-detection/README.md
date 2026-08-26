@@ -115,7 +115,7 @@ We are now ready to run the ianvs for benchmarking.
 
 ``` shell
 cd /ianvs/project
-ianvs -f examples/bdd/lifelong_learning_bench/curb-detection/benchmarkingjob.yaml
+python benchmarking.py -f examples/bdd/lifelong_learning_bench/curb-detection/benchmarkingjob.yaml
 ```
 
 Finally, the user can check the result of benchmarking on the console and also in the output path(

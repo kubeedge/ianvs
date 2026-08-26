@@ -65,7 +65,7 @@ pip install examples/resources/third_party/sedna-0.6.0.1-py3-none-any.whl
 pip install -r requirements.txt
 
 # Install dependencies for this example.
-pip install -r examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/requirements.txt
+pip install -r examples/Cloud_Robotics/cloud-edge-collaborative-inference_bench/requirements.txt
 
 # Install ianvs
 python setup.py install  
@@ -161,7 +161,7 @@ Update the algorithm's **URL address** and **hyperparemeter** in the `perception
       # name of edge model module; string type;
       name: "EdgeModel"
       # the url address of edge model module; string type;
-      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testalgorithms/edge_model.py"
+      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference_bench/perception-reasoning/testalgorithms/edge_model.py"
 
       hyperparameters:
       # name of the hyperparameter; string type;
@@ -173,7 +173,7 @@ Update the algorithm's **URL address** and **hyperparemeter** in the `perception
       # name of python module; string type;
       name: "CloudModel"
       # the url address of python module; string type;
-      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testalgorithms/cloud_model.py"
+      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference_bench/perception-reasoning/testalgorithms/cloud_model.py"
 
       hyperparameters:
         # name of the hyperparameter; string type;
@@ -197,7 +197,7 @@ Run Ianvs for benchmarking:
 ```bash
 cd /ianvs
 export DASHSCOPE_API_KEY="your_api_key_here"
-ianvs -f examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/benchmarkingjob.yaml
+python benchmarking.py -f examples/Cloud_Robotics/cloud-edge-collaborative-inference_bench/perception-reasoning/benchmarkingjob.yaml
 ```
 **Note**: Replace `"your_api_key_here"` with your actual Dashscope API key.
 
