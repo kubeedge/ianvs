@@ -52,6 +52,11 @@ class Rank:
         self._parse_config(config)
 
     def _parse_config(self, config):
+        if not isinstance(config, dict):
+            raise ValueError(
+                f"rank config({config}) must be dict type, "
+                f"got {type(config).__name__}.")
+
         for attribute, value in config.items():
             if attribute in self.__dict__:
                 self.__dict__[attribute] = value
