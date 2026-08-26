@@ -154,8 +154,12 @@ def get_host_number_of_cpus():
     if quota and period and int(quota) > 0:
         return max(1, int(int(quota) / int(period)))
 
-    # no quota applies, so the affinity mask is the next most accurate figure
-    return len(os.sched_getaffinity(0))
+    # no quota applies, so the affinity mask is the next most accurate figure.
+    # it is Linux only, so fall back to the host cpu count where it is absent
+    if hasattr(os, "sched_getaffinity"):
+        return len(os.sched_getaffinity(0))
+
+    return max(1, os.cpu_count() or 1)
 
 
 def check_host_cpu():
