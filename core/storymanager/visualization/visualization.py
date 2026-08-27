@@ -39,8 +39,10 @@ def draw_heatmap_picture(output, title, matrix):
     plt.ylabel('task', fontsize=15)
     plt.title(title, fontsize=15)
     plt.colorbar(format='%.2f')
-    output_dir = os.path.join(output, f"output/{title}-heatmap.png")
-    plt.savefig(output_dir)
+    output_dir = os.path.join(output, "output")
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    plt.savefig(os.path.join(output_dir, f"{title}-heatmap.png"))
     plt.show()
 
 def get_visualization_func(mode):
