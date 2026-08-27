@@ -85,10 +85,10 @@ class Rank:
         if not self.selected_dataitem.get("metrics"):
             raise ValueError("not found metrics of selected_dataitem in rank.")
 
-        if not self.save_mode and not isinstance(self.save_mode, list):
+        valid_save_modes = ("selected_and_all", "selected_only", "selected_and_all_and_picture")
+        if not isinstance(self.save_mode, str) or self.save_mode not in valid_save_modes:
             raise ValueError(
-                f"rank's save_mode({self.save_mode}) "
-                f"must be provided and be list type."
+                f"rank's save_mode({self.save_mode}) must be one of {valid_save_modes}."
             )
 
     @classmethod
@@ -276,13 +276,18 @@ class Rank:
             self._save_all()
             self._save_selected(test_cases, test_results)
 
-        if self.save_mode == "selected_only":
+        elif self.save_mode == "selected_only":
             self._save_selected(test_cases, test_results)
 
-        if self.save_mode == "selected_and_all_and_picture":
+        elif self.save_mode == "selected_and_all_and_picture":
             self._save_all()
             self._save_selected(test_cases, test_results)
             self._draw_pictures(test_cases, test_results)
+
+        else:
+            raise ValueError(
+                f"rank's save_mode({self.save_mode}) is not supported by save()."
+            )
 
     def plot(self):
         """
