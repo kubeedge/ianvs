@@ -39,10 +39,8 @@ def llm_judgement(y_true, y_pred):
 
     LOGGER.info(f"Extracted {len(valid_scores)} datas from {len(y_pred)} datas")
 
-    # Calculate the average
-    if valid_scores:
-        average_score = sum(valid_scores) / len(valid_scores)
-        return average_score
-    else:
-        # If there is no valid score, return None or some other appropriate value
+    # Return a sentinel value when no valid scores are available.
+    if not valid_scores:
         return -1
+
+    return sum(valid_scores) / len(valid_scores)
