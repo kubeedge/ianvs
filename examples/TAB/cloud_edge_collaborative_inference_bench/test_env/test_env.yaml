@@ -1,7 +1,7 @@
 testenv:
   dataset:
-    train_data: "./data.jsonl"
-    test_data: "./data.jsonl"
+    train_data: "./data.json"
+    test_data: "./data.json"
     test_data_info: "./metadata.json"
     data_processor:
       name: "ECHRDataProcessor"
