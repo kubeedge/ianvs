@@ -73,6 +73,7 @@ class FederatedLearning(ParadigmBase):
         self.clients = []
         self.lock = RLock()
         self.aggregate_clients = []
+        self.thread_errors = []
         self.clients_number = kwargs.get("client_number", 1)
         self.mode = kwargs.get("if_mode_llm", False)
         _, self.aggregator = self.module_instances.get(ModuleType.AGGREGATION.value)
@@ -199,6 +200,15 @@ class FederatedLearning(ParadigmBase):
         train_datasets = partition_llm_data(train_datasets, self.clients_number)
         return train_datasets
 
+    def _client_train_safe(self, client_idx, train_datasets, validation_datasets, **kwargs):
+        """wrapper around client_train that captures exceptions instead of
+        letting them be silently swallowed by the Thread they run in."""
+        try:
+            self.client_train(client_idx, train_datasets, validation_datasets, **kwargs)
+        except Exception as err:  # pylint: disable=broad-except
+            with self.lock:
+                self.thread_errors.append((client_idx, err))
+
     def client_train(self, client_idx, train_datasets, validation_datasets, **kwargs):
         """client train
 
@@ -250,10 +260,11 @@ class FederatedLearning(ParadigmBase):
             train_datasets (list): train data for each client
         """
         client_threads = []
+        self.thread_errors = []
         LOGGER.info(f"len(self.clients): {len(self.clients)}")
         for idx in range(self.clients_number):
             client_thread = Thread(
-                target=self.client_train,
+                target=self._client_train_safe,
                 args=(idx, train_datasets, None),
                 kwargs=kwargs,
             )
@@ -261,6 +272,12 @@ class FederatedLearning(ParadigmBase):
             client_threads.append(client_thread)
         for thread in client_threads:
             thread.join()
+        if self.thread_errors:
+            failed_ids = [idx for idx, _ in self.thread_errors]
+            raise RuntimeError(
+                f"federated learning client training failed for client(s) {failed_ids}; "
+                f"first error: {self.thread_errors[0][1]}"
+            )
         LOGGER.info("finish training")
 
     # pylint: disable=unused-argument
