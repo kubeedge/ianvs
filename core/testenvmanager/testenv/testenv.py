@@ -72,9 +72,9 @@ class TestEnv:
 
         self._check_fields()
 
-    def prepare(self):
+    def prepare(self, output_dir=None):
         """prepare env"""
         try:
-            self.dataset.process_dataset()
+            self.dataset.process_dataset(output_dir=output_dir)
         except Exception as err:
             raise RuntimeError(f"prepare dataset failed, error: {err}.") from err
