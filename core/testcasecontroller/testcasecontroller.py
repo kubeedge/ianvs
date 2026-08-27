@@ -18,6 +18,7 @@ import copy
 
 from core.common import utils
 from core.common.constant import TestObjectType
+from core.common.log import LOGGER
 from core.testcasecontroller.algorithm import Algorithm
 from core.testcasecontroller.testcase import TestCase
 
@@ -43,7 +44,7 @@ class TestCaseController:
             for algorithm in algorithms:
                 self.test_cases.append(TestCase(test_env, algorithm))
 
-    def run_testcases(self, workspace):
+    def run_testcases(self, workspace, incremental_save_cb=None):
         """
         Run all test cases.
         """
@@ -52,8 +53,9 @@ class TestCaseController:
         for testcase in self.test_cases:
             try:
                 res, time = (testcase.run(workspace), utils.get_local_time())
-            except Exception as err:
-                raise RuntimeError(f"testcase(id={testcase.id}) runs failed, error: {err}") from err
+            except Exception as err: # pylint: disable=broad-exception-caught
+                LOGGER.error("testcase(id=%s) runs failed, error: %s", testcase.id, err)
+                continue
 
             succeed_results[testcase.id] = (res, time)
             succeed_testcases.append(testcase)
