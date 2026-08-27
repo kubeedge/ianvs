@@ -15,6 +15,7 @@
 """This script contains some common tools."""
 
 import importlib
+import importlib.util
 import os
 import sys
 import time
@@ -61,19 +62,23 @@ def get_local_time():
 def py2dict(url):
     """Convert py file to the dict."""
     if url.endswith('.py'):
+        if not os.path.isfile(url):
+            raise RuntimeError(f"config file({url}) does not exist")
         module_name = os.path.basename(url)[:-3]
-        config_dir = os.path.dirname(url)
-        sys.path.insert(0, config_dir)
-        mod = import_module(module_name)
-        sys.path.pop(0)
-        raw_dict = {
-            name: value
-            for name, value in mod.__dict__.items()
-            if not name.startswith('__')
-        }
-        sys.modules.pop(module_name)
-
-        return raw_dict
+        try:
+            spec = importlib.util.spec_from_file_location(module_name, url)
+            if spec is None or spec.loader is None:
+                raise RuntimeError(f"load spec failed for {url}")
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            raw_dict = {
+                name: value
+                for name, value in mod.__dict__.items()
+                if not name.startswith('__')
+            }
+            return raw_dict
+        except Exception as err:
+            raise RuntimeError(f"convert py file({url}) to dict failed, error: {err}") from err
 
     raise RuntimeError('config file must be the py format')
 
@@ -95,9 +100,26 @@ def load_module(url):
     if os.path.isfile(url):
         module_name = module_name.split(".")[0]
 
-    sys.path.insert(0, module_path)
     try:
-        importlib.import_module(module_name)
-        sys.path.pop(0)
+        if os.path.isfile(url):
+            abs_url = os.path.abspath(url)
+            cached_mod = sys.modules.get(module_name)
+            if cached_mod is not None and getattr(cached_mod, "__file__", None) == abs_url:
+                return cached_mod
+
+            spec = importlib.util.spec_from_file_location(module_name, abs_url)
+            if spec is not None and spec.loader is not None:
+                mod = importlib.util.module_from_spec(spec)
+                sys.modules[module_name] = mod
+                spec.loader.exec_module(mod)
+                return mod
+
+        sys.path.insert(0, module_path)
+        try:
+            mod = import_module(module_name)
+            return mod
+        finally:
+            if module_path in sys.path:
+                sys.path.remove(module_path)
     except Exception as err:
         raise RuntimeError(f"load module(url={url}) failed, error: {err}") from err

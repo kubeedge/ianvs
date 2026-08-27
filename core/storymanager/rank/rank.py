@@ -85,10 +85,10 @@ class Rank:
         if not self.selected_dataitem.get("metrics"):
             raise ValueError("not found metrics of selected_dataitem in rank.")
 
-        if not self.save_mode and not isinstance(self.save_mode, list):
+        if not self.save_mode and not isinstance(self.save_mode, (str, list)):
             raise ValueError(
                 f"rank's save_mode({self.save_mode}) "
-                f"must be provided and be list type."
+                f"must be provided and be str or list type."
             )
 
     @classmethod
@@ -236,8 +236,9 @@ class Rank:
             out_put = test_case.output_dir
             test_result = test_results[test_case.id][0]
             matrix = test_result.get("Matrix")
-            for key in matrix.keys():
-                draw_heatmap_picture(out_put, key, matrix[key])
+            if isinstance(matrix, dict):
+                for key in matrix.keys():
+                    draw_heatmap_picture(out_put, key, matrix[key])
 
     def _prepare(self, test_cases, test_results, output_dir):
         all_metric_names = self._get_all_metric_names(test_results)
