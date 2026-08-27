@@ -48,6 +48,37 @@ class TestModuleHyperparameters(unittest.TestCase):
         self.assertEqual(module.hyperparameters_list, expected_combinations)
         self.assertEqual(config, config_before_parsing)
 
+    def _base_config(self, hyperparameters):
+        return {
+            "type": "basemodel",
+            "name": "DemoModel",
+            "url": "",
+            "hyperparameters": hyperparameters,
+        }
+
+    def test_multi_key_entry_raises(self):
+        """An entry defining two hyperparameters should not be silently truncated."""
+        config = self._base_config([
+            {"learning_rate": {"values": [0.1]}, "batch_size": {"values": [16]}},
+        ])
+        with self.assertRaises(ValueError):
+            Module(config)
+
+    def test_empty_entry_raises(self):
+        """An entry defining no hyperparameter should be rejected."""
+        with self.assertRaises(ValueError):
+            Module(self._base_config([{}]))
+
+    def test_non_mapping_entry_raises(self):
+        """A non-dict entry should be rejected with a clear error."""
+        with self.assertRaises(ValueError):
+            Module(self._base_config(["learning_rate"]))
+
+    def test_non_mapping_hyperparameter_config_raises(self):
+        """A hyperparameter whose config is not a dict should be rejected."""
+        with self.assertRaises(ValueError):
+            Module(self._base_config([{"learning_rate": [0.1, 0.01]}]))
+
 
 if __name__ == "__main__":
     unittest.main()
