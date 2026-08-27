@@ -97,6 +97,7 @@ setup(
                 better do algorithm test.",
     packages=find_packages(exclude=["tests", "*.tests",
                                     "*.tests.*", "tests.*"]),
+    install_requires=_infos.basic_dependencies,
     author=_infos.owners,
     maintainer=_infos.owners,
     maintainer_email="",
