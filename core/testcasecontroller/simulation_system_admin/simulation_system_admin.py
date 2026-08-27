@@ -19,6 +19,11 @@ import subprocess
 
 from core.common.log import LOGGER
 
+# Pinned kind release used by the auto-install fallback in check_host_kind().
+# Bump this when a newer kind release is verified to work with this project;
+# it's the only place the version should need to change.
+KIND_VERSION = "v0.32.0"
+
 
 def check_host_docker():
     """
@@ -61,8 +66,8 @@ def check_host_kind():
         LOGGER.info("check Kind successful")
     else:
         try:
-            shell_install_kind = "curl -Lo ./kind \
-https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64 && \
+            shell_install_kind = f"curl -Lo ./kind \
+https://kind.sigs.k8s.io/dl/{KIND_VERSION}/kind-linux-amd64 && \
 chmod +x ./kind && mv ./kind /usr/local/bin/kind"
             install_kind = subprocess.run(
                 shell_install_kind, shell=True, check=True)
