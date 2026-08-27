@@ -42,7 +42,9 @@ class Dataset:
          config of dataset, include: train url, test url and label, etc.
     """
 
-    _DEPRECATED_FIELDS = {
+    # Accepted as genuine inputs until 179d39d (2024-07-06); process_dataset()
+    # has computed them from the *_index / *_data / *_data_info keys ever since.
+    _OUTPUT_ONLY_FIELDS = {
         "train_url": "train_index, train_data or train_data_info",
         "test_url": "test_index, test_data or test_data_info",
     }
@@ -75,11 +77,11 @@ class Dataset:
 
     def _parse_config(self, config):
         for attr, value in config.items():
-            if attr in self._DEPRECATED_FIELDS:
+            if attr in self._OUTPUT_ONLY_FIELDS:
                 LOGGER.warning(
-                    "dataset field `%s` is not read by the dataset loader; "
-                    "use %s instead.",
-                    attr, self._DEPRECATED_FIELDS[attr]
+                    "dataset field `%s` is computed by process_dataset() and any "
+                    "supplied value is overwritten; use %s instead.",
+                    attr, self._OUTPUT_ONLY_FIELDS[attr]
                 )
                 continue
             if attr in self.__dict__:
