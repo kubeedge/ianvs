@@ -14,22 +14,16 @@
 
 from __future__ import absolute_import, division
 
-import os
-import tempfile
-import time
-import zipfile
 import logging
-
-import numpy as np
+import os
 import random
+
+import torch
 from tqdm import tqdm
-from sedna.common.config import Context
 from sedna.common.class_factory import ClassType, ClassFactory
 from core.common.log import LOGGER
 
-
 from transformers import AutoModelForCausalLM, AutoTokenizer
-device = "cuda" # the device to load the model onto
 
 
 logging.disable(logging.WARNING)
@@ -43,12 +37,21 @@ os.environ['BACKEND_TYPE'] = 'TORCH'
 class BaseModel:
 
     def __init__(self, **kwargs):
-        self.model = AutoModelForCausalLM.from_pretrained(
-            "/home/icyfeather/models/Qwen2-0.5B-Instruct",
-            torch_dtype="auto",
-            device_map="auto"
+        self.model_name_or_path = os.getenv(
+            "GOVERNMENT_BENCH_MODEL",
+            "Qwen/Qwen2-0.5B-Instruct",
         )
-        self.tokenizer = AutoTokenizer.from_pretrained("/home/icyfeather/models/Qwen2-0.5B-Instruct")
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        model_kwargs = {"torch_dtype": "auto"}
+        if torch.cuda.is_available():
+            model_kwargs["device_map"] = "auto"
+        self.model = AutoModelForCausalLM.from_pretrained(
+            self.model_name_or_path,
+            **model_kwargs,
+        )
+        if not torch.cuda.is_available():
+            self.model.to(self.device)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name_or_path)
 
     def train(self, train_data, valid_data=None, **kwargs):
         LOGGER.info("BaseModel train")
@@ -59,19 +62,25 @@ class BaseModel:
 
     def predict(self, data, input_shape=None, **kwargs):
         LOGGER.info("BaseModel predict")
-        LOGGER.info(f"Dataset: {data.dataset_name}")
-        LOGGER.info(f"Description: {data.description}")
-        LOGGER.info(f"Data Level 1 Dim: {data.level_1_dim}")
-        LOGGER.info(f"Data Level 2 Dim: {data.level_2_dim}")
+        if hasattr(data, "dataset_name"):
+            LOGGER.info(f"Dataset: {data.dataset_name}")
+            LOGGER.info(f"Description: {data.description}")
+            LOGGER.info(f"Data Level 1 Dim: {data.level_1_dim}")
+            LOGGER.info(f"Data Level 2 Dim: {data.level_2_dim}")
         
+        questions = list(getattr(data, "x", data))
+        labels = list(getattr(data, "y", []))
         answer_list = []
-        for line in tqdm(data.x, desc="Processing", unit="question"):
-            # 3-shot
-            indices = random.sample([i for i, l in enumerate(data.x) if l != line], 3)
+        for line in tqdm(questions, desc="Processing", unit="question"):
+            candidates = [
+                i for i, question in enumerate(questions)
+                if question != line and i < len(labels)
+            ]
+            indices = random.sample(candidates, min(3, len(candidates)))
             history = []
             for idx in indices:
-                history.append({"role": "user", "content": data.x[idx]})
-                history.append({"role": "assistant", "content": data.y[idx]})
+                history.append({"role": "user", "content": questions[idx]})
+                history.append({"role": "assistant", "content": labels[idx]})
             history.append({"role": "user", "content": line})
             response = self._infer(history)
             answer_list.append(response)
@@ -89,7 +98,7 @@ class BaseModel:
             tokenize=False,
             add_generation_prompt=True
         )
-        model_inputs = self.tokenizer([text], return_tensors="pt").to(device)
+        model_inputs = self.tokenizer([text], return_tensors="pt").to(self.device)
         
         generated_ids = self.model.generate(
             model_inputs.input_ids,
