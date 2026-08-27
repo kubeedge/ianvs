@@ -115,6 +115,22 @@ standalone dataset checks, reports, timeouts, affected-example detection, and
 troubleshooting, see the
 [local validation guide](../../../docs/example_validator/local_validation.md).
 
+### Validator contract tests
+
+Run the dependency-light decision-policy suite without models, datasets,
+external services, or specialized hardware:
+
+```bash
+python -m unittest discover \
+  -s .github/workflows/validator/tests \
+  -p 'test_*.py' \
+  -v
+```
+
+The suite locks inventory selection, result aggregation, executed-versus-skipped
+semantics, result-schema compatibility, base/head regression classification,
+runtime labeling, and workflow artifact isolation.
+
 ## Validation Reports
 
 Current workflows publish a Markdown report to the GitHub Step Summary and
