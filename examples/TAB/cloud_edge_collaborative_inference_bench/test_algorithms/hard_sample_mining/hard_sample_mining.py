@@ -75,7 +75,7 @@ class OracleRouter:
         for ent in sensitive_entities or []:
             if not isinstance(ent, dict):
                 continue
-            if ent.get("identifier_type") == "DIRECT" or ent.get("dentifier_type") == "QUASI":
+            if ent.get("identifier_type") == "DIRECT" or ent.get("identifier_type") == "QUASI":
                 start = int(ent.get("start_offset", 0) or 0)
                 end = int(ent.get("end_offset", 0) or 0)
                 entity_type = ent.get("entity_type", "UNKNOWN")
