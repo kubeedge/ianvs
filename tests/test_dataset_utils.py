@@ -71,6 +71,27 @@ class TestRenameKeysJsonl(unittest.TestCase):
                 source_content,
             )
 
+    def test_malformed_later_record_leaves_no_temporary_file(self):
+        """A parse failure mid-file should not orphan the staging file."""
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            directory = Path(temporary_directory)
+            source_path = directory / "dataset.jsonl"
+            source_path.write_text(
+                '{"instruction": "What is edge AI?", '
+                '"response": "AI running near the data source."}\n'
+                '{"instruction": "broken\n',
+                encoding="utf-8",
+            )
+
+            with self.assertRaises(json.JSONDecodeError):
+                rename_keys_jsonl(str(source_path))
+
+            leftovers = sorted(
+                entry.name for entry in directory.iterdir()
+                if entry.name.startswith("tmp")
+            )
+            self.assertEqual(leftovers, [])
+
 
 if __name__ == "__main__":
     unittest.main()

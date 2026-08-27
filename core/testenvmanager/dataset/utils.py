@@ -144,16 +144,19 @@ def rename_keys_jsonl(path: str, encoding: str = "utf-8"):
     normalized_path = src.with_name(f"{src.stem}.normalized{src.suffix}")
     file_descriptor, tmp_path = tempfile.mkstemp(suffix=".jsonl", dir=src.parent)
     os.close(file_descriptor)
-    with src.open("r", encoding=encoding) as fin, \
-         open(tmp_path, "w", encoding=encoding) as fout:
-        for line in fin:
-            if not line.strip():
-                continue
-            obj = json.loads(line)
-            if key_one in obj:
-                obj["question"] = obj.pop(key_one)
-            if key_two in obj:
-                obj["answer"] = obj.pop(key_two)
-            fout.write(json.dumps(obj, ensure_ascii=False) + "\n")
-    os.replace(tmp_path, normalized_path)
+    try:
+        with src.open("r", encoding=encoding) as fin, \
+             open(tmp_path, "w", encoding=encoding) as fout:
+            for line in fin:
+                if not line.strip():
+                    continue
+                obj = json.loads(line)
+                if key_one in obj:
+                    obj["question"] = obj.pop(key_one)
+                if key_two in obj:
+                    obj["answer"] = obj.pop(key_two)
+                fout.write(json.dumps(obj, ensure_ascii=False) + "\n")
+        os.replace(tmp_path, normalized_path)
+    finally:
+        Path(tmp_path).unlink(missing_ok=True)
     return str(normalized_path)
