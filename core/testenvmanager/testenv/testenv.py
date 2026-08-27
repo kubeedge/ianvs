@@ -60,7 +60,13 @@ class TestEnv:
             )
 
     def _parse_config(self, config):
-        config_dict = config[str.lower(TestEnv.__name__)]
+        expected_key = str.lower(TestEnv.__name__)
+        if not isinstance(config, dict) or expected_key not in config:
+            raise ValueError(
+                f"testenv config must have a top-level '{expected_key}' key; "
+                f"found: {list(config.keys()) if isinstance(config, dict) else config!r}"
+            )
+        config_dict = config[expected_key]
         # pylint: disable=C0103
         for k, v in config_dict.items():
             if k == str.lower(Dataset.__name__):
