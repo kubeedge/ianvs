@@ -72,6 +72,36 @@ class Dataset:
             if attr in self.__dict__:
                 self.__dict__[attr] = value
 
+        # Backward compatibility: older testenv configs reference the dataset
+        # via `train_url`/`test_url`. The dataset refactor replaced these with
+        # `train_index`/`train_data`/`train_data_info` (and the `test_*`
+        # counterparts). Route the legacy field to the appropriate new field
+        # based on its file format so existing examples keep working.
+        if self.train_url and not (
+            self.train_index or self.train_data or self.train_data_info
+        ):
+            file_format = utils.get_file_format(self.train_url)
+            if file_format in (DatasetFormat.TXT.value, DatasetFormat.JSON.value):
+                self.train_index = self.train_url
+            elif file_format == DatasetFormat.JSONL.value:
+                self.train_data = self.train_url
+            elif file_format == DatasetFormat.JSONFORLLM.value:
+                self.train_data_info = self.train_url
+            else:
+                self.train_index = self.train_url
+        if self.test_url and not (
+            self.test_index or self.test_data or self.test_data_info
+        ):
+            file_format = utils.get_file_format(self.test_url)
+            if file_format in (DatasetFormat.TXT.value, DatasetFormat.JSON.value):
+                self.test_index = self.test_url
+            elif file_format == DatasetFormat.JSONL.value:
+                self.test_data = self.test_url
+            elif file_format == DatasetFormat.JSONFORLLM.value:
+                self.test_data_info = self.test_url
+            else:
+                self.test_index = self.test_url
+
         self._check_fields()
 
     @classmethod
