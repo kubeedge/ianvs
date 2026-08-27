@@ -1,0 +1,4 @@
+# Machine Learning Libraries
+transformers >= 4.45.0
+torch >= 2.0.0
+accelerate >= 1.0.0

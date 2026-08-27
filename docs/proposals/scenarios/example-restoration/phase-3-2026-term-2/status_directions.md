@@ -10,7 +10,8 @@ The `examples/README.md` page should keep the latest validation time and example
 
 - ![Runnable](https://img.shields.io/badge/status-Runnable-brightgreen) `Runnable`
 - ![Broken](https://img.shields.io/badge/status-Broken-red) `Broken`
-- ![Not validated yet](https://img.shields.io/badge/status-Not%20validated%20yet-lightgrey) `Not validated yet`
+- ![CI/CD onGoing](https://img.shields.io/badge/status-CI%2FCD%20onGoing-lightgrey) `CI/CD onGoing`
+- ![Example onGoing](https://img.shields.io/badge/status-Example%20onGoing-yellow) `Example onGoing`
 - ![Requires external dataset or model download](https://img.shields.io/badge/status-Requires%20external%20dataset%20or%20model%20download-blue) `Requires external dataset or model download`
 - ![Requires GPU or special hardware](https://img.shields.io/badge/status-Requires%20GPU%20or%20special%20hardware-orange) `Requires GPU or special hardware`
 - ![Quarantined](https://img.shields.io/badge/status-Quarantined-8a2be2) `Quarantined`
@@ -27,6 +28,8 @@ The diagram treats some labels as machine-assigned explanations for why an examp
 ## Notes
 
 - `Status` is the primary classification field, and each example should normally have one main status.
+- `CI/CD onGoing` means the example exists in the inventory but has not yet been activated for dynamic CI validation.
+- `Example onGoing` means development of the example itself is still in progress, so dynamic CI validation is not expected to run yet.
 - `Broken` may include an auto-classified subtype such as `Dataset or resource unavailable`, `Dependency drift`, or `Documentation issue`.
 - `Last T2/T3 Validation Time` records the most recent broad validation evidence from Tier 2 or Tier 3 validation and should remain with the status matrix in `examples/README.md`.
 - `Known issue` means the failure has already been triaged; `Quarantined` means validation was intentionally disabled until follow-up repair work is ready.

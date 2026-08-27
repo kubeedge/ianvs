@@ -9,7 +9,7 @@ from torch import nn
 from transformers import DeiTConfig
 from transformers.models.deit.modeling_deit import DeiTEmbeddings
 from transformers.models.vit.modeling_vit import (
-    ViTIntermediate, ViTOutput, ViTSelfAttention, ViTSelfOutput
+    ViTAttention, ViTMLP
 )
 from .. import ModuleShard, ModuleShardConfig
 from . import TransformerShardData
@@ -41,31 +41,23 @@ class DeiTLayerShard(ModuleShard):
         if self.has_layer(0):
             self.layernorm_before = nn.LayerNorm(self.config.hidden_size,
                                                  eps=self.config.layer_norm_eps)
-            self.self_attention = ViTSelfAttention(self.config)
-        if self.has_layer(1):
-            self.self_output = ViTSelfOutput(self.config)
+            self.attention = ViTAttention(self.config)
         if self.has_layer(2):
             self.layernorm_after = nn.LayerNorm(self.config.hidden_size,
                                                 eps=self.config.layer_norm_eps)
-            self.intermediate = ViTIntermediate(self.config)
-        if self.has_layer(3):
-            self.output = ViTOutput(self.config)
+            self.mlp = ViTMLP(self.config)
 
     @torch.no_grad()
     def forward(self, data: TransformerShardData) -> TransformerShardData:
         """Compute layer shard."""
         if self.has_layer(0):
+            residual = data
             data_norm = self.layernorm_before(data)
-            data = (self.self_attention(data_norm)[0], data)
-        if self.has_layer(1):
-            skip = data[1]
-            data = self.self_output(data[0], skip)
-            data += skip
+            data = self.attention(data_norm, attention_mask=None)[0] + residual
         if self.has_layer(2):
+            residual = data
             data_norm = self.layernorm_after(data)
-            data = (self.intermediate(data_norm), data)
-        if self.has_layer(3):
-            data = self.output(data[0], data[1])
+            data = self.mlp(data_norm) + residual
         return data
 
 
@@ -136,24 +128,22 @@ class DeiTModelShard(ModuleShard):
             layer.layernorm_before.weight.copy_(torch.from_numpy(weights[root + "norm1.weight"]))
             layer.layernorm_before.bias.copy_(torch.from_numpy(weights[root + "norm1.bias"]))
             qkv_weight = weights[root + "attn.qkv.weight"]
-            layer.self_attention.query.weight.copy_(torch.from_numpy(qkv_weight[0:embed_dim,:]))
-            layer.self_attention.key.weight.copy_(torch.from_numpy(qkv_weight[embed_dim:embed_dim*2,:]))
-            layer.self_attention.value.weight.copy_(torch.from_numpy(qkv_weight[embed_dim*2:embed_dim*3,:]))
+            layer.attention.q_proj.weight.copy_(torch.from_numpy(qkv_weight[0:embed_dim,:]))
+            layer.attention.k_proj.weight.copy_(torch.from_numpy(qkv_weight[embed_dim:embed_dim*2,:]))
+            layer.attention.v_proj.weight.copy_(torch.from_numpy(qkv_weight[embed_dim*2:embed_dim*3,:]))
             qkv_bias = weights[root + "attn.qkv.bias"]
-            layer.self_attention.query.bias.copy_(torch.from_numpy(qkv_bias[0:embed_dim,]))
-            layer.self_attention.key.bias.copy_(torch.from_numpy(qkv_bias[embed_dim:embed_dim*2]))
-            layer.self_attention.value.bias.copy_(torch.from_numpy(qkv_bias[embed_dim*2:embed_dim*3]))
-        if layer.has_layer(1):
-            layer.self_output.dense.weight.copy_(torch.from_numpy(weights[root + "attn.proj.weight"]))
-            layer.self_output.dense.bias.copy_(torch.from_numpy(weights[root + "attn.proj.bias"]))
+            layer.attention.q_proj.bias.copy_(torch.from_numpy(qkv_bias[0:embed_dim,]))
+            layer.attention.k_proj.bias.copy_(torch.from_numpy(qkv_bias[embed_dim:embed_dim*2]))
+            layer.attention.v_proj.bias.copy_(torch.from_numpy(qkv_bias[embed_dim*2:embed_dim*3]))
+            layer.attention.o_proj.weight.copy_(torch.from_numpy(weights[root + "attn.proj.weight"]))
+            layer.attention.o_proj.bias.copy_(torch.from_numpy(weights[root + "attn.proj.bias"]))
         if layer.has_layer(2):
             layer.layernorm_after.weight.copy_(torch.from_numpy(weights[root + "norm2.weight"]))
             layer.layernorm_after.bias.copy_(torch.from_numpy(weights[root + "norm2.bias"]))
-            layer.intermediate.dense.weight.copy_(torch.from_numpy(weights[root + "mlp.fc1.weight"]))
-            layer.intermediate.dense.bias.copy_(torch.from_numpy(weights[root + "mlp.fc1.bias"]))
-        if layer.has_layer(3):
-            layer.output.dense.weight.copy_(torch.from_numpy(weights[root + "mlp.fc2.weight"]))
-            layer.output.dense.bias.copy_(torch.from_numpy(weights[root + "mlp.fc2.bias"]))
+            layer.mlp.fc1.weight.copy_(torch.from_numpy(weights[root + "mlp.fc1.weight"]))
+            layer.mlp.fc1.bias.copy_(torch.from_numpy(weights[root + "mlp.fc1.bias"]))
+            layer.mlp.fc2.weight.copy_(torch.from_numpy(weights[root + "mlp.fc2.weight"]))
+            layer.mlp.fc2.bias.copy_(torch.from_numpy(weights[root + "mlp.fc2.bias"]))
 
     @torch.no_grad()
     def forward(self, data: TransformerShardData) -> TransformerShardData:
@@ -179,9 +169,25 @@ class DeiTModelShard(ModuleShard):
             else:
                 hub_model_name = model_name
         import warnings
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", FutureWarning)
-            model = torch.hub.load(hub_repo, hub_model_name, pretrained=True)
+        import sys
+        # torch.hub.load() executes the DeiT repo's hubconf.py, which does
+        # `from models import *`. Our own package is also named `models`
+        # and is typically already cached in sys.modules by the time this
+        # runs (imported earlier via this codebase's relative imports), so
+        # Python resolves `from models import *` to OUR `models` package
+        # instead of the DeiT repo's own models.py -- causing torch.hub to
+        # report the requested model function as not found. Temporarily
+        # hide our cached `models` module so the DeiT repo's models.py is
+        # imported instead, then restore our original module afterward.
+        _local_models_module = sys.modules.pop('models', None)
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", FutureWarning)
+                model = torch.hub.load(hub_repo, hub_model_name, pretrained=True)
+        finally:
+            sys.modules.pop('models', None)
+            if _local_models_module is not None:
+                sys.modules['models'] = _local_models_module
         state_dict = model.state_dict()
         weights = {}
         for key, val in state_dict.items():

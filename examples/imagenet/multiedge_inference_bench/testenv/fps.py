@@ -11,6 +11,10 @@ __all__ = ('fps')
 def fps(y_true, y_pred, **kwargs):
     total = len(y_pred.get("pred"))
     inference_time_per_device = y_pred.get("inference_time_per_device")
+    if not inference_time_per_device:
+        # No device timing data available; nothing to report.
+        return 0
+
     plt.figure()
     min_fps = sys.maxsize
     for device, time in inference_time_per_device.items():

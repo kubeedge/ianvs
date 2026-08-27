@@ -6,6 +6,8 @@ With Ianvs installed and related environment prepared, users is then able to run
 
 ## Prerequisites
 
+> **Python version note:** The pinned versions in `requirements.txt` were tested with **Python 3.8 – 3.9**. On Python 3.10 or higher, some pinned versions may fail to install due to compatibility constraints. If you encounter installation errors, try installing without strict version pins or use a Python 3.8/3.9 environment.
+
 To setup the environment, run the following commands:
 ```shell
 cd <Ianvs_HOME>
@@ -64,6 +66,16 @@ To compare the running conditions of the model with and without parallelism in t
 ## Step 5. Run Benchmarking Job - Automatic
 We offer a profiling-based and memory matching partition algorithm to compare with the method of manually specifying partitioning points. This method prioritizes the memory matching between the computational subgraph and the device. First, we profile the initial model on the CPU to collect memory usage, the number of parameters, computational cost, and the input and output data shapes for each layer, as well as the total number of layers and their names in the entire model. To facilitate subsequent integration, we have implemented profiling for three types of transformer models: vit, bert, and deit. Secondly, based on the results of the profiling and the device information provided in devices.yaml, we can identify the partitioning point that matches the device memory through a single traversal and perform model partitioning.
 
+`profiler.py` requires the model's weights as a `.npz` file (e.g. `initial_model/ViT-B_16-224.npz`) before it can run. Generate it with:
+```shell
+cd <Ianvs_HOME>
+python -c "
+import sys
+sys.path.insert(0, './examples/imagenet/multiedge_inference_bench/testalgorithms/automatic')
+import model_cfg
+model_cfg.save_model_weights_file('google/vit-base-patch16-224')
+"
+```
 You should first run the following command to generate a profiling result:
 ```shell
 cd <Ianvs_HOME>
@@ -75,7 +87,7 @@ Then you will find a profiler_results.yml file in the <Ianvs_HOME>/examples/imag
 
 Then you can run the following command to perform benchmarking:
 ```shell
-ianvs -f ./examples/imagenet/multiedge_inference_bench/classification_job_auto.yaml
+ianvs -f ./examples/imagenet/multiedge_inference_bench/classification_job_automatic.yaml
 ```
 
 After running, you will see the profit from the automatic method compared with the manual method.

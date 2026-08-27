@@ -35,6 +35,6 @@ def acc(y_true, y_pred):
         
     same_elements = [y_pred[i] == y_true[i] for i in range(len(y_pred))]
 
-    acc = sum(same_elements) / len(same_elements)
+    acc = sum(same_elements) / len(same_elements) if same_elements else 0.0
     
     return acc

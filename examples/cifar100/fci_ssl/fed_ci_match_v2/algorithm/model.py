@@ -19,6 +19,7 @@ import keras
 from keras import layers, Sequential
 
 
+@keras.saving.register_keras_serializable()
 class Conv2D(keras.layers.Layer):
     def __init__(
         self,
@@ -28,8 +29,9 @@ class Conv2D(keras.layers.Layer):
         kernel_size,
         strides=(1, 1),
         padding: str = "valid",
+        **kwargs,
     ):
-        super(Conv2D, self).__init__()
+        super(Conv2D, self).__init__(**kwargs)
         self.is_combined = is_combined
         self.alpha = tf.Variable(alpha)
         self.conv_local = layers.Conv2D(
@@ -71,13 +73,30 @@ class Conv2D(keras.layers.Layer):
     def switch_to_global(self):
         self.conv_global.set_weights(self.conv_local.get_weights())
 
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "is_combined": self.is_combined,
+            "alpha": float(self.alpha.numpy()),
+            "filter_num": self.conv_local.filters,
+            "kernel_size": self.conv_local.kernel_size,
+            "strides": self.conv_local.strides,
+            "padding": self.conv_local.padding,
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
 
 # Input--conv2D--BN--ReLU--conv2D--BN--ReLU--Output
 #      \                              /
 #       ------------------------------
+@keras.saving.register_keras_serializable()
 class BasicBlock(keras.Model):
-    def __init__(self, is_combined: bool, filter_num, stride=1):
-        super(BasicBlock, self).__init__()
+    def __init__(self, is_combined: bool, filter_num, stride=1, **kwargs):
+        super(BasicBlock, self).__init__(**kwargs)
 
         self.filter_num = filter_num
         self.stride = stride
@@ -117,12 +136,27 @@ class BasicBlock(keras.Model):
 
         return output
 
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "is_combined": self.is_combined,
+            "filter_num": self.filter_num,
+            "stride": self.stride,
+        })
+        return config
 
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
+
+@keras.saving.register_keras_serializable()
 class ResNet(keras.Model):
-    def __init__(self, is_combined: bool, layer_dims):  # [2, 2, 2, 2]
-        super(ResNet, self).__init__()
+    def __init__(self, is_combined: bool, layer_dims, **kwargs):  # [2, 2, 2, 2]
+        super(ResNet, self).__init__(**kwargs)
 
         self.is_combined = is_combined
+        self.layer_dims = layer_dims
         self.stem = Sequential(
             [
                 Conv2D(is_combined, 0.0, 64, (3, 3), strides=(1, 1)),
@@ -139,6 +173,9 @@ class ResNet(keras.Model):
 
         # output: [b, 512, h, w],
         self.avgpool = layers.GlobalAveragePooling2D()
+
+        # Force-build all sublayers so copy.deepcopy works under Keras 3
+        self(tf.zeros([1, 32, 32, 3]))
 
     def call(self, inputs, training=None):
         x = self.stem(inputs, training=training)
@@ -159,6 +196,18 @@ class ResNet(keras.Model):
         for _ in range(1, blocks):
             res_blocks.append(BasicBlock(self.is_combined, filter_num, stride=1))
         return Sequential(res_blocks)
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "is_combined": self.is_combined,
+            "layer_dims": self.layer_dims,
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
 
     def get_alpha(self):
         convs = self._get_all_conv_layers()
@@ -225,6 +274,7 @@ def resnet34(is_combined=False) -> ResNet:
     return ResNet(is_combined, [3, 4, 6, 3])
 
 
+@keras.saving.register_keras_serializable()
 class LeNet5(keras.Model):
     def __init__(self):  # [2, 2, 2, 2]
         super(LeNet5, self).__init__()
