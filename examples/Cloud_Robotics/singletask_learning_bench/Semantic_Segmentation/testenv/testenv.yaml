@@ -13,7 +13,7 @@ testenv:
       # metric name; string type;
       name: "accuracy"
       # the url address of python file
-      url: "./examples/cloud-robotics/single_task_learing/testenv/accuracy.py"
+      url: "./examples/Cloud_Robotics/singletask_learning_bench/Semantic_Segmentation/testenv/accuracy.py"
       mode: "no-inference"
 
     # condition of triggering inference model to update
@@ -28,7 +28,7 @@ testenv:
       # metric name; string type;
     - name: "accuracy"
       # the url address of python file
-      url: "./examples/cloud_robotics/sinlge_task_learning/testenv/accuracy.py"
+      url: "./examples/Cloud_Robotics/singletask_learning_bench/Semantic_Segmentation/testenv/accuracy.py"
     - name: "samples_transfer_ratio"
 
   # incremental rounds setting; int type; default value is 2;
