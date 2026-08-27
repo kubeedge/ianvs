@@ -2,7 +2,7 @@
 FROM continuumio/miniconda3:latest
 
 ENV CONDA_ENV=ianvs-experiment \
-    PYTHON_VERSION=3.8
+    PYTHON_VERSION=3.10
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \

@@ -11,9 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Result parser utilities for cloud-edge LLM benchmark."""
 
 from dataclasses import dataclass
-from typing import TypedDict
 
 @dataclass
 class Response:
@@ -42,18 +42,19 @@ class Response:
             `Response` Object
         """
 
-        if response:
+        if isinstance(response, dict):
+            usage = response.get("usage") or {}
+            perf = response.get("perf") or {}
             return cls(
-                response["completion"],
-                response["usage"]["prompt_tokens"],
-                response["usage"]["completion_tokens"],
-                response["usage"]["total_tokens"],
-                response["perf"]["time_to_first_token"],
-                response["perf"]["internal_token_latency"],
-                response["perf"]["throughput"]
+                response.get("completion", ""),
+                usage.get("prompt_tokens", 0),
+                usage.get("completion_tokens", 0),
+                usage.get("total_tokens", 0),
+                perf.get("time_to_first_token", 0.0),
+                perf.get("internal_token_latency", 0.0),
+                perf.get("throughput", 0.0)
             )
-        else:
-            return cls("", 0, 0, 0, 0, 0, 0)
+        return cls("", 0, 0, 0, 0, 0, 0)
 
 @dataclass
 class JointInferenceResult:
@@ -72,11 +73,14 @@ class JointInferenceResult:
         is_hard_example : bool
             Whter the example is hard or not
         result : dict
-            Formatted Response. See `BaseLLM._format_response()` for more details.
+            Formatted Response.
+            See `BaseLLM._format_response()` for more details.
         edge_result : dict
-            Formatted Response from the Edge Model. See `BaseLLM._format_response()` for more details.
+            Formatted Response from the Edge Model.
+            See `BaseLLM._format_response()` for more details.
         cloud_reslut : dict
-            Formatted Response from the Cloud Model. See `BaseLLM._format_response()` for more details.
+            Formatted Response from the Cloud Model.
+            See `BaseLLM._format_response()` for more details.
 
         Returns
         -------

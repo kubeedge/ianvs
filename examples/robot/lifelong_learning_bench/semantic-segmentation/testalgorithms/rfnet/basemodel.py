@@ -1,3 +1,5 @@
+"""RFNet serving base model wrapper."""
+# pylint: disable=line-too-long,attribute-defined-outside-init,missing-module-docstring,missing-class-docstring,unidiomatic-typecheck,no-else-return,broad-exception-raised,f-string-without-interpolation,fixme,pointless-statement,duplicate-code
 import os
 import gc
 import numpy as np
@@ -35,10 +37,10 @@ class BaseModel:
 
     def get_weights(self):
         return self.trainer.get_weight()
-    
+
     def set_weights(self, weights):
         self.trainer.set_weight(weights)
-        
+
         epoch_num = 0
         print("Total epoch: ", epoch_num)
         loss_all = []
@@ -46,9 +48,8 @@ class BaseModel:
             train_loss = self.trainer.my_training(epoch)
             #train_loss = self.trainer.training(epoch)
             loss_all.append(train_loss)
-        with open('/home/shijing.hu/ianvs/project/ianvs/train_loss_2.txt', 'a+') as file:
+        with open('train_loss_2.txt', 'a+', encoding='utf-8') as file:
             np.savetxt(file, loss_all)
-        file.close
 
     def train(self, train_data, valid_data=None, **kwargs):
         self.trainer = Trainer(self.train_args, train_data=train_data)
@@ -83,14 +84,13 @@ class BaseModel:
                 }, is_best)
 
         self.trainer.writer.close()
-        with open('/home/shijing.hu/ianvs/project/ianvs/train_loss.txt', 'a+') as file:
+        with open('train_loss.txt', 'a+', encoding='utf-8') as file:
             np.savetxt(file, loss_all)
-        file.close
         return self.train_model_url
 
     def predict(self, data, **kwargs):
         """
-        Use the RFNet model to predict at the edge 
+        Use the RFNet model to predict at the edge
         """
         if len(data) > 10:
             print("predict start for big data")
@@ -107,7 +107,7 @@ class BaseModel:
             #print("predict starting 73")
             self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
                                                 pin_memory=True)
-        
+
         #print("predict starting 75")
         return self.validator.validate()
 
