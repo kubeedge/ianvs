@@ -43,13 +43,17 @@ class TestCase:
         self.output_dir = None
 
     def _get_output_dir(self, workspace):
-        output_dir = os.path.join(workspace, self.algorithm.name)
-        flag = True
-        while flag:
-            output_dir = os.path.join(workspace, self.algorithm.name, str(self.id))
-            if not os.path.exists(output_dir):
-                flag = False
-        return output_dir
+        base_dir = os.path.join(workspace, self.algorithm.name)
+        output_dir = os.path.join(base_dir, str(self.id))
+        if not os.path.exists(output_dir):
+            return output_dir
+
+        suffix_id = 1
+        while True:
+            candidate = os.path.join(base_dir, f"{self.id}_{suffix_id}")
+            if not os.path.exists(candidate):
+                return candidate
+            suffix_id += 1
 
     def run(self, workspace):
         """
