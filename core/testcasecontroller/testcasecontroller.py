@@ -20,6 +20,7 @@ from core.common import utils
 from core.common.constant import TestObjectType
 from core.testcasecontroller.algorithm import Algorithm
 from core.testcasecontroller.testcase import TestCase
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 class TestCaseController:
@@ -43,20 +44,95 @@ class TestCaseController:
             for algorithm in algorithms:
                 self.test_cases.append(TestCase(test_env, algorithm))
 
-    def run_testcases(self, workspace):
+    def run_testcases(self, workspace, parallel=False, max_workers=None):
         """
         Run all test cases.
+
+        Parameters
+        ----------
+        workspace : str
+            The workspace directory for test case outputs.
+        parallel : bool
+            Whether to run test cases in parallel. Default is False.
+        max_workers : int, optional
+            Maximum number of parallel workers. Defaults to number of test cases.
         """
+        if isinstance(parallel, str):
+            parallel = parallel.lower() in ("true", "1", "yes")
+
+        if parallel:
+            if max_workers is not None:
+                try:
+                    max_workers = int(max_workers)
+                except ValueError:
+                    raise ValueError(
+                f"max_workers must be an integer, got {max_workers}"
+            )
+            if max_workers <= 0:
+                raise ValueError(
+                    f"max_workers must be greater than 0, got {max_workers}"
+                )
+            return self._run_testcases_parallel(workspace, max_workers)
+        return self._run_testcases_sequential(workspace)
+
+    def _run_testcases_sequential(self, workspace):
+        """Run test cases sequentially — original behavior."""
         succeed_results = {}
         succeed_testcases = []
         for testcase in self.test_cases:
             try:
                 res, time = (testcase.run(workspace), utils.get_local_time())
             except Exception as err:
-                raise RuntimeError(f"testcase(id={testcase.id}) runs failed, error: {err}") from err
-
+                raise RuntimeError(
+                    f"testcase(id={testcase.id}) runs failed, error: {err}"
+                ) from err
             succeed_results[testcase.id] = (res, time)
             succeed_testcases.append(testcase)
+        return succeed_testcases, succeed_results
+
+    def _run_testcases_parallel(self, workspace, max_workers=None):
+        """
+        Run test cases in parallel using ThreadPoolExecutor.
+
+        Uses threads rather than processes to avoid pickling issues
+        with ML model objects loaded during paradigm execution.
+        Each test case receives a deep copy of test_env to prevent
+        race conditions from shared state modifications.
+        """ 
+        import copy
+        succeed_results = {}
+        succeed_testcases = []
+        failed_testcases = []
+
+        # deep copy test cases to avoid shared test_env/dataset
+        # state mutations between parallel threads
+        parallel_testcases = [copy.deepcopy(tc) for tc in self.test_cases]
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_testcase = {
+            executor.submit(testcase.run, workspace): testcase
+            for testcase in parallel_testcases
+        }
+
+        for future in as_completed(future_to_testcase):
+            testcase = future_to_testcase[future]
+            try:
+                res = future.result()
+                time = utils.get_local_time()
+                succeed_results[testcase.id] = (res, time)
+                succeed_testcases.append(testcase)
+            except Exception as err:
+                failed_testcases.append((testcase, err))
+
+        if failed_testcases:
+            error_msgs = [
+                f"testcase(id={tc.id}) runs failed, error: {err}"
+                for tc, err in failed_testcases
+            ]
+            raise RuntimeError(
+            f"{len(failed_testcases)} testcase(s) failed:\n" +
+            "\n".join(error_msgs)
+            )
 
         return succeed_testcases, succeed_results
 

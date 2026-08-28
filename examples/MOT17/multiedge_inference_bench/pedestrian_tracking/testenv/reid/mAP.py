@@ -12,35 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-
 import numpy as np
-from sklearn.metrics import average_precision_score
-from sedna.common.class_factory import ClassType, ClassFactory
-
-__all__ = ["mAP"]
+from core.common.log import LOGGER
 
 
 def mean_ap(distmat, query_ids, gallery_ids):
     m, _ = distmat.shape
-    # Sort and find correct matches
     indices = np.argsort(distmat, axis=1)
     matches = (gallery_ids[indices] == query_ids[:, np.newaxis])
-    # Compute AP for each query
     aps = []
     for i in range(m):
-        y_true = matches[i]
-        y_score = -distmat[i][indices[i]]
-        if not np.any(y_true): 
+        valid = matches[i]
+        if not valid.any():
+            # No gallery match for this query — skip gracefully.
             continue
-        aps.append(average_precision_score(y_true, y_score))
+        tps = np.cumsum(valid)
+        precision_at_k = tps / (np.arange(len(valid)) + 1)
+        ap = (precision_at_k * valid).sum() / valid.sum()
+        aps.append(ap)
+
     if len(aps) == 0:
-        raise RuntimeError("No valid query")
+        # Fix #447: replaced RuntimeError("No valid query") with a warning
+        # and graceful 0.0 return so the pipeline does not crash.
+        LOGGER.warning(
+            "mAP: no valid queries found (no query identity appears in the "
+            "gallery). Returning mAP=0.0. Check that query/gallery splits "
+            "share at least one common identity."
+        )
+        return 0.0
+
     return round(float(np.mean(aps)), 4)
 
 
-@ClassFactory.register(ClassType.GENERAL, alias="mAP")
-def mAP(query_ids, pred):
-    query_ids = np.asarray([int(y.split('/')[-1]) for y in query_ids])
-    distmat, gallery_ids = pred
-    return mean_ap(distmat, query_ids, gallery_ids)
+def mAP(y_pred, y_true, **kwargs):
+    return mean_ap(y_pred, y_true[:, 0], y_true[:, 1])

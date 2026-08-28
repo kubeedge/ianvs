@@ -51,7 +51,7 @@ ianvs -f ./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/tracking
 ```
 
 The benchmarking process takes a few minutes and varies depending on devices.
-Finally, the user can check the result of benchmarking on the console and also in the output path( /ianvs/multiedge_inference_bench/workspace) defined in the benchmarking config file ( tracking_job.yaml).
+Finally, the user can check the result of benchmarking on the console and also in the output path( ./workspace/multiedge_inference_bench) defined in the benchmarking config file ( tracking_job.yaml).
 The final output might look like this:
 
 |rank  |algorithm                | mota | f1_score  |motp  |recall  |idf1  |precision  |paradigm            |basemodel  |batch_size  |time                     |url                                                                                                                             |
@@ -82,7 +82,7 @@ ianvs -f ./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/reid_job
 ```
 
 The benchmarking process takes a few minutes and varies depending on devices.
-Finally, the user can check the result of benchmarking on the console and also in the output path( /ianvs/multiedge_inference_bench/workspace) defined in the benchmarking config file ( reid_job.yaml).
+Finally, the user can check the result of benchmarking on the console and also in the output path( ./workspace/multiedge_inference_bench) defined in the benchmarking config file ( reid_job.yaml).
 The final output might look like this:
 
 |rank  |algorithm                |rank_1  |mAP  |cmc  |rank_2  |rank_5  |paradigm            |basemodel  |batch_size  |time                     |url                                                                                                                             |
