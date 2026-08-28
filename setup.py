@@ -93,13 +93,12 @@ _infos = InstallPrepare()
 setup(
     name='ianvs',
     version=_infos.version,
-    description="The ianvs package is designed to help algorithm developers \
-                better do algorithm test.",
+    description="The ianvs package is designed to help algorithm developers better do algorithm test.",
     packages=find_packages(exclude=["tests", "*.tests",
                                     "*.tests.*", "tests.*"]),
     author=_infos.owners,
     maintainer=_infos.owners,
-    maintainer_email="",
+    maintainer_email="kubeedge@googlegroups.com",
     include_package_data=True,
     entry_points={
         "console_scripts": ["ianvs = core.cmd.benchmarking:main"]
