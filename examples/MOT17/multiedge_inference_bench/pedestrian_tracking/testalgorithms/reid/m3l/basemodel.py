@@ -25,6 +25,7 @@ import torch
 from torch import nn
 from torch.backends import cudnn
 from torch.utils.data import DataLoader
+from loguru import logger
 from sedna.common.class_factory import ClassType, ClassFactory
 
 from reid import models
@@ -39,6 +40,15 @@ __all__ = ["BaseModel"]
 os.environ["BACKEND_TYPE"] = "TORCH"
 
 
+def _get_device():
+    """Return the best available device: CUDA > MPS > CPU."""
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
+
+
 @ClassFactory.register(ClassType.GENERAL, alias="M3L")
 class BaseModel:
     def __init__(self, **kwargs):
@@ -50,25 +60,55 @@ class BaseModel:
         cudnn.benchmark = True
         self.model = None
         self.batch_size = kwargs.get("batch_size", 1)
+        self.device = _get_device()
 
     def load(self, model_url=None):
         if model_url:
-            arch = re.compile("_([a-zA-Z]+).pth").search(model_url).group(1)
-            # Create model
+            match = re.compile(r"_([a-zA-Z]+)\.pth").search(model_url)
+
+            if match is None:
+                raise ValueError(
+                    f"Cannot infer model architecture from '{model_url}'. "
+                    "Expected filename pattern: *_<arch>.pth (e.g. model_resnet50.pth)"
+                )
+
+            arch = match.group(1)
             self.model = models.create(
-                arch, num_features=0, dropout=0, norm=True, BNNeck=True
+            arch,
+            num_features=0,
+            dropout=0,
+            norm=True,
+            BNNeck=True,
             )
-            # use CUDA
-            self.model.cuda()
-            self.model = nn.DataParallel(self.model)
+
             if Path(model_url).is_file():
-                checkpoint = torch.load(model_url, map_location=torch.device('cpu'))
-                print("=> Loaded checkpoint '{}'".format(model_url))
-                self.model.load_state_dict(checkpoint["state_dict"])
+                checkpoint = torch.load(
+                    model_url,
+                    map_location=torch.device("cpu")
+                )
+
+                logger.info(
+                    "=> Loaded checkpoint '{}'".format(model_url)
+                )
+                state_dict = checkpoint["state_dict"]
+                state_dict = {
+                    k[7:] if k.startswith("module.") else k: v
+                    for k, v in state_dict.items()
+                }
+
+                self.model.load_state_dict(state_dict)
+
             else:
-                raise ValueError("=> No checkpoint found at '{}'".format(model_url))
+                raise ValueError(
+                    "=> No checkpoint found at '{}'".format(model_url)
+                )
+            self.model.to(self.device)
+
+            if self.device.type == "cuda":
+                self.model = nn.DataParallel(self.model)
+
         else:
-            raise Exception(f"model url is None")
+            raise Exception("model url is None")
 
     def predict(self, data, input_shape=None, **kwargs):
         train_dataset = kwargs.get("train_dataset")
@@ -109,7 +149,7 @@ class BaseModel:
         return test_loader
 
     def _extract_cnn_feature(self, model, inputs):
-        inputs = to_torch(inputs).cuda()
+        inputs = to_torch(inputs).to(self.device)
         outputs = model(inputs.contiguous())
         outputs = outputs.data.cpu()
         return outputs
@@ -134,9 +174,15 @@ class BaseModel:
                 end = time.time()
 
                 if (i + 1) % print_freq == 0:
-                    print("Extract Features: [{}/{}]\t"
+                    logger.info(
+                        "Extract Features: [{}/{}]\t"
                         "Time {:.3f} ({:.3f})\t"
-                        "Data {:.3f} ({:.3f})\t".format(i + 1, len(data_loader), batch_time.val, batch_time.avg, data_time.val, data_time.avg,))
+                        "Data {:.3f} ({:.3f})\t".format(
+                            i + 1, len(data_loader),
+                            batch_time.val, batch_time.avg,
+                            data_time.val, data_time.avg,
+                        )
+                    )
 
         return features
 
@@ -150,7 +196,7 @@ class BaseModel:
             torch.pow(x, 2).sum(dim=1, keepdim=True).expand(m, n)
             + torch.pow(y, 2).sum(dim=1, keepdim=True).expand(n, m).t()
         )
-        dist_m.addmm_(1, -2, x, y.t())
+        dist_m.addmm_(x, y.t(), beta=1, alpha=-2)
         return dist_m
 
     def to_numpy(self, tensor):
