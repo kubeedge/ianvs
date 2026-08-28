@@ -249,7 +249,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         if isinstance(testdataset_files, str):
             testdataset_files = [testdataset_files]
         job = self.get_global_model()
-        # caculate the seen class accuracy
+        # calculate the seen class accuracy
         old_class_acc_list = (
             []
         )  # for current round [class_0: acc_0, class_1: acc1, ....]
@@ -272,7 +272,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value]["accuracy"] = (
             np.mean(old_class_acc_list)
         )
-        # caculate the forget rate
+        # calculate the forget rate
         for i in range(len(old_class_acc_list)):
             max_acc_diff = 0
             for j in range(incremental_round):

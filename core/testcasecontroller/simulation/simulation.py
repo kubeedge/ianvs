@@ -18,7 +18,7 @@
 # pylint: disable=too-few-public-methods
 class Simulation:
     """
-    Simulation: The simulation enviroment, e.g. config of simulation.
+    Simulation: The simulation environment, e.g. config of simulation.
 
     Parameters
     ----------
