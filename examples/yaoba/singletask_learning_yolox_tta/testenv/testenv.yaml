@@ -11,7 +11,9 @@ testenv:
     test_url: "examples/yaoba/singletask_learning_yolox_tta/dataset/test.json"
 
     # the image folder url address of train, val, and test sets; string type;
-    image_folder_url: "/media/huawei_YaoBa/Images"
+    # relative to the ianvs project root; place the downloaded dataset images here
+    # (see examples/yaoba/singletask_learning_yolox_tta/readme/README.md for dataset setup)
+    image_folder_url: "examples/yaoba/singletask_learning_yolox_tta/dataset/images"
     # classes: ""
   # metrics configuration for test case's evaluation; list type;
   metrics:
