@@ -17,7 +17,7 @@ algorithm:
       # name of edge model module; string type;
       name: "EdgeModel"
       # the url address of edge model module; string type;
-      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testalgorithms/edge_model.py"
+      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference_bench/perception-reasoning/testalgorithms/edge_model.py"
 
       hyperparameters:
       # name of the hyperparameter; string type;
@@ -30,7 +30,7 @@ algorithm:
       # name of python module; string type;
       name: "CloudModel"
       # the url address of python module; string type;
-      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testalgorithms/cloud_model.py"
+      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference_bench/perception-reasoning/testalgorithms/cloud_model.py"
 
       hyperparameters:
         # name of the hyperparameter; string type;
@@ -48,4 +48,4 @@ algorithm:
       # BERTRouter, EdgeOnly, CloudOnly, RandomRouter, OracleRouter
       name: "EdgeCloudDispatcher"
       # the url address of python module; string type;
-      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testalgorithms/cloud_edge_dispacher.py"
+      url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference_bench/perception-reasoning/testalgorithms/cloud_edge_dispacher.py"
