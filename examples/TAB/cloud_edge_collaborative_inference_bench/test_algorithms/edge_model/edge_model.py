@@ -1,3 +1,4 @@
+import hashlib
 # edge_model.py
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import time
@@ -80,9 +81,20 @@ class EdgeModel:
     
     def predict(self, data, **kwargs):
 
-        query_hash = hash(data["query"])
-        if query_hash in self.cache:
-            return self.cache[query_hash]
+        cache_payload = (
+            data["query"],
+            self.model_name,
+            self.backend,
+            kwargs.get("max_tokens", self.kwargs.get("max_tokens", 1024)),
+            kwargs.get("temperature", self.kwargs.get("temperature", 0.7)),
+            kwargs.get("top_p", self.kwargs.get("top_p", 0.9)),
+            kwargs.get("repetition_penalty", self.kwargs.get("repetition_penalty", 1.0)),
+        )
+        cache_key = hashlib.sha256(
+            json.dumps(cache_payload).encode("utf-8")
+        ).hexdigest()
+        if cache_key in self.cache:
+            return self.cache[cache_key]
         
 
         start_time = time.time()
@@ -96,7 +108,7 @@ class EdgeModel:
             "model_used": self.model_name,
             "backend": self.backend
         }
-        self.cache[query_hash] = output
+        self.cache[cache_key] = output
         self._save_cache()
         
         return output

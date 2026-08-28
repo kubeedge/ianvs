@@ -250,11 +250,27 @@ class BaseLLM:
                 for cache in self.cache_models:
                     if cache["config"] == self.config:
                         self.cache = cache
-                        self.cache_hash = {item["query"]:item['response'] for item in cache["result"]}
+                        self.cache_hash = {
+                            self._cache_key(item["query"]): item["response"]
+                            for item in cache["result"]
+                        }
         self.is_cache_loaded = True
 
+    def _cache_key(self, question):
+        """Build a cache key from the question and effective generation settings."""
+        return json.dumps(
+            {
+                "query": question,
+                "max_tokens": self.max_tokens,
+                "temperature": self.temperature,
+                "top_p": self.top_p,
+                "repetition_penalty": self.repetition_penalty,
+            },
+            sort_keys=True,
+        )
+
     def _try_cache(self, question):
-        """Try to get the response from cache
+        """Try to get the response from cache.
 
         Parameters
         ----------
@@ -264,13 +280,14 @@ class BaseLLM:
         Returns
         -------
         dict
-            If the question is found in cache, return the Formatted Response. Otherwise, return None.
+            If the question is found in cache, return the Formatted Response.
+            Otherwise, return None.
         """
 
         if not self.is_cache_loaded:
             self._load_cache()
 
-        return self.cache_hash.get(question, None)
+        return self.cache_hash.get(self._cache_key(question), None)
 
     def _update_cache(self, question, response, prediction, gold):
         """Update the cache with the new item
@@ -297,7 +314,7 @@ class BaseLLM:
             "gold": gold
         }
 
-        self.cache_hash[question] = response
+        self.cache_hash[self._cache_key(question)] = response
 
         if self.cache is not None:
             self.cache["result"].append(new_item)
