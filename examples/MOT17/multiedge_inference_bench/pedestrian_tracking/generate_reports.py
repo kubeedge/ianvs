@@ -74,7 +74,7 @@ def main():
         args = parser.parse_args()
         tracking_config_file = args.tracking_benchmarking_config_file
         if not utils.is_local_file(tracking_config_file):
-            raise SystemExit(f"not found benchmarking config({config_file}) file in local")
+            raise SystemExit(f"Tracking benchmarking config file not found: {tracking_config_file}")
 
         tracking_config = utils.yaml2dict(args.tracking_benchmarking_config_file)
         tracking_rank = pd.read_csv(Path(tracking_config["benchmarkingjob"]["workspace"], tracking_config["benchmarkingjob"]["name"], "rank/all_rank.csv"), delim_whitespace=True)
@@ -83,7 +83,7 @@ def main():
 
         reid_config_file = args.reid_benchmarking_config_file
         if not utils.is_local_file(reid_config_file):
-            raise SystemExit(f"not found benchmarking config({config_file}) file in local")
+            raise SystemExit(f"ReID benchmarking config file not found: {reid_config_file}")
         reid_config = utils.yaml2dict(args.reid_benchmarking_config_file)
         reid_rank = pd.read_csv(Path(reid_config["benchmarkingjob"]["workspace"], reid_config["benchmarkingjob"]["name"], "rank/all_rank.csv"), delim_whitespace=True)
         reid_rank["time"] = pd.to_datetime(reid_rank["time"])
