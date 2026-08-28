@@ -20,7 +20,7 @@ import os
 import onnx
 
 from core.common.log import LOGGER
-from core.common.constant import ParadigmType
+from core.common.constant import EnvKey, ParadigmType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 
 
@@ -81,10 +81,10 @@ class MultiedgeInference(ParadigmBase):
 
     def _inference(self, job, trained_model):
         train_dataset = self.dataset.load_data(self.dataset.train_url, "train")
-        os.environ["BASE_MODEL_URL"] = trained_model
+        os.environ[EnvKey.BASE_MODEL_URL] = trained_model
         inference_dataset = self.dataset.load_data(self.dataset.test_url, "inference")
         inference_output_dir = os.path.join(self.workspace, "output/inference/")
-        os.environ["RESULT_SAVED_URL"] = inference_output_dir
+        os.environ[EnvKey.RESULT_SAVED_URL] = inference_output_dir
         job.load(trained_model)
         infer_res = job.predict(inference_dataset.x, train_dataset=train_dataset)
         return infer_res
@@ -92,7 +92,7 @@ class MultiedgeInference(ParadigmBase):
     def _inference_mp(self, job, models_dir, map_info):
         inference_dataset = self.dataset.load_data(self.dataset.test_url, "inference")
         inference_output_dir = os.path.join(self.workspace, "output/inference/")
-        os.environ["RESULT_SAVED_URL"] = inference_output_dir
+        os.environ[EnvKey.RESULT_SAVED_URL] = inference_output_dir
         job.load(models_dir, map_info)
         infer_res = job.predict(inference_dataset.x)
         return infer_res

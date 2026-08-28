@@ -103,3 +103,49 @@ class TestObjectType(Enum):
     """
 
     ALGORITHMS = "algorithms"
+
+
+class EnvKey(str, Enum):
+    """
+    Canonical names of the environment variables that ianvs sets for algorithm modules.
+
+    Using these constants instead of inline strings eliminates typos, provides a single
+    authoritative reference, and makes the YAML-key → env-var mapping explicit.
+
+    Mapping to the YAML ``algorithm`` config key:
+        ``initial_model_url``  →  :attr:`BASE_MODEL_URL`
+    """
+
+    # Path to the starting model supplied via ``initial_model_url`` in the algorithm YAML.
+    # Algorithm train() implementations should read this to locate the base checkpoint.
+    BASE_MODEL_URL = "BASE_MODEL_URL"
+
+    # Output path where the algorithm should write the newly trained model.
+    MODEL_URL = "MODEL_URL"
+
+    # Semicolon-separated list of model paths used during evaluation and lifelong learning.
+    MODEL_URLS = "MODEL_URLS"
+
+    # Base output directory for the current paradigm step (train / eval / inference).
+    OUTPUT_URL = "OUTPUT_URL"
+
+    # Directory where inference result files should be written.
+    RESULT_SAVED_URL = "RESULT_SAVED_URL"
+
+    # Directory for per-sample inference result files in lifelong learning.
+    INFERENCE_RESULT_DIR = "INFERENCE_RESULT_DIR"
+
+    # Path to the cloud knowledge-base task index used in lifelong learning.
+    CLOUD_KB_INDEX = "CLOUD_KB_INDEX"
+
+    # "True" / "False" string: whether the initial training round has completed.
+    HAS_COMPLETED_INITIAL_TRAINING = "HAS_COMPLETED_INITIAL_TRAINING"
+
+    # Floating-point threshold (as a string) for model-update trigger decisions.
+    MODEL_THRESHOLD = "model_threshold"
+
+    # Comparison operator string (">", "<", ">=", …) for model-update trigger decisions.
+    OPERATOR = "operator"
+
+    # Set to "TRUE" when ianvs runs a local (non-Kubernetes) benchmark.
+    LOCAL_TEST = "LOCAL_TEST"

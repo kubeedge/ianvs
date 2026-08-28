@@ -18,7 +18,7 @@ import os
 from tqdm import tqdm
 
 from core.common.log import LOGGER
-from core.common.constant import ParadigmType
+from core.common.constant import EnvKey, ParadigmType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 
 class JointInference(ParadigmBase):
@@ -67,7 +67,7 @@ class JointInference(ParadigmBase):
 
 
         inference_output_dir = os.path.dirname(self.workspace)
-        os.environ["RESULT_SAVED_URL"] = inference_output_dir
+        os.environ[EnvKey.RESULT_SAVED_URL] = inference_output_dir
         os.makedirs(inference_output_dir, exist_ok=True)
 
         LOGGER.info("Loading dataset")
