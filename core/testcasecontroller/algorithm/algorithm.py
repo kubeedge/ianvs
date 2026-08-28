@@ -157,13 +157,35 @@ class Algorithm:
                 f"algorithm initial_model_url({self.initial_model_url}) must be string type.")
 
     def _parse_config(self, config):
-        config_dict = config[str.lower(Algorithm.__name__)]
-        # pylint: disable=C0103
+        config_dict = config.get(str.lower(Algorithm.__name__))
+        if not config_dict:
+            raise ValueError(f"not found {str.lower(Algorithm.__name__)} in config.")
+
+        fields_mapping = {
+            "paradigm_type": str,
+            "third_party_packages": list,
+            "incremental_learning_data_setting": dict,
+            "lifelong_learning_data_setting": dict,
+            "fl_data_setting": dict,
+            "initial_model_url": str,
+            "mode": str,
+            "quantization_type": str,
+            "llama_quantize_path": str,
+        }
+
         for k, v in config_dict.items():
             if k == str.lower(Module.__name__ + "s"):
                 self.modules_list = self._parse_modules_config(v)
-            if k in self.__dict__:
-                self.__dict__[k] = v
+            elif k in fields_mapping:
+                expected_type = fields_mapping[k]
+                try:
+                    casted_v = expected_type(v)
+                    setattr(self, k, casted_v)
+                except (ValueError, TypeError) as err:
+                    raise ValueError(
+                        f"algorithm field '{k}' expected {expected_type.__name__}, "
+                        f"got {type(v).__name__} (value={v}). Error: {err}"
+                    ) from err
         self._check_fields()
 
     @classmethod
