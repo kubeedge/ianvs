@@ -104,7 +104,7 @@ Provide ianvs with the feature of industrial distributed system simulation.
 
 ![img](images/simulation_framework.jpg)
 
-In the framwork of ianvs, the `simulation controller` is the core module of system simulation. The `simulation controller` has been supplemented, which build and deploy local edge-cloud simulation environment with K8s.
+In the framework of ianvs, the `simulation controller` is the core module of system simulation. The `simulation controller` has been supplemented, which build and deploy local edge-cloud simulation environment with K8s.
 
 ![img](images/simulation_controller.jpg)
 
@@ -112,11 +112,11 @@ The models in `simulation controller` are as follows:
 
 - The `Simulation System Administrator` is used to
   1. parse the system config(simulation)
-  2. check the host enviroment, e.g. check if the host has installed docker, kind, and whether memory > 4GB
-  3. build the simulation enviroment
-  4. create and deploy the moudles needed in simulation enviroment
-  5. close and delete the simulation enviroment
-- The `Simulation Job Administrator` is the core module for manage the simulation job, and provides the following funcitons:
+  2. check the host environment, e.g. check if the host has installed docker, kind, and whether memory > 4GB
+  3. build the simulation environment
+  4. create and deploy the modules needed in simulation environment
+  5. close and delete the simulation environment
+- The `Simulation Job Administrator` is the core module for manage the simulation job, and provides the following functions:
   1. build the docker images of algorithms to be tested
   2. generate the YAML file of `simulation job`
   3. deploy and delete the `simulation job` in K8s
@@ -137,7 +137,7 @@ In the flowchart diagram above, the expected flow is as follows:
   - check environment: e.g. check if the host has installed docker, kind, and whether the memory > 4GB
   - parse simulation config
 
-4. `Simulation System Administrator` build the environment and create needed moudles.
+4. `Simulation System Administrator` build the environment and create needed modules.
   - build the environment: deploying a cluster including K8s and GM (global manager) locally through [all-in-one scripts of sedna](https://github.com/kubeedge/sedna/blob/527c574a60d0ae87b0436f9a8b38cf84fb6dab21/docs/setup/all-in-one.md)
   - create and deploy the `simulation job controller`
 
@@ -145,11 +145,11 @@ In the flowchart diagram above, the expected flow is as follows:
   - build the docker images of algorithms to be tested
   - generate the YAML of simulation job base on `testenv.yaml` and `algorithm.yaml`
   - deploy simulation job: access k8s API-server via `python-k8sclient` to deploy simulation jobs
-6. `Simulation Job Administrator` list-watch the configmap of results: ianvs-simualtion-job-result
+6. `Simulation Job Administrator` list-watch the configmap of results: ianvs-simulation-job-result
 7. `Simulation Job Controller` run the simulation jobs
   - list-watch the simulation jobs in K8s
   - run the simulation jobs
-8. `Simulation Job Controller` save results of simulation job to configmap: ianvs-simualtion-job-result
+8. `Simulation Job Controller` save results of simulation job to configmap: ianvs-simulation-job-result
 9. `Simulation Job Administrator` generates the test_results after watched the configmap of results.
 ## Roadmap
 

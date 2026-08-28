@@ -1,4 +1,4 @@
-# How to contributrbute an algorithm to Ianvs
+# How to contribute an algorithm to Ianvs
 
 Ianvs serves as testing tools for test objects, e.g., algorithms. Ianvs does NOT include code directly on the test object. Algorithms serve as typical test objects in Ianvs and detailed algorithms are thus NOT included in this Ianvs python file. As for the details of example test objects, e.g., algorithms, please refer to third party packages in the Ianvs example. For example, for AI workflow and interface please refer to sedna and for module implementation please refer to third party packages like FPN_TensorFlow and Sedna IBT algorithm.
 
