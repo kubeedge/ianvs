@@ -236,6 +236,8 @@ class Rank:
             out_put = test_case.output_dir
             test_result = test_results[test_case.id][0]
             matrix = test_result.get("Matrix")
+            if not matrix:
+                continue
             for key in matrix.keys():
                 draw_heatmap_picture(out_put, key, matrix[key])
 
