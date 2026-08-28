@@ -34,6 +34,9 @@ def edge_ratio(_, y_pred):
 
     infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
 
+    if not infer_res:
+        return 0.0
+
     y_pred = [pred.is_hard_example for pred in infer_res]
 
     edge_ratio = 1 - sum(y_pred) / len(y_pred)
