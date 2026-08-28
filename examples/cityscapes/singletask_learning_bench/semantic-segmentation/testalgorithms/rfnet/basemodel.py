@@ -146,7 +146,6 @@ class BaseModel:
         return self.validator.validate()
 
     def load(self, model_url):
-        model_url = '/home/wxc/dev/ianvs/models/model_best_mapi_only.pth'
         if FileOps.exists(model_url):
             self.validator.new_state_dict = torch.load(
                 model_url, map_location=torch.device("cpu"))
