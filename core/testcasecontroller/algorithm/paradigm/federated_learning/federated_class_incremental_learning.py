@@ -61,13 +61,21 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         }
 
         self.aggregate_clients = []
-        self.train_infos = []
+        self.train_infos = {}
 
         self.forget_rate_metrics = []
         self.accuracy_per_round = []
-        metrics_dict = kwargs.get("model_eval", {})["model_metric"]
-        _, accuracy_func = get_metric_func(metrics_dict)
-        self.accuracy_func = accuracy_func
+        self.accuracy_func = None
+        model_eval = kwargs.get("model_eval")
+        if isinstance(model_eval, dict):
+            metrics_dict = model_eval.get("model_metric")
+            try:
+                _, accuracy_func = get_metric_func(metrics_dict)
+                self.accuracy_func = accuracy_func
+            except Exception as err:  # pylint: disable=broad-except
+                LOGGER.warning(
+                    f"Failed to initialize accuracy_func from {metrics_dict}: {err}"
+                )
 
     def task_definition(self, dataset_files, task_id):
         """Define the task for the class incremental learning paradigm
@@ -215,18 +223,42 @@ class FederatedClassIncrementalLearning(FederatedLearning):
             client_idx, train_datasets, validation_datasets, **kwargs
         )
         with self.lock:
-            self.train_infos.append(train_info)
+            self.train_infos[client_idx] = train_info
 
     def helper_function(self, train_infos):
         """helper function for FCI Method
            Many of the FCI algorithms need server to perform some operations
            after the training of each round e.g data generation, model update etc.
         Args:
-            train_infos (list of dict): the train info that the clients want to send to the server
+            train_infos (dict or list of dict): the train info that the clients
+                want to send to the server
         """
+        if isinstance(train_infos, dict):
+            train_info_map = train_infos
+        else:
+            train_info_map = {
+                info.get("client_id", idx): info
+                for idx, info in enumerate(train_infos)
+                if isinstance(info, dict)
+            }
+
+        expected_clients = set(range(self.clients_number))
+        actual_clients = set(train_info_map.keys())
+        missing_clients = expected_clients - actual_clients
+        unexpected_clients = actual_clients - expected_clients
+        if missing_clients or unexpected_clients:
+            err_msg = []
+            if missing_clients:
+                err_msg.append(f"missing client(s) {sorted(list(missing_clients))}")
+            if unexpected_clients:
+                err_msg.append(f"unexpected client(s) {sorted(list(unexpected_clients))}")
+            raise RuntimeError(
+                f"invalid train_infos in helper_function: {', '.join(err_msg)}, "
+                f"expected {sorted(list(expected_clients))}"
+            )
 
         for i in range(self.clients_number):
-            helper_info = self.aggregator.helper_function(train_infos[i])
+            helper_info = self.aggregator.helper_function(train_info_map[i])
             self.clients[i].helper_function(helper_info)
         LOGGER.info("finish helper function")
 
