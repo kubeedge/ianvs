@@ -2,13 +2,44 @@
 
 from collections.abc import Mapping
 
+#: Token id handed back for every mocked token. Examples only ever feed these
+#: ids straight back into the mocked model, so the value is arbitrary; it is
+#: named to keep the intent obvious at call sites.
+_MOCK_TOKEN_ID = 0
+
 
 class _MockBatch:
-    def __init__(self, size):
-        self.input_ids = [[0] for _ in range(size)]
+    """Stand-in for ``BatchEncoding``.
+
+    Examples reach into the tokenizer result in two different ways: attribute
+    access (``batch.input_ids``) and mapping access
+    (``batch["input_ids"]``). Real ``BatchEncoding`` supports both, so the mock
+    must too, otherwise an example that tokenises with
+    ``add_special_tokens=False`` and then subscripts the result fails inside
+    the mock rather than in its own logic.
+    """
+
+    def __init__(self, size, length=1):
+        self.input_ids = [[_MOCK_TOKEN_ID] * length for _ in range(size)]
+        self.attention_mask = [[1] * length for _ in range(size)]
 
     def to(self, _device):
         return self
+
+    def __getitem__(self, key):
+        try:
+            return getattr(self, key)
+        except AttributeError as error:
+            raise KeyError(key) from error
+
+    def __contains__(self, key):
+        return hasattr(self, key)
+
+    def keys(self):
+        return ("input_ids", "attention_mask")
+
+    def __iter__(self):
+        return iter(self.keys())
 
 
 class _MockModel:
