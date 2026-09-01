@@ -1,4 +1,10 @@
-"""Minimal Transformers adapter used by the llm_simple_qa smoke test."""
+"""Minimal Transformers adapter used by Ianvs example smoke tests.
+
+The adapter deliberately implements only the Transformers surface that Ianvs
+examples actually use. Any attribute an example touches that is not modelled
+here raises ``AttributeError`` rather than returning a plausible-looking
+value, so a smoke test can never pass by accident on a fabricated result.
+"""
 
 from collections.abc import Mapping
 
@@ -52,6 +58,24 @@ class _MockBatch:
 class _MockModel:
     def generate(self, input_ids, **_kwargs):
         return [list(input_ids[index]) + [index + 1] for index in range(len(input_ids))]
+
+    def eval(self):
+        return self
+
+    def train(self, _mode=True):
+        return self
+
+    def half(self):
+        return self
+
+    def float(self):
+        return self
+
+    def to(self, _device):
+        return self
+
+    def parameters(self):
+        return iter(())
 
 
 class _MockTokenizer:
@@ -108,7 +132,7 @@ class _MockTokenizer:
 
 
 def install(responses):
-    """Patch only the Transformers factories exercised by llm_simple_qa."""
+    """Patch only the Transformers factories exercised by Ianvs examples."""
     if not isinstance(responses, Mapping):
         raise TypeError("Hugging Face mock responses must be a mapping")
 
