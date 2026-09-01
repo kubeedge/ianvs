@@ -7,6 +7,13 @@ from collections.abc import Mapping
 #: named to keep the intent obvious at call sites.
 _MOCK_TOKEN_ID = 0
 
+#: Sentinel token ids. Distinct values make an off-by-one in example code
+#: visible instead of silently collapsing onto the padding id.
+_MOCK_EOS_TOKEN_ID = 2
+_MOCK_BOS_TOKEN_ID = 1
+_MOCK_PAD_TOKEN_ID = 0
+_MOCK_MASK_TOKEN_ID = 3
+
 
 class _MockBatch:
     """Stand-in for ``BatchEncoding``.
@@ -48,6 +55,14 @@ class _MockModel:
 
 
 class _MockTokenizer:
+    eos_token_id = _MOCK_EOS_TOKEN_ID
+    bos_token_id = _MOCK_BOS_TOKEN_ID
+    pad_token_id = _MOCK_PAD_TOKEN_ID
+    mask_token_id = _MOCK_MASK_TOKEN_ID
+    eos_token = "</s>"
+    bos_token = "<s>"
+    pad_token = "<pad>"
+
     def __init__(self, responses):
         self._responses = responses
         self._response_index = 0
@@ -64,6 +79,15 @@ class _MockTokenizer:
 
     def batch_decode(self, generated_ids, **_kwargs):
         return [self._next_response(self._next_prompt()) for _ in generated_ids]
+
+    def decode(self, _token_ids, **_kwargs):
+        """Single-sequence counterpart of :meth:`batch_decode`.
+
+        Examples that generate one sequence at a time consume the same
+        response sequence as ``batch_decode``, so both must draw from the same
+        cursor to keep a fixture's responses in the order the fixture declares.
+        """
+        return self._next_response(self._next_prompt())
 
     def _next_prompt(self):
         if self._pending_prompts:
