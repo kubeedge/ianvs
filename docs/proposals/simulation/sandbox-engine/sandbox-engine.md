@@ -133,6 +133,10 @@ When `sandbox_profile` is absent, execution falls through to `testcase.run(works
 
 ### 6.3 Configuration contract (opt-in)
 
+The cluster simulation is configured under the existing `simulation:` key,
+parsed by `BenchmarkingJob._parse_simulation_config()` into `self.simulation`.
+The `sandbox_profile:` key (new, this proposal) coexists with it:
+
 ```yaml
 benchmarkingjob:
   name: "llm-edge-evaluation"
@@ -141,9 +145,15 @@ benchmarkingjob:
   sandbox_profile:
     enabled: true
     system_metrics: ["cpu_utilization", "peak_memory_mb", "wall_time_s"]
-  cluster_simulation:
-    cloud_nodes: 1
-    edge_nodes: 2
+  # EXISTING key — parsed by BenchmarkingJob._parse_simulation_config()
+  # into self.simulation and consumed by build_simulation_environment().
+  # Keys: cloud_number, edge_number, cluster_name, kubeedge_version, sedna_version.
+  simulation:
+    cloud_number: 1
+    edge_number: 2
+    cluster_name: "ianvs-simulation"
+    kubeedge_version: "1.23.0"
+    sedna_version: "latest"
 ```
 
 ### 6.4 System metrics in reports
