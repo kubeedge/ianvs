@@ -160,9 +160,23 @@ class Module:
         base_hps = {}
         hp_name_values_list = []
         for ele in config:
-            hp_config = ele.popitem()
-            hp_name = hp_config[0]
-            hp_values = hp_config[1].get("values")
+            if not isinstance(ele, dict):
+                raise ValueError(
+                    f"hyperparameter entry({ele}) must be dict type, "
+                    f"but got {type(ele).__name__}."
+                )
+            if len(ele) != 1:
+                raise ValueError(
+                    f"hyperparameter entry({ele}) must define exactly one "
+                    f"hyperparameter, but got {len(ele)}: {list(ele)}."
+                )
+            hp_name, hp_config = next(iter(ele.items()))
+            if not isinstance(hp_config, dict):
+                raise ValueError(
+                    f"hyperparameter({hp_name})'s config must be dict type, "
+                    f"but got {type(hp_config).__name__}."
+                )
+            hp_values = hp_config.get("values")
             if hp_name == "other_hyperparameters":
                 base_hps = self._parse_other_hyperparameters(hp_values)
             else:
