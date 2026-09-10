@@ -26,8 +26,9 @@ def check_host_docker():
     If Docker is not installed, try to install Docker with one-click installation script.
     """
 
-    shell_cmd = "docker version | head -n 2"
-    check_docker = subprocess.run(shell_cmd, shell=True, check=True)
+    shell_cmd = "docker version"
+    check_docker = subprocess.run(
+        shell_cmd, shell=True, capture_output=True, check=False)
 
     if check_docker.returncode != 0:
         # trying to install docker
@@ -55,7 +56,8 @@ def check_host_kind():
     """
 
     shell_cmd = "kind version"
-    check_kind = subprocess.run(shell_cmd, shell=True, check=True)
+    check_kind = subprocess.run(
+        shell_cmd, shell=True, capture_output=True, check=False)
 
     if check_kind.returncode == 0:
         LOGGER.info("check Kind successful")
@@ -80,10 +82,10 @@ def get_host_free_memory_size():
     """
     return the current memory(free) on the host(in kB)
     """
-    shell_cmd = "cat /proc/meminfo | grep MemFree"   # in kB
+    shell_cmd = "grep MemFree /proc/meminfo"   # in kB
     with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_memory_info:
-        memory_info = get_memory_info.stdout.read()
-        memory_free = int(str(memory_info).split(":")[1].strip().split(" ")[0])
+        memory_info = get_memory_info.stdout.read().decode("utf-8")
+        memory_free = int(memory_info.split(":")[1].strip().split(" ")[0])
         return memory_free
 
 
@@ -110,11 +112,12 @@ def get_host_number_of_cpus():
     return the number of cpus
 
     """
-    shell_cmd = "lscpu | grep CPU:"
+    # LC_ALL=C keeps the label in English, and "^CPU(s):" anchors the match so the
+    # "NUMA node0 CPU(s):" line (a range such as "0-11") is not picked up instead.
+    shell_cmd = "LC_ALL=C lscpu | grep '^CPU(s):'"
     with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_cpu_info:
-        cpu_info = get_cpu_info.stdout.read()
-        number_of_cpus = int(str(cpu_info).split(":")[
-                             1].strip().split("\\")[0])
+        cpu_info = get_cpu_info.stdout.read().decode("utf-8")
+        number_of_cpus = int(cpu_info.split(":")[1].strip())
         return number_of_cpus
 
 
@@ -130,7 +133,7 @@ def check_host_cpu():
         LOGGER.info("check cpu successful")
     else:
         LOGGER.info(
-            "The number of cpus is insufficient. Number of Cpus: %s kB, Cpus Require: %s kB",
+            "The number of cpus is insufficient. Number of Cpus: %s, Cpus Require: %s",
             number_of_cpus, cpus_require)
         raise RuntimeError("The number os cpus is insufficient.")
 
@@ -155,7 +158,7 @@ def build_simulation_enviroment(simulation):
     check_host_enviroment()         # check the enviroment
 
     shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
-/master/scripts/installation/all-in-one.sh | " \
+/main/scripts/installation/all-in-one.sh | " \
         f"NUM_CLOUD_WORKER_NODES={simulation.cloud_number} " \
         f"NUM_EDGE_NODES={simulation.edge_number} " \
         f"KUBEEDGE_VERSION={simulation.kubeedge_version} " \
