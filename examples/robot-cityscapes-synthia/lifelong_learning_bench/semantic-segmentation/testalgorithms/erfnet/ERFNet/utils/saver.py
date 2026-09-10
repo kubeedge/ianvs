@@ -10,7 +10,17 @@ class Saver(object):
 
     def __init__(self, args):
         self.args = args
-        self.directory = os.path.join('/tmp', args.dataset, args.checkname)
+        
+        # Secure Path Resolution
+        dataset = args.dataset or ""
+        checkname = args.checkname or ""
+        workspace_tmp = os.path.abspath(os.path.join(os.getcwd(), 'tmp'))
+        directory = os.path.abspath(os.path.join(workspace_tmp, dataset, checkname))
+        
+        if not directory.startswith(workspace_tmp):
+            raise ValueError("Path traversal detected: directory is outside the workspace.")
+        self.directory = directory
+        
         self.runs = sorted(glob.glob(os.path.join(self.directory, 'experiment_*')))
         run_id = int(self.runs[-1].split('_')[-1]) + 1 if self.runs else 0
 
