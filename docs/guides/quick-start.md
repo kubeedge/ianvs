@@ -56,8 +56,13 @@ docker build -t ianvs-experiment-image ./examples/cloud-edge-collaborative-infer
 
 3. Run the image in an interactive shell:
 ```bash 
-docker run -it ianvs-experiment-image /bin/bash 
+docker run --gpus all -it ianvs-experiment-image /bin/bash
 ```
+
+The `--gpus all` option makes the host GPU available to the container for the
+vLLM-based edge model used by this example. It requires a compatible NVIDIA
+driver and the NVIDIA Container Toolkit. If you only want to inspect existing
+result files without running the benchmark, you can omit this option.
 
 4. Activate the ianvs-experiment Conda environment:
 ```bash 
