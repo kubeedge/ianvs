@@ -149,6 +149,65 @@ def forget_rate_func(system_metric_info: dict):
     return round(forget_rate, 3)
 
 
+def _system_metric(system_metric_info: dict, key, default=0.0):
+    """
+    Read one profiler-produced value out of the system metric payload.
+
+    The sandbox merges its profile into the same dict the paradigms use for
+    system metrics, so these accessors stay consistent with the existing
+    samples_transfer_ratio / BWT / FWT functions.
+    """
+    if not isinstance(system_metric_info, dict):
+        return default
+    value = system_metric_info.get(key)
+    return default if value is None else value
+
+
+def peak_memory_mb_func(system_metric_info: dict):
+    """Peak memory of the test case's process tree, in MiB."""
+    return _system_metric(
+        system_metric_info, SystemMetricType.PEAK_MEMORY_MB.value
+    )
+
+
+def mean_memory_mb_func(system_metric_info: dict):
+    """Mean sampled memory of the test case's process tree, in MiB."""
+    return _system_metric(
+        system_metric_info, SystemMetricType.MEAN_MEMORY_MB.value
+    )
+
+
+def cpu_utilization_pct_func(system_metric_info: dict):
+    """CPU utilisation as a percentage of one core (200 == two cores busy)."""
+    return _system_metric(
+        system_metric_info, SystemMetricType.CPU_UTILIZATION_PCT.value
+    )
+
+
+def cpu_time_s_func(system_metric_info: dict):
+    """Total user+system CPU seconds consumed by the test case."""
+    return _system_metric(system_metric_info, SystemMetricType.CPU_TIME_S.value)
+
+
+def wall_time_s_func(system_metric_info: dict):
+    """Wall-clock seconds from worker launch to worker exit."""
+    return _system_metric(system_metric_info, SystemMetricType.WALL_TIME_S.value)
+
+
+def memory_headroom_pct_func(system_metric_info: dict):
+    """
+    Percentage of the declared edge-node memory budget left unused.
+
+    Negative means the algorithm exceeded the budget it was benchmarked
+    against, which is the number an edge deployment engineer needs.
+    """
+    peak = _system_metric(system_metric_info, SystemMetricType.PEAK_MEMORY_MB.value)
+    quota = _system_metric(system_metric_info, "quota_memory_mb", default=None)
+    if not quota:
+        return np.nan
+    return round((1.0 - float(peak) / float(quota)) * 100.0, 2)
+
+
 def get_metric_func(metric_dict: dict):
     """
     get metric func by metric info

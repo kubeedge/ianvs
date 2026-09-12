@@ -72,9 +72,16 @@ Related parameters and explanations are as follows:
 
 - `cloud_number` : int, number of the cloud worker
 - `edge_number` : int, number of the edge nodes.
-- `cluster_name` : int, name of the simulation cluster.
+- `cluster_name` : string, name of the simulation cluster.
 - `kubeedge_version` : string, version of kubeedge, e.g. 1.8.0, latest.
 - `sedna_version` : string, version of sedna, e.g. 0.4.3, latest.
+
+> **Topology limits:** Ianvs currently provisions the environment through
+> Sedna's `all-in-one.sh` backend. That backend supports at most **2 cloud
+> worker nodes** and **3 edge nodes**. Keep `cloud_number` at or below `2` and
+> `edge_number` at or below `3`. The current Ianvs parser does not validate
+> these limits, so larger values are accepted initially but fail later during
+> environment provisioning with `Only support ... at most ...`.
 
 Note that the current simulation environment build script is still being debugged at this time. Our current testing is based on Kubeedge v1.8.0, sedna v0.4.3, and the system OS is ubuntu 20.04.
 
