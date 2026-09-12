@@ -1,4 +1,7 @@
+import logging
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 
 class Evaluator(object):
@@ -12,117 +15,124 @@ class Evaluator(object):
     
     def Pixel_Accuracy_Class_Curb(self):
         Acc = np.diag(self.confusion_matrix) / self.confusion_matrix.sum(axis=1)
-        print('-----------Acc of each classes-----------')
-        print("road         : %.6f" % (Acc[0] * 100.0), "%\t")
-        print("sidewalk     : %.6f" % (Acc[1] * 100.0), "%\t")
+        logger.info('-----------Acc of each classes-----------')
+        logger.info("road         : %.6f %%", Acc[0] * 100.0)
+        logger.info("sidewalk     : %.6f %%", Acc[1] * 100.0)
         Acc = np.nanmean(Acc[:2])
         return Acc
         
 
     def Pixel_Accuracy_Class(self):
-        Acc = np.diag(self.confusion_matrix) / self.confusion_matrix.sum(axis=1)
-        print('-----------Acc of each classes-----------')
-        print("road         : %.6f" % (Acc[0] * 100.0), "%\t")
-        print("sidewalk     : %.6f" % (Acc[1] * 100.0), "%\t")
-        print("building     : %.6f" % (Acc[2] * 100.0), "%\t")
-        print("wall         : %.6f" % (Acc[3] * 100.0), "%\t")
-        print("fence        : %.6f" % (Acc[4] * 100.0), "%\t")
-        print("pole         : %.6f" % (Acc[5] * 100.0), "%\t")
-        print("traffic light: %.6f" % (Acc[6] * 100.0), "%\t")
-        print("traffic sign : %.6f" % (Acc[7] * 100.0), "%\t")
-        print("vegetation   : %.6f" % (Acc[8] * 100.0), "%\t")
-        print("terrain      : %.6f" % (Acc[9] * 100.0), "%\t")
-        print("sky          : %.6f" % (Acc[10] * 100.0), "%\t")
-        print("person       : %.6f" % (Acc[11] * 100.0), "%\t")
-        print("rider        : %.6f" % (Acc[12] * 100.0), "%\t")
-        print("car          : %.6f" % (Acc[13] * 100.0), "%\t")
-        print("truck        : %.6f" % (Acc[14] * 100.0), "%\t")
-        print("bus          : %.6f" % (Acc[15] * 100.0), "%\t")
-        print("train        : %.6f" % (Acc[16] * 100.0), "%\t")
-        print("motorcycle   : %.6f" % (Acc[17] * 100.0), "%\t")
-        print("bicycle      : %.6f" % (Acc[18] * 100.0), "%\t")
-        print("dynamic      : %.6f" % (Acc[19] * 100.0), "%\t")
-        print("stair        : %.6f" % (Acc[20] * 100.0), "%\t")
+        with np.errstate(invalid='ignore', divide='ignore'):
+            Acc = np.diag(self.confusion_matrix) / self.confusion_matrix.sum(axis=1)
+        logger.info('-----------Acc of each classes-----------')
+        logger.info("road         : %.6f %%", Acc[0] * 100.0)
+        logger.info("sidewalk     : %.6f %%", Acc[1] * 100.0)
+        logger.info("building     : %.6f %%", Acc[2] * 100.0)
+        logger.info("wall         : %.6f %%", Acc[3] * 100.0)
+        logger.info("fence        : %.6f %%", Acc[4] * 100.0)
+        logger.info("pole         : %.6f %%", Acc[5] * 100.0)
+        logger.info("traffic light: %.6f %%", Acc[6] * 100.0)
+        logger.info("traffic sign : %.6f %%", Acc[7] * 100.0)
+        logger.info("vegetation   : %.6f %%", Acc[8] * 100.0)
+        logger.info("terrain      : %.6f %%", Acc[9] * 100.0)
+        logger.info("sky          : %.6f %%", Acc[10] * 100.0)
+        logger.info("person       : %.6f %%", Acc[11] * 100.0)
+        logger.info("rider        : %.6f %%", Acc[12] * 100.0)
+        logger.info("car          : %.6f %%", Acc[13] * 100.0)
+        logger.info("truck        : %.6f %%", Acc[14] * 100.0)
+        logger.info("bus          : %.6f %%", Acc[15] * 100.0)
+        logger.info("train        : %.6f %%", Acc[16] * 100.0)
+        logger.info("motorcycle   : %.6f %%", Acc[17] * 100.0)
+        logger.info("bicycle      : %.6f %%", Acc[18] * 100.0)
+        logger.info("dynamic      : %.6f %%", Acc[19] * 100.0)
+        logger.info("stair        : %.6f %%", Acc[20] * 100.0)
         if self.num_class == 20:
-            print("small obstacles: %.6f" % (Acc[19] * 100.0), "%\t")
+            logger.info("small obstacles: %.6f %%", Acc[19] * 100.0)
         Acc = np.nanmean(Acc)
         return Acc
 
     def Mean_Intersection_over_Union(self):
-        MIoU = np.diag(self.confusion_matrix) / (
-                    np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
-                    np.diag(self.confusion_matrix))
+        with np.errstate(invalid='ignore', divide='ignore'):
+            MIoU = np.diag(self.confusion_matrix) / (
+                        np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
+                        np.diag(self.confusion_matrix))
 
-        # print MIoU of each class
-        print('-----------IoU of each classes-----------')
-        print("road         : %.6f" % (MIoU[0] * 100.0), "%\t")
-        print("sidewalk     : %.6f" % (MIoU[1] * 100.0), "%\t")
-        print("building     : %.6f" % (MIoU[2] * 100.0), "%\t")
-        print("wall         : %.6f" % (MIoU[3] * 100.0), "%\t")
-        print("fence        : %.6f" % (MIoU[4] * 100.0), "%\t")
-        print("pole         : %.6f" % (MIoU[5] * 100.0), "%\t")
-        print("traffic light: %.6f" % (MIoU[6] * 100.0), "%\t")
-        print("traffic sign : %.6f" % (MIoU[7] * 100.0), "%\t")
-        print("vegetation   : %.6f" % (MIoU[8] * 100.0), "%\t")
-        print("terrain      : %.6f" % (MIoU[9] * 100.0), "%\t")
-        print("sky          : %.6f" % (MIoU[10] * 100.0), "%\t")
-        print("person       : %.6f" % (MIoU[11] * 100.0), "%\t")
-        print("rider        : %.6f" % (MIoU[12] * 100.0), "%\t")
-        print("car          : %.6f" % (MIoU[13] * 100.0), "%\t")
-        print("truck        : %.6f" % (MIoU[14] * 100.0), "%\t")
-        print("bus          : %.6f" % (MIoU[15] * 100.0), "%\t")
-        print("train        : %.6f" % (MIoU[16] * 100.0), "%\t")
-        print("motorcycle   : %.6f" % (MIoU[17] * 100.0), "%\t")
-        print("bicycle      : %.6f" % (MIoU[18] * 100.0), "%\t")
-        print("dynamic      : %.6f" % (MIoU[19] * 100.0), "%\t")
-        print("stair        : %.6f" % (MIoU[20] * 100.0), "%\t")
+        logger.info('-----------IoU of each classes-----------')
+        logger.info("road         : %.6f %%", MIoU[0] * 100.0)
+        logger.info("sidewalk     : %.6f %%", MIoU[1] * 100.0)
+        logger.info("building     : %.6f %%", MIoU[2] * 100.0)
+        logger.info("wall         : %.6f %%", MIoU[3] * 100.0)
+        logger.info("fence        : %.6f %%", MIoU[4] * 100.0)
+        logger.info("pole         : %.6f %%", MIoU[5] * 100.0)
+        logger.info("traffic light: %.6f %%", MIoU[6] * 100.0)
+        logger.info("traffic sign : %.6f %%", MIoU[7] * 100.0)
+        logger.info("vegetation   : %.6f %%", MIoU[8] * 100.0)
+        logger.info("terrain      : %.6f %%", MIoU[9] * 100.0)
+        logger.info("sky          : %.6f %%", MIoU[10] * 100.0)
+        logger.info("person       : %.6f %%", MIoU[11] * 100.0)
+        logger.info("rider        : %.6f %%", MIoU[12] * 100.0)
+        logger.info("car          : %.6f %%", MIoU[13] * 100.0)
+        logger.info("truck        : %.6f %%", MIoU[14] * 100.0)
+        logger.info("bus          : %.6f %%", MIoU[15] * 100.0)
+        logger.info("train        : %.6f %%", MIoU[16] * 100.0)
+        logger.info("motorcycle   : %.6f %%", MIoU[17] * 100.0)
+        logger.info("bicycle      : %.6f %%", MIoU[18] * 100.0)
+        logger.info("dynamic      : %.6f %%", MIoU[19] * 100.0)
+        logger.info("stair        : %.6f %%", MIoU[20] * 100.0)
         if self.num_class == 20:
-            print("small obstacles: %.6f" % (MIoU[19] * 100.0), "%\t")
+            logger.info("small obstacles: %.6f %%", MIoU[19] * 100.0)
 
         MIoU = np.nanmean(MIoU)
         return MIoU
     
     def Mean_Intersection_over_Union_Curb(self):
-        MIoU = np.diag(self.confusion_matrix) / (
-                    np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
-                    np.diag(self.confusion_matrix))
+        with np.errstate(invalid='ignore', divide='ignore'):
+            MIoU = np.diag(self.confusion_matrix) / (
+                        np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
+                        np.diag(self.confusion_matrix))
 
-        # print MIoU of each class
-        print('-----------IoU of each classes-----------')
-        print("road         : %.6f" % (MIoU[0] * 100.0), "%\t")
-        print("sidewalk     : %.6f" % (MIoU[1] * 100.0), "%\t")
-        
+        logger.info('-----------IoU of each classes-----------')
+        logger.info("road         : %.6f %%", MIoU[0] * 100.0)
+        logger.info("sidewalk     : %.6f %%", MIoU[1] * 100.0)
+
         if self.num_class == 20:
-            print("small obstacles: %.6f" % (MIoU[19] * 100.0), "%\t")
+            logger.info("small obstacles: %.6f %%", MIoU[19] * 100.0)
 
         MIoU = np.nanmean(MIoU[:2])
         return MIoU
 
     def Frequency_Weighted_Intersection_over_Union(self):
-        freq = np.sum(self.confusion_matrix, axis=1) / np.sum(self.confusion_matrix)
-        iu = np.diag(self.confusion_matrix) / (
-                    np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
-                    np.diag(self.confusion_matrix))
+        if self.confusion_matrix.sum() == 0:
+            return 0.0
+        with np.errstate(invalid='ignore', divide='ignore'):
+            freq = np.sum(self.confusion_matrix, axis=1) / np.sum(self.confusion_matrix)
+            iu = np.diag(self.confusion_matrix) / (
+                        np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
+                        np.diag(self.confusion_matrix))
 
         FWIoU = (freq[freq > 0] * iu[freq > 0]).sum()
         CFWIoU = freq[freq > 0] * iu[freq > 0]
-        print('-----------FWIoU of each classes-----------')
-        print("road         : %.6f" % (CFWIoU[0] * 100.0), "%\t")
-        print("sidewalk     : %.6f" % (CFWIoU[1] * 100.0), "%\t")
-       
+        logger.info('-----------FWIoU of each classes-----------')
+        if len(CFWIoU) > 0:
+            logger.info("road         : %.6f %%", CFWIoU[0] * 100.0)
+        if len(CFWIoU) > 1:
+            logger.info("sidewalk     : %.6f %%", CFWIoU[1] * 100.0)
+
         return FWIoU
 
     def Frequency_Weighted_Intersection_over_Union_Curb(self):
-        freq = np.sum(self.confusion_matrix, axis=1) / np.sum(self.confusion_matrix)
-        iu = np.diag(self.confusion_matrix) / (
-                np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
-                np.diag(self.confusion_matrix))
+        with np.errstate(invalid='ignore', divide='ignore'):
+            freq = np.sum(self.confusion_matrix, axis=1) / np.sum(self.confusion_matrix)
+            iu = np.diag(self.confusion_matrix) / (
+                    np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
+                    np.diag(self.confusion_matrix))
 
         # FWIoU = (freq[freq > 0] * iu[freq > 0]).sum()
         CFWIoU = freq[freq > 0] * iu[freq > 0]
-        print('-----------FWIoU of each classes-----------')
-        print("road         : %.6f" % (CFWIoU[0] * 100.0), "%\t")
-        print("sidewalk     : %.6f" % (CFWIoU[1] * 100.0), "%\t")
+        logger.info('-----------FWIoU of each classes-----------')
+        logger.info("road         : %.6f %%", CFWIoU[0] * 100.0)
+        logger.info("sidewalk     : %.6f %%", CFWIoU[1] * 100.0)
 
         return np.nanmean(CFWIoU[:2])
 
@@ -136,8 +146,7 @@ class Evaluator(object):
     def add_batch(self, gt_image, pre_image):
         gt_image = np.array(gt_image)
         pre_image = np.array(pre_image)
-        print(gt_image.shape, pre_image.shape)
-        if gt_image.shape != pre_image.shape:
+        while pre_image.ndim > gt_image.ndim:
             pre_image = pre_image[0]
         assert gt_image.shape == pre_image.shape
         self.confusion_matrix += self._generate_matrix(gt_image, pre_image)

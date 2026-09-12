@@ -1,3 +1,4 @@
+import logging
 import os
 import numpy as np
 from PIL import Image
@@ -5,6 +6,8 @@ from torch.utils import data
 from mypath import Path
 from torchvision import transforms
 from dataloaders import custom_transforms as tr
+
+logger = logging.getLogger(__name__)
 
 class CityscapesSegmentation(data.Dataset):
     NUM_CLASSES = 24 # 25
@@ -20,28 +23,32 @@ class CityscapesSegmentation(data.Dataset):
         self.labels = {}
 
         self.disparities_base = os.path.join(self.root, self.split, "depth", "cityscapes_real")
-        self.images[split] = [img[0] for img in data.x] if hasattr(data, "x") else data
 
-
-        if hasattr(data, "x") and len(data.x[0]) == 1:
-            # TODO: fit the case that depth images don't exist.
-            self.disparities[split] = self.images[split]
-        elif hasattr(data, "x") and len(data.x[0]) == 2:
-            self.disparities[split] = [img[1] for img in data.x]
+        if hasattr(data, "x") and len(data.x) > 0:
+            self.images[split] = [img[0] for img in data.x]
+            if len(data.x[0]) == 1:
+                self.disparities[split] = self.images[split]
+            elif len(data.x[0]) == 2:
+                self.disparities[split] = [img[1] for img in data.x]
+            else:
+                self.disparities[split] = self.images[split]
         else:
-            self.disparities[split] = data
+            self.images[split] = []
+            self.disparities[split] = []
 
         self.labels[split] = data.y if hasattr(data, "y") else data
 
         self.ignore_index = 255
 
         if len(self.images[split]) == 0:
-            raise Exception("No RGB images for split=[%s] found in %s" % (split, self.images_base))
+            logger.warning("No RGB images for split=[%s]", split)
+            return
         if len(self.disparities[split]) == 0:
-            raise Exception("No depth images for split=[%s] found in %s" % (split, self.disparities_base))
+            logger.warning("No depth images for split=[%s]", split)
+            return
 
-        print("Found %d %s RGB images" % (len(self.images[split]), split))
-        print("Found %d %s disparity images" % (len(self.disparities[split]), split))
+        logger.info("Found %d %s RGB images", len(self.images[split]), split)
+        logger.info("Found %d %s disparity images", len(self.disparities[split]), split)
 
 
     def __len__(self):

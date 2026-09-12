@@ -2,14 +2,14 @@ class TrainArgs:
     def __init__(self, **kwargs):
         self.depth = False
         self.dataset = 'cityscapes'
-        self.workers = 4
-        self.base_size = 1024
-        self.crop_size = 768
+        self.workers = kwargs.get("workers", 4)
+        self.base_size = kwargs.get("base_size", 1024)
+        self.crop_size = kwargs.get("crop_size", 768)
         self.loss_type = 'ce'
         self.epochs = kwargs.get("epochs", 2)
         self.start_epoch = 0
 
-        self.batch_size = 4
+        self.batch_size = kwargs.get("batch_size", 4)
         self.val_batch_size = 1
         self.use_balanced_weights = False
         self.num_class = 24
