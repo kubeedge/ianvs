@@ -1,4 +1,4 @@
-# Copyright 2022 The KubeEdge Authors.
+﻿# Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -174,7 +174,7 @@ def build_simulation_enviroment(simulation):
 
 def destory_simulation_enviroment(simulation):
     """
-    build the simulation enviroment
+    destroy the simulation enviroment
 
     """
     shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
@@ -182,5 +182,14 @@ def destory_simulation_enviroment(simulation):
         f"CLUSTER_NAME={simulation.cluster_name} bash /dev/stdin clean"
 
     retcode = subprocess.call(shell_cmd, shell=True)
+
+    if retcode == 0:
+        LOGGER.info("The simulation enviroment has been destroyed.")
+    else:
+        LOGGER.error(
+            "Failed to destroy the simulation enviroment (cluster_name=%s). "
+            "It may still be running; manual cleanup with "
+            "`kind delete cluster --name %s` may be required.",
+            simulation.cluster_name, simulation.cluster_name)
 
     return retcode
