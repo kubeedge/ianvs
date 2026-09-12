@@ -133,6 +133,22 @@ The validator produces three related but distinct kinds of information:
 | PR-impact classification | Did the pull request introduce a blocking issue? | [Classification policy](../../../docs/example_validator/classification_policy.md) |
 | Published example health | What does the latest broad evidence say about the example group? | [Status directions](../../../docs/example_validator/status_directions.md) |
 
+### Dataset check failures
+
+JSONL dataset checks read one row at a time. Invalid UTF-8 and file read errors
+produce a failed dataset check, allowing reports for other examples to finish.
+Diagnostics include the file and row number when available. To keep reports
+bounded for heavily corrupted files, only the first 100 invalid-row details per
+file are retained, followed by the count of additional invalid rows; every row
+is still checked. Empty training files remain allowed and empty test files fail.
+
+Run the dataset-validation regression tests without downloading any datasets:
+
+```bash
+PYTHONPATH=.github/workflows/validator python -m unittest discover \
+  -s .github/workflows/validator/tests -p 'test_jsonl_dataset.py' -v
+```
+
 ## Example Health
 
 Broad T2 and T3 validation produces example-health evidence. The
