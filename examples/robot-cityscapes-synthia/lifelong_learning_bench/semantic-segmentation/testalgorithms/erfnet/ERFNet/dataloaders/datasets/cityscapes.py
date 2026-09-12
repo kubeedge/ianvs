@@ -1,5 +1,5 @@
 import os
-os.environ["OMP_NUM_THREADS"] = "1" 
+os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 import numpy as np
 from PIL import Image
@@ -21,31 +21,55 @@ class CityscapesSegmentation(data.Dataset):
         self.labels = {}
 
         self.disparities_base = os.path.join(self.root, self.split, "depth", "cityscapes_real")
-        self.images[split] = [img[0] for img in data.x] if hasattr(data, "x") else data
 
+        if data is None:
+            raise ValueError(
+                f"CityscapesSegmentation requires a 'data' argument for split='{split}', but received None. "
+                "Ensure the dataset is correctly passed from the Ianvs/Sedna pipeline."
+            )
 
-        if hasattr(data, "x") and len(data.x[0]) == 1:
-            # TODO: fit the case that depth images don't exist.
-            self.disparities[split] = self.images[split]
-        elif hasattr(data, "x") and len(data.x[0]) == 2:
-            self.disparities[split] = [img[1] for img in data.x]
-        else:
-            if len(data[0]) == 2:
-                self.images[split] = [img[0] for img in data]
-                self.disparities[split] = [img[1] for img in data]
-            elif len(data[0]) == 1:
-                self.images[split] = [img[0] for img in data]
-                self.disparities[split] = [img[0] for img in data]
+        # Handle BaseDataSource (has .x and .y attributes)
+        if hasattr(data, "x"):
+            raw_x = data.x
+            if not raw_x:
+                raise ValueError(f"data.x is empty for split='{split}'.")
+
+            self.images[split] = [img[0] for img in raw_x]
+
+            if len(raw_x[0]) == 1:
+                # Only RGB, no depth — reuse RGB as depth placeholder
+                self.disparities[split] = self.images[split]
+            elif len(raw_x[0]) >= 2:
+                self.disparities[split] = [img[1] for img in raw_x]
             else:
-                self.images[split] = data
-                self.disparities[split] = data
+                self.disparities[split] = self.images[split]
 
-        self.labels[split] = data.y if hasattr(data, "y") else data
+            # data.y may be None during inference; handle gracefully
+            self.labels[split] = list(data.y) if (hasattr(data, "y") and data.y is not None) else None
+
+        # Handle plain list/tuple of paths
+        else:
+            raw = list(data)
+            if not raw:
+                raise ValueError(f"data is empty for split='{split}'.")
+
+            if isinstance(raw[0], (list, tuple)):
+                if len(raw[0]) >= 2:
+                    self.images[split] = [img[0] for img in raw]
+                    self.disparities[split] = [img[1] for img in raw]
+                else:
+                    self.images[split] = [img[0] for img in raw]
+                    self.disparities[split] = [img[0] for img in raw]
+            else:
+                self.images[split] = raw
+                self.disparities[split] = raw
+
+            self.labels[split] = None
 
         self.ignore_index = 255
 
         if len(self.images[split]) == 0:
-            raise Exception("No RGB images for split=[%s] found in %s" % (split, self.images_base))
+            raise Exception("No RGB images for split=[%s] found in %s" % (split, self.root))
         if len(self.disparities[split]) == 0:
             raise Exception("No depth images for split=[%s] found in %s" % (split, self.disparities_base))
 
@@ -60,15 +84,21 @@ class CityscapesSegmentation(data.Dataset):
         img_path = self.images[self.split][index].rstrip()
         disp_path = self.disparities[self.split][index].rstrip()
         try:
-            lbl_path = self.labels[self.split][index].rstrip()
+            labels = self.labels[self.split]
+            if labels is not None:
+                lbl_path = labels[index].rstrip()
+                _img = Image.open(img_path).convert('RGB')
+                _depth = Image.open(disp_path)
+                _target = Image.open(lbl_path)
+                sample = {'image': _img, 'depth': _depth, 'label': _target}
+            else:
+                _img = Image.open(img_path).convert('RGB')
+                _depth = Image.open(disp_path)
+                sample = {'image': _img, 'depth': _depth, 'label': _img}
+        except Exception:
             _img = Image.open(img_path).convert('RGB')
             _depth = Image.open(disp_path)
-            _target = Image.open(lbl_path)
-            sample = {'image': _img,'depth':_depth, 'label': _target}
-        except:
-            _img = Image.open(img_path).convert('RGB')
-            _depth = Image.open(disp_path)
-            sample = {'image': _img,'depth':_depth, 'label': _img}
+            sample = {'image': _img, 'depth': _depth, 'label': _img}
 
         if self.split == 'train':
             return self.transform_tr(sample)
@@ -153,4 +183,3 @@ if __name__ == '__main__':
             break
 
     plt.show(block=True)
-

@@ -6,7 +6,7 @@ benchmarkingjob:
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/class_increment_semantic_segmentation/lifelong_learning_bench/testenv/testenv.yaml"
+  testenv: "./examples/robot-cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/testenv/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -19,7 +19,7 @@ benchmarkingjob:
       - name: "erfnet_lifelong_learning"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
-        url: "./examples/class_increment_semantic_segmentation/lifelong_learning_bench/testalgorithms/erfnet/test_algorithm.yaml"
+        url: "./examples/robot-cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/testalgorithms/erfnet/test_algorithm.yaml"
 
   # the configuration of ranking leaderboard
   rank:

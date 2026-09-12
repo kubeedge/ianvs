@@ -18,13 +18,15 @@ class TaskAllocationByOrigin:
         label with finite values.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, task_extractor=None, **kwargs):
         self.default_origin = kwargs.get("default", None)
+        # Sedna passes task_extractor to __init__, not __call__.
+        # Store it here; fall back to a hardcoded mapping if not provided.
+        self.task_extractor = task_extractor if task_extractor is not None else {
+            "Synthia": 0, "Cityscapes": 1, "Cloud-Robotics": 2
+        }
 
-    def __call__(self, task_extractor, samples: BaseDataSource):
-        # Mapping of origins to task indices
-        self.task_extractor = {"Synthia": 0, "Cityscapes": 1, "Cloud-Robotics": 2}
-
+    def __call__(self, samples: BaseDataSource):
         if self.default_origin:
             return samples, [int(self.task_extractor.get(self.default_origin))] * len(samples.x)
 
@@ -39,7 +41,6 @@ class TaskAllocationByOrigin:
                     sample_origin = category
                     break
             if sample_origin is None:
-                # If none of the categories match, assign a default origin
                 sample_origin = self.default_origin if self.default_origin else categories[0]
             sample_origins.append(sample_origin)
 

@@ -10,6 +10,13 @@ from sedna.common.log import LOGGER
 from PIL import Image
 from torchvision import transforms
 
+# Make ERFNet's internal flat imports (mypath, dataloaders, models, utils)
+# resolve without relying on an external PYTHONPATH export.
+import sys
+_ERFNET_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ERFNet")
+if _ERFNET_DIR not in sys.path:
+    sys.path.insert(0, _ERFNET_DIR)
+
 from ERFNet.train import Trainer
 from ERFNet.eval import Validator, load_my_state_dict
 from ERFNet.dataloaders import custom_transforms as tr
