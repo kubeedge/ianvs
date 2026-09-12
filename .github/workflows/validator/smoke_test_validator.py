@@ -41,6 +41,7 @@ from static_validator import (
 
 DEFAULT_TIMEOUT_SECONDS = 600
 DEFAULT_DATASET_ROOT = "dataset"
+MAX_JSONL_ISSUES_PER_FILE = 100
 PREPARATION_STEP_FIELDS = ("name", "type", "script", "args", "timeout")
 
 
@@ -648,29 +649,47 @@ def _validate_jsonl_file(
     allow_empty: bool = False,
 ) -> List[str]:
     display_path = _display_path(path, repo_root)
-    if not path.is_file():
-        return ["{}: file is missing".format(display_path)]
-
-    rows = path.read_text(encoding="utf-8").splitlines()
-    if not rows:
-        if allow_empty:
-            return []
-        return ["{}: file is empty".format(display_path)]
-
     issues = []
-    for line_number, line in enumerate(rows, 1):
-        if not line.strip():
-            issues.append("{}:{}: blank line".format(display_path, line_number))
-            continue
-        try:
-            payload = json.loads(line)
-        except json.JSONDecodeError as exc:
-            issues.append("{}:{}: {}".format(display_path, line_number, exc))
-            continue
-        if not isinstance(payload, dict):
-            issues.append("{}:{}: row is not a JSON object".format(display_path, line_number))
-            continue
+    line_number = 0
+    invalid_rows = 0
+    try:
+        if not path.is_file():
+            return ["{}: file is missing".format(display_path)]
+        # Decode individual rows so one damaged UTF-8 sequence can be reported
+        # with its line number without discarding the rest of the batch report.
+        with path.open("rb") as stream:
+            for line_number, row in enumerate(stream, 1):
+                issue = _validate_jsonl_row(row, display_path, line_number)
+                if issue:
+                    invalid_rows += 1
+                    if len(issues) < MAX_JSONL_ISSUES_PER_FILE:
+                        issues.append(issue)
+    except OSError as error:
+        issues.append("{}: could not read file: {}".format(display_path, error))
+
+    omitted = invalid_rows - MAX_JSONL_ISSUES_PER_FILE
+    if omitted > 0:
+        issues.append("{}: {} additional invalid rows omitted".format(display_path, omitted))
+    if not line_number and not allow_empty and not issues:
+        issues.append("{}: file is empty".format(display_path))
     return issues
+
+
+def _validate_jsonl_row(row: bytes, display_path: str, line_number: int) -> str:
+    prefix = "{}:{}: ".format(display_path, line_number)
+    try:
+        line = row.decode("utf-8")
+    except UnicodeDecodeError as error:
+        return prefix + "invalid UTF-8: {}".format(error)
+    if not line.strip():
+        return prefix + "blank line"
+    try:
+        payload = json.loads(line)
+    except json.JSONDecodeError as error:
+        return prefix + str(error)
+    if not isinstance(payload, dict):
+        return prefix + "row is not a JSON object"
+    return ""
 
 
 def _run_smoke_command(
