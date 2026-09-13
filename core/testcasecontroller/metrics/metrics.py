@@ -57,17 +57,19 @@ def compute(key, matrix):
     accuracy = 0.0
     bwt_score = 0.0
     fwt_score = 0.0
-    flag = True
 
-    for row in matrix:
-        if not isinstance(row, list) or len(row) != length - 1:
-            flag = False
-            break
+    # A matrix with fewer than two rows leaves no task pair to compare, and the
+    # score normalisation below would divide by (length - 1) == 0.
+    flag = length > 1
+
+    if flag:
+        for row in matrix:
+            if not isinstance(row, list) or len(row) != length - 1:
+                flag = False
+                break
 
     if not flag:
-        bwt_score = np.nan
-        fwt_score = np.nan
-        return bwt_score, fwt_score
+        return None, np.nan, np.nan
 
     for i in range(length - 1):
         for j in range(length - 1):
