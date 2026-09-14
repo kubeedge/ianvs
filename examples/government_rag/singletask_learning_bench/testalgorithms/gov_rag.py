@@ -13,7 +13,7 @@ from tqdm import tqdm
 class GovernmentRAG:
     def __init__(
         self,
-        base_path: str = "/path/ianvs/dataset/gov_rag",
+        base_path: Optional[str] = None,
         provinces: Optional[Union[str, List[str]]] = None,
         model_name: str = "BAAI/bge-large-zh-v1.5",
         device: str = "cuda" if torch.cuda.is_available() else "cpu",
@@ -29,6 +29,8 @@ class GovernmentRAG:
             device: Device to run the model on
             persist_directory: Directory to persist the vector database
         """
+        if base_path is None:
+            raise ValueError("base_path must be explicitly provided")
         self.base_path = base_path
         self.provinces = self._validate_provinces(provinces)
         self.persist_directory = persist_directory
