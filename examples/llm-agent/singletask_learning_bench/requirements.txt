@@ -1,6 +1,0 @@
-torch
-transformers
-peft
-datasets
-evaluate 
-rouge_score
