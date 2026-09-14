@@ -104,6 +104,21 @@ class ParadigmBase:
             )
 
         if paradigm_type == ParadigmType.LIFELONG_LEARNING.value:
+            task_update_decision = self.module_instances.get(
+                ModuleType.TASK_UPDATE_DECISION.value
+            )
+            if task_update_decision is None:
+                task_update_decision = {
+                    "method": "UpdateStrategyByFinetune",
+                    "param": {"attribute": "accuracy"}
+                }
+            elif isinstance(task_update_decision, dict):
+                if task_update_decision.get("method") == "UpdateStrategyByFinetune":
+                    param = dict(task_update_decision.get("param") or {})
+                    if "attribute" not in param:
+                        param["attribute"] = "accuracy"
+                        task_update_decision["param"] = param
+
             return LifelongLearning(
                 seen_estimator=self.module_instances.get(
                     ModuleType.BASEMODEL.value
@@ -124,9 +139,7 @@ class ParadigmBase:
                 inference_integrate=self.module_instances.get(
                     ModuleType.INFERENCE_INTEGRATE.value
                 ),
-                task_update_decision=self.module_instances.get(
-                    ModuleType.TASK_UPDATE_DECISION.value
-                ),
+                task_update_decision=task_update_decision,
                 unseen_task_allocation=self.module_instances.get(
                     ModuleType.UNSEEN_TASK_ALLOCATION.value
                 ),
