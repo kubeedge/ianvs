@@ -97,13 +97,13 @@ class LifelongLearning(ParadigmBase):
             # pylint: disable=C0201
             # pylint: disable=W1203
             my_dict = {}
-            for r in range(rounds + 1):
+            for r in range(len(dataset_files)):
                 train_dataset_file, eval_dataset_file = dataset_files[r]
                 self.cloud_task_index = self._train(self.cloud_task_index,
                                                     train_dataset_file,
                                                     r)
                 tmp_dict = {}
-                for j in range(1, rounds+1):
+                for j in range(1, len(dataset_files)):
                     _, eval_dataset_file = dataset_files[j]
                     self.edge_task_index, tasks_detail, res = self.my_eval(
                                                     self.cloud_task_index,
@@ -171,7 +171,7 @@ class LifelongLearning(ParadigmBase):
             # pylint: disable=C0201
             # pylint: disable=W1203
             my_dict = {}
-            for r in range(rounds + 1):
+            for r in range(len(dataset_files)):
                 train_dataset_file, eval_dataset_file = dataset_files[r]
                 if r == 0:
                     self.cloud_task_index = self._train(self.cloud_task_index,
@@ -201,7 +201,7 @@ class LifelongLearning(ParadigmBase):
                                                         r)
 
                 tmp_dict = {}
-                for j in range(1, rounds+1):
+                for j in range(1, len(dataset_files)):
                     _, eval_dataset_file = dataset_files[j]
                     self.edge_task_index, tasks_detail, res = self.my_eval(
                                                     self.cloud_task_index,
