@@ -18,7 +18,7 @@ from tqdm import tqdm
 from sedna.common.class_factory import ClassType, ClassFactory
 
 
-__all__ = ('map')
+__all__ = ["map"]
 
 import sys
 import torch
