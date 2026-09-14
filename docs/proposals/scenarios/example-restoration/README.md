@@ -11,6 +11,7 @@ The proposals are organized chronologically so readers can understand how the Ex
 | Phase 1 | 2025 Term 3 | Comprehensive Example Restoration for Ianvs | [#263](https://github.com/kubeedge/ianvs/pull/263) | [`phase-1-2025-term-3/example-restoration.md`](./phase-1-2025-term-3/example-restoration.md) |
 | Phase 2 | 2026 Term 1 | Example Restoration of Ianvs | [#375](https://github.com/kubeedge/ianvs/pull/375) | [`phase-2-2026-term-1/Example_Restoration.md`](./phase-2-2026-term-1/Example_Restoration.md) |
 | Phase 3 | 2026 Term 2 | KubeEdge Ianvs Example Classification CI Validation Framework | [#541](https://github.com/kubeedge/ianvs/pull/541) | [`phase-3-2026-term-2/proposal.md`](./phase-3-2026-term-2/proposal.md) |
+| Phase 4 | 2026 Term 3 | KubeEdge Ianvs Example Environment Contract and Result Validity | [#986](https://github.com/kubeedge/ianvs/pull/986) | [`phase-4-2026-term-3/proposal.md`](./phase-4-2026-term-3/proposal.md) |
 
 ## Phase 1 — 2025 Term 3
 
@@ -29,6 +30,17 @@ It expands the restoration effort into a more concrete plan for restoring multip
 Phase 3 contains the CI validation and classification follow-up introduced through PR #541.
 
 It shifts the Example Restoration effort toward automated example health classification, pull-request validation, and sustainable maintenance workflows. It also uses `examples/llm_simple_qa` as the first concrete restoration target verified by the proposed CI framework.
+
+## Phase 4 — 2026 Term 3
+
+Phase 4 contains the environment contract and result validity follow-up introduced through PR #986.
+
+It shifts the Example Restoration effort from *does an example run?* to *does an example produce a
+result that describes the hardware it ran on?* It introduces a declared environment contract in
+`testenv.yaml`, resolution and verification in `core/`, environment provenance in the benchmark
+report, and replaces the validator's textual CUDA-only heuristic with checks against the
+declaration. It uses the emulated-`bfloat16` case documented in issue #888 as the proven failure
+mode motivating the work.
 
 ## Notes for Maintainers
 
