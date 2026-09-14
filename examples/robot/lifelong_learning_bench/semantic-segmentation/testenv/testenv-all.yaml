@@ -2,9 +2,9 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_url: "/home/shijing.hu/ianvs/dataset/all-train-index.txt"
+    train_url: "/data/datasets/all-train-index.txt"
     # the url address of test dataset index; string type;
-    test_url: "/home/shijing.hu/ianvs/dataset/all-test-index.txt"
+    test_url: "/data/datasets/all-test-index.txt"
 
   # model eval configuration of incremental learning;
   model_eval:
@@ -13,7 +13,7 @@ testenv:
       # metric name; string type;
       name: "accuracy"
       # the url address of python file
-      url: "./examples/robot/lifelong_learning_bench/testenv/accuracy.py"
+      url: "./examples/robot/lifelong_learning_bench/semantic-segmentation/testenv/accuracy.py"
       mode: "no-inference"
 
     # condition of triggering inference model to update
@@ -28,7 +28,7 @@ testenv:
       # metric name; string type;
     - name: "accuracy"
       # the url address of python file
-      url: "./examples/robot/lifelong_learning_bench/testenv/accuracy.py"
+      url: "./examples/robot/lifelong_learning_bench/semantic-segmentation/testenv/accuracy.py"
     - name: "samples_transfer_ratio"
 
   # incremental rounds setting; int type; default value is 2;
