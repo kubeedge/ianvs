@@ -59,16 +59,44 @@ class TestEnv:
                 f" must be int type and not less than 2."
             )
 
+        round_val = getattr(self, "round", None)
+        if not isinstance(round_val, int) or round_val < 1:
+            raise ValueError(f"testenv round(value={round_val}) must be int type and not less than 1.")
+        client_number_val = getattr(self, "client_number", None)
+        if not isinstance(client_number_val, int) or client_number_val < 1:
+            raise ValueError(
+                f"testenv client_number(value={client_number_val}) must be int type and not less than 1."
+            )
+
     def _parse_config(self, config):
-        config_dict = config[str.lower(TestEnv.__name__)]
-        # pylint: disable=C0103
+        config_dict = config.get(str.lower(TestEnv.__name__))
+        if not config_dict:
+            raise ValueError(f"not found {str.lower(TestEnv.__name__)} in config.")
+        fields_mapping = {
+            "model_eval": dict,
+            "metrics": list,
+            "incremental_rounds": int,
+            "round": int,
+            "client_number": int,
+            "use_gpu": bool,
+        }
+
         for k, v in config_dict.items():
             if k == str.lower(Dataset.__name__):
                 self.dataset = Dataset(v)
-            elif k == 'use_gpu':
-                self.use_gpu = bool(v)
-            else:
-                self.__dict__[k] = v
+            elif k in fields_mapping:
+                expected_type = fields_mapping[k]
+                try:
+                    if expected_type == bool:
+                        casted_v = str(v).lower() in ("true", "1", "yes")
+                    else:
+                        casted_v = expected_type(v)
+                    setattr(self, k, casted_v)
+                except (ValueError, TypeError) as err:
+                    raise ValueError(
+                        f"testenv field '{k}' expected {expected_type.__name__}, "
+                        f"got {type(v).__name__} (value={v}). Error: {err}"
+                    ) from err
 
         self._check_fields()
 
