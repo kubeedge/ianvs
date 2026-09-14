@@ -17,6 +17,7 @@ import time
 from threading import Thread
 
 import torch
+from core.common.device import supports_bf16
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 
 from models.base_llm import BaseLLM
@@ -42,7 +43,7 @@ class EagleSpecDecModel(BaseLLM):
         self.model = EaModel.from_pretrained(
             base_model_path=self.config.get("model", None),
             ea_model_path=self.config.get("draft_model", None),
-            torch_dtype=torch.bfloat16,
+            torch_dtype=torch.bfloat16 if supports_bf16() else torch.float32,
             low_cpu_mem_usage=True,
             device_map="auto",
             total_token=-1
