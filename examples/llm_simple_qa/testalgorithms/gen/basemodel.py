@@ -89,9 +89,13 @@ class BaseModel:
         )
         model_inputs = self.tokenizer([text], return_tensors="pt").to(device)
         
+        # do_sample is passed explicitly: without it the value comes from the
+        # model's own generation_config.json, which enables sampling for chat
+        # models and makes the benchmark score vary between identical runs.
         generated_ids = self.model.generate(
             model_inputs.input_ids,
-            max_new_tokens=512
+            max_new_tokens=512,
+            do_sample=False
         )
         generated_ids = [
             output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
