@@ -25,7 +25,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "BaseModel"
       # the url address of python module; string type;
-      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/basemodel-simple.py"
+      url: "./examples/robot/lifelong_learning_bench/semantic-segmentation/testalgorithms/rfnet/basemodel-simple.py"
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
         # name of the hyperparameter; string type;
@@ -40,7 +40,7 @@ algorithm:
       # name of python module; string type;
       name: "TaskDefinitionByOrigin"
       # the url address of python module; string type;
-      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/task_definition_by_origin-simple.py"
+      url: "./examples/robot/lifelong_learning_bench/semantic-segmentation/testalgorithms/rfnet/task_definition_by_origin-simple.py"
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
         # name of the hyperparameter; string type;
@@ -53,7 +53,7 @@ algorithm:
       # name of python module; string type;
       name: "TaskAllocationByOrigin"
       # the url address of python module; string type;
-      url: "./examples/robot/lifelong_learning_bench/testalgorithms/rfnet/task_allocation_by_origin-simple.py"
+      url: "./examples/robot/lifelong_learning_bench/semantic-segmentation/testalgorithms/rfnet/task_allocation_by_origin-simple.py"
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
         # name of the hyperparameter; string type;
