@@ -98,7 +98,7 @@ python ./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/generate_r
 -r ./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/reid_job.yaml
 ```
 
-Finally, the report is generated under <Ianvs_HOME>/examples/pedestrian_tracking/multiedge_inference_bench/reports. You can also check the sample report under the current directory.
+Finally, the report is generated under <Ianvs_HOME>/examples/MOT17/multiedge_inference_bench/pedestrian_tracking/reports. You can also check the sample report under the current directory.
 
 ## What is next
 
