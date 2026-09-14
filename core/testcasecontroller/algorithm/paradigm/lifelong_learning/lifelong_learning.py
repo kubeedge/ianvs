@@ -155,7 +155,7 @@ class LifelongLearning(ParadigmBase):
             inference_dataset = self.dataset.load_data(self.dataset.test_url, "eval",
                                                    feature_process=_data_feature_process)
             kwargs = {}
-            test_res = job.my_inference(inference_dataset, **kwargs)
+            test_res, _, _ = job.inference(inference_dataset, **kwargs)
             del job
             for key in my_dict.keys():
                 LOGGER.info(f"{key} scores: {my_dict[key]}")
@@ -333,7 +333,7 @@ class LifelongLearning(ParadigmBase):
         for i, _ in enumerate(inference_dataset.x):
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
-            res, is_unseen_task, _ = job.inference_2(data, **kwargs)
+            res, is_unseen_task, _ = job.inference(data, **kwargs)
             inference_results.append(res)
             if is_unseen_task:
                 unseen_tasks.append(inference_dataset.x[i])
