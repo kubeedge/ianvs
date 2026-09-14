@@ -236,7 +236,7 @@ class BaseModel:
 
             restorer = self._get_restorer()
             saver = tf.train.Saver(max_to_keep=3)
-            self.checkpoint_path = self.load(Context.get_parameters("base_model_url"))
+            self.checkpoint_path = self.load(Context.get_parameters("initial_model_url"))
 
             config = tf.ConfigProto()
             config.gpu_options.allow_growth = False
