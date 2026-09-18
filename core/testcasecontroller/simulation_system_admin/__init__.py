@@ -13,5 +13,5 @@
 # limitations under the License.
 
 # pylint: disable=missing-module-docstring
-from .simulation_system_admin import build_simulation_enviroment
-from .simulation_system_admin import destory_simulation_enviroment
+from .simulation_system_admin import build_simulation_environment
+from .simulation_system_admin import destroy_simulation_environment

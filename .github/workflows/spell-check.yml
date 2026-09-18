@@ -1,0 +1,22 @@
+name: Spell Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  codespell:
+    runs-on: ubuntu-22.04
+    name: codespell
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+      - name: Install codespell
+        run: python -m pip install codespell
+      - name: Run codespell
+        run: codespell --config .codespellrc core

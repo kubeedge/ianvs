@@ -22,7 +22,7 @@ from core.common.constant import TestObjectType
 from core.testenvmanager.testenv import TestEnv
 from core.storymanager.rank import Rank
 from core.testcasecontroller.simulation import Simulation
-from core.testcasecontroller.simulation_system_admin import build_simulation_enviroment
+from core.testcasecontroller.simulation_system_admin import build_simulation_environment
 from core.testcasecontroller.testcasecontroller import TestCaseController
 
 
@@ -84,7 +84,7 @@ class BenchmarkingJob:
         self.workspace = os.path.join(self.workspace, self.name)
 
         if self.simulation is not None:
-            build_simulation_enviroment(self.simulation)
+            build_simulation_environment(self.simulation)
 
         self.test_env.prepare()
 
