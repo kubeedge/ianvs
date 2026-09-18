@@ -228,7 +228,7 @@ class Dataset:
                 output_dir=output_dir,
                 times=times,
             )
-        # add new splitting method for semantic segmantation
+        # add new splitting method for semantic segmentation
         if method == "city_splitting":
             return self._city_splitting(
                 dataset_url,
