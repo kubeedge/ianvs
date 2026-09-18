@@ -20,7 +20,7 @@ import tempfile
 
 import numpy as np
 
-from core.common.constant import ParadigmType, SystemMetricType
+from core.common.constant import EnvKey, ParadigmType, SystemMetricType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 from core.testcasecontroller.metrics import get_metric_func
 from core.common.utils import get_file_format, is_local_dir
@@ -121,8 +121,8 @@ class IncrementalLearning(ParadigmBase):
         if not is_local_dir(hard_example_saved_dir):
             os.makedirs(hard_example_saved_dir)
 
-        os.environ["RESULT_SAVED_URL"] = inference_output_dir
-        os.environ["MODEL_URL"] = model
+        os.environ[EnvKey.RESULT_SAVED_URL] = inference_output_dir
+        os.environ[EnvKey.MODEL_URL] = model
 
         return hard_example_saved_dir
 
@@ -166,8 +166,8 @@ class IncrementalLearning(ParadigmBase):
         if not is_local_dir(train_output_dir):
             os.makedirs(train_output_dir)
 
-        os.environ["MODEL_URL"] = train_output_dir
-        os.environ["BASE_MODEL_URL"] = model
+        os.environ[EnvKey.MODEL_URL] = train_output_dir
+        os.environ[EnvKey.BASE_MODEL_URL] = model
 
         job = self.build_paradigm_job(ParadigmType.INCREMENTAL_LEARNING.value)
         train_dataset = self.dataset.load_data(data_index_file, "train")
@@ -177,7 +177,7 @@ class IncrementalLearning(ParadigmBase):
         return new_model
 
     def _eval(self, new_model, old_model, data_index_file):
-        os.environ["MODEL_URLS"] = f"{new_model};{old_model}"
+        os.environ[EnvKey.MODEL_URLS] = f"{new_model};{old_model}"
         model_eval_info = self.model_eval_config
         model_metric = model_eval_info.get("model_metric")
 
