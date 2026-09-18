@@ -91,7 +91,12 @@ class BenchmarkingJob:
         self.testcase_controller.build_testcases(test_env=self.test_env,
                                                  test_object=self.test_object)
 
-        succeed_testcases, test_results = self.testcase_controller.run_testcases(self.workspace)
+        def incremental_save(testcase, res, time):
+            self.rank.save([testcase], {testcase.id: (res, time)}, output_dir=self.workspace)
+
+        succeed_testcases, test_results = self.testcase_controller.run_testcases(
+            self.workspace, incremental_save_cb=incremental_save
+            )
 
         if test_results:
             self.rank.save(succeed_testcases, test_results, output_dir=self.workspace)
