@@ -15,35 +15,39 @@
 
 """simulation system admin"""
 
+import os
+import shutil
 import subprocess
 
 from core.common.log import LOGGER
 
+SEDNA_INSTALL_URL = ("https://raw.githubusercontent.com/kubeedge/sedna"
+                     "/main/scripts/installation/all-in-one.sh")
+MEMORY_REQUIRE_KB = 4 * 1024 * 1024    # 4GB
+CPUS_REQUIRE = 4
+
+
+def _run(cmd, **kwargs):
+    """run a command (list, no shell); return CompletedProcess, or None if the binary is missing."""
+    try:
+        return subprocess.run(cmd, check=False, **kwargs)
+    except (FileNotFoundError, PermissionError):
+        return None
+
 
 def check_host_docker():
     """
-    check whether Docker is installed on the host.
-    If Docker is not installed, try to install Docker with one-click installation script.
+    check whether Docker is installed and its daemon is reachable on the host.
+    Raises RuntimeError with an actionable message otherwise.
     """
+    if shutil.which("docker") is None:
+        raise RuntimeError(
+            "docker is not installed; install it from https://docs.docker.com/get-docker/")
 
-    shell_cmd = "docker version | head -n 2"
-    check_docker = subprocess.run(shell_cmd, shell=True, check=True)
-
-    if check_docker.returncode != 0:
-        # trying to install docker
-        LOGGER.info("trying to install docker")
-        try:
-            shell_install_docker = "curl -fsSL https://get.docker.com | \
-bash -s docker --mirror Aliyun"
-            install_docker = subprocess.run(
-                shell_install_docker, shell=True, check=True)
-
-            if install_docker.returncode == 0:
-                LOGGER.info("successfully installed docker")
-            else:
-                raise RuntimeError("install docker failed")
-        except Exception as err:
-            raise RuntimeError(f"install docker failed, error: {err}.") from err
+    ret = _run(["docker", "version"], capture_output=True, text=True)
+    if ret is None or ret.returncode != 0:
+        raise RuntimeError(
+            "docker is installed but the daemon is not reachable; is it running?")
 
     LOGGER.info("check docker successful")
 
@@ -51,94 +55,127 @@ bash -s docker --mirror Aliyun"
 def check_host_kind():
     """
     check whether Kind is installed on the host.
-    If Kind is not installed, try to install Kind with one-click installation script.
+    Raises RuntimeError with an actionable message otherwise.
     """
+    if shutil.which("kind") is None:
+        raise RuntimeError(
+            "kind is not installed; "
+            "install it from https://kind.sigs.k8s.io/docs/user/quick-start/")
 
-    shell_cmd = "kind version"
-    check_kind = subprocess.run(shell_cmd, shell=True, check=True)
+    ret = _run(["kind", "version"], capture_output=True, text=True)
+    if ret is None or ret.returncode != 0:
+        raise RuntimeError("kind is installed but `kind version` failed.")
 
-    if check_kind.returncode == 0:
-        LOGGER.info("check Kind successful")
-    else:
+    LOGGER.info("check Kind successful")
+
+
+def _read_cgroup_limit(*paths):
+    """return the first numeric cgroup limit found in paths, or None if unlimited/absent."""
+    for path in paths:
         try:
-            shell_install_kind = "curl -Lo ./kind \
-https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64 && \
-chmod +x ./kind && mv ./kind /usr/local/bin/kind"
-            install_kind = subprocess.run(
-                shell_install_kind, shell=True, check=True)
+            with open(path, encoding="utf-8") as limit_file:
+                raw = limit_file.read().split()
+        except OSError:
+            continue
+        if raw and raw[0].isdigit():
+            return int(raw[0])
+    return None
 
-            if install_kind.returncode == 0:
-                LOGGER.info("successfully installed kind")
-            else:
-                LOGGER.exception("install kind failed")
-                raise RuntimeError("install kind failed")
-        except Exception as err:
-            raise RuntimeError(f"install kind failed, error: {err}.") from err
+
+def _cgroup_cpu_limit():
+    """CPU quota of the current cgroup (v2 then v1) as a float, or None if unlimited."""
+    try:
+        with open("/sys/fs/cgroup/cpu.max", encoding="utf-8") as cpu_max:
+            quota, period = cpu_max.read().split()[:2]
+        if quota != "max":
+            return int(quota) / int(period)
+    except (OSError, ValueError):
+        pass
+    quota = _read_cgroup_limit("/sys/fs/cgroup/cpu/cpu.cfs_quota_us")
+    period = _read_cgroup_limit("/sys/fs/cgroup/cpu/cpu.cfs_period_us")
+    if quota and period:
+        return quota / period
+    return None
 
 
 def get_host_free_memory_size():
     """
-    return the current memory(free) on the host(in kB)
+    return the currently available memory on the host (in kB).
+    Uses MemAvailable (falls back to MemFree) from /proc/meminfo.
     """
-    shell_cmd = "cat /proc/meminfo | grep MemFree"   # in kB
-    with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_memory_info:
-        memory_info = get_memory_info.stdout.read()
-        memory_free = int(str(memory_info).split(":")[1].strip().split(" ")[0])
-        return memory_free
+    try:
+        with open("/proc/meminfo", encoding="utf-8") as meminfo:
+            fields = {}
+            for line in meminfo:
+                key, _, value = line.partition(":")
+                fields[key.strip()] = value.strip()
+    except OSError as err:
+        raise RuntimeError(
+            f"cannot read host memory info (simulation requires a Linux host): {err}") from err
+
+    free = None
+    for key in ("MemAvailable", "MemFree"):
+        if key in fields:
+            free = int(fields[key].split()[0])
+            break
+    if free is None:
+        raise RuntimeError("cannot find MemAvailable/MemFree in /proc/meminfo")
+
+    # inside a container /proc/meminfo reports the host; honour the cgroup limit too
+    limit = _read_cgroup_limit("/sys/fs/cgroup/memory.max",
+                               "/sys/fs/cgroup/memory/memory.limit_in_bytes")
+    if limit is not None and limit < 1 << 60:
+        free = min(free, limit // 1024)
+    return free
 
 
 def check_host_memory():
     """
     check whether the current memory is sufficient(>=4GB)
-
     """
     memory_free = get_host_free_memory_size()
-    memory_require = 4 * 1024 * 1024    # 4GB
 
-    if memory_free >= memory_require:
+    if memory_free >= MEMORY_REQUIRE_KB:
         LOGGER.info("check memory successful")
     else:
-        LOGGER.exception(
-            "The current free memory is insufficient. \
-Current Memory Free: %s kB, Memory Require: %s kB",
-            memory_free, memory_require)
-        raise RuntimeError("The current free memory is insufficient.")
+        msg = (f"The current free memory is insufficient. "
+               f"Current Memory Free: {memory_free} kB, Memory Require: {MEMORY_REQUIRE_KB} kB")
+        LOGGER.error(msg)
+        raise RuntimeError(msg)
 
 
 def get_host_number_of_cpus():
     """
     return the number of cpus
-
     """
-    shell_cmd = "lscpu | grep CPU:"
-    with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_cpu_info:
-        cpu_info = get_cpu_info.stdout.read()
-        number_of_cpus = int(str(cpu_info).split(":")[
-                             1].strip().split("\\")[0])
-        return number_of_cpus
+    if hasattr(os, "sched_getaffinity"):
+        count = len(os.sched_getaffinity(0))
+    else:
+        count = os.cpu_count() or 0
+    quota = _cgroup_cpu_limit()
+    if quota is not None:
+        count = min(count, int(quota))
+    return count
 
 
 def check_host_cpu():
     """
     check whether the number of CPUs is sufficient (>=4cores)
-
     """
     number_of_cpus = get_host_number_of_cpus()
-    cpus_require = 4
 
-    if number_of_cpus >= cpus_require:
+    if number_of_cpus >= CPUS_REQUIRE:
         LOGGER.info("check cpu successful")
     else:
-        LOGGER.info(
-            "The number of cpus is insufficient. Number of Cpus: %s kB, Cpus Require: %s kB",
-            number_of_cpus, cpus_require)
-        raise RuntimeError("The number os cpus is insufficient.")
+        msg = (f"The number of cpus is insufficient. "
+               f"Number of Cpus: {number_of_cpus}, Cpus Require: {CPUS_REQUIRE}")
+        LOGGER.error(msg)
+        raise RuntimeError(msg)
 
 
 def check_host_enviroment():
     """
     check the host enviroment, includes docker, kind, cpu and memory.
-
     """
     check_host_docker()
     check_host_kind()
@@ -146,41 +183,59 @@ def check_host_enviroment():
     check_host_cpu()
 
 
+def _installer_env(simulation):
+    """environment for the sedna installer; unset values keep the installer defaults."""
+    env = dict(os.environ)
+    if simulation.cluster_name:
+        env["CLUSTER_NAME"] = simulation.cluster_name
+    env["NUM_CLOUD_WORKER_NODES"] = str(simulation.cloud_number)
+    env["NUM_EDGE_NODES"] = str(simulation.edge_number)
+    if simulation.kubeedge_version:
+        env["KUBEEDGE_VERSION"] = simulation.kubeedge_version
+    if simulation.sedna_version:
+        env["SEDNA_VERSION"] = simulation.sedna_version
+    return env
+
+
+def _fetch_installer():
+    """download the sedna all-in-one script (fails loudly on HTTP errors)."""
+    ret = _run(["curl", "-fsSL", SEDNA_INSTALL_URL], capture_output=True)
+    if ret is None or ret.returncode != 0:
+        raise RuntimeError(f"failed to download the installer from {SEDNA_INSTALL_URL}")
+    return ret.stdout
+
+
 def build_simulation_enviroment(simulation):
     """
     build a simulation enviroment
-
     """
-
     check_host_enviroment()         # check the enviroment
 
-    shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
-/master/scripts/installation/all-in-one.sh | " \
-        f"NUM_CLOUD_WORKER_NODES={simulation.cloud_number} " \
-        f"NUM_EDGE_NODES={simulation.edge_number} " \
-        f"KUBEEDGE_VERSION={simulation.kubeedge_version} " \
-        f"SEDNA_VERSION={simulation.sedna_version} " \
-        f"CLUSTER_NAME={simulation.cluster_name} bash -"
-
-    build_simulation_env_ret = subprocess.run(
-        shell_cmd, shell=True, check=True)
-
-    if build_simulation_env_ret.returncode == 0:
-        LOGGER.info(
-            "Congratulation! The simulation enviroment build successful!")
-    else:
+    ret = _run(["bash", "-s", "--"], input=_fetch_installer(), env=_installer_env(simulation))
+    if ret is None or ret.returncode != 0:
+        # a failed install can leave a partial cluster behind; clean up best-effort
+        LOGGER.error("simulation enviroment build failed, cleaning up the partial cluster")
+        try:
+            destory_simulation_enviroment(simulation)
+        except RuntimeError as err:
+            LOGGER.error("cleanup after failed build also failed: %s", err)
         raise RuntimeError("The simulation enviroment build failed.")
+
+    LOGGER.info("Congratulation! The simulation enviroment build successful!")
 
 
 def destory_simulation_enviroment(simulation):
     """
-    build the simulation enviroment
-
+    destroy the simulation enviroment; returns the installer's exit code.
     """
-    shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
-/main/scripts/installation/all-in-one.sh | " \
-        f"CLUSTER_NAME={simulation.cluster_name} bash /dev/stdin clean"
+    env = dict(os.environ)
+    if simulation.cluster_name:
+        env["CLUSTER_NAME"] = simulation.cluster_name
+    ret = _run(["bash", "-s", "--", "clean"], input=_fetch_installer(), env=env)
+    return -1 if ret is None else ret.returncode
 
-    retcode = subprocess.call(shell_cmd, shell=True)
 
-    return retcode
+# correctly spelled aliases; the misspelled names are kept for backward compatibility
+build_simulation_environment = build_simulation_enviroment
+destroy_simulation_environment = destory_simulation_enviroment
+check_host_environment = check_host_enviroment

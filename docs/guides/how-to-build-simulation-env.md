@@ -64,19 +64,23 @@ benchmarkingjob:
     cloud_number: 1
     edge_number: 2
     cluster_name: "ianvs-simulation"
-    kubeedge_version: "1.8.0"
-    sedna_version: "0.4.3"
+    kubeedge_version: "v1.14.0"
+    sedna_version: "latest"
 ```
 
 Related parameters and explanations are as follows:
 
-- `cloud_number` : int, number of the cloud worker
-- `edge_number` : int, number of the edge nodes.
-- `cluster_name` : int, name of the simulation cluster.
-- `kubeedge_version` : string, version of kubeedge, e.g. 1.8.0, latest.
-- `sedna_version` : string, version of sedna, e.g. 0.4.3, latest.
+- `cloud_number` : int, number of the cloud worker (0-2).
+- `edge_number` : int, number of the edge nodes (0-3).
+- `cluster_name` : string, name of the simulation cluster; must not be empty if given.
+- `kubeedge_version` : string, version of kubeedge; default v1.14.0. Versions v1.16 and later currently fail to deploy: the Sedna all-in-one installer uses its own bundled `keadm` (v1.9.1), which downloads `devices_v1alpha2` CRD files that KubeEdge removed from release-1.16 on, so the download fails with an HTTP 404. v1.14.0 is the newest version verified to deploy end-to-end.
+- `sedna_version` : string, version of sedna, e.g. v0.4.3, latest (default: resolved by the installer).
 
-Note that the current simulation environment build script is still being debugged at this time. Our current testing is based on Kubeedge v1.8.0, sedna v0.4.3, and the system OS is ubuntu 20.04.
+Invalid values (booleans, negative or out-of-range node counts, empty names, non-string versions) are rejected when the config is parsed. Unknown keys are ignored with a warning. The simulation environment is torn down automatically when the job ends, even if it fails.
+
+The simulation requires a Linux host with Docker and kind installed. Ianvs no longer auto-installs them; it stops with a clear error if they are missing.
+
+If building the environment fails, Ianvs removes the partially built cluster before reporting the error. If one test case fails, the results of the test cases that completed are still ranked; the job stops with an error only when every test case fails.
 
 ### 2. Run the benchmarkingJob
 
@@ -84,12 +88,12 @@ We just need to attach the `benchmarkingJob.yaml` when executing the `ianvs` com
 
 Next, the `Simulation System Administrator` module will first check your system environment, including the following checks:
 
-1. Whether `docker` has been installed. If not, it will try to help users install it.
-2. Whether `kind` has been installed. If not, it will try to help users install it.
-3. Whether the number of cpus is sufficient. Currently we tentatively need 4 CPU logical cores.
-4. Whether the available memory is sufficient. More than 4GB of free memory is required.
+1. Whether `docker` is installed and its daemon is reachable. If not, Ianvs stops with an error that links to the Docker installation guide.
+2. Whether `kind` is installed and `kind version` runs. If not, Ianvs stops with an error that links to the kind quick start.
+3. Whether at least 4 CPU cores are available. Ianvs counts the cores it is allowed to use, and inside a container it also applies the container's CPU limit (cgroup), so the check reflects what the simulation can really use.
+4. Whether at least 4 GB of memory is available. Ianvs reads `MemAvailable` from `/proc/meminfo` (falling back to `MemFree`), and inside a container it also applies the container's memory limit (cgroup).
 
-If you pass the above environment tests, you will see the following information in the terminal.
+If you pass the above environment tests, you will see output like the following in the terminal (this example is from the original 2022 run; your timestamps and line numbers will differ).
 
 ```shell
 [2022-10-29 01:12:54,544] simulation_system_admin.py(48) [INFO] - check docker successful
@@ -117,3 +121,15 @@ See Pod status: kubectl -n sedna get pod
 ```
 
 In the end. You get an all-in-one environment of sedna.
+
+## Troubleshooting
+
+| Message or symptom | Cause | What to do |
+|---|---|---|
+| `docker is not installed; install it from https://docs.docker.com/get-docker/` | Docker is not on the host. | Install Docker, then run Ianvs again. |
+| `docker is installed but the daemon is not reachable; is it running?` | The Docker daemon is stopped, or your user cannot access it. | Start the daemon (for example `sudo systemctl start docker`) and make sure your user may run `docker version`. |
+| `kind is not installed; install it from https://kind.sigs.k8s.io/docs/user/quick-start/` | kind is not on the host. | Install kind, then run Ianvs again. |
+| `failed to download the installer from ...` | The Sedna all-in-one installer could not be downloaded. | Check the host's network access to `raw.githubusercontent.com`; building the environment needs a network connection. |
+| `cannot read host memory info (simulation requires a Linux host)` | Ianvs is not running on Linux. | Run the simulation on a Linux host. |
+| `The current free memory is insufficient ...` or `The number of cpus is insufficient ...` | The host, or the container Ianvs runs in, has less than 4 GB of available memory or fewer than 4 CPU cores. | Free memory, raise the container's limits, or use a larger host. The message shows the current and required values. |
+| The build fails with an HTTP 404 while `keadm` downloads a device CRD file | `kubeedge_version` is set to v1.16 or later; the installer's bundled `keadm` v1.9.1 requests CRD files those releases no longer have. | Use the default `v1.14.0`, the newest version verified to deploy end-to-end. |
