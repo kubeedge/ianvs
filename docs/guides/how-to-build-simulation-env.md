@@ -86,16 +86,16 @@ Next, the `Simulation System Administrator` module will first check your system 
 
 1. Whether `docker` has been installed. If not, it will try to help users install it.
 2. Whether `kind` has been installed. If not, it will try to help users install it.
-3. Whether the number of cpus is sufficient. Currently we tentatively need 4 CPU logical cores.
-4. Whether the available memory is sufficient. More than 4GB of free memory is required.
+3. Whether the available memory is sufficient. More than 4GB of free memory is required.
+4. Whether the number of cpus is sufficient. Currently we tentatively need 4 CPU logical cores.
 
 If you pass the above environment tests, you will see the following information in the terminal.
 
 ```shell
 [2022-10-29 01:12:54,544] simulation_system_admin.py(48) [INFO] - check docker successful
 [2022-10-29 01:12:54,559] simulation_system_admin.py(61) [INFO] - check Kind successful
-[2022-10-29 01:12:54,617] simulation_system_admin.py(130) [INFO] - check cpu successful
-[2022-10-29 01:12:54,626] simulation_system_admin.py(99) [INFO] - check memory successful
+[2022-10-29 01:12:54,617] simulation_system_admin.py(99) [INFO] - check memory successful
+[2022-10-29 01:12:54,626] simulation_system_admin.py(130) [INFO] - check cpu successful
 ```
 
 Next, the module starts installing all-in-one environment of sedna. If all goes well, you should get the following output:
