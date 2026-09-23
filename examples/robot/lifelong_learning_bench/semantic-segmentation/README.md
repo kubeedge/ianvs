@@ -37,7 +37,7 @@ sudo apt-get install libgl1-mesa-glx -y
 python -m pip install --upgrade pip
 
 cd ianvs 
-python -m pip install ./examples/resources/third_party/*
+python -m pip install ./resources/third_party/*
 python -m pip install -r requirements.txt
 ```
 

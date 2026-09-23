@@ -137,7 +137,7 @@ python -m pip install --upgrade pip
 
 # Then install some third-party packages that Ianvs needs:
 cd ianvs/project/ianvs
-python -m pip install ./examples/resources/third_party/*
+python -m pip install ./resources/third_party/*
 python -m pip install -r requirements.txt 
 python setup.py install
 
