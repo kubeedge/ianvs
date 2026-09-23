@@ -16,7 +16,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "OpenVLA_Finetune"
       # the url address of python module; string type;
-      url: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/singletask_learning_bench/testalgorithms/vla_dataselect/basemodel.py"
+      url: "./examples/cloud_VLA_finetune/singletask_learning_bench/testalgorithms/vla_dataselect/basemodel.py"
 
       # # hyperparameters configuration for the python module; list type;
       hyperparameters:
