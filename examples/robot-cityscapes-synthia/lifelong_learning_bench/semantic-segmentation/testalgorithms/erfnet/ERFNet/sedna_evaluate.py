@@ -20,9 +20,9 @@ def eval():
     eval_data.parse(eval_dataset_url, use_raw=False)
 
     task_allocation = {
-        "method": "TaskAllocationByOrigin",
+        "method": "TaskAllocationByDomain",
         "param": {
-            "origins": ["real", "sim"]
+            "origins": ["Cityscapes", "Synthia", "Cloud-Robotics"]
         }
     }
 

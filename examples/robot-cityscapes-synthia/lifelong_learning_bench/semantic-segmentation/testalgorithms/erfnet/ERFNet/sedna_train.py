@@ -20,16 +20,16 @@ def _load_txt_dataset(dataset_url):
 
 def train(estimator, train_data):
     task_definition = {
-        "method": "TaskDefinitionByOrigin",
+        "method": "TaskDefinitionByDomain",
         "param": {
-            "origins": ["real", "sim"]
+            "origins": ["Cityscapes", "Synthia", "Cloud-Robotics"]
         }
     }
 
     task_allocation = {
-        "method": "TaskAllocationByOrigin",
+        "method": "TaskAllocationByDomain",
         "param": {
-            "origins": ["real", "sim"]
+            "origins": ["Cityscapes", "Synthia", "Cloud-Robotics"]
         }
     }
 
