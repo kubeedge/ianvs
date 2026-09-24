@@ -24,7 +24,8 @@ import time
 import editdistance
 import matplotlib.pyplot as plt
 import numpy as np
-from langchain import PromptTemplate, OpenAI
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import OpenAI
 from rtree import index
 from scipy.interpolate import interp1d
 from shapely.geometry import Polygon, Point, box, LineString

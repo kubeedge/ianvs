@@ -18,7 +18,7 @@ from typing import Optional, Dict, Any, Tuple
 
 import compress_json
 import open_clip
-from langchain.llms import OpenAI
+from langchain_openai import OpenAI
 from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
