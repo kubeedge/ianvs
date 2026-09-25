@@ -1,104 +1,140 @@
-# Government BenchMark
+# Government Benchmark
 
-## Introduction
+This example runs the Ianvs single-task learning benchmark for the GovAff
+government affairs dataset. It contains two benchmark jobs:
 
-This is the work for Domain-specific Large Model Benchmark:
+- `objective`: multiple-choice government affairs questions, scored with `acc`
+- `subjective`: open-ended government affairs questions, scored by an LLM judge
 
-Constructs a suite for the government sector, including test datasets, evaluation metrics, testing environments, and usage guidelines.
+The commands below assume you run them from the repository root.
 
-This Benchmark consists of two parts: subjective evaluation data and objective evaluation data.
+## Requirements
 
-## Design
+- Python 3.9 or 3.10
+- Enough disk space for the GovAff dataset and the selected Hugging Face model
+- A Kaggle account/API token, or a browser download of the public dataset
+- A DeepSeek-compatible API key only if you run the subjective benchmark
 
-### Metadata Format
+## Install
 
-| Name | Field Name | Option | Description |
-| --- | --- | --- | --- |
-| Data Name | dataset |  Required | Name of the dataset |
-| Data Description | description | Optional | Dataset description, such as usage scope, sample size, etc. |
-| First-level Dimension | level_1_dim | Required | Should fill in "Single Modal" or "Multi-Modal" |
-| Second-level Dimension | level_2_dim | Required | For "Single Modal", fill in "Text", "Image", or "Audio". For "Multi-Modal", fill in "Text-Image", "Text-Audio", "Image-Audio", or "Text-Image-Audio" |
-| Third-level Dimension | level_3_dim | Optional | Should be filled if all samples in the dataset have the same third-level dimension. If filled, content should be based on the standards shown in the normative reference document |
-| Fourth-level Dimension | level_4_dim | Optional | Should be filled if all samples in the dataset have the same third-level dimension. If filled, content should be based on the standards shown in the normative reference document |
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -e .
+python -m pip install -r examples/government/singletask_learning_bench/requirements.txt
+```
 
-metadata example:
+On Linux or macOS, activate the environment with:
+
+```bash
+source .venv/bin/activate
+```
+
+## Prepare Dataset
+
+Download the GovAff dataset from Kaggle:
+
+```powershell
+python -m pip install kaggle
+kaggle datasets download -d kubeedgeianvs/the-government-affairs-dataset-govaff -p dataset
+python -m zipfile -e dataset/the-government-affairs-dataset-govaff.zip dataset/govaff_raw
+python examples/government/singletask_learning_bench/prepare_dataset.py
+```
+
+If you download the zip in a browser, place it under `dataset/`, unzip it to
+`dataset/govaff_raw`, then run the same `prepare_dataset.py` command.
+
+After preparation, Ianvs should see this layout:
+
+```text
+dataset/government
+|-- objective
+|   |-- test_data
+|   |   |-- data.jsonl
+|   |   `-- metadata.json
+|   `-- train_data
+|       `-- data.jsonl
+`-- subjective
+    |-- test_data
+    |   |-- data.jsonl
+    |   `-- metadata.json
+    `-- train_data
+        `-- data.jsonl
+```
+
+The preparation step converts the current Kaggle folder names
+`government/multi-choice questions` and `government/subjective questions` into
+the paths expected by the Ianvs YAML files.
+
+## Model Configuration
+
+By default, both jobs load `Qwen/Qwen2-0.5B-Instruct` from Hugging Face. To use a
+local checkpoint or another compatible causal language model, set:
+
+```powershell
+$env:GOVERNMENT_BENCH_MODEL = "C:\path\to\model-or-huggingface-id"
+```
+
+On Linux or macOS:
+
+```bash
+export GOVERNMENT_BENCH_MODEL=/path/to/model-or-huggingface-id
+```
+
+The model uses CUDA when available and falls back to CPU.
+
+## Run
+
+Objective benchmark:
+
+```powershell
+ianvs -f examples/government/singletask_learning_bench/objective/benchmarkingjob.yaml
+```
+
+Subjective benchmark:
+
+```powershell
+$env:DEEPSEEK_API_KEY = "your_api_key"
+ianvs -f examples/government/singletask_learning_bench/subjective/benchmarkingjob.yaml
+```
+
+Optional subjective judge settings:
+
+```powershell
+$env:DEEPSEEK_BASE_URL = "https://api.deepseek.com"
+$env:DEEPSEEK_MODEL = "deepseek-chat"
+```
+
+Outputs are written under `workspace/government/objective` and
+`workspace/government/subjective`.
+
+## Data Format
+
+Metadata files use:
 
 ```json
 {
-    "dataset": "Medical BenchMark",
-    "description": "xxx",
+    "dataset": "A Objective BenchMark Template",
+    "description": "A government benchmark for llm testing",
     "level_1_dim": "single-modal",
     "level_2_dim": "text",
     "level_3_dim": "Q&A",
-    "level_4_dim": "medical"
+    "level_4_dim": "government"
 }
 ```
 
-### Data format:
-
-|name|Option|information|
-|---|---|---|
-|prompt|Optional|the background of the LLM testing|
-|query|Required|the testing question|
-|response|Required|the answer of the question|
-|explanation|Optional|the explanation of the answer|
-|judge_prompt|Optional|the prompt of the judge model|
-|level_1_dim|Optional|single-modal or multi-modal|
-|level_2_dim|Optional|single-modal: text, image, video; multi-modal: text-image, text-video, text-image-video|
-|level_3_dim|Required|details|
-|level_4_dim|Required|details|
-
-data example:
+Subjective test rows use the Sedna LLM metadata parser format:
 
 ```json
 {
-    "prompt": "Please think step by step and answer the question.",
-    "question": "Which one is the correct answer of xxx? A. xxx B. xxx C. xxx D. xxx",
-    "response": "C",
-    "explanation": "xxx",
+    "prompt": "System or task background.",
+    "query": "Question text.",
+    "response": "Reference answer.",
+    "judge_prompt": "Judge prompt ending before the candidate answer.",
     "level_1_dim": "single-modal",
     "level_2_dim": "text",
-    "level_3_dim": "knowledge Q&A",
-    "level_4_dim": "medical knowledge"
+    "level_3_dim": "Q&A",
+    "level_4_dim": "government"
 }
 ```
-
-
-## Change to Core Code
-
-![](./imgs/structure.png)
-
-## Prepare Datasets
-
-You can download dataset in [kaggle](https://www.kaggle.com/datasets/kubeedgeianvs/the-government-affairs-dataset-govaff/data?select=government_benchmark)
-
-```
-dataset/government
-├── objective
-│   ├── test_data
-│   │   ├── data.jsonl
-│   │   └── metadata.json
-│   └── train_data
-└── subjective
-    ├── test_data
-    │   ├── data_full.jsonl
-    │   ├── data.jsonl
-    │   └── metadata.json
-    └── train_data
-```
-
-## Prepare Environment
-
-You should change your sedna package like this: [my sedna repo commit](https://github.com/IcyFeather233/sedna/commit/e13b82363c03dc771fca4922a24798554ca32a9f)
-
-Or you can replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `examples/resources/sedna-llm.zip`
-
-## Run Ianvs
-
-### Objective
-
-`ianvs -f examples/government/singletask_learning_bench/objective/benchmarkingjob.yaml`
-
-### Subjective
-
-`ianvs -f examples/government/singletask_learning_bench/subjective/benchmarkingjob.yaml`
