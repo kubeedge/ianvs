@@ -62,26 +62,39 @@ class TestCaseController:
 
     @classmethod
     def _parse_algorithms_config(cls, config):
-        algorithms = []
+        all_expanded_algorithms = []
         for algorithm_config in config:
             name = algorithm_config.get("name")
             config_file = algorithm_config.get("url")
+
+            if not config_file:
+                raise ValueError(f"Algorithm 'url' is missing for algorithm: {name}")
+
             if not utils.is_local_file(config_file):
-                raise RuntimeError(f"not found algorithm config file({config_file}) in local")
+                raise FileNotFoundError(f"Algorithm config file not found: {config_file}")
 
             try:
-                config = utils.yaml2dict(config_file)
-                algorithm = Algorithm(name, config)
-                algorithms.append(algorithm)
+                raw_config = utils.yaml2dict(config_file)
             except Exception as err:
-                raise RuntimeError(f"algorithm config file({config_file} is not supported, "
-                                f"error: {err}") from err
+                raise ValueError(
+                    f"Failed to parse algorithm config file({config_file}): {err}"
+                ) from err
 
-        new_algorithms = []
-        for algorithm in algorithms:
+            try:
+                algorithm = Algorithm(name, raw_config)
+            except Exception as err:
+                raise RuntimeError(
+                    f"Failed to initialize Algorithm '{name}' from {config_file}: {err}"
+                ) from err
+
+            # If no modules_list (e.g. no permutations), add the base algorithm
+            if not algorithm.modules_list:
+                all_expanded_algorithms.append(algorithm)
+                continue
+
             for modules in algorithm.modules_list:
                 new_algorithm = copy.deepcopy(algorithm)
                 new_algorithm.modules = modules
-                new_algorithms.append(new_algorithm)
+                all_expanded_algorithms.append(new_algorithm)
 
-        return new_algorithms
+        return all_expanded_algorithms
