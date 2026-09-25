@@ -130,12 +130,12 @@ class Algorithm:
         return None
 
     def _check_fields(self):
-        if not self.name and not isinstance(self.name, str):
-            raise ValueError(f"algorithm name({self.name}) must be provided and be string type.")
+        if not isinstance(self.name, str) or not self.name:
+            raise ValueError(f"algorithm name({self.name!r}) must be provided and be string type.")
 
-        if not self.paradigm_type and not isinstance(self.paradigm_type, str):
+        if not isinstance(self.paradigm_type, str) or not self.paradigm_type:
             raise ValueError(
-                f"algorithm paradigm({self.paradigm_type}) must be provided and be string type.")
+                f"algorithm paradigm({self.paradigm_type!r}) must be provided and be string type.")
 
         paradigm_types = [e.value for e in ParadigmType.__members__.values()]
         if self.paradigm_type not in paradigm_types:
@@ -145,12 +145,30 @@ class Algorithm:
         if not isinstance(self.incremental_learning_data_setting, dict):
             raise ValueError(
                 f"algorithm incremental_learning_data_setting"
-                f"({self.incremental_learning_data_setting} must be dictionary type.")
+                f"({self.incremental_learning_data_setting}) must be dictionary type.")
 
         if not isinstance(self.lifelong_learning_data_setting, dict):
             raise ValueError(
                 f"algorithm lifelong_learning_data_setting"
-                f"({self.lifelong_learning_data_setting} must be dictionary type.")
+                f"({self.lifelong_learning_data_setting}) must be dictionary type.")
+
+        if not isinstance(self.fl_data_setting, dict):
+            raise ValueError(
+                f"algorithm fl_data_setting({self.fl_data_setting}) must be dictionary type.")
+
+        data_partition = self.fl_data_setting.get("data_partition")
+        if data_partition is not None and data_partition not in ("iid", "non-iid"):
+            raise ValueError(
+                f"algorithm fl_data_setting data_partition({data_partition!r}) must be 'iid' or 'non-iid'.")
+
+        non_iid_ratio = self.fl_data_setting.get("non_iid_ratio")
+        if non_iid_ratio is not None and (
+            isinstance(non_iid_ratio, bool)
+            or not isinstance(non_iid_ratio, (int, float))
+            or not 0 < non_iid_ratio <= 1.0
+        ):
+            raise ValueError(
+                f"algorithm fl_data_setting non_iid_ratio({non_iid_ratio!r}) must be a number in (0, 1].")
 
         if not isinstance(self.initial_model_url, str):
             raise ValueError(

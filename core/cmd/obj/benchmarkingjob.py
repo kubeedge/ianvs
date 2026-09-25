@@ -51,27 +51,35 @@ class BenchmarkingJob:
         self._parse_config(config)
 
     def _check_fields(self):
-        if not self.name and not isinstance(self.name, str):
-            raise ValueError(f"benchmarkingjob's name({self.name}) must be provided"
+        if not isinstance(self.name, str) or not self.name:
+            raise ValueError(f"benchmarkingjob's name({self.name!r}) must be provided"
                              f" and be string type.")
 
         if not isinstance(self.workspace, str):
-            raise ValueError(f"benchmarkingjob's workspace({self.workspace}) must be string type.")
+            raise ValueError(f"benchmarkingjob's workspace({self.workspace!r}) must be string type.")
 
-        if not self.test_object and not isinstance(self.test_object, dict):
-            raise ValueError(f"benchmarkingjob's test_object({self.test_object})"
-                             f" must be dict type.")
+        if not isinstance(self.test_object, dict) or not self.test_object:
+            raise ValueError(f"benchmarkingjob's test_object({self.test_object!r})"
+                             f" must be a non-empty dict type.")
 
         test_object_types = [e.value for e in TestObjectType.__members__.values()]
         test_object_type = self.test_object.get("type")
         if test_object_type not in test_object_types:
             raise ValueError(
-                f"benchmarkingjob' test_object doesn't support the type({test_object_type}), "
+                f"benchmarkingjob' test_object doesn't support the type({test_object_type!r}), "
                 f"the following test object types can be selected: {test_object_types}.")
 
         if not self.test_object.get(test_object_type):
             raise ValueError(f"benchmarkingjob' test_object doesn't find"
-                             f" the field({test_object_type}).")
+                             f" the field({test_object_type!r}).")
+
+        if self.test_env is None:
+            raise ValueError("benchmarkingjob's testenv must be provided "
+                             "in the benchmarking config file.")
+
+        if self.rank is None:
+            raise ValueError("benchmarkingjob's rank must be provided "
+                             "in the benchmarking config file.")
 
     def run(self):
         """

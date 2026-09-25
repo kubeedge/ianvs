@@ -43,6 +43,13 @@ def draw_heatmap_picture(output, title, matrix):
     plt.savefig(output_dir)
     plt.show()
 
+_VISUALIZATION_FUNCS = {"print_table", "draw_heatmap_picture"}
+
 def get_visualization_func(mode):
     """ get visualization func """
+    if mode not in _VISUALIZATION_FUNCS:
+        raise ValueError(
+            f"unsupported visualization method: {mode!r}. "
+            f"Valid options are: {sorted(_VISUALIZATION_FUNCS)}"
+        )
     return getattr(sys.modules[__name__], mode)
