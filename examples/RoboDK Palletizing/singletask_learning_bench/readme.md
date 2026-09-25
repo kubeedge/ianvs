@@ -208,7 +208,7 @@ Assuming the current directory is `ianvs/project` created in Step 1, execute the
 
 ```bash
 # Navigate to the single-task learning benchmark directory
-cd ianvs/project/ianvs/example/RoboDK_Palletizing/singletask_learning_bench/singletasklearning
+cd ianvs/project/ianvs/examples/RoboDK Palletizing/singletask_learning_bench/singletasklearning
 
 # Start benchmarking
 ianvs -f benchmarkingjob.yaml 
@@ -265,13 +265,13 @@ benchmarkingjob:
   name: "palletizing_bench"
   workspace: "./workspace/palletizing_bench"
 
-  testenv: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testenv/testenv.yaml"
+  testenv: "/root/ianvs/project/ianvs-0.3.0/examples/RoboDK Palletizing/singletask_learning_bench/testenv/testenv.yaml"
 
   test_object:
     type: "algorithms"
     algorithms:
       - name: "YOLOv8n"
-        url: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testalgorithms/algorithm.yaml"
+        url: "/root/ianvs/project/ianvs-0.3.0/examples/RoboDK Palletizing/singletask_learning_bench/testalgorithms/algorithm.yaml"
 
   rank:
     sort_by:
@@ -312,10 +312,10 @@ testenv:
       # metric name; string type;
     - name: "map50"
       # the url address of python file
-      url: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testenv/map50.py"
+      url: "/root/ianvs/project/ianvs-0.3.0/examples/RoboDK Palletizing/singletask_learning_bench/testenv/map50.py"
     - name: "map90"
       # the url address of python file
-      url: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testenv/map90.py"
+      url: "/root/ianvs/project/ianvs-0.3.0/examples/RoboDK Palletizing/singletask_learning_bench/testenv/map90.py"
 
 ```
 
@@ -330,7 +330,7 @@ algorithm:
   modules:
     - type: "basemodel"
       name: "YOLOv8n"
-      url: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testalgorithms/basemodel.py"
+      url: "/root/ianvs/project/ianvs-0.3.0/examples/RoboDK Palletizing/singletask_learning_bench/testalgorithms/basemodel.py"
       
       hyperparameters:
         - learning_rate:
