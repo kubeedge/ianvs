@@ -26,13 +26,13 @@
 - [Future](#future)
 - [References](#references)
 
-## Deatails of Cloud Edge Collaborative Inference for LLMs
+## Details of Cloud Edge Collaborative Inference for LLMs
 
 ### Introduction
 
 This example aims to implement benchmarks for **LLM in cloud-edge collaborative inference scenario**. 
 
-### Why LLM need cloud-edge collaborative inference?
+### Why do LLM need cloud-edge collaborative inference?
 
 Currently, such LLMs have billions or even trillions of parameters, requiring massive computing power for training and deployment. Therefore, they are often deployed in cloud computing centers and serving via APIs. However, such service paradigm faces many drawbacks.
 
