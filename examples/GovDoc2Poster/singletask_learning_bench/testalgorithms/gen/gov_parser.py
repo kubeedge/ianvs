@@ -174,6 +174,9 @@ class NewGovernmentDocumentParser:
     
     def _extract_key_information(self, content: str, structured_content: Dict) -> Dict[str, Any]:
         """Extract key information"""
+        if structured_content is None:
+            structured_content = {}
+
         key_info = {
             'main_topic': structured_content.get('main_topic', ''),
             'purpose': structured_content.get('purpose', ''),
