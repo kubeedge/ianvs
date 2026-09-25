@@ -145,9 +145,9 @@ class Rank:
         return all_df.sort_values(by=sort_metric_list, ascending=is_ascend_list)
 
     def _get_all(self, test_cases, test_results) -> pd.DataFrame:
-        all_df = pd.DataFrame(columns=self.all_df_header)
+        rows = []
 
-        for i, test_case in enumerate(test_cases):
+        for _, test_case in enumerate(test_cases):
             algorithm = test_case.algorithm
             test_result = test_results[test_case.id][0]
 
@@ -171,8 +171,9 @@ class Rank:
             # add hyperparameters of algorithm modules
             row_data.update(self._get_algorithm_hyperparameters(algorithm))
 
-            # fill data
-            all_df.loc[i] = row_data
+            rows.append(row_data)
+
+        all_df = pd.DataFrame(rows, columns=self.all_df_header)
 
         new_df = self._concat_existing_data(all_df)
 
