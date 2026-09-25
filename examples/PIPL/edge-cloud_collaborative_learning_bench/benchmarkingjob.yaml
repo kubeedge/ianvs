@@ -2,13 +2,13 @@ benchmarkingjob:
   name: "pipl-compliant-privacy-preserving-llm-bench"
   workspace: "./workspace-pipl-llm"
   
-  testenv: "./testenv/testenv.yaml"
+  testenv: "./examples/PIPL/edge-cloud_collaborative_learning_bench/testenv/testenv.yaml"
   
   test_object:
     type: "algorithms"
     algorithms:
       - name: "privacy-preserving-llm-collaboration"
-        url: "./test_algorithms/algorithm.yaml"
+        url: "./examples/PIPL/edge-cloud_collaborative_learning_bench/test_algorithms/algorithm.yaml"
   
   rank:
     sort_by: [{"Accuracy": "descend"}, {"Privacy_Score": "descend"}]

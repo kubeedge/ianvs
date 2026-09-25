@@ -47,9 +47,7 @@ from privacy_encryption.compliance_monitor import ComplianceMonitor
 logger = logging.getLogger(__name__)
 
 
-@ClassFactory.register(ClassType.GENERAL, alias="PIPLPrivacyDatasetProcessor")
-@ClassFactory.register(ClassType.GENERAL, alias="PrivacyPreservingEdgeModel")
-@ClassFactory.register(ClassType.GENERAL, alias="PrivacyPreservingCloudModel")
+@ClassFactory.register(ClassType.GENERAL, alias="PrivacyPreservingLLM")
 class PrivacyPreservingLLM:
     """
     PIPL-Compliant Privacy-Preserving LLM for Cloud-Edge Collaborative Inference
