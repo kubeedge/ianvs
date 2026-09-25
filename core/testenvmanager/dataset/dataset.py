@@ -441,6 +441,8 @@ class Dataset:
             )
         )
         times = times - 1
+        if times <= 0:
+            return data_files
         step = int((len(all_data) - index0) / times)
         index = 1
         while index <= times:
