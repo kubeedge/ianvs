@@ -101,3 +101,29 @@ def load_module(url):
         sys.path.pop(0)
     except Exception as err:
         raise RuntimeError(f"load module(url={url}) failed, error: {err}") from err
+
+
+def patch_sedna_timeouts():
+    """Bypass Sedna network timeouts during local offline benchmarking."""
+    if os.getenv("BYPASS_TIMEOUTS", "1") == "1":
+        try:
+            import sedna.service.client
+            from core.common.log import LOGGER
+            original_http_request = sedna.service.client.http_request
+            LOGGER.info("Bypassing Sedna network timeouts is active.")
+
+            def patched_http_request(url, *args, **kwargs):
+                """Bypass local/invalid HTTP endpoints to speed up offline runs."""
+                is_local_endpoint = (
+                    not url
+                    or url.startswith("None")
+                    or "127.0.0.1" in url
+                    or "localhost" in url
+                )
+                if is_local_endpoint:
+                    raise ConnectionError("Connection refused.")
+                return original_http_request(url, *args, **kwargs)
+
+            sedna.service.client.http_request = patched_http_request
+        except ImportError:
+            pass
