@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Accuracy metric for cloud-edge LLM benchmark."""
+
 from sedna.common.class_factory import ClassType, ClassFactory
 from result_parser import JointInferenceResult
 
@@ -45,15 +47,21 @@ def acc(y_true, y_pred):
         The accuracy (%)
     """
 
+    if not y_pred:
+        return 0.0
+
     infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
 
-    y_pred = [get_last_letter(pred.result.completion) for pred in infer_res]
-    y_true = [get_last_letter(y) for y in y_true]
+    y_pred_list = [get_last_letter(pred.result.completion) for pred in infer_res]
+    y_true_list = [get_last_letter(y) for y in y_true]
 
     # 使用列表推导来比较两个列表中的元素是否相同
-    same_elements = [y_pred[i] == y_true[i] for i in range(len(y_pred))]
+    same_elements = [y_pred_list[i] == y_true_list[i] for i in range(len(y_pred_list))]
+
+    if not same_elements:
+        return 0.0
 
     # 计算相同元素的数量
-    acc = sum(same_elements) / len(same_elements)
+    accuracy_val = sum(same_elements) / len(same_elements)
 
-    return round(acc * 100, 2)
+    return round(accuracy_val * 100, 2)
