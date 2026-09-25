@@ -6,7 +6,7 @@ benchmarkingjob:
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/cityscapes/singletask_learning_bench/testenv/testenv.yaml"
+  testenv: "./examples/cityscapes/singletask_learning_bench/semantic-segmentation/testenv/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -19,7 +19,7 @@ benchmarkingjob:
       - name: "rfnet_singletask_learning"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml;
-        url: "./examples/cityscapes/singletask_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml"
+        url: "./examples/cityscapes/singletask_learning_bench/semantic-segmentation/testalgorithms/rfnet/rfnet_algorithm.yaml"
 
   # the configuration of ranking leaderboard
   rank:
