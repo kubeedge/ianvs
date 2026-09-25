@@ -5,7 +5,7 @@ algorithm:
   modules:
     - type: "basemodel"
       name: "RFNet"
-      url: "./examples/cloudrobotics/singletask_learning_bench/testalgorithms/rfnet/basemodel.py"
+      url: "./examples/Cloud_Robotics/singletask_learning_bench/Semantic_Segmentation/testalgorithms/basemodel.py"
 
       hyperparameters:
         - momentum:
