@@ -207,11 +207,11 @@ pip install ultralytics
 Assuming the current directory is `ianvs/project` created in Step 1, execute the following relative path command.(adjust path to match your installation)
 
 ```bash
-# Navigate to the single-task learning benchmark directory
-cd ianvs/project/ianvs/example/RoboDK_Palletizing/singletask_learning_bench/singletasklearning
+# Navigate to the repository root (created in Step 1)
+cd ianvs/project/ianvs
 
 # Start benchmarking
-ianvs -f benchmarkingjob.yaml 
+ianvs -f "examples/RoboDK Palletizing/singletask_learning_bench/benchmarkingjob.yaml" 
 ```
 
 ### Results
