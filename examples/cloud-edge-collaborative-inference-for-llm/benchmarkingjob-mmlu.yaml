@@ -2,13 +2,14 @@ benchmarkingjob:
   # job name of bechmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  workspace: "./workspace"
+  # "~/" cannot be identified, so must be relative path or absoulute path
+  workspace: "./workspace-mmlu"
+
+  hard_example_mining_mode: "mining-then-inference"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/testenv/testenv.yaml"
-  #testenv: "./examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/testenv/testenv-small.yaml"
-  #testenv: "./examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/testenv/testenv-full.yaml"
+  testenv: "./examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv-mmlu.yaml"
 
   # the configuration of test object
   test_object:
@@ -18,16 +19,16 @@ benchmarkingjob:
     # test algorithm configuration files; list type;
     algorithms:
       # algorithm name; string type;
-      - name: "rfnet_lifelong_learning"
+      - name: "query-routing"
         # the url address of test algorithm configuration file; string type;
-        # the file format supports yaml/yml
-        url: "./examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/testalgorithms/rfnet/rfnet_algorithm.yaml"
+        # the file format supports yaml/yml;
+        url: "./examples/cloud-edge-collaborative-inference-for-llm/testalgorithms/query-routing/test_queryrouting.yaml"
 
   # the configuration of ranking leaderboard
   rank:
     # rank leaderboard with metric of test case's evaluation and order ; list type;
     # the sorting priority is based on the sequence of metrics in the list from front to back;
-    sort_by: [ { "accuracy": "descend" }, { "samples_transfer_ratio": "ascend" } ]
+    sort_by: [ { "Accuracy": "descend" } ]
 
     # visualization configuration
     visualization:
@@ -51,24 +52,18 @@ benchmarkingjob:
       # currently the options of value are as follows:
       #   1> "all": select all modules in the leaderboard;
       #   2> modules in the leaderboard, e.g., "basemodel"
-      modules: [ "all" ]
+      modules: [ "hard_example_mining" ]
       # currently the options of value are as follows:
       #   1> "all": select all hyperparameters in the leaderboard;
       #   2> hyperparameters in the leaderboard, e.g., "momentum"
-      hyperparameters: [ "all" ]
+      hyperparameters: [ "edgemodel-model", "edgemodel-backend", "cloudmodel-model"]
       # currently the options of value are as follows:
       #   1> "all": select all metrics in the leaderboard;
-      #   2> metrics in the leaderboard, e.g., "F1_SCORE"
-      metrics: [ "accuracy", "samples_transfer_ratio" ]
+      #   2> metrics in the leaderboard, e.g., "f1_score"
+      metrics: ["Accuracy", "Edge Ratio", "Time to First Token", "Throughput", "Internal Token Latency", "Cloud Prompt Tokens", "Cloud Completion Tokens", "Edge Prompt Tokens", "Edge Completion Tokens"]
 
-    # model of save selected and all dataitems in workspace `./rank` ; string type;
+    # model of save selected and all dataitems in workspace; string type;
     # currently the options of value are as follows:
     #  1> "selected_and_all": save selected and all dataitems;
     #  2> "selected_only": save selected dataitems;
     save_mode: "selected_and_all"
-
-
-
-
-
-
