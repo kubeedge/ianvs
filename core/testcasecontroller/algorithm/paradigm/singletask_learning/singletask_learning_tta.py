@@ -11,6 +11,7 @@ import os
 import torch
 from mmdet.apis import init_detector
 from core.common.constant import ParadigmType
+from core.common.log import LOGGER
 from examples.yaoba.singletask_learning_yolox_tta.resource.utils.TTA_strategy import TTA_Strategy
 from .singletask_learning import SingleTaskLearning
 
@@ -52,7 +53,7 @@ class SingleTaskLearningTTA(SingleTaskLearning):
 
         # Perform inference with data augmentation policy.
         job.load(trained_model)
-        print(f"Total infer strategy is :{strategy}")
+        LOGGER.info(f"Total infer strategy is :{strategy}")
         infer_res = job.tta_predict(test_set, strategy)
 
         return infer_res

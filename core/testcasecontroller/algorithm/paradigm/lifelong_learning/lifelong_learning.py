@@ -300,7 +300,6 @@ class LifelongLearning(ParadigmBase):
 
     def _inference(self, edge_task_index, data_index_file, rounds):
         # pylint:disable=duplicate-code
-        #print("start inference")
         output_dir = os.path.join(self.workspace,
                                   f"output/inference/results/{rounds}")
         if not is_local_dir(output_dir):
@@ -329,7 +328,6 @@ class LifelongLearning(ParadigmBase):
             # fix the bug of "TypeError: call() got an unexpected keyword argument 'mode'"
         else:
             kwargs = {"mode": mode}
-        #print(len(inference_dataset.x))
         for i, _ in enumerate(inference_dataset.x):
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
