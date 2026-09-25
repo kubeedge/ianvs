@@ -22,8 +22,6 @@ from sedna.datasources import (
     CSVDataParse,
     TxtDataParse,
     JSONDataParse,
-    JsonlDataParse,
-    JSONMetaDataParse
 )
 
 from core.common import utils
@@ -575,20 +573,20 @@ class Dataset:
             data = CSVDataParse(data_type=data_type, func=feature_process)
             data.parse(file, label=label)
 
-        if data_format == DatasetFormat.TXT.value:
+        elif data_format == DatasetFormat.TXT.value:
             data = TxtDataParse(data_type=data_type, func=feature_process)
             data.parse(file, use_raw=use_raw)
 
-        if data_format == DatasetFormat.JSON.value:
+        elif data_format == DatasetFormat.JSON.value:
             data = JSONDataParse(data_type=data_type, func=feature_process)
             data.parse(file)
 
-        if data_format == DatasetFormat.JSONL.value:
-            data = JsonlDataParse(data_type=data_type, func=feature_process)
+        elif data_format == DatasetFormat.JSONL.value:
+            data = JSONDataParse(data_type=data_type, func=feature_process)
             data.parse(file)
 
-        if data_format == DatasetFormat.JSONFORLLM.value:
-            data = JSONMetaDataParse(data_type=data_type, func=feature_process)
+        elif data_format == DatasetFormat.JSONFORLLM.value:
+            data = JSONDataParse(data_type=data_type, func=feature_process)
             data.parse(file, **kwargs)
 
         return data
