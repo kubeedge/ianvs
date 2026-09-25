@@ -1,0 +1,37 @@
+name: Spellcheck Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.md'
+  pull_request:
+    paths:
+      - '**.md'
+
+jobs:
+  spellcheck:
+    runs-on: ubuntu-latest
+    name: Spellcheck Markdown Files
+    # Non-blocking: spellcheck is advisory, not a merge barrier
+    continue-on-error: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install aspell
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y aspell aspell-en
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install pyspelling
+        run: pip install pyspelling
+
+      - name: Run spellcheck
+        run: python -m pyspelling --config .spellcheck.yml
