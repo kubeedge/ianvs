@@ -34,6 +34,9 @@ def cloud_completion_tokens(_, y_pred):
 
     infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
 
+    if not infer_res:
+        return 0
+
     cloud_completion_tokens = sum([pred.cloud_result.completion_tokens for pred in infer_res])
 
     return cloud_completion_tokens

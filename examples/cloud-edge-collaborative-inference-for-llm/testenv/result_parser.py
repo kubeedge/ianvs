@@ -42,18 +42,20 @@ class Response:
             `Response` Object
         """
 
-        if response:
+        if response and isinstance(response, dict):
+            usage = response.get("usage") or {}
+            perf = response.get("perf") or {}
             return cls(
-                response["completion"],
-                response["usage"]["prompt_tokens"],
-                response["usage"]["completion_tokens"],
-                response["usage"]["total_tokens"],
-                response["perf"]["time_to_first_token"],
-                response["perf"]["internal_token_latency"],
-                response["perf"]["throughput"]
+                completion=response.get("completion", ""),
+                prompt_tokens=usage.get("prompt_tokens", 0),
+                completion_tokens=usage.get("completion_tokens", 0),
+                total_tokens=usage.get("total_tokens", 0),
+                time_to_first_token=perf.get("time_to_first_token", 0.0),
+                internal_token_latency=perf.get("internal_token_latency", 0.0),
+                throughput=perf.get("throughput", 0.0),
             )
         else:
-            return cls("", 0, 0, 0, 0, 0, 0)
+            return cls("", 0, 0, 0, 0.0, 0.0, 0.0)
 
 @dataclass
 class JointInferenceResult:
