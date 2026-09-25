@@ -61,6 +61,7 @@ Start your journey on Ianvs with the following links:
     Incremental Learning: BasicIL-FPN <proposals/algorithms/incremental-learning/basicIL-fpn>
     Lifelong Learning: RFNet <proposals/algorithms/lifelong-learning/Cloud-Robotic AI Benchmarking for Edge-cloud Collaborative Lifelong Learning>
     Joint Inference : Query-Routing <proposals/algorithms/joint-inference/query-routing>
+    Edge-Cloud Collaboration with Large Foundation Models <proposals/algorithms/edge-cloud-foundation-models>
 
 .. toctree::
     :maxdepth: 1
