@@ -2,11 +2,11 @@ benchmarkingjob:
   # job name of bechmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  workspace: "/ianvs/single_task_learning/cloud"
+  workspace: "./workspace/cloud_robotics"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/cloud_robot/single_task_learning/testenv/testenv.yaml"
+  testenv: "./examples/Cloud_Robotics/singletask_learning_bench/Semantic_Segmentation/testenv/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -19,7 +19,7 @@ benchmarkingjob:
       - name: "rfnet_singletask_learning"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
-        url: "./examples/cloud-robotics/single_task_learning/testalgorithm/rfnet/algorithm.yaml"
+        url: "./examples/Cloud_Robotics/singletask_learning_bench/Semantic_Segmentation/testalgorithms/algorithm.yaml"
 
 
     # selected dataitem configuration
