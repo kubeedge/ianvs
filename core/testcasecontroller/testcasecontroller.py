@@ -16,6 +16,7 @@
 
 import copy
 
+from core.common.log import LOGGER
 from core.common import utils
 from core.common.constant import TestObjectType
 from core.testcasecontroller.algorithm import Algorithm
@@ -49,16 +50,39 @@ class TestCaseController:
         """
         succeed_results = {}
         succeed_testcases = []
+        failed_errors = []
+
         for testcase in self.test_cases:
             try:
                 res, time = (testcase.run(workspace), utils.get_local_time())
+                succeed_results[testcase.id] = (res, time)
+                succeed_testcases.append(testcase)
             except Exception as err:
-                raise RuntimeError(f"testcase(id={testcase.id}) runs failed, error: {err}") from err
+                msg = f"testcase(id={testcase.id}) runs failed, error: {err}"
+                LOGGER.error(msg)
+                failed_errors.append(msg)
+            finally:
+                self._clean_hardware_resources()
 
-            succeed_results[testcase.id] = (res, time)
-            succeed_testcases.append(testcase)
+        if not succeed_testcases and failed_errors:
+            raise RuntimeError(f"All testcases failed. Errors: {'; '.join(failed_errors)}")
 
         return succeed_testcases, succeed_results
+
+    @classmethod
+    def _clean_hardware_resources(cls):
+        """Clean memory and hardware caches after testcase execution."""
+        import gc
+        import sys
+
+        gc.collect()
+        if "torch" in sys.modules:
+            try:
+                torch = sys.modules["torch"]
+                if hasattr(torch, "cuda") and torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+            except Exception:  # pylint: disable=broad-except
+                pass
 
     @classmethod
     def _parse_algorithms_config(cls, config):
