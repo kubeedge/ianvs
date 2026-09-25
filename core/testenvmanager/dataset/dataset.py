@@ -51,6 +51,15 @@ class Dataset:
         self.train_data_info: str = ""
         self.test_data_info: str = ""
         self.label: str = ""
+        # Read by singletask_learning_tta.py / singletask_learning_active_boost.py
+        # (examples/yaoba) as self.dataset.<attr>; previously silently dropped by
+        # _parse_config since they were absent from this __init__, making any
+        # value set for them in testenv.yaml a no-op (see PR discussion on #796
+        # and #824).
+        self.image_folder_url: str = ""
+        self.known_dataset_url: str = ""
+        self.unknown_dataset_url: str = ""
+        self.val_url: str = ""
         self._parse_config(config)
 
     def _check_fields(self):

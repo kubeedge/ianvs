@@ -1,3 +1,4 @@
+import hashlib
 # cloud_model.py
 import time
 import json
@@ -196,12 +197,19 @@ class CloudModelAPI:
         if not isinstance(input_text, str):
              raise KeyError("input must include 'query' or 'text'")
 
-        cache_key = (
-            f"{hash(input_text)}_{privacy_method}_{self.model_name}_"
-            f"{kwargs.get('max_tokens', 1024)}_{kwargs.get('temperature', 0.7)}_"
-            f"{kwargs.get('top_p', 0.9)}_{kwargs.get('presence_penalty', 0.0)}_"
-            f"{kwargs.get('frequency_penalty', 0.0)}"
+        cache_payload = (
+            input_text,
+            privacy_method,
+            self.model_name,
+            kwargs.get("max_tokens", 1024),
+            kwargs.get("temperature", 0.7),
+            kwargs.get("top_p", 0.9),
+            kwargs.get("presence_penalty", 0.0),
+            kwargs.get("frequency_penalty", 0.0),
         )
+        cache_key = hashlib.sha256(
+            json.dumps(cache_payload).encode("utf-8")
+        ).hexdigest()
         if cache_key in self.cache:
             return self.cache[cache_key]
         

@@ -2,9 +2,9 @@ import json
 import os
 import cv2
 from mmdet.apis import inference_detector, init_detector
-from custom_code.instance_based.utils.transform_unkonwn import xyxy_to_xywh
+from .transform_unkonwn import xyxy_to_xywh
 from tqdm import tqdm
-from custom_code.test_time_aug.general_TTA_v4 import topleftxywh_to_xyxy
+from .general_TTA_v4 import topleftxywh_to_xyxy
 
 CATEGORY = [{"id": 0, "name": "yanse"},
             {"id": 1, "name": "huahen"},
