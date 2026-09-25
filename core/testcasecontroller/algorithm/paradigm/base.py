@@ -60,6 +60,12 @@ class ParadigmBase:
         """
         get output dir of dataset in test process
 
+        Note: any staging or intermediate file a paradigm needs to write during a run
+        (split datasets, generated training sets, etc.) should be placed under
+        ``self.workspace`` (e.g. via this helper) rather than a bare ``tempfile.mkdtemp()``,
+        so that everything a run produces lives in one place and nothing is orphaned
+        outside the workspace once the process exits.
+
         Returns
         ------
         str
