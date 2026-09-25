@@ -3,7 +3,6 @@
 
 # Core dependencies
 ianvs>=0.1.0
-sedna>=0.1.0
 
 # Document processing (轻量级方案)
 PyPDF2>=3.0.0
