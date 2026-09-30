@@ -96,7 +96,18 @@ def test_tokenizer_exposes_special_token_ids():
     tokenizer = _MockTokenizer({})
     assert isinstance(tokenizer.eos_token_id, int)
     assert isinstance(tokenizer.pad_token_id, int)
-    assert tokenizer.eos_token_id != tokenizer.pad_token_id
+
+    special = (
+        tokenizer.bos_token_id,
+        tokenizer.eos_token_id,
+        tokenizer.mask_token_id,
+        tokenizer.pad_token_id,
+    )
+    assert len(set(special)) == len(special), special
+
+    # Ordinary tokens must not be indistinguishable from padding.
+    token_id = _MockBatch(1).input_ids[0][0]
+    assert token_id not in special, (token_id, special)
 
 
 def test_decode_and_batch_decode_share_one_cursor():

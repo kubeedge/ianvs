@@ -8,17 +8,18 @@ value, so a smoke test can never pass by accident on a fabricated result.
 
 from collections.abc import Mapping
 
-#: Token id handed back for every mocked token. Examples only ever feed these
-#: ids straight back into the mocked model, so the value is arbitrary; it is
-#: named to keep the intent obvious at call sites.
+#: Token id handed back for every mocked token. It stays 0 because that is
+#: what the adapter has always returned, and the llm_simple_qa smoke test
+#: depends on those exact ids.
 _MOCK_TOKEN_ID = 0
 
-#: Sentinel token ids. Distinct values make an off-by-one in example code
-#: visible instead of silently collapsing onto the padding id.
-_MOCK_EOS_TOKEN_ID = 2
+#: Sentinel token ids. Each differs from the others and from _MOCK_TOKEN_ID,
+#: so ordinary tokens are never mistaken for padding and an off-by-one in
+#: example code stays visible.
 _MOCK_BOS_TOKEN_ID = 1
-_MOCK_PAD_TOKEN_ID = 0
+_MOCK_EOS_TOKEN_ID = 2
 _MOCK_MASK_TOKEN_ID = 3
+_MOCK_PAD_TOKEN_ID = 4
 
 
 class _MockBatch:
