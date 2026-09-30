@@ -20,7 +20,7 @@ from enum import Enum
 class DatasetFormat(Enum):
     """
     File format of inputting dataset.
-    Currently, file formats are as follows: txt, csv.
+    Currently, file formats are as follows: txt, csv, json, jsonl, jsonforllm.
     """
 
     CSV = "csv"

@@ -125,17 +125,21 @@ class Dataset:
         file_format = utils.get_file_format(file_url)
         if file_format == DatasetFormat.TXT.value:
             return self._process_txt_index_file(file_url)
-        if file_format == DatasetFormat.JSON.value:
+        if file_format in (DatasetFormat.JSON.value, DatasetFormat.CSV.value):
             return file_url
 
-        return None
+        raise ValueError(
+            f"index file({file_url})'s format({file_format}) is not supported."
+        )
 
     def _process_data_file(self, file_url):
         file_format = utils.get_file_format(file_url)
-        if file_format == DatasetFormat.JSONL.value:
+        if file_format in (DatasetFormat.JSONL.value, DatasetFormat.CSV.value):
             return file_url
 
-        return None
+        raise ValueError(
+            f"data file({file_url})'s format({file_format}) is not supported."
+        )
 
     def _process_data_info_file(self, file_url):
         file_format = utils.get_file_format(file_url)
@@ -573,7 +577,14 @@ class Dataset:
         data = None
         if data_format == DatasetFormat.CSV.value:
             data = CSVDataParse(data_type=data_type, func=feature_process)
-            data.parse(file, label=label)
+            try:
+                data.parse(file, label=label)
+            except ValueError as err:
+                if "No objects to concatenate" in str(err) and not label:
+                    data.x = pd.read_csv(file)
+                    data.y = None
+                else:
+                    raise err
 
         if data_format == DatasetFormat.TXT.value:
             data = TxtDataParse(data_type=data_type, func=feature_process)

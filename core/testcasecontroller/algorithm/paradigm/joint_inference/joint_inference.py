@@ -79,7 +79,8 @@ class JointInference(ParadigmBase):
             else self.dataset.test_data_info
         self.inference_dataset = self.dataset.load_data(
             source,
-            "inference"
+            "inference",
+            label=self.dataset.label
         )
 
         dataset_processor = self.module_instances.get("dataset_processor", None)
