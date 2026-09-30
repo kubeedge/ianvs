@@ -79,6 +79,18 @@ def test_batch_supports_attribute_and_mapping_access():
     assert sorted(batch.keys()) == ["attention_mask", "input_ids"]
 
 
+def test_batch_mapping_access_is_limited_to_encoding_keys():
+    """Method and dunder names must not masquerade as encoding keys."""
+    batch = _MockBatch(1)
+    for name in ("to", "keys", "__init__"):
+        assert name not in batch, name
+        try:
+            batch[name]
+        except KeyError:
+            continue
+        raise AssertionError("batch[{!r}] should raise KeyError".format(name))
+
+
 def test_tokenizer_exposes_special_token_ids():
     """Fine-tuning examples append eos_token_id while building labels."""
     tokenizer = _MockTokenizer({})

@@ -40,13 +40,14 @@ class _MockBatch:
         return self
 
     def __getitem__(self, key):
-        try:
-            return getattr(self, key)
-        except AttributeError as error:
-            raise KeyError(key) from error
+        # Only the encoding keys are items. Delegating to getattr would make
+        # method names such as "to" or "keys" look like valid keys.
+        if key not in self.keys():
+            raise KeyError(key)
+        return getattr(self, key)
 
     def __contains__(self, key):
-        return hasattr(self, key)
+        return key in self.keys()
 
     def keys(self):
         return ("input_ids", "attention_mask")
