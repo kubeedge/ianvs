@@ -134,7 +134,13 @@ class _MockTokenizer:
 
 
 def install(responses):
-    """Patch only the Transformers factories exercised by Ianvs examples."""
+    """Patch ``AutoModelForCausalLM`` and ``AutoTokenizer`` loading.
+
+    Only these two ``from_pretrained`` entry points are replaced. Examples
+    that load through any other class, such as ``AutoModel``,
+    ``AutoModelForSeq2SeqLM`` or ``BertTokenizer``, are not mocked and will
+    still try to load a real model.
+    """
     if not isinstance(responses, Mapping):
         raise TypeError("Hugging Face mock responses must be a mapping")
 
