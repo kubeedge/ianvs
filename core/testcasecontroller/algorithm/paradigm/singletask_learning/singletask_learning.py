@@ -119,13 +119,17 @@ class SingleTaskLearning(ParadigmBase):
         train_output_dir = os.path.join(self.workspace, "output/train/")
         os.environ["BASE_MODEL_URL"] = initial_model
 
-        train_dataset = self.dataset.load_data(self.dataset.train_url, "train")
+        train_dataset = self.dataset.load_data(
+            self.dataset.train_url, "train", label=self.dataset.label
+        )
         job.train(train_dataset)
         trained_model_path = job.save(train_output_dir)
         return trained_model_path
 
     def _inference(self, job, trained_model):
-        inference_dataset = self.dataset.load_data(self.dataset.test_url, "inference")
+        inference_dataset = self.dataset.load_data(
+            self.dataset.test_url, "inference", label=self.dataset.label
+        )
         inference_output_dir = os.path.join(self.workspace, "output/inference/")
         os.environ["RESULT_SAVED_URL"] = inference_output_dir
         job.load(trained_model)
