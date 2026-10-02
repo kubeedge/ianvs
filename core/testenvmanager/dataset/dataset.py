@@ -18,13 +18,29 @@ import os
 import tempfile
 
 import pandas as pd
-from sedna.datasources import (
-    CSVDataParse,
-    TxtDataParse,
-    JSONDataParse,
-    JsonlDataParse,
-    JSONMetaDataParse
-)
+
+try:
+    # Sedna >= 0.4.x: modern module layout
+    from sedna.datasources import (
+        BaseDataSource,
+        CSVDataParse,
+        TxtDataParse,
+        JSONDataParse,
+    )
+except ImportError:
+    # Sedna 0.1.0 legacy layout
+    from sedna.core.base import (
+        BaseDataSource,
+        CSVDataParse,
+        TxtDataParse,
+        JSONDataParse,
+    )
+
+# Backwards-compat aliases
+JsonDataParse = JSONDataParse
+JSONMetaDataParse = JSONDataParse
+JsonlDataParse = JSONDataParse      
+
 
 from core.common import utils
 from core.common.constant import DatasetFormat
@@ -584,8 +600,12 @@ class Dataset:
             data.parse(file)
 
         if data_format == DatasetFormat.JSONL.value:
-            data = JsonlDataParse(data_type=data_type, func=feature_process)
-            data.parse(file)
+            import json
+        with open(file, "r", encoding="utf-8") as fh:
+            rows = [json.loads(line) for line in fh if line.strip()]
+        data = BaseDataSource(data_type=data_type, func=feature_process)
+        data.x = [r.get("question", r.get("prompt", "")) for r in rows]
+        data.y = [r.get("answer", r.get("response", "")) for r in rows]
 
         if data_format == DatasetFormat.JSONFORLLM.value:
             data = JSONMetaDataParse(data_type=data_type, func=feature_process)
