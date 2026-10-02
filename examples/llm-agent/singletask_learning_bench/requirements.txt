@@ -1,6 +1,9 @@
 torch
-transformers
+transformers<5.0
 peft
-datasets
-evaluate 
+datasets<3.0
+evaluate
 rouge_score
+accelerate
+huggingface-hub<2.0
+httpx

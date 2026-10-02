@@ -5,13 +5,3 @@ pandas
 tqdm
 matplotlib
 onnx
-sedna
-torch
-transformers<5.0
-peft
-datasets<3.0
-evaluate
-rouge_score
-accelerate
-huggingface-hub<2.0
-httpx
