@@ -40,7 +40,8 @@ Modes:
         Select changed examples from the inventory, including examples that are
         not yet active so dynamic validation can report them as skipped. If
         files under core/ or .github/workflows/ changed, select all examples
-        from the inventory.
+        from the inventory, except inventory edits, which select only changed
+        benchmark entries.
 
 GitHub Actions outputs:
     mode, run_all, examples_changed, base_examples_changed,
@@ -242,10 +243,28 @@ def detect_static_examples(changed_files: Sequence[str], examples: Sequence[dict
     return changed_examples
 
 
-def should_run_all_dynamic(changed_files: Sequence[str]) -> bool:
+def should_run_all_dynamic(
+    changed_files: Sequence[str],
+    inventory_path: str = DEFAULT_INVENTORY_PATH,
+) -> bool:
     return any(
-        changed_file.startswith(DYNAMIC_RUN_ALL_PREFIXES) for changed_file in changed_files
+        changed_file != inventory_path
+        and changed_file.startswith(DYNAMIC_RUN_ALL_PREFIXES)
+        for changed_file in changed_files
     )
+
+
+def detect_inventory_examples(
+    examples: Sequence[dict], other_examples: Sequence[dict]
+) -> List[dict]:
+    """Select added, removed, or modified benchmark entries by parsed data."""
+    other_by_selector = {}
+    for example in other_examples:
+        other_by_selector.setdefault(example_selector(example), []).append(example)
+    return [
+        example for example in examples
+        if example not in other_by_selector.get(example_selector(example), [])
+    ]
 
 
 def example_selector(example: dict) -> str:
@@ -493,6 +512,11 @@ def detect_changes(
     inventory_path: Path,
     base_inventory_ref: str = "",
 ) -> dict:
+    changed_files = git_lines(["diff", "--name-only", base_ref, head_ref])
+    inventory_changed = (
+        mode == MODE_DYNAMIC and inventory_path.as_posix() in changed_files
+    )
+    comparison_ref = base_inventory_ref or (base_ref if inventory_changed else "")
     head_examples = load_inventory_examples(
         inventory_path,
         active_only=False,
@@ -500,13 +524,12 @@ def detect_changes(
     base_examples = (
         load_inventory_examples_at_ref(
             inventory_path,
-            base_inventory_ref,
+            comparison_ref,
             active_only=False,
         )
-        if base_inventory_ref
+        if comparison_ref
         else head_examples
     )
-    changed_files = git_lines(["diff", "--name-only", base_ref, head_ref])
     if mode == MODE_STATIC:
         changed_files = [
             changed_file
@@ -514,9 +537,22 @@ def detect_changes(
             if is_static_tracked_file(changed_file)
         ]
 
-    run_all = mode == MODE_DYNAMIC and should_run_all_dynamic(changed_files)
+    run_all = mode == MODE_DYNAMIC and should_run_all_dynamic(
+        changed_files, inventory_path.as_posix()
+    )
     base_changed_examples = detect_static_examples(changed_files, base_examples)
     head_changed_examples = detect_static_examples(changed_files, head_examples)
+    if inventory_changed:
+        base_inventory_changes = detect_inventory_examples(base_examples, head_examples)
+        head_inventory_changes = detect_inventory_examples(head_examples, base_examples)
+        base_changed_examples = [
+            example for example in base_examples
+            if example in base_changed_examples or example in base_inventory_changes
+        ]
+        head_changed_examples = [
+            example for example in head_examples
+            if example in head_changed_examples or example in head_inventory_changes
+        ]
     base_selected_examples = base_examples if run_all else base_changed_examples
     head_selected_examples = head_examples if run_all else head_changed_examples
     base_report = inventory_selection_report(
@@ -642,6 +678,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         default="",
         help=(
             "Git revision from which to load the base inventory. When omitted, "
+            "dynamic inventory edits are compared against --base-ref; otherwise "
             "the current inventory is used for both target sets."
         ),
     )
