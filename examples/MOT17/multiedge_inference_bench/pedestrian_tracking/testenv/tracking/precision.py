@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import math
 from collections import OrderedDict
 from pathlib import Path
 
@@ -46,4 +47,11 @@ def metric(y_true, y_pred):
     summary = mh.compute_many(accs, names=names, metrics=metrics_name, generate_overall=True)
     logger.info('Completed')
 
-    return round(float(summary.iloc[-1][metrics_name]), 4)
+    value = float(summary.iloc[-1][metrics_name])
+    if math.isnan(value) or math.isinf(value):
+        logger.warning(
+            "Metric '{}' returned {} (no valid detections?). Recording 0.0.",
+            metrics_name[0], value
+        )
+        return 0.0
+    return round(value, 4)
