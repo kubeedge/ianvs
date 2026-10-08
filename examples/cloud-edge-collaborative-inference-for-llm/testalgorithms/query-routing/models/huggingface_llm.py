@@ -77,12 +77,15 @@ class HuggingfaceLLM(BaseLLM):
         most_recent_timestamp = st
 
         try:
-            # messages = self.get_message_chain(question, system_prompt
-            text = self.tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True
-            )
+            try:
+                # messages = self.get_message_chain(question, system_prompt
+                text = self.tokenizer.apply_chat_template(
+                    messages,
+                    tokenize=False,
+                    add_generation_prompt=True
+                )
+            except ValueError:
+                text = "\n".join(msg.get("content", "") for msg in messages if msg.get("content"))
 
             model_inputs = self.tokenizer([text], return_tensors="pt").to(device)
 
