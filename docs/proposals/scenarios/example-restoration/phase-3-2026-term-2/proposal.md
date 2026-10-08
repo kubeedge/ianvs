@@ -120,6 +120,8 @@ This proposal focuses on classification, validation, reporting, and one concrete
 
 For `examples/llm_simple_qa`, this proposal adds a focused target: the validation framework should be able to confirm whether the example can run from a clean clone with portable paths, reproducible dataset setup, valid JSONL, configurable model loading, CUDA/MPS/CPU fallback, documented dependencies, and robust metric behavior.
 
+LLM Smoke Tests may otherwise require a GPU, model download, external API credentials, network access, or substantial CI time. This proposal therefore adds an opt-in Mock LLM runtime: the Validator owns shared SDK adapters, each Example owns its responses, and `sitecustomize.py` injects them without changing Example inference code. This proposal implements both the Hugging Face pattern used by `examples/llm_simple_qa` and the OpenAI Chat Completions API pattern.
+
 ---
 
 ## Scope
@@ -142,6 +144,7 @@ The project will include:
 * Documentation for validation rules and local validation usage
 * Initial validation coverage for `examples/llm_simple_qa`
 * Restoration of `examples/llm_simple_qa` portability and clean-environment execution
+* An opt-in Smoke Test Mock Runtime with Example-owned responses, Hugging Face support for `llm_simple_qa`, and OpenAI Chat Completions support
 
 ### Out of Scope
 
@@ -157,6 +160,7 @@ The project will not:
 * Run every example fully on every pull request
 * Introduce core code changes unless repeated CI failures reveal a framework-level issue
 * Guarantee that every classified example becomes runnable during this project
+* Use predefined LLM responses as evidence that a real model, external provider, or model-quality evaluation has passed
 * Treat missing `preprocess()` as an active blocker for `llm_simple_qa`, because PR #407 already addressed the relevant core-side `_preprocess()` behavior
 
 The design principle is:
@@ -416,8 +420,12 @@ Ianvs Repository
   ├── examples/
 + │   ├── README.md (Show validation time and status matrix)
   │   ├── llm_simple_qa/
-+ │   │   └── scripts/
-+ │   │       └── prepare_dataset.py
++ │   │   ├── scripts/
++ │   │   │   ├── 01_install_requirements.sh
++ │   │   │   ├── 02_prepare_dataset.py
++ │   │   │   ├── ...
++ │   │   │   └── mock_runtime/
++ │   │   │       └── ianvs_mock_fixture.py
   │   ├── example A/
   │   ├── example B/
   │   └── ...
@@ -447,6 +455,13 @@ M         ├── third_party_fossa_cicd.yaml             (Rename)
 +             │   ├── inventory_loader.py
 +             │   ├── regression_detector.py
 +             │   └── report_generator.py
++             ├── scripts/
++             │   └── mock_runtime/
++             │       ├── sitecustomize.py
++             │       └── adapters/
++             │           ├── __init__.py
++             │           ├── huggingface_adapter.py
++             │           └── openai_adapter.py
 +             └── data/
 +                 └── example_inventory.yaml
 ```
@@ -463,22 +478,24 @@ The responsibilities of the proposed files are:
 |---|---|
 | `examples/` | Stores Ianvs example projects, including their runnable configurations, documentation, dependency references, dataset references, and algorithm-related files. These directories are the validation targets of the framework. |
 | `examples/README.md` | Serves as the maintainer-facing summary of current example health. It should keep the latest T2/T3 validation time and the example status matrix, link or point to the underlying CI evidence when needed, and provide a stable place to track whether an example is validated, degraded, quarantined, external-resource-dependent, or awaiting follow-up repair work. Detailed status explanations should live in `docs/example_validator/status_directions.md`, and `examples/README.md` should link to that file. |
-| `examples/<example_name>/scripts/prepare_dataset.py` | Provides the standard dataset preparation entry point for examples that support automated dataset setup. It should download, generate, or normalize the required dataset into the documented directory structure from a clean environment. |
 | `docs/example_validator/status_directions.md` | Documents the example status model, badge legend, broken-status subtypes, and interpretation notes. This keeps detailed status explanations out of `examples/README.md`, where only the latest validation time and status matrix should remain. A later documentation update should make `examples/README.md` link to this file. |
 | `.github/workflows/validator/validation_runner.py` | Serves as the main entry point for local and CI validation. It should parse CLI arguments, load the inventory, select validation stages, invoke the validation modules that live directly under `validator/`, and coordinate report generation. |
 | `.github/workflows/validator/static_validator.py` | Performs lightweight static checks without executing examples. It should detect problems such as missing files, invalid YAML, broken relative paths, hardcoded local paths, outdated repository layout references, README and configuration mismatches, local-only model paths, and CUDA-only assumptions. |
-| `.github/workflows/validator/dependency_validator.py` | Validates whether example dependencies are properly declared and installable. It should check dependency file presence, package installation behavior, Python version compatibility, and dependency-related failures that block clean-environment execution. |
-| `.github/workflows/validator/smoke_test_validator.py` | Runs lightweight execution validation for selected examples to confirm that they can start and complete a minimal validation run in CI without requiring full benchmark workloads where possible. |
+| `.github/workflows/validator/dependency_validator.py` | Validates `requirements_file` syntax, Python-version compatibility, dependency drift, and installation in a clean environment. It does not prepare datasets or run other environment-preparation scripts. |
+| `.github/workflows/validator/smoke_test_validator.py` | Runs lightweight execution validation for selected examples. For Mock LLM runs, it sets `IANVS_LLM_MOCK=1`, composes `PYTHONPATH` from inventory metadata, and starts each Example in a separate subprocess. |
+| `.github/workflows/validator/scripts/mock_runtime/sitecustomize.py` | Loads the current Example fixture and calls `install(responses)` on each declared adapter when Mock LLM mode is enabled. |
+| `.github/workflows/validator/scripts/mock_runtime/adapters/` | Contains the implemented `huggingface_adapter.py` and `openai_adapter.py` runtime adapters. Adapter filenames avoid shadowing installed SDK packages. |
+| `examples/llm_simple_qa/scripts/mock_runtime/ianvs_mock_fixture.py` | Stores the Example-owned adapter selection and semantic responses used only by Mock Smoke Tests. |
 | `.github/workflows/validator/services/validation_branch_manager.py` | Wraps local validation with the branch preparation and cleanup steps shown in the local validation flowchart. It should run around `validation_runner.py`, checking whether the `upstream` remote exists, adding it when missing, fetching `upstream/main`, finding the merge-base against the contributor's local `HEAD`, detecting changed files, creating a temporary validation branch, rebasing that branch onto `upstream/main`, and deleting the temporary branch after validation completes. |
 | `.github/workflows/validator/services/inventory_loader.py` | Loads and manages the example inventory. It should provide structured metadata access, helper logic for selecting changed or affected examples, and shared inventory operations used by the validation pipeline. |
 | `.github/workflows/validator/services/regression_detector.py` | Compares validation failures from the pull request result against the baseline result from the `main` branch. It should identify which failures are newly introduced by the pull request, which failures already exist on `main`, and which differences should be classified as non-blocking baseline debt rather than PR regressions. |
 | `.github/workflows/validator/services/report_generator.py` | Converts validation results into human-readable CI summaries and example health reports, including failure classifications, reproduction commands, and suggested next actions for contributors and maintainers. |
-| `.github/workflows/validator/data/example_inventory.yaml` | Stores the example inventory and classification metadata, including each example's path, validation level, dataset requirements, dependency requirements, model requirements, hardware requirements, current status, expected dataset structure, and whether the dataset is external when automated preparation is unavailable. |
+| `.github/workflows/validator/data/example_inventory.yaml` | Stores the example inventory and classification metadata, including each example's paths, `requirements_file`, ordered `prepare_env.steps`, validation level, dataset requirements, model requirements, hardware requirements, current status, expected dataset structure, and whether the dataset is external when preparation is unavailable. Its optional `mock_runtime` metadata provides only the shared and Example fixture paths used to compose `PYTHONPATH`; adapter selection and responses remain Example-owned. |
 | `docs/example_validator/validation_rules.md` | Documents the validation rules implemented by the framework, including what each validator checks, why the rule exists, and how maintainers should interpret its result. |
 | `docs/example_validator/classification_policy.md` | Defines the example status model and failure classification policy, including which failure types block pull requests and which should be treated as known, pre-existing, or time-based failures. |
 | `docs/example_validator/local_validation.md` | Documents how contributors run validation locally, including example commands, expected usage patterns, local troubleshooting, and optional workflow-level local verification guidance. |
 | `.github/workflows/static_code_requirement_cicd.yaml` | Defines the GitHub Actions workflow for Tier 0 static validation. It should run non-execution checks such as required-file presence, YAML and README consistency, dependency-file declarations, dataset and model path declarations, hardcoded local path detection, and hardware-assumption detection by invoking the reusable static validation logic under `.github/workflows/validator/`. |
-| `.github/workflows/dynamic_code_cicd.yaml` | Defines the GitHub Actions workflow for execution-oriented example validation tiers. It should run only the dynamic portions of validation, such as dependency installation, environment setup, dataset preparation when practical, smoke tests, regression comparison, result collection, and CI summaries or report artifacts. |
+| `.github/workflows/dynamic_code_cicd.yaml` | Defines the GitHub Actions workflow for execution-oriented example validation tiers. It should run only the dynamic portions of validation, such as dependency installation validation, the separate environment-preparation stage, smoke tests, regression comparison, result collection, and CI summaries or report artifacts. |
 
 For local contributor validation, `validation_branch_manager.py` should act as a wrapper around `validation_runner.py`. Before validation starts, it should ensure the `upstream` remote is available, synchronize with `upstream/main`, compute the change set against the merge-base, and create the temporary rebased validation branch. After validation finishes, it should handle cleanup, including deleting the temporary validation branch.
 
@@ -535,26 +552,44 @@ Example inventory metadata may include:
 
 ```yaml
 examples:
-  - name: llm_simple_qa
+  - name: simple_qa_singletask_learning
+    example: llm_simple_qa
+    status: active
     path: examples/llm_simple_qa
-    benchmark_config: benchmarkingjob.yaml
-    requirement_file: examples/llm_simple_qa/requestment.txt
-    dataset:
-      required: true
-      external: false
-      prepare_script: examples/llm_simple_qa/scripts/prepare_dataset.py
-      root: dataset/llm_simple_qa
-      structure:
-        - train_data/data.jsonl
-        - test_data/data.jsonl
-      format: jsonl
-    model_required: true
-    gpu_required: false
-    validation_level: smoke
-    status: runnable
-    blocking: true
-    clean_environment_validated: false
+    readme_file: examples/llm_simple_qa/README.md
+    benchmark_file: examples/llm_simple_qa/benchmarkingjob.yaml
+    requirements_file: examples/llm_simple_qa/requirements.txt
+
+    mock_runtime:
+      enabled: true
+      shared_pythonpath:
+        - .github/workflows/validator/scripts/mock_runtime
+      example_pythonpath:
+        - examples/llm_simple_qa/scripts/mock_runtime
+
+    prepare_env:
+      working_directory: examples/llm_simple_qa
+      steps:
+        - name: install_requirements
+          type: dependency
+          script: scripts/01_install_requirements.sh
+          args:
+            - requirements.txt
+          timeout: 600
+
+        - name: prepare_dataset
+          type: dataset
+          script: scripts/02_prepare_dataset.py
+          args:
+            - --output-dir
+            - ../../dataset/llm_simple_qa
+            - --overwrite
+          timeout: 300
 ```
+
+The inventory provides the shared and Example fixture paths; `ianvs_mock_fixture.py` declares adapters and responses.
+
+`prepare_env.steps` is an ordered environment-preparation contract. Each step supports `name`, `type`, `script`, `args`, and `timeout`. `args` must be an array of strings and must be passed directly to the subprocess argument vector; the runner must not use `shell=True`. The separate environment-preparation stage runs these steps in order from `working_directory` and reports the failing step, if any. The Mock Runtime is not a `prepare_env` step; it is injected only into the Smoke Test subprocess environment.
 
 ---
 
@@ -585,7 +620,7 @@ Checks:
 * Dataset format mismatch between README, YAML, and runtime code
 * README contains dependency installation instructions
 * README contains dataset preparation instructions
-* README references the standard `prepare_dataset.py` flow when the example supports automated dataset setup
+* README describes the inventory-defined `prepare_env` flow when the example supports automated environment preparation
 * README contains JSONL format when applicable
 * README contains model configuration instructions when applicable
 * README paths match YAML paths
@@ -648,7 +683,7 @@ Static validation should be lightweight enough to run across relevant examples o
 For `examples/llm_simple_qa`, static validation should also confirm:
 
 * The README explains the example overview, setup steps, dependency installation, dataset preparation, JSONL format, model configuration, run command, expected output, and troubleshooting.
-* Dataset preparation uses `prepare_dataset.py` when the example supports automated setup, and the documented dataset layout matches the structure declared in `example_inventory.yaml`.
+* The documented dataset layout matches the inventory and the README describes any applicable `prepare_env` dataset step.
 * Model loading uses a portable model ID or a documented override mechanism instead of local-only paths.
 * Device selection supports CUDA, MPS, and CPU fallback rather than assuming CUDA-only execution.
 * Metric handling avoids crashes when no valid prediction-answer pairs exist, for example by returning `0.0` and logging a warning instead of triggering `ZeroDivisionError`.
@@ -660,16 +695,15 @@ For `examples/llm_simple_qa`, static validation should also confirm:
 
 Purpose:
 
-* Verify whether dependencies are installable and compatible.
+* Verify whether declared dependencies are syntactically valid, installable, and compatible; environment preparation is handled separately.
 
 Checks:
 
-* Dependency file availability
-* Package installation
+* `requirements_file` availability and requirements syntax
 * Python version compatibility
-* Dependency conflicts
-* Missing runtime packages
-* Example-specific dependency documentation
+* Dependency drift and dependency conflicts
+* Clean-environment installation validation
+* Missing runtime packages and example-specific dependency documentation
 
 Initial Python matrix:
 
@@ -677,10 +711,10 @@ Initial Python matrix:
 * Python 3.9
 * Python 3.10
 
-For `examples/llm_simple_qa`, the validation framework should recognize the planned dependency file:
+For `examples/llm_simple_qa`, the validation framework should recognize the inventory-declared dependency file:
 
 ```text
-examples/llm_simple_qa/requestment.txt
+examples/llm_simple_qa/requirements.txt
 ```
 
 Planned content:
@@ -692,7 +726,7 @@ torch >= 2.0.0
 accelerate >= 1.0.0
 ```
 
-If maintainers prefer the standard spelling `requirements.txt`, the file name can be adjusted during review. The CI framework should validate whichever path is recorded in the example inventory.
+The dependency validator must not execute `prepare_env` steps. It is limited to requirements syntax, Python compatibility, dependency drift, and installation validation; the separate environment-preparation stage executes the inventory-defined steps after dependency validation.
 
 Output:
 
@@ -703,7 +737,25 @@ Dependency validation should run mainly for changed examples or examples affecte
 
 ---
 
-### 4. Dataset and JSONL Validation Module
+### 4. Environment Preparation Module
+
+Purpose:
+
+* Prepare an example's runtime environment through the ordered `prepare_env.steps` declared in the inventory.
+
+Execution rules:
+
+* Run each step sequentially from `prepare_env.working_directory`.
+* Require every step to provide `name`, `type`, `script`, `args`, and `timeout`.
+* Require `args` to be an array of strings; pass the script and arguments directly to `subprocess` without `shell=True`.
+* Apply each step's timeout and stop the stage on failure, reporting the step name and type.
+* Keep dependency validation separate: a `type: dependency` preparation step may perform example-specific setup, but it does not expand the responsibilities of `dependency_validator.py`.
+
+This stage may install example prerequisites, prepare datasets, or perform other documented setup required before smoke testing. It should run only when the selected validation tier requires environment preparation.
+
+---
+
+### 5. Dataset and JSONL Validation Module
 
 Purpose:
 
@@ -713,13 +765,13 @@ Checks:
 
 * Dataset path exists or is declared in `example_inventory.yaml`
 * Dataset path matches README and YAML references
-* `prepare_dataset.py` exists for examples that support automated dataset setup
+* Applicable `prepare_env` dataset steps are declared and their documented output location matches the inventory
 * `example_inventory.yaml` declares the expected dataset directory structure
 * If automated dataset setup is unavailable, the example inventory marks the dataset as `external: true`
 * JSONL files are not empty
 * Each JSONL line is a complete JSON object
 * Required fields are present
-* `prepare_dataset.py` produces or documents the expected dataset layout when data is not committed
+* The relevant `prepare_env` dataset step produces or documents the expected dataset layout when data is not committed
 
 For `examples/llm_simple_qa`, the expected dataset layout may be:
 
@@ -740,9 +792,11 @@ Each JSONL line should be one complete JSON object, for example:
 Example validation commands:
 
 ```bash
-python examples/llm_simple_qa/scripts/prepare_dataset.py
-python examples/llm_simple_qa/scripts/validate_jsonl.py dataset/llm_simple_qa/train_data/data.jsonl
-python examples/llm_simple_qa/scripts/validate_jsonl.py dataset/llm_simple_qa/test_data/data.jsonl
+cd examples/llm_simple_qa
+scripts/01_install_requirements.sh requirements.txt
+python scripts/02_prepare_dataset.py --output-dir ../../dataset/llm_simple_qa --overwrite
+python scripts/validate_jsonl.py ../../dataset/llm_simple_qa/train_data/data.jsonl
+python scripts/validate_jsonl.py ../../dataset/llm_simple_qa/test_data/data.jsonl
 ```
 
 Output:
@@ -780,6 +834,29 @@ python3 benchmarking.py -f examples/llm_simple_qa/benchmarkingjob.yaml
 
 For examples that require large datasets or large model downloads, CI should mark the example accordingly or use an existing lightweight validation mode if already available. Creating new datasets or repairing dataset pipelines for all examples is outside the scope of this proposal.
 
+For `examples/llm_simple_qa`, the Validator may run the same command in Mock LLM mode by setting only the following subprocess environment:
+
+```bash
+IANVS_LLM_MOCK=1 \
+PYTHONPATH=.github/workflows/validator/scripts/mock_runtime:examples/llm_simple_qa/scripts/mock_runtime \
+ianvs -f examples/llm_simple_qa/benchmarkingjob.yaml
+```
+
+The two `PYTHONPATH` entries provide the shared Runtime and current Example fixture. Each Example runs in a separate subprocess, and no third environment variable is required.
+
+The Smoke Test flow is:
+
+```mermaid
+flowchart TD
+    A[Validator] --> B[Compose PYTHONPATH and set IANVS_LLM_MOCK]
+    B --> C[Start Example subprocess]
+    C --> D[Python loads sitecustomize]
+    D --> E[Load Example fixture and declared adapters]
+    E --> F[Patch supported SDK APIs]
+    F --> G[Run unchanged Example flow]
+    G --> H[Return Example-owned Mock Response]
+```
+
 Output:
 
 * Runtime validation report
@@ -795,7 +872,55 @@ Smoke tests should run for:
 
 ---
 
-### 6. Report Generator
+### 6. Mock LLM Runtime for Smoke Tests
+
+Purpose:
+
+* Make the Python `llm_simple_qa` Smoke Test deterministic, offline, and low cost without downloading or executing a real Hugging Face model.
+
+#### Runtime Injection
+
+The Validator sets `IANVS_LLM_MOCK=1` and composes `PYTHONPATH` from `.github/workflows/validator/scripts/mock_runtime` and the current Example's `scripts/mock_runtime`. Python then imports the shared `sitecustomize.py`, which loads the Example-owned fixture and each declared adapter. This remains outside `prepare_env` and does not change Example inference code.
+
+Adapters expose `install(responses)`. `sitecustomize.py` invokes it for each entry in `ADAPTERS`. The Hugging Face adapter patches the two `from_pretrained()` calls and implements only the Model, Tokenizer, batch, `generate()`, and `batch_decode()` behavior used by `llm_simple_qa`. The OpenAI adapter patches `OpenAI(...)` and `AsyncOpenAI(...)` clients and implements `client.chat.completions.create(...)` for synchronous, asynchronous, and streaming calls without credentials or network access.
+
+The adapter owns SDK compatibility; the Example fixture owns semantic responses:
+
+```python
+ADAPTERS = ["huggingface"]
+RESPONSES = {
+    "huggingface": {"default": "A"},
+}
+```
+
+Examples may list `huggingface`, `openai`, or both; each adapter constructs its SDK-specific response shape from its grouped fixture data.
+
+Requirements:
+
+* Mock LLM mode must be explicitly enabled with `IANVS_LLM_MOCK=1`; it must be disabled by default.
+* The Validator must inject the Mock Runtime only when starting a Smoke Test and must not register it as a `prepare_env` step.
+* Example inference code must remain unchanged, and the version-controlled fixture must own adapter selection and semantic responses.
+* Adapters must implement `install(responses)` and preserve the response shape expected by existing Example code.
+* The OpenAI adapter must support `OpenAI(...)`, `AsyncOpenAI(...)`, and `client.chat.completions.create(...)`, including non-streaming and streaming response shapes.
+* OpenAI Mock Runtime tests must run without an API key and must fail if they attempt external network access.
+* Validation reports must identify runs that used substituted responses as `mocked_llm`; those runs must not be classified as real Hugging Face model, GPU, external-provider, or model-quality validation.
+
+#### `examples/llm_simple_qa` Repair Example
+
+`llm_simple_qa` keeps its existing Hugging Face `from_pretrained()` calls and `_infer()` flow. Its fixture selects Hugging Face and provides the fixed answer, allowing offline execution without a model download or GPU. Real model validation remains a separate resource-dependent tier.
+
+#### Limitations
+
+* The first phase applies only to Python Examples.
+* Hugging Face support covers only the API pattern currently used by `llm_simple_qa`; other Transformers patterns require adapter extensions.
+* OpenAI support covers the Chat Completions API pattern; other OpenAI SDK resources and endpoints are outside this proposal.
+* An Example may declare multiple adapters; different Examples run in separate Smoke Test subprocesses.
+* Runtime patches affect only the Python process that loaded `sitecustomize.py` and Python child processes that inherit the same environment; they do not modify installed packages or system-wide behavior.
+* Mock LLM mode verifies execution, not model quality, real GPU behavior, resource availability, or benchmark accuracy.
+
+---
+
+### 7. Report Generator
 
 Purpose:
 
@@ -995,17 +1120,17 @@ PR impact:
 * Updates the example health report.
 * Creates or references maintenance issues if configured by maintainers.
 
-When a Tier 2 validation run is merged into `main`, the Tier 3 schedule for the same target set should be reset relative to that newly merged baseline instead of continuing from the older pre-merge schedule. This avoids immediately re-running a broad scheduled validation for code that was just exercised by a Tier 2 path and keeps the scheduled signal aligned with the latest known validated `main` state.
+When a pull request runs Tier 2 validation, the Tier 3 schedule for the same target set should be reset from that Tier 2 run. This rescheduling occurs regardless of whether the pull request is later merged into `main`; merge status must not be a prerequisite. This avoids immediately re-running a broad scheduled validation for a target set that was just exercised by Tier 2 while retaining Tier 3 as the periodic time-dependent validation signal.
 
 ![Tier 3 Validation Reset After Tier 2](images/Tier3-Validation-Reset-After-Tier2.png)
 
 The timeline shows the reset behavior through three main time points:
 
 * **Previous Tier 3:** The last scheduled Tier 3 run has completed and becomes the current validation baseline for `main`.
-* **Tier 2 Merge:** One day after the previous Tier 3 run, a Tier 2 validation run is merged into `main`. Because this merge already validates the same target set, it replaces the previous Tier 3 run as the newest validated baseline.
-* **Rescheduled Next Tier 3:** The next Tier 3 timer restarts from the Tier 2 merge point. With a one-week Tier 3 cadence, the original next Tier 3 time is skipped and the actual next Tier 3 run is pushed back by one day.
+* **Tier 2 PR Run:** One day after the previous Tier 3 run, an open pull request runs Tier 2 validation for the same target set. The run resets the Tier 3 timer even if the pull request is never merged.
+* **Rescheduled Next Tier 3:** The next Tier 3 timer restarts from the Tier 2 run. With a one-week Tier 3 cadence, the original next Tier 3 time is skipped and the actual next Tier 3 run is pushed back by one day.
 
-This reset rule applies only when the Tier 2 pull request is merged before the originally scheduled Tier 3 time. If Tier 2 completes but the corresponding pull request is merged only after that scheduled Tier 3 point, then Tier 3 should still execute as originally scheduled, because there was no newer merged baseline available before the scheduled run time.
+This reset rule applies when Tier 2 runs before the originally scheduled Tier 3 time. A later merge, rejection, or closure of the pull request does not restore the original Tier 3 schedule or otherwise change the already rescheduled Tier 3 run.
 
 ---
 
@@ -1546,6 +1671,7 @@ The project will repair `examples/llm_simple_qa` through concrete implementation
 * Add CUDA, MPS, and CPU fallback so the example does not assume CUDA-only execution.
 * Add the example-specific dependency file and validate the documented dependency installation flow.
 * Update metric handling so empty or invalid prediction-answer pairs return a safe result instead of crashing.
+* Add the Example-owned Mock fixture and validate the unchanged Hugging Face inference flow through the shared Runtime.
 * Reuse existing related PR work from Issue/PR #452 when it already solves part of the restoration.
 * Confirm the restored example through CI smoke testing or clearly document any resource-dependent step that cannot run in normal PR CI.
 
@@ -1603,7 +1729,17 @@ Deliverable:
 
 ---
 
-### FR-6 Local Contributor Validation
+### FR-6 Mock LLM Runtime Injection
+
+The system shall inject a shared Mock Runtime and Example-owned responses through `IANVS_LLM_MOCK=1` and the inventory-defined `PYTHONPATH`, without changing Example inference code or `prepare_env`. It shall run the existing `llm_simple_qa` Hugging Face flow offline and support offline OpenAI Chat Completions calls through synchronous, asynchronous, and streaming APIs. All substituted-response runs shall be reported as `mocked_llm`.
+
+Deliverable:
+
+* Shared Runtime, common adapter interface, Hugging Face adapter, implemented OpenAI Chat Completions adapter, Example-owned fixtures, and adapter tests
+
+---
+
+### FR-7 Local Contributor Validation
 
 The system shall provide local commands for contributors. It shall also document how contributors can locally execute the relevant GitHub Actions workflows before pushing changes, for example by using `nektos/act` directly or through a VS Code integration such as `github-local-actions`.
 
@@ -1615,7 +1751,7 @@ Deliverable:
 
 ---
 
-### FR-7 Example Health Reporting
+### FR-8 Example Health Reporting
 
 The system shall generate reports for maintainers.
 
@@ -1625,7 +1761,7 @@ Deliverable:
 
 ---
 
-### FR-8 Tiered CI Validation
+### FR-9 Tiered CI Validation
 
 The system shall use tiered validation to avoid running every example on every pull request.
 
@@ -1635,7 +1771,7 @@ Deliverable:
 
 ---
 
-### FR-9 Failure Classification
+### FR-10 Failure Classification
 
 The system shall classify validation failures by cause and PR impact.
 
@@ -1830,6 +1966,8 @@ The project will be considered successful if:
 14. The project clearly documents that broad repair of broken examples is out of scope, except for the explicit `examples/llm_simple_qa` restoration target.
 15. Failures requiring repair outside `examples/llm_simple_qa` are recorded for separate follow-up issues or proposals.
 16. `examples/llm_simple_qa` is repaired or has mentor-approved remaining blockers documented for clean-environment execution, portable paths, dataset setup, model configuration, hardware fallback, dependency documentation, and metric robustness.
+17. CI can run the unchanged `llm_simple_qa` Hugging Face flow offline through the Smoke Test-only Mock Runtime without model download or GPU.
+18. CI verifies that the OpenAI adapter supports synchronous, asynchronous, and streaming Chat Completions response shapes without API credentials or external network access.
 
 ---
 
@@ -1898,12 +2036,14 @@ Mitigation:
 * Keep broad restoration work in separate proposals.
 * Restore `examples/llm_simple_qa` as the initial reference case, while avoiding any implication that every example will be restored in this proposal.
 
-### Risk 8: LLM model downloads may be unstable in CI
+### Risk 8: LLM model downloads and external provider access may be unstable in CI
 
 Mitigation:
 
 * Allow model-dependent examples to be classified separately.
-* Prefer lightweight models or mockable validation modes when maintainers approve.
+* Use the Validator-owned Hugging Face adapter with the Example-owned `llm_simple_qa` fixture for its Python Smoke Test.
+* Use the Validator-owned OpenAI adapter with Example-owned fixtures for Chat Completions Smoke Tests without API credentials or network access.
+* Run each Example in a separate subprocess so fixture modules and response data do not leak between Smoke Tests.
 * Record model download failures as model/resource drift when caused by external availability.
 * Keep full model execution in scheduled validation if it is too expensive for every PR.
 
@@ -1921,6 +2061,10 @@ After the initial project, the validation framework can be extended with:
 * Broader coverage across all Ianvs examples
 * Release validation reports
 * More advanced affected-example detection
+* Additional Hugging Face Mock Adapters for API patterns beyond those currently used by `llm_simple_qa`
+* Runtime adapters for other specialized SDKs and non-Python Examples
+* Additional Example-owned LLM response fixtures, including provider-error and malformed-response cases
+* Scheduled real-provider validation alongside low-cost substituted-response CI, with results reported as separate validation tiers
 * Dependency lockfile support for reproducible CI
 * Historical example health tracking
 * Separate restoration proposals based on classification results

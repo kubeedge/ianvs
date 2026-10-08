@@ -15,13 +15,14 @@
 import keras
 import tensorflow as tf
 import numpy as np
-from keras.src.layers import Dense
+from keras.layers import Dense
 from resnet import resnet10
 
 
+@keras.saving.register_keras_serializable()
 class NetWork(keras.Model):
-    def __init__(self, num_classes, feature_extractor):
-        super(NetWork, self).__init__()
+    def __init__(self, num_classes, feature_extractor, **kwargs):
+        super(NetWork, self).__init__(**kwargs)
         self.num_classes = num_classes
         self.feature = feature_extractor
         self.fc = Dense(num_classes, activation="softmax")
@@ -38,13 +39,18 @@ class NetWork(keras.Model):
         return self.fc(fea_input)
 
     def get_config(self):
-        return {
+        config = super().get_config()
+        config.update({
             "num_classes": self.num_classes,
-            "feature_extractor": self.feature,
-        }
+            "feature_extractor": keras.saving.serialize_keras_object(self.feature),
+        })
+        return config
 
     @classmethod
     def from_config(cls, config):
+        config["feature_extractor"] = keras.saving.deserialize_keras_object(
+            config["feature_extractor"]
+        )
         return cls(**config)
 
 

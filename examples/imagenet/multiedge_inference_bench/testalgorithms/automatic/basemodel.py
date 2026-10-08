@@ -30,7 +30,22 @@ from torch.utils.data import DataLoader
 import torch
 import numpy as np
 from tqdm import tqdm
-import pynvml
+try:
+    import pynvml
+    PYNVML_AVAILABLE = True
+except Exception:
+    PYNVML_AVAILABLE = False
+    class pynvml:
+        @staticmethod
+        def nvmlInit(): pass
+        @staticmethod
+        def nvmlDeviceGetHandleByIndex(i): return None
+        @staticmethod
+        def nvmlDeviceGetPowerUsage(h): return 0
+        @staticmethod
+        def nvmlDeviceGetMemoryInfo(h):
+            class m: used = 0
+            return m
 
 
 __all__ = ["BaseModel"]
@@ -81,12 +96,13 @@ class BaseModel:
         def _partition_model(pre, cur, flag):
             print("========= Sub Model {} Partition =========".format(flag))
             model = model_cfg.module_shard_factory(self.args.model_name, initial_model, pre+1, cur+1, 1)
+            model.eval()
             dummy_input = torch.randn(1, *self.profiler_info.get('profile_data')[pre].get("shape_in")[0])
             torch.onnx.export(model,
                             dummy_input,
                             str(Path(Path(initial_model).parent.resolve())) + "/sub_model_" + str(flag) + ".onnx",
                             export_params=True,
-                            opset_version=16,
+                            opset_version=18,
                             do_constant_folding=True,
                             input_names=['input_' + str(pre+1)],
                             output_names=['output_' + str(cur+1)])
@@ -127,13 +143,14 @@ class BaseModel:
             model = models_dir + '/' + model_name
             if not os.path.exists(model):
                 raise ValueError("=> No modle found at '{}'".format(model))
-            if device == 'cpu':
+            available = ort.get_available_providers()
+            if device == 'cpu' or 'CUDAExecutionProvider' not in available:
                 session = ort.InferenceSession(model, providers=['CPUExecutionProvider'])
             elif 'gpu' in device:
                 device_id = int(device.split('-')[-1])
                 session = ort.InferenceSession(model, providers=[('CUDAExecutionProvider', {'device_id': device_id})])
             else:
-                raise ValueError("Error device info: '{}'".format(device))
+                session = ort.InferenceSession(model, providers=['CPUExecutionProvider'])
             self.models.append({
                 'session': session,
                 'name': model_name,
@@ -147,7 +164,16 @@ class BaseModel:
 
     def predict(self, data, input_shape=None, **kwargs):
         pynvml.nvmlInit()
-        root = str(Path(data[0]).parents[2])
+        # Resolve dataset root by finding the parent of the split directory.
+        # ianvs resolves relative paths in txt index files against the txt file's
+        # directory, causing double nesting (e.g. dataset/dataset/val/class/img.JPEG).
+        # We find the directory named after the split (e.g. 'val') and take its parent.
+        _p = Path(data[0]).resolve()
+        _split = self.args.split
+        try:
+            root = str(next(p for p in [_p] + list(_p.parents) if p.name == _split).parent)
+        except StopIteration:
+            root = str(_p.parents[2])
         dataset_cfg = {
             'name': self.args.dataset_name,
             'root': root,

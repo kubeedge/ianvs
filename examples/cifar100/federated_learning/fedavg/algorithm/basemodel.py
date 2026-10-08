@@ -19,11 +19,11 @@ import keras
 import numpy as np
 import tensorflow as tf
 from keras import Sequential
-from keras.src.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
 from sedna.common.class_factory import ClassType, ClassFactory
 
 __all__ = ["BaseModel"]
-os.environ["BACKEND_TYPE"] = "KEARS"
+os.environ["BACKEND_TYPE"] = "KERAS"
 
 
 @ClassFactory.register(ClassType.GENERAL, alias="fedavg")
@@ -79,7 +79,7 @@ class BaseModel:
 
     def load(self, model_url=None):
         print(f"load model from {model_url}")
-        extra_model_path = os.path.basename(model_url) + "/model"
+        extra_model_path = os.path.join(os.path.basename(model_url), "model")
         with zipfile.ZipFile(model_url, "r") as zip_ref:
             zip_ref.extractall(extra_model_path)
         self.model = tf.saved_model.load(extra_model_path)

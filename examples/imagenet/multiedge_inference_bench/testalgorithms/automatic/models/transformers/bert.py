@@ -42,7 +42,7 @@ class BertLayerShard(ModuleShard):
     def forward(self, data: TransformerShardData) -> TransformerShardData:
         """Compute layer shard."""
         if self.has_layer(0):
-            data = (self.self_attention(data)[0], data)
+            data = (self.self_attention(data, attention_mask=None, past_key_value=None)[0], data)
         if self.has_layer(1):
             data = self.self_output(data[0], data[1])
         if self.has_layer(2):
@@ -103,7 +103,6 @@ class BertModelShard(ModuleShard):
 
     @torch.no_grad()
     def _load_weights_first(self, weights):
-        self.embeddings.position_ids.copy_(torch.from_numpy((weights["embeddings.position_ids"])))
         self.embeddings.word_embeddings.weight.copy_(torch.from_numpy(weights['embeddings.word_embeddings.weight']))
         self.embeddings.position_embeddings.weight.copy_(torch.from_numpy(weights['embeddings.position_embeddings.weight']))
         self.embeddings.token_type_embeddings.weight.copy_(torch.from_numpy(weights['embeddings.token_type_embeddings.weight']))
@@ -143,7 +142,10 @@ class BertModelShard(ModuleShard):
     def forward(self, data: TransformerShardData) -> TransformerShardData:
         """Compute shard layers."""
         if self.shard_config.is_first:
-            data = self.embeddings(data)
+            if isinstance(data, tuple):
+                data = self.embeddings(input_ids=data[0], token_type_ids=data[1])
+            else:
+                data = self.embeddings(input_ids=data)
         for layer in self.layers:
             data = layer(data)
         if self.shard_config.is_last:
@@ -157,7 +159,7 @@ class BertModelShard(ModuleShard):
         state_dict = model.state_dict()
         weights = {}
         for key, val in state_dict.items():
-            weights[key] = val
+            weights[key] = val.detach().cpu().numpy()
         np.savez(model_file, **weights)
 
 
@@ -215,5 +217,5 @@ class BertShardForSequenceClassification(ModuleShard):
         state_dict = model.state_dict()
         weights = {}
         for key, val in state_dict.items():
-            weights[key] = val
+            weights[key] = val.detach().cpu().numpy()
         np.savez(model_file, **weights)

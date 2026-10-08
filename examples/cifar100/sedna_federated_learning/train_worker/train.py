@@ -47,7 +47,7 @@ def read_data_from_file_to_npy(files):
 
 
 def main():
-    train_file = "/home/wyd/ianvs/project/data/cifar100/cifar100_train.txt"
+    train_file = "./data/cifar100/cifar100_train.txt"
     train_data = TxtDataParse(data_type="train")
     train_data.parse(train_file)
     train_data = read_data_from_file_to_npy(train_data)
