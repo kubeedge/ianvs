@@ -2,11 +2,11 @@ benchmarkingjob:
   # job name of benchmarking; string type;
   name: "tracking_job"
   # the url address of job workspace that will reserve the output of tests; string type;
-  workspace: "/ianvs/multiedge_inference_bench/workspace"
+  workspace: "./ianvs-workspace/mot17/multiedge_inference_bench"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/tracking/testenv.yaml"
+  testenv: "./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/testenv/tracking/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -19,7 +19,7 @@ benchmarkingjob:
       - name: "tracking"
       #   # the url address of test algorithm configuration file; string type;
       #   # the file format supports yaml/yml;
-        url: "./examples/pedestrian_tracking/multiedge_inference_bench/testalgorithms/tracking/byte_track/byte_track_algorithm.yaml"
+        url: "./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/testalgorithms/tracking/byte_track/byte_track_algorithm.yaml"
 
   # the configuration of ranking leaderboard
   rank:

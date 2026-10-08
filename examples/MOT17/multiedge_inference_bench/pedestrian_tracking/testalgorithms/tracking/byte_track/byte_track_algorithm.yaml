@@ -17,7 +17,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "ByteTrack"
       # the url address of python module; string type;
-      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testalgorithms/tracking/byte_track/basemodel.py"
+      url: "./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/testalgorithms/tracking/byte_track/basemodel.py"
 
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
