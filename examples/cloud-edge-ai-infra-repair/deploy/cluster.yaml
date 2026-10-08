@@ -1,0 +1,12 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  apiServerAddress: "127.0.1.1"
+nodes:
+  - role: control-plane
+  - role: edge-node
+    extraPortMappings:
+      - containerPort: 18080
+        hostPort: 18080
+        listenAddress: "127.0.1.1"
+        protocol: TCP

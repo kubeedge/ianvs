@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-09-16T14:20:05.834136+00:00",
+  "experiment_namespaces_remaining": 0,
+  "experiment_firewall_rules_remaining": 0,
+  "target_service_processes_remaining": 0,
+  "formal_model_workspaces_remaining": 0,
+  "nodes_ready": {
+    "ianvs-repair-control-plane": true,
+    "ianvs-repair-worker": true
+  },
+  "original_model_unchanged": true,
+  "passed": true
+}
