@@ -19,6 +19,7 @@ import keras
 # Input--conv2D--BN--ReLU--conv2D--BN--ReLU--Output
 #      \                              /
 #       ------------------------------
+@keras.saving.register_keras_serializable()
 class BasicBlock(keras.layers.Layer):
     def __init__(self, filter_num, stride=1):
         super(BasicBlock, self).__init__()
@@ -55,6 +56,7 @@ class BasicBlock(keras.layers.Layer):
         return output
 
 
+@keras.saving.register_keras_serializable()
 class ResNet(keras.Model):
     def __init__(self, layer_dims):  # [2, 2, 2, 2]
         super(ResNet, self).__init__()
@@ -78,6 +80,9 @@ class ResNet(keras.Model):
 
         # output: [b, 512, h, w],
         self.avgpool = keras.layers.GlobalAveragePooling2D()
+
+        # Force-build all sublayers so copy.deepcopy works under Keras 3
+        self(tf.zeros([1, 32, 32, 3]))
 
     def call(self, inputs, training=None):
         x = self.stem(inputs, training=training)
@@ -107,6 +112,7 @@ class ResNet(keras.Model):
         return cls(**config)
 
 
+@keras.saving.register_keras_serializable()
 class LeNet(keras.Model):
     def __init__(self, input_shape, channels=3, num_classes=10):
         super(LeNet, self).__init__()

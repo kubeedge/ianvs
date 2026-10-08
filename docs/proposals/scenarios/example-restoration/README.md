@@ -11,6 +11,7 @@ The proposals are organized chronologically so readers can understand how the Ex
 | Phase 1 | 2025 Term 3 | Comprehensive Example Restoration for Ianvs | [#263](https://github.com/kubeedge/ianvs/pull/263) | [`phase-1-2025-term-3/example-restoration.md`](./phase-1-2025-term-3/example-restoration.md) |
 | Phase 2 | 2026 Term 1 | Example Restoration of Ianvs | [#375](https://github.com/kubeedge/ianvs/pull/375) | [`phase-2-2026-term-1/Example_Restoration.md`](./phase-2-2026-term-1/Example_Restoration.md) |
 | Phase 3 | 2026 Term 2 | KubeEdge Ianvs Example Classification CI Validation Framework | [#541](https://github.com/kubeedge/ianvs/pull/541) | [`phase-3-2026-term-2/proposal.md`](./phase-3-2026-term-2/proposal.md) |
+| Phase 4 | 2026 Term 3 | KubeEdge Ianvs Example Restoration — Phase IV | [#1000](https://github.com/kubeedge/ianvs/pull/1000) | [`phase-4-2026-term-3/proposal.md`](./phase-4-2026-term-3/proposal.md) |
 
 ## Phase 1 — 2025 Term 3
 
@@ -29,6 +30,12 @@ It expands the restoration effort into a more concrete plan for restoring multip
 Phase 3 contains the CI validation and classification follow-up introduced through PR #541.
 
 It shifts the Example Restoration effort toward automated example health classification, pull-request validation, and sustainable maintenance workflows. It also uses `examples/llm_simple_qa` as the first concrete restoration target verified by the proposed CI framework.
+
+## Phase 4 — 2026 Term 3
+
+Phase 4 returns to concrete restoration, using the Phase 3 validator as the recurrence guard rather than as the deliverable.
+
+It identifies the lifelong-learning example failures as a single contract drift — Ianvs changed its dataset input contract in July 2024 and its vendored Sedna wheel in April 2026, and migrated the lifelong-learning path through neither. It repairs the drift in Ianvs Core, patches the Sedna-side defect in the vendored wheel, restores `examples/cityscapes-synthia/lifelong_learning_bench/curb-detection` end to end as an MVP, evaluates every other lifelong-learning example against the core change one at a time, and adds three lifelong-learning modules to the Phase 3 validator so the same break cannot recur.
 
 ## Notes for Maintainers
 

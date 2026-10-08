@@ -1,6 +1,6 @@
 devices:
-  - name: "gpu"
-    type: "gpu-0"
+  - name: "gpu-0"
+    type: "gpu"
     memory: "1024"
     freq: "2.6"
     bandwith: "100"

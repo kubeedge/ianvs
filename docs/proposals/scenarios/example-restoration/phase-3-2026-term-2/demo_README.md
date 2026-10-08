@@ -9,16 +9,41 @@ For status meanings, badge definitions, and broken-status subtypes, see [`status
 
 ## Example Classification Matrix
 
-| Example | Path | Status |
-| --- | --- | --- |
-| Demo Runnable Example | `examples/demo-runnable` | ![Runnable](https://img.shields.io/badge/status-Runnable-brightgreen) |
-| Demo Broken Example | `examples/demo-broken` | ![Broken](https://img.shields.io/badge/status-Broken-red) |
-| Demo Not Validated Example | `examples/demo-unvalidated` | ![Not validated yet](https://img.shields.io/badge/status-Not%20validated%20yet-lightgrey) |
-| Demo External Dataset Example | `examples/demo-dataset` | ![Requires external dataset or model download](https://img.shields.io/badge/status-Requires%20external%20dataset%20or%20model%20download-blue) |
-| Demo Model Download Example | `examples/demo-model-download` | ![Requires external dataset or model download](https://img.shields.io/badge/status-Requires%20external%20dataset%20or%20model%20download-blue) |
-| Demo GPU Example | `examples/demo-gpu` | ![Requires GPU or special hardware](https://img.shields.io/badge/status-Requires%20GPU%20or%20special%20hardware-orange) |
-| Demo Quarantined Example | `examples/demo-quarantined` | ![Quarantined](https://img.shields.io/badge/status-Quarantined-8a2be2) |
-| Demo Known Issue Example | `examples/demo-known-issue` | ![Known issue](https://img.shields.io/badge/status-Known%20issue-critical) |
-| Demo Dependency Drift Example | `examples/demo-dependency-drift` | ![Broken](https://img.shields.io/badge/status-Broken-red) ![Dependency drift](https://img.shields.io/badge/reason-Dependency%20drift-ff69b4) |
-| Demo Resource Unavailable Example | `examples/demo-resource-unavailable` | ![Broken](https://img.shields.io/badge/status-Broken-red) ![Dataset or resource unavailable](https://img.shields.io/badge/reason-Dataset%20or%20resource%20unavailable-795548) |
-| Demo Documentation Issue Example | `examples/demo-doc-issue` | ![Broken](https://img.shields.io/badge/status-Broken-red) ![Documentation issue](https://img.shields.io/badge/reason-Documentation%20issue-607d8b) |
+The matrix uses one row per benchmark unit. Benchmark units belonging to the
+same Example share one merged `Example` cell.
+
+<table>
+  <thead>
+    <tr>
+      <th>Example</th>
+      <th>Benchmark Unit</th>
+      <th>Path</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="2">Demo Multi-Benchmark Example</td>
+      <td>demo_runnable</td>
+      <td><code>examples/demo/runnable</code></td>
+      <td><img alt="Runnable" src="https://img.shields.io/badge/status-Runnable-brightgreen"></td>
+    </tr>
+    <tr>
+      <td>demo_broken</td>
+      <td><code>examples/demo/broken</code></td>
+      <td><img alt="Broken" src="https://img.shields.io/badge/status-Broken-red"></td>
+    </tr>
+    <tr>
+      <td>Demo CI State</td>
+      <td>demo_cicd_ongoing</td>
+      <td><code>examples/demo/cicd-ongoing</code></td>
+      <td><img alt="CI/CD onGoing" src="https://img.shields.io/badge/status-CI%2FCD%20onGoing-lightgrey"></td>
+    </tr>
+    <tr>
+      <td>Demo Example State</td>
+      <td>demo_example_ongoing</td>
+      <td><code>examples/demo/example-ongoing</code></td>
+      <td><img alt="Example onGoing" src="https://img.shields.io/badge/status-Example%20onGoing-yellow"></td>
+    </tr>
+  </tbody>
+</table>

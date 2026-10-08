@@ -15,8 +15,8 @@
 import os
 import tensorflow as tf
 import numpy as np
-from keras.src.layers import Dense, MaxPooling2D, Conv2D, Flatten, Dropout
-from keras.src.models import Sequential
+from keras.layers import Dense, MaxPooling2D, Conv2D, Flatten, Dropout
+from keras.models import Sequential
 
 os.environ["BACKEND_TYPE"] = "KERAS"
 
@@ -48,7 +48,7 @@ class Estimator:
         model.add(Dense(64, activation="relu"))
         model.add(Dense(32, activation="relu"))
         model.add(Dropout(0.5))
-        model.add(Dense(1, activation="softmax"))
+        model.add(Dense(100, activation="softmax"))
 
         model.compile(
             loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
@@ -71,7 +71,7 @@ class Estimator:
             .batch(batch_size)
         )
         history = self.model.fit(train_loader, epochs=int(epochs))
-        return {k: list(map(np.float, v)) for k, v in history.history.items()}
+        return {k: list(map(float, v)) for k, v in history.history.items()}
 
     def get_weights(self):
         return self.model.get_weights()

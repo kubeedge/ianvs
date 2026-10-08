@@ -4,7 +4,15 @@
 
 ### Prepare Data
 
-The data of simple-qa example structure is:
+From the repository root, run:
+
+`python examples/llm_simple_qa/scripts/02_prepare_dataset.py`
+
+For a smoke test, generate a single test row:
+
+`python examples/llm_simple_qa/scripts/02_prepare_dataset.py --smoke`
+
+The script creates the following structure by default:
 
 ```
 .
@@ -14,71 +22,43 @@ The data of simple-qa example structure is:
     └── data.jsonl
 ```
 
-`train_data/data.jsonl` is empty, and the `test_data/data.jsonl` is as follows:
+`train_data/data.jsonl` is empty.
 
-```
-{
-  "question": "If Xiao Ming has 5 apples, and he gives 3 to Xiao Hua, how many apples does Xiao Ming have left?\nA. 2\nB. 3\nC. 4\nD. 5",
-  "answer": "A"
-}
-{
-  "question": "Which of the following numbers is the smallest prime number?\nA. 0\nB. 1\nC. 2\nD. 4",
-  "answer": "C"
-}
-{
-  "question": "A rectangle has a length of 10 centimeters and a width of 5 centimeters, what is its perimeter in centimeters?\nA. 20 centimeters\nB. 30 centimeters\nC. 40 centimeters\nD. 50 centimeters",
-  "answer": "B"
-}
-{
-  "question": "Which of the following fractions is closest to 1?\nA. 1/2\nB. 3/4\nC. 4/5\nD. 5/6",
-  "answer": "D"
-}
-{
-  "question": "If a number plus 10 equals 30, what is the number?\nA. 20\nB. 21\nC. 22\nD. 23",
-  "answer": "A"
-}
-{
-  "question": "Which of the following expressions has the largest result?\nA. 3 + 4\nB. 5 - 2\nC. 6 * 2\nD. 7 ÷ 2",
-  "answer": "C"
-}
-{
-  "question": "A class has 24 students, and if each student brings 2 books, how many books are there in total?\nA. 48\nB. 36\nC. 24\nD. 12",
-  "answer": "A"
-}
-{
-  "question": "Which of the following is the correct multiplication rhyme?\nA. Three threes are seven\nB. Four fours are sixteen\nC. Five fives are twenty-five\nD. Six sixes are thirty-six",
-  "answer": "B"
-}
-{
-  "question": "If one number is three times another number, and this number is 15, what is the other number?\nA. 5\nB. 10\nC. 15\nD. 45",
-  "answer": "A"
-}
-{
-  "question": "Which of the following shapes has the longest perimeter?\nA. Square\nB. Rectangle\nC. Circle\nD. Triangle",
-  "answer": "C"
-}
+`test_data/data.jsonl` contains generated JSONL rows, one JSON object per line. By default it writes 10 rows; `--smoke` writes 1 row.
+
+Example output for the default run:
+
+```json
+{"question":"If Xiao Ming has 5 apples, and he gives 3 to Xiao Hua, how many apples does Xiao Ming have left?\nA. 2\nB. 3\nC. 4\nD. 5","answer":"A"}
+{"question":"Which of the following numbers is the smallest prime number?\nA. 0\nB. 1\nC. 2\nD. 4","answer":"C"}
+{"question":"A rectangle has a length of 10 centimeters and a width of 5 centimeters, what is its perimeter in centimeters?\nA. 20 centimeters\nB. 30 centimeters\nC. 40 centimeters\nD. 50 centimeters","answer":"B"}
 ```
 
 ### Prepare Environment
 
-You need to install the changed-sedna package, which added `JsonlDataParse` in `sedna.datasources`
+Install the example dependencies first:
 
-Replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `examples/resources/sedna-with-jsonl.zip`
+`cd examples/llm_simple_qa && scripts/01_install_requirements.sh requirements.txt`
+
+Install Sedna from the bundled wheel:
+
+`pip install resources/third_party/sedna-0.6.0.1-py3-none-any.whl`
 
 
 ### Run Ianvs
 
 Run the following command:
 
-`ianvs -f examples/llm/singletask_learning_bench/simple_qa/benchmarkingjob.yaml`
+`ianvs -f examples/llm_simple_qa/benchmarkingjob.yaml`
 
 ## OpenCompass Evaluation
 
 ### Prepare Environment
 
-`pip install examples/resources/opencompass-0.2.5-py3-none-any.whl`
+Install OpenCompass from pip:
+
+`pip install -U opencompass`
 
 ### Run Evaluation
 
-`python run_op.py examples/llm/singletask_learning_bench/simple_qa/testalgorithms/gen/op_eval.py`
-
+`python run_op.py examples/llm_simple_qa/testalgorithms/gen/op_eval.py`
