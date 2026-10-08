@@ -10,7 +10,20 @@ class Saver(object):
 
     def __init__(self, args):
         self.args = args
-        self.directory = os.path.join('/tmp', args.dataset, args.checkname)
+
+        # keep checkpoints inside <cwd>/tmp; reject names that would escape it
+        dataset = args.dataset or ""
+        checkname = args.checkname or ""
+        workspace_tmp = os.path.abspath(os.path.join(os.getcwd(), 'tmp'))
+        directory = os.path.abspath(os.path.join(workspace_tmp, dataset, checkname))
+        try:
+            inside = os.path.commonpath([workspace_tmp, directory]) == workspace_tmp
+        except ValueError:  # paths on different drives (Windows)
+            inside = False
+        if not inside:
+            raise ValueError("Path traversal detected: directory is outside the workspace.")
+        self.directory = directory
+
         self.runs = sorted(glob.glob(os.path.join(self.directory, 'experiment_*')))
         run_id = int(self.runs[-1].split('_')[-1]) + 1 if self.runs else 0
 
