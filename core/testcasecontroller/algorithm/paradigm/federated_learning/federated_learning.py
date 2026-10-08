@@ -106,7 +106,7 @@ class FederatedLearning(ParadigmBase):
         dataset_files = self.get_all_train_data()
         train_dataset_file, _ = dataset_files[0]
         if self.mode:
-            rename_keys_jsonl(train_dataset_file)
+            train_dataset_file = rename_keys_jsonl(train_dataset_file)
             train_datasets = self.train_llm_data_partition(train_dataset_file)
             train_fn = self.llm_train
         else:
@@ -334,7 +334,7 @@ class FederatedLearning(ParadigmBase):
         """
         test_dataset = None
         if self.mode:
-            rename_keys_jsonl(test_dataset_file)
+            test_dataset_file = rename_keys_jsonl(test_dataset_file)
         if isinstance(test_dataset_file, str):
             test_dataset = self.dataset.load_data(test_dataset_file, "eval")
         if isinstance(test_dataset_file, list):
