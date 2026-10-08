@@ -14,10 +14,14 @@
 
 """Dataset"""
 
+import json
 import os
 import tempfile
 
 import pandas as pd
+
+from core.common import utils
+from core.common.constant import DatasetFormat
 
 try:
     # Sedna >= 0.4.x: modern module layout
@@ -39,11 +43,7 @@ except ImportError:
 # Backwards-compat aliases
 JsonDataParse = JSONDataParse
 JSONMetaDataParse = JSONDataParse
-JsonlDataParse = JSONDataParse      
-
-
-from core.common import utils
-from core.common.constant import DatasetFormat
+JsonlDataParse = JSONDataParse
 
 # pylint: disable=too-many-instance-attributes
 class Dataset:
@@ -191,7 +191,7 @@ class Dataset:
             raise NotImplementedError('not one of test_index/test_data/test_data_info')
 
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,too-many-positional-arguments
     def split_dataset(
         self,
         dataset_url,
@@ -600,12 +600,11 @@ class Dataset:
             data.parse(file)
 
         if data_format == DatasetFormat.JSONL.value:
-            import json
-        with open(file, "r", encoding="utf-8") as fh:
-            rows = [json.loads(line) for line in fh if line.strip()]
-        data = BaseDataSource(data_type=data_type, func=feature_process)
-        data.x = [r.get("question", r.get("prompt", "")) for r in rows]
-        data.y = [r.get("answer", r.get("response", "")) for r in rows]
+            with open(file, "r", encoding="utf-8") as fh:
+                rows = [json.loads(line) for line in fh if line.strip()]
+            data = BaseDataSource(data_type=data_type, func=feature_process)
+            data.x = [r.get("question", r.get("prompt", "")) for r in rows]
+            data.y = [r.get("answer", r.get("response", "")) for r in rows]
 
         if data_format == DatasetFormat.JSONFORLLM.value:
             data = JSONMetaDataParse(data_type=data_type, func=feature_process)
