@@ -16,6 +16,7 @@
 
 import importlib
 import os
+import re
 import sys
 import time
 
@@ -78,11 +79,32 @@ def py2dict(url):
     raise RuntimeError('config file must be the py format')
 
 
+# pylint: disable=too-many-ancestors
+class _Yaml12FloatLoader(yaml.SafeLoader):
+    """
+    SafeLoader that also resolves YAML 1.2 floats.
+    PyYAML follows YAML 1.1, which requires a dot in a float,
+    so values like 1e-3 would otherwise be loaded as strings.
+    """
+
+
+_Yaml12FloatLoader.add_implicit_resolver(
+    "tag:yaml.org,2002:float",
+    re.compile(r"""^(?:[-+]?(?:[0-9][0-9_]*)\.[0-9_]*(?:[eE][-+]?[0-9]+)?
+                    |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
+                    |\.[0-9_]+(?:[eE][-+][0-9]+)?
+                    |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\.[0-9_]*
+                    |[-+]?\.(?:inf|Inf|INF)
+                    |\.(?:nan|NaN|NAN))$""", re.X),
+    list("-+0123456789."),
+)
+
+
 def yaml2dict(url):
     """Convert yaml file to the dict."""
     if url.endswith('.yaml') or url.endswith('.yml'):
         with open(url, "rb") as file:
-            raw_dict = yaml.load(file, Loader=yaml.SafeLoader)
+            raw_dict = yaml.load(file, Loader=_Yaml12FloatLoader)
 
         return raw_dict
 
