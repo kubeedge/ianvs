@@ -1,4 +1,23 @@
+# For dynamic PR validation, `example_inventory.yaml` edits select only added, removed, or modified benchmark entries by comparing base and head data, instead of triggering validation for all examples.
+#
+# For more information, please refer download documentation: 
+#  - ./docs/example_validator/validation_rules.md
+#  - ./.github/workflows/validator/services/inventory_loader.py
+#  - https://github.com/kubeedge/ianvs/pull/1016
+
 examples:
+# List of examples is a job-level inventory for the validator workflow. Each example is represented as a dictionary with the following fields:
+# - name: Job name
+#   example: "Example name"
+#   status: validated | unvalidated | onGoing
+#   python_version: "Python version required for the example"
+#   path: "Path to the example directory"
+#   readme_file: "Path to the example's README file"
+#   benchmark_file: "Path to the example's benchmarking job file"
+#   requirements_file: "Path to the example's requirements file"
+#   dataset: # preparation information for the dataset used in the example=
+#   prepare_env: # preparation environment for the example
+# 
 - name: perception_reasoning_test
   example: "Cloud_Robotics"
   status: unvalidated

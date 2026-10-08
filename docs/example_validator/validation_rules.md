@@ -189,6 +189,8 @@ The repository uses these validation levels:
 
 The static workflow currently triggers for changed example Python or YAML files. The dynamic workflow event filter covers `examples/**`, `core/**`, `.github/workflows/validator/**`, and `.github/workflows/dynamic_code_cicd.yaml`. Although `inventory_loader.py` treats every `.github/workflows/` path as a dynamic run-all prefix when invoked, changes to other workflow files do not trigger the current dynamic workflow. Scheduled planning runs daily and uses a seven-day broad-validation cadence. Generated reports and status snapshots are the evidence for classification; a passing mocked check must retain its `mocked_llm` label.
 
+For dynamic PR validation, `example_inventory.yaml` edits select only added, removed, or modified benchmark entries by comparing base and head data, instead of triggering validation for all examples.
+
 For static and dynamic pull-request validation, the base target set is selected
 from the base revision's inventory and the head target set from the head
 inventory, using the same changed-file range. The sets may differ when a
