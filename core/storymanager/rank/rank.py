@@ -188,7 +188,8 @@ class Rank:
         # pylint: disable=E1101
         all_df = copy.deepcopy(self.all_df)
         all_df.index = np.arange(1, len(all_df) + 1)
-        all_df.to_csv(self.all_rank_file, index_label="rank", encoding="utf-8")
+        all_df.to_csv(self.all_rank_file, index_label="rank", encoding="utf-8", na_rep="N/A")
+
 
     def _get_selected(self, test_cases, test_results) -> pd.DataFrame:
         module_types = self.selected_dataitem.get("modules")
@@ -228,7 +229,9 @@ class Rank:
         # pylint: disable=E1101
         selected_df = self._get_selected(test_cases, test_results)
         selected_df.index = np.arange(1, len(selected_df) + 1)
-        selected_df.to_csv(self.selected_rank_file, index_label="rank", encoding="utf-8")
+        selected_df.to_csv(
+            self.selected_rank_file, index_label="rank", encoding="utf-8", na_rep="N/A"
+        )
 
     def _draw_pictures(self, test_cases, test_results):
         # pylint: disable=E1101

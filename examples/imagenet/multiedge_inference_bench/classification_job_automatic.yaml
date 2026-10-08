@@ -25,7 +25,7 @@ benchmarkingjob:
   rank:
     # rank leaderboard with metric of test case's evaluation and order ; list type;
     # the sorting priority is based on the sequence of metrics in the list from front to back;
-    sort_by: [ { "mota": "descend" } ]
+    sort_by: [ { "accuracy": "descend" } ]
 
     # visualization configuration
     visualization:

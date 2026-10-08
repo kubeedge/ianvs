@@ -1,0 +1,285 @@
+name: "Static Code Requirement Verification"
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'examples/**/*.py'
+      - 'examples/**/*.yml'
+      - 'examples/**/*.yaml'
+
+jobs:
+  detect-change-examples:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    permissions: read-all
+    outputs:
+      mode: ${{ steps.check_examples.outputs.mode }}
+      run_all: ${{ steps.check_examples.outputs.run_all }}
+      examples_changed: ${{ steps.check_examples.outputs.examples_changed }}
+      base_examples_changed: ${{ steps.check_examples.outputs.base_examples_changed }}
+      head_examples_changed: ${{ steps.check_examples.outputs.head_examples_changed }}
+      base_changed_examples: ${{ steps.check_examples.outputs.base_changed_examples }}
+      head_changed_examples: ${{ steps.check_examples.outputs.head_changed_examples }}
+      base_validation_matrix: ${{ steps.check_examples.outputs.base_validation_matrix }}
+      head_validation_matrix: ${{ steps.check_examples.outputs.head_validation_matrix }}
+      changed_files: ${{ steps.check_examples.outputs.changed_files }}
+      base_check_items: ${{ steps.check_examples.outputs.base_check_items }}
+      head_check_items: ${{ steps.check_examples.outputs.head_check_items }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.8'
+
+      - name: Check changed examples
+        id: check_examples
+        run: |
+          python .github/workflows/validator/services/inventory_loader.py \
+            --mode static \
+            --inventory .github/workflows/validator/data/example_inventory.yaml \
+            --base-ref "${{ github.event.pull_request.base.sha }}" \
+            --base-inventory-ref "${{ github.event.pull_request.base.sha }}" \
+            --head-ref HEAD
+
+  static-code-requirement-base:
+    needs: detect-change-examples
+    if: ${{ github.event_name == 'pull_request' && needs.detect-change-examples.outputs.base_examples_changed == 'true' }}
+    runs-on: ubuntu-latest
+    permissions: read-all
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.detect-change-examples.outputs.base_validation_matrix) }}
+    name: ${{ format('Base static requirement check ({0})', matrix.selector) }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.8'
+
+      - name: Install validator dependencies
+        run: python -m pip install -r .github/workflows/validator/requirements.txt
+
+      - name: Prepare base validation worktree
+        run: |
+          base_dir="$(mktemp -d)"
+          git fetch --no-tags --depth=1 origin "${{ github.event.pull_request.base.sha }}"
+          git worktree add --detach "${base_dir}" FETCH_HEAD
+          echo "IANVS_BASE_DIR=${base_dir}" >> "${GITHUB_ENV}"
+
+      - name: Run base static example validation
+        id: run_validation
+        continue-on-error: true
+        run: |
+          safe_name="$(printf '%s' "${{ matrix.selector }}" | tr -c 'A-Za-z0-9._-' '-')"
+          result_file="${GITHUB_WORKSPACE}/baseline-results/${safe_name}.json"
+          mkdir -p "${GITHUB_WORKSPACE}/baseline-results"
+          echo "artifact_name=static-validation-base-${safe_name}" >> "${GITHUB_OUTPUT}"
+          echo "result_file=${result_file}" >> "${GITHUB_OUTPUT}"
+
+          (
+            cd "${IANVS_BASE_DIR}"
+            python "${IANVS_BASE_DIR}/.github/workflows/validator/validation_runner.py" \
+              --static \
+              --example "${{ matrix.selector }}" \
+              --inventory "${IANVS_BASE_DIR}/.github/workflows/validator/data/example_inventory.yaml" \
+              --format json \
+              --report "${result_file}"
+          )
+
+      - name: Upload base static validation result
+        if: ${{ always() && steps.run_validation.outputs.result_file != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.run_validation.outputs.artifact_name }}
+          path: ${{ steps.run_validation.outputs.result_file }}
+          if-no-files-found: ignore
+
+  static-code-requirement-pr:
+    needs: detect-change-examples
+    if: ${{ needs.detect-change-examples.outputs.head_examples_changed == 'true' }}
+    runs-on: ubuntu-latest
+    permissions: read-all
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.detect-change-examples.outputs.head_validation_matrix) }}
+    name: ${{ format('PR static requirement check ({0})', matrix.selector) }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.8'
+
+      - name: Install validator dependencies
+        run: python -m pip install -r .github/workflows/validator/requirements.txt
+
+      - name: Run PR static example validation
+        id: run_validation
+        continue-on-error: true
+        run: |
+          safe_name="$(printf '%s' "${{ matrix.selector }}" | tr -c 'A-Za-z0-9._-' '-')"
+          result_file="validation-results/${safe_name}.json"
+          mkdir -p validation-results
+          echo "artifact_name=static-validation-pr-${safe_name}" >> "${GITHUB_OUTPUT}"
+          echo "result_file=${result_file}" >> "${GITHUB_OUTPUT}"
+
+          python .github/workflows/validator/validation_runner.py \
+            --static \
+            --example "${{ matrix.selector }}" \
+            --inventory .github/workflows/validator/data/example_inventory.yaml \
+            --format json \
+            --report "${result_file}"
+
+      - name: Upload PR static validation result
+        if: ${{ always() && steps.run_validation.outputs.result_file != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.run_validation.outputs.artifact_name }}
+          path: ${{ steps.run_validation.outputs.result_file }}
+          if-no-files-found: ignore
+
+  regression-static-code-requirement:
+    needs:
+      - detect-change-examples
+      - static-code-requirement-base
+      - static-code-requirement-pr
+    if: ${{ always() && github.event_name == 'pull_request' && needs.detect-change-examples.outputs.examples_changed == 'true' }}
+    runs-on: ubuntu-latest
+    permissions: read-all
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.8'
+
+      - name: Install validator dependencies
+        run: python -m pip install -r .github/workflows/validator/requirements.txt
+
+      - name: Download base static validation results
+        if: ${{ needs.detect-change-examples.outputs.base_examples_changed == 'true' }}
+        uses: actions/download-artifact@v8
+        with:
+          pattern: static-validation-base-*
+          path: baseline-results
+          merge-multiple: true
+
+      - name: Download PR static validation results
+        if: ${{ needs.detect-change-examples.outputs.head_examples_changed == 'true' }}
+        uses: actions/download-artifact@v8
+        with:
+          pattern: static-validation-pr-*
+          path: validation-results
+          merge-multiple: true
+
+      - name: Detect PR regressions
+        id: detect_regression
+        continue-on-error: true
+        run: |
+          python .github/workflows/validator/services/regression_detector.py \
+            --base-results baseline-results \
+            --head-results validation-results \
+            --base-ref "${{ github.event.pull_request.base.sha }}" \
+            --head-ref HEAD \
+            --allow-missing-base \
+            --allow-missing-head \
+            --json-output regression-report.json \
+            --json-only
+
+      - name: Upload regression report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: static-validation-regression-report
+          path: regression-report.json
+          if-no-files-found: ignore
+
+      - name: Fail on PR regression
+        if: ${{ steps.detect_regression.outcome == 'failure' }}
+        run: exit 1
+
+  report-static-code-requirement:
+    needs:
+      - detect-change-examples
+      - regression-static-code-requirement
+      - static-code-requirement-pr
+    if: ${{ always() && needs.detect-change-examples.outputs.examples_changed == 'true' }}
+    runs-on: ubuntu-latest
+    permissions: read-all
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.8'
+
+      - name: Install validator dependencies
+        run: python -m pip install -r .github/workflows/validator/requirements.txt
+
+      - name: Download PR static validation results
+        if: ${{ needs.detect-change-examples.outputs.head_examples_changed == 'true' }}
+        uses: actions/download-artifact@v8
+        with:
+          pattern: static-validation-pr-*
+          path: validation-results
+          merge-multiple: true
+
+      - name: Download regression report
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/download-artifact@v8
+        with:
+          name: static-validation-regression-report
+          path: .
+
+      - name: Collect static validation artifact metadata
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api \
+            --paginate \
+            --slurp \
+            "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100" \
+            > static-validation-artifacts.json
+
+      - name: Generate validation report
+        run: |
+          python .github/workflows/validator/services/report_generator.py \
+            --results validation-results \
+            --mode static \
+            --output validation-report.md \
+            --regression-json regression-report.json \
+            --artifacts-json static-validation-artifacts.json \
+            --step-summary \
+            --allow-empty \
+            --no-fail
+
+      - name: Upload validation report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: static-validation-report
+          path: |
+            validation-report.md
+            regression-report.json
+          if-no-files-found: ignore
