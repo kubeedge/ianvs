@@ -142,7 +142,7 @@ class Dataset:
         if file_format == DatasetFormat.JSONFORLLM.value:
             return file_url
         raise ValueError(
-            f"The Data Info File must be named as `data_info.json`, "
+            f"The Data Info File must be named as `metadata.json`, "
             f"but the current file is {file_url}."
         )
 
