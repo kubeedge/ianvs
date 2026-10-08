@@ -56,7 +56,7 @@ class BaseModel:
 
     def load(self, model_url=None):
         logging.info(f"load model from {model_url}")
-        extra_model_path = os.path.basename(model_url) + "/model"
+        extra_model_path = os.path.join(os.path.basename(model_url), "model")
         with zipfile.ZipFile(model_url, "r") as zip_ref:
             zip_ref.extractall(extra_model_path)
         self.model = tf.saved_model.load(extra_model_path)
