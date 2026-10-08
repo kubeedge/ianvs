@@ -27,7 +27,26 @@ python3 -m venv ianvs_env
 source ianvs_env/bin/activate
 pip install -r requirements.txt
 pip install .
+```
 
+### Installing KubeEdge Sedna
+
+This example depends on KubeEdge Sedna, which is **not** the `sedna` package on PyPI (that's an unrelated mathematics library). Install Sedna from source:
+
+```bash
+git clone --recursive https://github.com/kubeedge/sedna.git
+cd sedna/lib
+python setup.py bdist_wheel
+pip install dist/sedna*.whl
+```
+
+For CPU-only environments, additional service-layer deps may be needed:
+
+```bash
+pip install fastapi "uvicorn>=0.27" pycocotools watchdog
+```
+
+```bash
 # 3. Install the ML deps used by this example
 pip install -r examples/llm-agent/singletask_learning_bench/requirements.txt
 
