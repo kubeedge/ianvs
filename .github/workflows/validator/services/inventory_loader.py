@@ -83,7 +83,7 @@ def git_lines(args: Sequence[str]) -> List[str]:
 
 
 def normalize_path(value: str) -> str:
-    return value.strip().strip("\"'").rstrip("/")
+    return value.strip().strip("\"'").replace("\\", "/").rstrip("/")
 
 
 def parse_scalar(value: str):
