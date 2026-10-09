@@ -105,7 +105,8 @@ class Trainer(object):
                     "=> no checkpoint found at '{}'" .format(args.resume))
             print(f"Training: load model from {args.resume}")
             checkpoint = torch.load(
-                args.resume, map_location=torch.device('cuda:0'))
+                args.resume,
+                map_location=torch.device(f'cuda:{args.gpu_ids}' if args.cuda else 'cpu'))
             args.start_epoch = checkpoint['epoch']
 
             self.model.load_state_dict(checkpoint['state_dict'], False)
@@ -260,7 +261,8 @@ class Trainer(object):
                 target, 255, self.nclass[self.current_domain] - 1)
 
             target = target.squeeze(0)
-            target = target.cuda(self.gpu_ids)
+            if self.args.cuda:
+                target = target.cuda(self.gpu_ids)
 
             outputs_prev_task = self.model(
                 image, max(self.current_domain-1, 0))

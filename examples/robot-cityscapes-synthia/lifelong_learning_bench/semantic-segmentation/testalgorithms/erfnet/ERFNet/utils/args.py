@@ -1,3 +1,6 @@
+import torch
+
+
 class TrainArgs:
     def __init__(self, **kwargs):
         self.depth = False
@@ -22,7 +25,7 @@ class TrainArgs:
         self.lr_scheduler = 'cos'
         self.momentum = 0.9
         self.weight_decay = 2.5e-5
-        self.no_cuda = False
+        self.no_cuda = kwargs.get("no_cuda", not torch.cuda.is_available())
         self.gpu_ids = 0
 
         self.seed = 1
@@ -31,7 +34,7 @@ class TrainArgs:
         self.ft = True
         self.eval_interval = kwargs.get("eval_interval", 50)
         self.no_val = kwargs.get("no_val", True)
-        self.cuda = True
+        self.cuda = kwargs.get("cuda", not self.no_cuda and torch.cuda.is_available())
         self.savedir = './dataset/mdil-ss/save'
 
 class ValArgs:
@@ -48,7 +51,7 @@ class ValArgs:
         self.current_domain = 0
         self.next_domain = 1
 
-        self.no_cuda = False
+        self.no_cuda = kwargs.get("no_cuda", not torch.cuda.is_available())
         self.gpu_ids = 0
         self.checkname = None
         self.weight_path = "./models/530_exp3_2.pth"
@@ -58,4 +61,4 @@ class ValArgs:
         self.label_save_path = './test/label'
         self.merge = True
         self.depth = False
-        self.cuda = True
+        self.cuda = kwargs.get("cuda", not self.no_cuda and torch.cuda.is_available())
