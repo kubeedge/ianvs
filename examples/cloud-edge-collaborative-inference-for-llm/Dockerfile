@@ -24,10 +24,10 @@ RUN conda create -y -n $CONDA_ENV python=$PYTHON_VERSION rust -c conda-forge
 
 # Install dependencies inside the conda environment and Ianvs
 RUN /bin/bash -c "source activate $CONDA_ENV && \
-    pip install examples/resources/third_party/sedna-0.6.0.1-py3-none-any.whl && \
+    pip install resources/third_party/sedna-0.6.0.1-py3-none-any.whl && \
     pip install -r requirements.txt && \
     pip install -r examples/cloud-edge-collaborative-inference-for-llm/requirements.txt && \
-    python setup.py install"
+    pip install ."
 
 # Download Kaggle CLI
 RUN pip install kaggle
