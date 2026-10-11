@@ -17,7 +17,6 @@
 import os
 
 # pylint: disable=E0401
-import onnx
 
 from core.common.log import LOGGER
 from core.common.constant import ParadigmType
@@ -99,6 +98,14 @@ class MultiedgeInference(ParadigmBase):
 
     # pylint: disable=W0718, C0103
     def _partition(self, partition_point_list, initial_model_path, sub_model_dir):
+        # Fix #450: lazy import — only needed for model partitioning path
+        try:
+            import onnx
+        except ImportError as e:
+            raise ImportError(
+                "onnx is required for model partitioning but is not installed. "
+                "Install with: pip install onnx"
+            ) from e
         map_info = dict({})
         for idx, point in enumerate(partition_point_list):
             input_names = point['input_names']

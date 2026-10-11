@@ -1,0 +1,18 @@
+# Requirements for MOT17/multiedge_inference_bench
+# Fix #449: added missing packages (loguru, motmetrics, mmcv, opencv-python)
+# that caused repeated ImportError cycles for new contributors.
+#
+# Version bounds:
+#   motmetrics>=1.2.0  — 1.x and 0.x have incompatible metric field names
+#   pandas<2.0         — generate_reports.py uses deprecated delim_whitespace=True
+#
+# Note: ByteTrack must be installed separately from source (see README).
+motmetrics>=1.2.0
+loguru
+fpdf
+pandas>=1.3.0,<2.0
+seaborn
+scikit-learn
+scipy
+opencv-python
+mmcv

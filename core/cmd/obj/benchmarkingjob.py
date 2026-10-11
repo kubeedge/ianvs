@@ -47,6 +47,8 @@ class BenchmarkingJob:
         self.rank = None
         self.test_env = None
         self.simulation = None
+        self.parallel = False
+        self.max_workers = None
         self.testcase_controller = TestCaseController()
         self._parse_config(config)
 
@@ -91,7 +93,10 @@ class BenchmarkingJob:
         self.testcase_controller.build_testcases(test_env=self.test_env,
                                                  test_object=self.test_object)
 
-        succeed_testcases, test_results = self.testcase_controller.run_testcases(self.workspace)
+        succeed_testcases, test_results = self.testcase_controller.run_testcases(
+            self.workspace,
+            parallel=self.parallel,
+            max_workers=self.max_workers)
 
         if test_results:
             self.rank.save(succeed_testcases, test_results, output_dir=self.workspace)
