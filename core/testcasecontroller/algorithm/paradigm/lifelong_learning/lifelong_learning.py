@@ -356,7 +356,15 @@ class LifelongLearning(ParadigmBase):
 
         os.environ["CLOUD_KB_INDEX"] = cloud_task_index
         os.environ["OUTPUT_URL"] = train_output_dir
-        if rounds < 1:
+        # Sedna builds the knowledge base on the initial training call and
+        # updates it afterwards. The default mode trains first in round 1;
+        # no-inference and hard-example-mining train first in round 0.
+        mode = (self.model_eval_config or {}).get("model_metric", {}).get("mode")
+        if mode in ("no-inference", "hard-example-mining"):
+            is_initial_training = rounds < 1
+        else:
+            is_initial_training = rounds <= 1
+        if is_initial_training:
             os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'False'
         else:
             os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'True'
