@@ -188,6 +188,17 @@ class Algorithm:
 
             modules_list.append((module.type, module_list))
 
+        module_types = [module_type for module_type, _ in modules_list]
+        duplicate_types = {t for t in module_types if module_types.count(t) > 1}
+        if duplicate_types:
+            raise ValueError(
+                f"Duplicate module type(s) {sorted(duplicate_types)} found in algorithm "
+                f"config; get_full_combinations() would silently keep only the last "
+                f"module of each duplicated type, dropping the earlier one from every "
+                f"generated test case. Each module 'type' in the 'modules' list must "
+                f"be unique."
+            )
+
         module_combinations_list = get_full_combinations(modules_list)
 
         return module_combinations_list
