@@ -115,7 +115,15 @@ if __name__ == '__main__':
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
     net = Autoencoder().to(device)
-    encoder_dataset = DatasetAutoEncoder(fake_images_path='../data/fake_imgs/')
+    # BUG-4 (domain transfer): the encoder is trained here on GAN-generated
+    # fake images, but is later applied to REAL Cityscapes images in
+    # deeplabv3/train.py. Results are therefore not directly comparable to
+    # standard Cityscapes benchmarks. See the README "Scientific Validity Notes".
+    # Resolve the path relative to this file so it is directory-agnostic; the
+    # trailing separator is required by DatasetAutoEncoder's path concatenation.
+    fake_imgs_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'fake_imgs', '')
+    encoder_dataset = DatasetAutoEncoder(fake_images_path=fake_imgs_path)
     encoder_loader = DataLoader(
         dataset=encoder_dataset, batch_size=batch_size, drop_last=True)
     criterion = nn.MSELoss()

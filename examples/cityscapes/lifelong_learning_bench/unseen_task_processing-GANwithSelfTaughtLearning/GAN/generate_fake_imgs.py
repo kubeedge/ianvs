@@ -12,6 +12,14 @@ import numpy as np
 
 from skimage import io
 
+import sys
+# Resolve paths relative to this file so the script is directory-agnostic, and
+# ensure the example root is importable so `from util import load_yaml` works
+# when this script is run from inside the GAN/ directory.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.abspath(os.path.join(BASE_DIR, "..")))
+from util import load_yaml
+
 
 device = 'cuda'
 
@@ -20,7 +28,13 @@ nz = 256
 im_size = 1024
 netG = Generator(ngf=ngf, nz=nz, im_size=im_size).to(device)
 weights_init(netG)
-weights = torch.load(os.getcwd() + '/train_results/test1/models/50000.pth')
+# BUG-3: read the GAN checkpoint name/iter from config instead of hardcoding.
+configs = load_yaml(os.path.join(BASE_DIR, '..', 'config.yaml'))
+# Flatten the list-of-single-key-dicts section so lookups are order-independent.
+gan_cfg = {k: v for entry in configs['GAN'] for k, v in entry.items()}
+gan_name = gan_cfg.get('name')
+gan_iter = gan_cfg.get('iter')
+weights = torch.load(os.path.join(BASE_DIR, 'train_results', gan_name, 'models', f'{gan_iter}.pth'))
 netG_weights = OrderedDict()
 for name, weight in weights['g'].items():
     name = name.split('.')[1:]
@@ -39,5 +53,5 @@ while index <= 3000:
         fake_image = fake_image * np.array([0.5, 0.5, 0.5])
         fake_image = fake_image + np.array([0.5, 0.5, 0.5])
         fake_image = (fake_image * 255).astype(np.uint8)
-        io.imsave('../data/fake_imgs1/' + str(index) + '.png', fake_image)
+        io.imsave('../data/fake_imgs/' + str(index) + '.png', fake_image)
         index += 1

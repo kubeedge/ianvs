@@ -37,24 +37,66 @@ class Encoder(nn.Module):
         return x
 
 
+def _flatten_config(entries):
+    """Merge a list of single-key dicts (as used in config.yaml) into one dict.
+
+    This makes config lookups robust to ordering changes in config.yaml.
+    """
+    flat = {}
+    for entry in entries:
+        flat.update(entry)
+    return flat
+
+
 def train_deepblabv3():
-    configs = load_yaml('../config.yaml')
-    model_id = configs['deeplabv3'][3]['name']
+    # Resolve paths relative to this file so the script is directory-agnostic.
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    configs = load_yaml(os.path.join(base_dir, '..', 'config.yaml'))
 
+    # Flatten the list-of-single-key-dicts config sections into plain dicts so
+    # lookups are robust to ordering changes in config.yaml.
+    deeplabv3_cfg = _flatten_config(configs['deeplabv3'])
+    stl_cfg = _flatten_config(configs['STL'])
+
+    # BUG-1: validate required config paths up front so a missing value fails
+    # immediately with a clear, named error instead of a cryptic downstream crash.
+    required_paths = {
+        'cityscapes_data_path': deeplabv3_cfg.get('cityscapes_data_path'),
+        'cityscapes_meta_path': deeplabv3_cfg.get('cityscapes_meta_path'),
+        'class_weights': deeplabv3_cfg.get('class_weights'),
+    }
+    for key, value in required_paths.items():
+        if not value:
+            raise ValueError(
+                f"config.yaml: '{key}' is empty. Please set this path.")
+
+    model_id = deeplabv3_cfg.get('name')
+
+    # BUG-2: build the encoder checkpoint path from config (STL name/iter)
+    # instead of a hardcoded developer path.
+    stl_name = stl_cfg.get('name')
+    stl_epochs = stl_cfg.get('iter')
     encoder = Encoder().cuda()
-    encoder.load_state_dict(torch.load(
-        '../self-taught-learning/train_results/encoder_models4/encoder50.pth'))
+    encoder_path = os.path.join(
+        base_dir, '..', 'selftaughtlearning', 'train_results',
+        stl_name, f'encoder{stl_epochs}.pth')
+    encoder.load_state_dict(torch.load(encoder_path))
+    # The encoder is a fixed preprocessing transform: switch it to eval mode and
+    # freeze its parameters so it is not updated during DeepLabV3 training.
+    encoder.eval()
+    for param in encoder.parameters():
+        param.requires_grad = False
 
-    num_epochs = configs['deeplabv3'][0]['iter']
-    batch_size = configs['deeplabv3'][1]['batch_size']
-    learning_rate = configs['deeplabv3'][2]['lr']
+    num_epochs = deeplabv3_cfg.get('iter')
+    batch_size = deeplabv3_cfg.get('batch_size')
+    learning_rate = deeplabv3_cfg.get('lr')
 
     network = DeepLabV3(model_id, project_dir=os.getcwd()).cuda()
 
-    train_dataset = DatasetTrain(cityscapes_data_path=configs['deeplabv3'][4]['cityscapes_data_path'],
-                                 cityscapes_meta_path=configs['deeplabv3'][5]['cityscapes_meta_path'])
-    val_dataset = DatasetVal(cityscapes_data_path=configs['deeplabv3'][4]['cityscapes_data_path'],
-                             cityscapes_meta_path=configs['deeplabv3'][5]['cityscapes_meta_path'])
+    train_dataset = DatasetTrain(cityscapes_data_path=deeplabv3_cfg.get('cityscapes_data_path'),
+                                 cityscapes_meta_path=deeplabv3_cfg.get('cityscapes_meta_path'))
+    val_dataset = DatasetVal(cityscapes_data_path=deeplabv3_cfg.get('cityscapes_data_path'),
+                             cityscapes_meta_path=deeplabv3_cfg.get('cityscapes_meta_path'))
 
     num_train_batches = int(len(train_dataset) / batch_size)
     num_val_batches = int(len(val_dataset) / batch_size)
@@ -69,7 +111,7 @@ def train_deepblabv3():
     params = add_weight_decay(network, l2_value=0.0001)
     optimizer = torch.optim.Adam(params, lr=learning_rate)
 
-    with open(configs['deeplabv3'][6]['class_weights'], "rb") as file:
+    with open(deeplabv3_cfg.get('class_weights'), "rb") as file:
         class_weights = np.array(pickle.load(file))
     class_weights = torch.from_numpy(class_weights)
     class_weights = Variable(class_weights.type(torch.FloatTensor)).cuda()
@@ -121,6 +163,8 @@ def train_deepblabv3():
         for step, (imgs, label_imgs, img_ids) in enumerate(val_loader):
             with torch.no_grad():
                 imgs = Variable(imgs).cuda()
+                # encoder images - match training distribution (BUG-5)
+                imgs = encoder(imgs)
                 label_imgs = Variable(label_imgs.type(torch.LongTensor)).cuda()
 
                 outputs = network(imgs)
