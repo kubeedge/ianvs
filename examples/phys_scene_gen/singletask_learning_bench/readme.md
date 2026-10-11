@@ -32,7 +32,7 @@ conda activate phys_scene_gen
 
 ```bash
 # Confirm that you are already in the ianvs root directory
-pip install examples/resources/third_party/sedna-0.6.0.1-py3-none-any.whl
+pip install resources/third_party/sedna-0.6.0.1-py3-none-any.whl
 pip install -r requirements.txt
 pip install -e .
 ```

@@ -232,7 +232,7 @@ cd ianvs
 # Activate our environment
 conda activate ianvs-experiment
 
-python -m pip install ./examples/resources/third_party/*
+python -m pip install ./resources/third_party/*
 python -m pip install -r requirements.txt
 
 # Install ianvs

@@ -50,7 +50,7 @@ source ianvs_env/bin/activate
 python setup.py install
 
 # Install the Sedna client that Ianvs depends on
-pip install ./examples/resources/third_party/sedna-0.4.1-py3-none-any.whl
+pip install ./resources/third_party/sedna-0.6.0.1-py3-none-any.whl
 ```
 
 Verify the install:

@@ -101,7 +101,7 @@ Change `train_data` to `train_data_info` and its url to the corresponding `metad
 
 You should change your sedna package like this: [sedna repo commit](https://github.com/IcyFeather233/sedna/commit/e13b82363c03dc771fca4922a24798554ca32a9f)
 
-Or you can replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `examples/resources/sedna-llm.zip`
+Or you can replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.x/site-packages/sedna` with `resources/sedna-llm.zip`
 
 ## Run Ianvs
 
