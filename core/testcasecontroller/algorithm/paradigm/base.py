@@ -56,6 +56,17 @@ class ParadigmBase:
         self.module_instances = self._get_module_instances()
         os.environ["LOCAL_TEST"] = "TRUE"
 
+    @staticmethod
+    def _set_initial_model_url(model_url):
+        """
+        expose the initial model path to the algorithm (e.g. basemodel.py),
+        read by `Context.get_parameters("initial_model_url")`.
+        `BASE_MODEL_URL` is the deprecated former name, still set so that
+        algorithms outside this repo that read `base_model_url` keep working.
+        """
+        os.environ["INITIAL_MODEL_URL"] = model_url
+        os.environ["BASE_MODEL_URL"] = model_url
+
     def dataset_output_dir(self):
         """
         get output dir of dataset in test process
