@@ -1,11 +1,10 @@
 {
-    "tokenizer_dir": "Langboat/bloom-1b4-zh",
-    "auth_token": null,
-    "data_dir" :"./examples/llm-agent/dataset/activity_classification.jsonl",
-    "token_factor": 32,
-    "half_model": true,
-    "token_padding": "right",
-    "trust_remote": true,
-    "device": "auto",
-    "output_dir": "./checkpoint"
-  }
+  "tokenizer_dir": "Langboat/bloom-1b4-zh",
+  "auth_token": null,
+  "data_dir": "./examples/llm-agent/dataset/activity_classification.jsonl",
+  "token_factor": 32,
+  "token_padding": "right",
+  "trust_remote": true,
+  "device": "auto",
+  "output_dir": "./checkpoint"
+}
