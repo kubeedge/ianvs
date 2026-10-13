@@ -22,6 +22,7 @@ from core.common import utils
 from core.cmd.obj import BenchmarkingJob
 from core.__version__ import __version__
 
+utils.patch_sedna_timeouts()
 
 def main():
     """ main command-line interface to ianvs"""
