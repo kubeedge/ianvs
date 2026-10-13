@@ -137,7 +137,10 @@ class IncrementalLearning(ParadigmBase):
         hard_examples = []
         for _, data in enumerate(inference_dataset_x):
             res, _, is_hard_example = job.inference([data])
-            inference_results.update(res)
+            if isinstance(res, dict):
+                inference_results.update(res)
+            else:
+                inference_results[data] = res
             if is_hard_example:
                 shutil.copy(data, hard_example_saved_dir)
                 new_hard_example = os.path.join(hard_example_saved_dir, os.path.basename(data))
@@ -150,18 +153,34 @@ class IncrementalLearning(ParadigmBase):
         # pylint: disable=W0012
         # pylint: disable=E0606
         data_labels = self.dataset.load_data(data_label_file, "train label")
-        temp_dir = tempfile.mkdtemp()
+
+        missing_or_ambiguous = []
+        rows = []
+        for old, new in hard_examples:
+            index = np.where(data_labels.x == old)
+            if len(index[0]) == 1:
+                label = data_labels.y[index[0][0]]
+                rows.append((new, label))
+            else:
+                missing_or_ambiguous.append(old)
+
+        if missing_or_ambiguous:
+            raise ValueError(
+                f"Hard example(s) not found or ambiguous in train label dataset: "
+                f"{missing_or_ambiguous}"
+            )
+
+        temp_dir = tempfile.mkdtemp(dir=self.dataset_output_dir())
         train_dataset_file = os.path.join(temp_dir, os.path.basename(data_label_file))
+
         with open(train_dataset_file, "w", encoding="utf-8") as file:
-            for old, new in hard_examples:
-                index = np.where(data_labels.x == old)
-                if len(index[0]) == 1:
-                    label = data_labels.y[index[0][0]]
+            for new, label in rows:
                 file.write(f"{new} {label}\n")
 
         return train_dataset_file
 
     def _train(self, model, data_index_file, rounds):
+        # pylint: disable=E1101
         train_output_dir = os.path.join(self.workspace, f"output/train/{rounds}")
         if not is_local_dir(train_output_dir):
             os.makedirs(train_output_dir)
@@ -183,7 +202,8 @@ class IncrementalLearning(ParadigmBase):
 
         job = self.build_paradigm_job(ParadigmType.INCREMENTAL_LEARNING.value)
         eval_dataset = self.dataset.load_data(data_index_file, "eval")
-        eval_results = job.evaluate(eval_dataset, metric=get_metric_func(model_metric))
+        _, metric_func = get_metric_func(model_metric)
+        eval_results = job.evaluate(eval_dataset, metric=metric_func)
         del job
 
         return eval_results
@@ -208,14 +228,30 @@ class IncrementalLearning(ParadigmBase):
 
         operator_func = operator_map[operator]
 
-        if len(eval_results) != 2:
+        if not isinstance(eval_results, (list, tuple)) or len(eval_results) != 2:
             raise RuntimeError(f"two models of evaluation should have two results."
                             f" the eval results: {eval_results}")
 
-        metric_values = [0, 0]
+        metric_values = [None, None]
         for i, result in enumerate(eval_results):
-            metrics = result.get("metrics")
-            metric_values[i] = metrics.get(metric_name)
+            if isinstance(result, dict):
+                metrics = result.get("metrics")
+                if isinstance(metrics, dict) and metric_name in metrics:
+                    val = metrics.get(metric_name)
+                    if isinstance(val, (int, float)):
+                        metric_values[i] = float(val)
+                elif metric_name in result:
+                    val = result.get(metric_name)
+                    if isinstance(val, (int, float)):
+                        metric_values[i] = float(val)
+            elif isinstance(result, (int, float)):
+                metric_values[i] = float(result)
+
+        if metric_values[0] is None or metric_values[1] is None:
+            raise RuntimeError(
+                f"could not extract valid numeric metric '{metric_name}' "
+                f"from eval_results: {eval_results}"
+            )
 
         metric_delta = metric_values[0] - metric_values[1]
         return operator_func(metric_delta, threshold)
