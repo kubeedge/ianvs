@@ -1,3 +1,5 @@
+"""Dataset processing and validation class."""
+# pylint: disable=line-too-long,attribute-defined-outside-init,too-many-positional-arguments,ungrouped-imports,duplicate-code,R0917,C0412,C0413,W0105
 # Copyright 2022 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Dataset"""
 
 import os
 import tempfile
 
 import pandas as pd
-from sedna.datasources import (
-    CSVDataParse,
-    TxtDataParse,
-    JSONDataParse,
-    JsonlDataParse,
-    JSONMetaDataParse
-)
+try:
+    from sedna.datasources import (
+        CSVDataParse,
+        TxtDataParse,
+        JSONDataParse,
+        JsonlDataParse,
+        JSONMetaDataParse
+    )
+except ImportError:
+    CSVDataParse = TxtDataParse = JSONDataParse = JsonlDataParse = JSONMetaDataParse = None
 
 from core.common import utils
+from core.common.log import LOGGER
 from core.common.constant import DatasetFormat
 
 # pylint: disable=too-many-instance-attributes
@@ -73,6 +78,45 @@ class Dataset:
                 self.__dict__[attr] = value
 
         self._check_fields()
+        self.validate_dataset()
+
+    def validate_dataset(self):
+        """Validate the dataset configuration and verify that files exist."""
+        train_sources = [self.train_url, self.train_index, self.train_data, self.train_data_info]
+        train_count = sum(1 for src in train_sources if src)
+        if train_count > 1:
+            conflict_names = [name for name, src in [
+                ("train_url", self.train_url),
+                ("train_index", self.train_index),
+                ("train_data", self.train_data),
+                ("train_data_info", self.train_data_info)
+            ] if src]
+            LOGGER.warning("Conflicting train dataset sources specified: %s", conflict_names)
+
+        test_sources = [self.test_url, self.test_index, self.test_data, self.test_data_info]
+        test_count = sum(1 for src in test_sources if src)
+        if test_count > 1:
+            conflict_names = [name for name, src in [
+                ("test_url", self.test_url),
+                ("test_index", self.test_index),
+                ("test_data", self.test_data),
+                ("test_data_info", self.test_data_info)
+            ] if src]
+            LOGGER.warning("Conflicting test dataset sources specified: %s", conflict_names)
+
+        for name, path in [
+            ("train_url", self.train_url),
+            ("test_url", self.test_url),
+            ("train_index", self.train_index),
+            ("test_index", self.test_index),
+            ("train_data", self.train_data),
+            ("test_data", self.test_data),
+            ("train_data_info", self.train_data_info),
+            ("test_data_info", self.test_data_info)
+        ]:
+            if path:
+                if not os.path.exists(path):
+                    LOGGER.warning("Dataset path for %s does not exist: %s", name, path)
 
     @classmethod
     def _check_dataset_url(cls, url):

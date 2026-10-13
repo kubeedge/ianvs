@@ -2,9 +2,9 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_url: "/home/shijing.hu/ianvs/dataset/semantic_segmentation_dataset/city-train-index-2.txt"
+    train_url: "./dataset/semantic_segmentation_dataset/city-train-index-2.txt"
     # the url address of test dataset index; string type;
-    test_url: "/home/shijing.hu/ianvs/dataset/semantic_segmentation_dataset/city-test-index-2.txt"
+    test_url: "./dataset/semantic_segmentation_dataset/city-test-index-2.txt"
 
   # model eval configuration of incremental learning;
   model_eval:
