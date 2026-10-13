@@ -51,6 +51,16 @@ class Dataset:
         self.train_data_info: str = ""
         self.test_data_info: str = ""
         self.label: str = ""
+        # Declared because core paradigms read them off the Dataset instance:
+        #   val_url             -> singletask_learning_tta.py:77
+        #   known_dataset_url   -> singletask_learning_active_boost.py:61
+        #   unknown_dataset_url -> singletask_learning_active_boost.py:62
+        #   image_folder_url    -> singletask_learning_active_boost.py:49,63
+        #                          singletask_learning_tta.py:46,76
+        self.val_url: str = ""
+        self.known_dataset_url: str = ""
+        self.unknown_dataset_url: str = ""
+        self.image_folder_url: str = ""
         self._parse_config(config)
 
     def _check_fields(self):
