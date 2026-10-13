@@ -10,7 +10,7 @@ from dataloaders import custom_transforms as tr
 class CityscapesSegmentation(data.Dataset):
     NUM_CLASSES = 19
 
-    def __init__(self, args, root=Path.db_root_dir('cityrand'), split="train"):
+    def __init__(self, args, root=Path.db_root_dir('cityrand'), data=None, split="train"):
 
         self.root = root
         self.split = split
@@ -23,14 +23,58 @@ class CityscapesSegmentation(data.Dataset):
         self.disparities_base = os.path.join(self.root, 'disparity', self.split)
         self.annotations_base = os.path.join(self.root, 'gtFine', self.split)
 
-        self.images[split] = self.recursive_glob(rootdir=self.images_base, suffix='.png')
-        self.images[split].sort()
+        if data is not None:
+            # Extract image paths
+            if hasattr(data, "x"):
+                self.images[split] = [
+                    img[0] if (
+                        isinstance(img, (list, tuple, np.ndarray))
+                        and len(img) > 0
+                    ) else img for img in data.x
+                ]
+            else:
+                self.images[split] = [
+                    img[0] if (
+                        isinstance(img, (list, tuple, np.ndarray))
+                        and len(img) > 0
+                    ) else img for img in data
+                ] if isinstance(data, (list, tuple)) else data
 
-        self.disparities[split] = self.recursive_glob(rootdir=self.disparities_base, suffix='.png')
-        self.disparities[split].sort()
+            # Extract depth/disparity paths
+            if hasattr(data, "x"):
+                if (
+                    len(data.x) > 0
+                    and isinstance(data.x[0], (list, tuple, np.ndarray))
+                    and len(data.x[0]) == 2
+                ):
+                    self.disparities[split] = [img[1] for img in data.x]
+                else:
+                    self.disparities[split] = self.images[split]
+            else:
+                if (
+                    isinstance(data, (list, tuple))
+                    and len(data) > 0
+                    and isinstance(data[0], (list, tuple, np.ndarray))
+                    and len(data[0]) == 2
+                ):
+                    self.disparities[split] = [img[1] for img in data]
+                else:
+                    self.disparities[split] = self.images[split]
 
-        self.labels[split] = self.recursive_glob(rootdir=self.annotations_base, suffix='TrainIds.png')
-        self.labels[split].sort()
+            # Extract label paths
+            if hasattr(data, "y"):
+                self.labels[split] = data.y
+            else:
+                self.labels[split] = data
+        else:
+            self.images[split] = self.recursive_glob(rootdir=self.images_base, suffix='.png')
+            self.images[split].sort()
+            
+            self.disparities[split] = self.recursive_glob(rootdir=self.disparities_base, suffix='.png')
+            self.disparities[split].sort()
+            
+            self.labels[split] = self.recursive_glob(rootdir=self.annotations_base, suffix='TrainIds.png')
+            self.labels[split].sort()
         
 
         self.ignore_index = 255

@@ -20,18 +20,53 @@ class CityscapesSegmentation(data.Dataset):
         self.labels = {}
 
         self.disparities_base = os.path.join(self.root, self.split, "depth", "cityscapes_real")
-        self.images[split] = [img[0] for img in data.x] if hasattr(data, "x") else data
-
-
-        if hasattr(data, "x") and len(data.x[0]) == 1:
-            # TODO: fit the case that depth images don't exist.
-            self.disparities[split] = self.images[split]
-        elif hasattr(data, "x") and len(data.x[0]) == 2:
-            self.disparities[split] = [img[1] for img in data.x]
+        if data is None:
+            self.images[split] = []
+            self.disparities[split] = []
+            self.labels[split] = []
         else:
-            self.disparities[split] = data
+            # Extract image paths
+            if hasattr(data, "x"):
+                self.images[split] = [
+                    img[0] if (
+                        isinstance(img, (list, tuple, np.ndarray))
+                        and len(img) > 0
+                    ) else img for img in data.x
+                ]
+            else:
+                self.images[split] = [
+                    img[0] if (
+                        isinstance(img, (list, tuple, np.ndarray))
+                        and len(img) > 0
+                    ) else img for img in data
+                ] if isinstance(data, (list, tuple)) else data
 
-        self.labels[split] = data.y if hasattr(data, "y") else data
+            # Extract depth/disparity paths
+            if hasattr(data, "x"):
+                if (
+                    len(data.x) > 0
+                    and isinstance(data.x[0], (list, tuple, np.ndarray))
+                    and len(data.x[0]) == 2
+                ):
+                    self.disparities[split] = [img[1] for img in data.x]
+                else:
+                    self.disparities[split] = self.images[split]
+            else:
+                if (
+                    isinstance(data, (list, tuple))
+                    and len(data) > 0
+                    and isinstance(data[0], (list, tuple, np.ndarray))
+                    and len(data[0]) == 2
+                ):
+                    self.disparities[split] = [img[1] for img in data]
+                else:
+                    self.disparities[split] = self.images[split]
+
+            # Extract label paths
+            if hasattr(data, "y"):
+                self.labels[split] = data.y
+            else:
+                self.labels[split] = data
 
         self.ignore_index = 255
 

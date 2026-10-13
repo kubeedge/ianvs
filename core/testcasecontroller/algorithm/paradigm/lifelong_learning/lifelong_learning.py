@@ -25,6 +25,20 @@ from core.testcasecontroller.metrics import get_metric_func
 from core.common.utils import get_file_format, is_local_dir
 
 
+# Register default knowledge management strategy if not registered
+try:
+    from sedna.common.class_factory import ClassFactory, ClassType
+    from sedna.algorithms.seen_task_learning.task_update_decision.\
+        task_update_decision_finetune import UpdateStrategyByFinetune
+    if not ClassFactory.is_exists(ClassType.KM, "UpdateStrategyDefault"):
+        ClassFactory.register_cls(
+            UpdateStrategyByFinetune,
+            ClassType.KM,
+            alias="UpdateStrategyDefault"
+        )
+except ImportError:
+    pass
+
 
 class LifelongLearning(ParadigmBase):
     # pylint: disable=too-many-locals
@@ -148,14 +162,20 @@ class LifelongLearning(ParadigmBase):
                 entry = detail.entry
                 LOGGER.info(f"{entry} scores: {scores}")
                 task_avg_score['accuracy'] += scores['accuracy']
-            task_avg_score['accuracy'] = task_avg_score['accuracy']/i
+            if i > 0:
+                task_avg_score['accuracy'] = task_avg_score['accuracy']/i
+            else:
+                task_avg_score['accuracy'] = 0.0
             self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value] = task_avg_score
             LOGGER.info(task_avg_score)
             job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
             inference_dataset = self.dataset.load_data(self.dataset.test_url, "eval",
                                                    feature_process=_data_feature_process)
             kwargs = {}
-            test_res = job.my_inference(inference_dataset, **kwargs)
+            if hasattr(job, "my_inference"):
+                test_res = job.my_inference(inference_dataset, **kwargs)
+            else:
+                test_res = job.inference(inference_dataset, **kwargs)
             del job
             for key in my_dict.keys():
                 LOGGER.info(f"{key} scores: {my_dict[key]}")
@@ -416,7 +436,10 @@ class LifelongLearning(ParadigmBase):
 
         job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
         _, metric_func = get_metric_func(model_metric)
-        edge_task_index, tasks_detail, res = job.my_evaluate(eval_dataset, metrics=metric_func)
+        if hasattr(job, "my_evaluate"):
+            edge_task_index, tasks_detail, res = job.my_evaluate(eval_dataset, metrics=metric_func)
+        else:
+            edge_task_index, tasks_detail, res = job.evaluate(eval_dataset, metrics=metric_func)
 
         del job
 
