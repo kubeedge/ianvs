@@ -14,12 +14,13 @@
 
 """This script contains some common tools."""
 
+import hashlib
 import importlib
 import os
 import sys
 import time
 
-from importlib import import_module
+from importlib import import_module, util
 from inspect import getfullargspec
 import yaml
 
@@ -92,12 +93,28 @@ def yaml2dict(url):
 def load_module(url):
     """Load python module."""
     module_path, module_name = os.path.split(url)
+    loaded_module = None
     if os.path.isfile(url):
         module_name = module_name.split(".")[0]
 
     sys.path.insert(0, module_path)
     try:
-        importlib.import_module(module_name)
-        sys.path.pop(0)
+        if os.path.isfile(url):
+            module_id = hashlib.md5(os.path.abspath(url).encode("utf-8")).hexdigest()
+            module_name = f"{module_name}_{module_id}"
+            if module_name not in sys.modules:
+                spec = util.spec_from_file_location(module_name, url)
+                if spec is None or spec.loader is None:
+                    raise ImportError(f"not found module spec({module_name})")
+                mod = util.module_from_spec(spec)
+                sys.modules[module_name] = mod
+                loaded_module = module_name
+                spec.loader.exec_module(mod)
+        else:
+            importlib.import_module(module_name)
     except Exception as err:
+        if loaded_module:
+            sys.modules.pop(loaded_module, None)
         raise RuntimeError(f"load module(url={url}) failed, error: {err}") from err
+    finally:
+        sys.path.pop(0)
