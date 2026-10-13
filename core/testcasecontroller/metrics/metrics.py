@@ -25,7 +25,7 @@ from core.common.utils import load_module
 def samples_transfer_ratio_func(system_metric_info: dict):
     """
     compute samples transfer ratio:
-        ratio = nums of all inference samples / nums of all transfer samples
+        ratio = nums of all transfer samples / nums of all inference samples
 
     Parameters
     ----------
@@ -36,22 +36,34 @@ def samples_transfer_ratio_func(system_metric_info: dict):
     -------
     float
         e.g.: 0.92
-
     """
+    if not system_metric_info:
+        return np.nan
 
     info = system_metric_info.get(SystemMetricType.SAMPLES_TRANSFER_RATIO.value)
+    if not info or not isinstance(info, (list, tuple)):
+        return np.nan
+
     inference_num = 0
     transfer_num = 0
-    for inference_data, transfer_data in info:
-        inference_num += len(inference_data)
-        transfer_num += len(transfer_data)
-    return round(float(transfer_num) / (inference_num + 1), 4)
+    for item in info:
+        if isinstance(item, (list, tuple)) and len(item) == 2:
+            inference_data, transfer_data = item
+            inference_num += len(inference_data) if hasattr(inference_data, "__len__") else 0
+            transfer_num += len(transfer_data) if hasattr(transfer_data, "__len__") else 0
+
+    if inference_num == 0:
+        return 0.0 if transfer_num == 0 else np.nan
+
+    return round(float(transfer_num) / float(inference_num), 4)
 
 
 def compute(key, matrix):
     """
     Compute BWT and FWT scores for a given matrix.
     """
+    if not matrix or not isinstance(matrix, list) or len(matrix) <= 1:
+        return [], np.nan, np.nan
 
     length = len(matrix)
     accuracy = 0.0
@@ -67,7 +79,7 @@ def compute(key, matrix):
     if not flag:
         bwt_score = np.nan
         fwt_score = np.nan
-        return bwt_score, fwt_score
+        return [], bwt_score, fwt_score
 
     for i in range(length - 1):
         for j in range(length - 1):
@@ -102,7 +114,11 @@ def bwt_func(system_metric_info: dict):
     """
     # pylint: disable=C0103
     # pylint: disable=W0632
+    if not system_metric_info:
+        return np.nan
     info = system_metric_info.get(SystemMetricType.MATRIX.value)
+    if not info or not isinstance(info, dict) or "all" not in info:
+        return np.nan
     _, BWT_score, _ = compute("all", info["all"])
     return BWT_score
 
@@ -113,7 +129,11 @@ def fwt_func(system_metric_info: dict):
     """
     # pylint: disable=C0103
     # pylint: disable=W0632
+    if not system_metric_info:
+        return np.nan
     info = system_metric_info.get(SystemMetricType.MATRIX.value)
+    if not info or not isinstance(info, dict) or "all" not in info:
+        return np.nan
     _, _, FWT_score = compute("all", info["all"])
     return FWT_score
 
@@ -124,7 +144,11 @@ def matrix_func(system_metric_info: dict):
     """
     # pylint: disable=C0103
     # pylint: disable=W0632
+    if not system_metric_info:
+        return {}
     info = system_metric_info.get(SystemMetricType.MATRIX.value)
+    if not info or not isinstance(info, dict):
+        return {}
     my_dict = {}
     for key in info.keys():
         my_matrix, _, _ = compute(key, info[key])
@@ -136,7 +160,11 @@ def task_avg_acc_func(system_metric_info: dict):
     """
     compute task average accuracy
     """
+    if not system_metric_info:
+        return np.nan
     info = system_metric_info.get(SystemMetricType.TASK_AVG_ACC.value)
+    if not info or not isinstance(info, dict) or "accuracy" not in info:
+        return np.nan
     return round(info["accuracy"], 3)
 
 
@@ -144,9 +172,18 @@ def forget_rate_func(system_metric_info: dict):
     """
     compute task forget rate
     """
+    if not system_metric_info:
+        return np.nan
     info = system_metric_info.get(SystemMetricType.FORGET_RATE.value)
-    forget_rate = np.mean(info)
-    return round(forget_rate, 3)
+    if info is None or (hasattr(info, "__len__") and len(info) == 0):
+        return np.nan
+    try:
+        forget_rate = np.mean(info)
+        if np.isnan(forget_rate):
+            return np.nan
+        return round(float(forget_rate), 3)
+    except Exception:
+        return np.nan
 
 
 def get_metric_func(metric_dict: dict):
@@ -179,4 +216,11 @@ def get_metric_func(metric_dict: dict):
                 f"get metric func(url={url}) failed, error: {err}."
             ) from err
 
-    return name, getattr(sys.modules[__name__], str.lower(name) + "_func")
+    func_name = str.lower(name) + "_func" if name else ""
+    if func_name and hasattr(sys.modules[__name__], func_name):
+        return name, getattr(sys.modules[__name__], func_name)
+
+    raise ValueError(
+        f"metric func for '{name}' is not found in built-in metrics "
+        f"and no external plugin url was provided."
+    )
