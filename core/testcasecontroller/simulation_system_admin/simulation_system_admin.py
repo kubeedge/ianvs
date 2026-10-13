@@ -154,13 +154,18 @@ def build_simulation_enviroment(simulation):
 
     check_host_enviroment()         # check the enviroment
 
+    import shlex
+    cluster_name = shlex.quote(str(simulation.cluster_name))
+    kubeedge_version = shlex.quote(str(simulation.kubeedge_version))
+    sedna_version = shlex.quote(str(simulation.sedna_version))
+
     shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
 /master/scripts/installation/all-in-one.sh | " \
         f"NUM_CLOUD_WORKER_NODES={simulation.cloud_number} " \
         f"NUM_EDGE_NODES={simulation.edge_number} " \
-        f"KUBEEDGE_VERSION={simulation.kubeedge_version} " \
-        f"SEDNA_VERSION={simulation.sedna_version} " \
-        f"CLUSTER_NAME={simulation.cluster_name} bash -"
+        f"KUBEEDGE_VERSION={kubeedge_version} " \
+        f"SEDNA_VERSION={sedna_version} " \
+        f"CLUSTER_NAME={cluster_name} bash -"
 
     build_simulation_env_ret = subprocess.run(
         shell_cmd, shell=True, check=True)
@@ -177,9 +182,12 @@ def destory_simulation_enviroment(simulation):
     build the simulation enviroment
 
     """
+    import shlex
+    cluster_name = shlex.quote(str(simulation.cluster_name))
+
     shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
 /main/scripts/installation/all-in-one.sh | " \
-        f"CLUSTER_NAME={simulation.cluster_name} bash /dev/stdin clean"
+        f"CLUSTER_NAME={cluster_name} bash /dev/stdin clean"
 
     retcode = subprocess.call(shell_cmd, shell=True)
 
