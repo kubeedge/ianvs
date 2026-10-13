@@ -187,7 +187,16 @@ class Algorithm:
                 module_list.append(new_module)
 
             modules_list.append((module.type, module_list))
-
+                
+        module_types = [module_type for module_type, _ in modules_list]
+        duplicate_types = {
+            module_type for module_type in module_types
+            if module_types.count(module_type) > 1
+        }
+        if duplicate_types:
+            raise ValueError(
+                f"Duplicate module type(s) found: {sorted(duplicate_types)}"
+            )
         module_combinations_list = get_full_combinations(modules_list)
 
         return module_combinations_list
