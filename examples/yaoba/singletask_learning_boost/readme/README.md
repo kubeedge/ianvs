@@ -79,7 +79,6 @@ testenv:
     known_dataset_url: "dataset/jsons/known_train.json"
     unknown_dataset_url: "dataset/jsons/NG_labeled.json"
     image_folder_url: "dataset/images"
- type;
   metrics:
     # metric name; string type;
     - name: "map"
@@ -97,16 +96,14 @@ algorithm:
     - type: "basemodel"
       name: "FPN_ac_boost"
       url: "examples/yaoba/singletask_learning_boost/testalgorithms/basemodel.py"
-      hyperparameters:
+     hyperparameters:
         - config:
             values:
               - "examples/yaoba/singletask_learning_boost/resource/FPN_model_config.py"
         - work_dir:
             values:
               - "examples/yaoba/singletask_learning_boost/work_dir"
-         - resource_dir:
-            values:
-              - "examples/yaoba/singletask_learning_boost/resource"
+        - resource_dir:
 ```
 ### benchmarking Setting
 
