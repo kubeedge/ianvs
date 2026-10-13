@@ -4,6 +4,7 @@ from tqdm import tqdm
 import torch
 from pathlib import Path
 from ultralytics.utils.metrics import ap_per_class, box_iou
+from PIL import Image
 from sedna.common.class_factory import ClassType, ClassFactory
 
 logger = logging.getLogger(__name__)
@@ -82,14 +83,25 @@ def map50(y_true_paths, y_pred, **kwargs):
 
     for label_path in tqdm(y_true_paths, desc="Evaluating"):
         label_path = Path(label_path)
-        # read the true labels
-        y_true_i = read_label_file(label_path, img_width=img_width, img_height=img_height)
-        y_true_i = np.array(y_true_i, dtype=np.float32) if len(y_true_i) > 0 else np.zeros((0, 6), dtype=np.float32)
 
         # construct the image path
         dataset_root = label_path.parents[2]        # .../RoboDK_Palletizing_Dataset
         sub_dir = label_path.parent.name            # test / train / val
         img_path = str(dataset_root / "images" / sub_dir / (label_path.stem + ".png"))
+
+        # determine actual image dimensions dynamically, falling back to the
+        # historical 640x480 default only if the image cannot be read
+        real_width, real_height = img_width, img_height
+        if Path(img_path).exists():
+            try:
+                with Image.open(img_path) as im:
+                    real_width, real_height = im.size
+            except Exception as e:
+                logger.warning(f"Could not read dimensions for {img_path}, falling back to default {img_width}x{img_height}: {e}")
+
+        # read the true labels using the actual image resolution
+        y_true_i = read_label_file(label_path, img_width=real_width, img_height=real_height)
+        y_true_i = np.array(y_true_i, dtype=np.float32) if len(y_true_i) > 0 else np.zeros((0, 6), dtype=np.float32)
 
         # from the y_pred dict attain the predictions
         pred_list = y_pred.get(img_path, [])
