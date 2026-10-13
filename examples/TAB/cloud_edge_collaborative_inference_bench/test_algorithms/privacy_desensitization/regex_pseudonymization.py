@@ -32,15 +32,23 @@ class RegexPseudonymization:
             'code': '[CODE]',
             'quantity': '[QUANTITY]'
         }
-    
+
+        # Patterns whose meaning depends on letter case. 'name' matches
+        # capitalised words and 'id'/'code' match upper-case alphanumeric
+        # runs, so applying re.IGNORECASE to them makes them match ordinary
+        # lower-case prose. These must stay case-sensitive; the remaining
+        # patterns are digit- or symbol-driven and are unaffected by case.
+        self.case_sensitive_patterns = {'name', 'id', 'code'}
+
     def anonymize(self, text):
-       
+
         start_time = time.time()
-        
-        
+
+
         for category, pattern in self.patterns.items():
-            text = re.sub(pattern, self.replacements[category], text, flags=re.IGNORECASE)
-        
+            flags = 0 if category in self.case_sensitive_patterns else re.IGNORECASE
+            text = re.sub(pattern, self.replacements[category], text, flags=flags)
+
         processing_time = time.time() - start_time
         return text, processing_time
     
