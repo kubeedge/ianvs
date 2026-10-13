@@ -79,7 +79,7 @@ For example:
 |sort_by|yes|Rank leaderboard with metric of test case's evaluation and order; Type: list; Value Constraint: The sorting priority is based on the sequence of metrics in the list from front to back.|
 |visualization|yes|The configuration of visualization|
 |selected_dataitem|yes|The configuration of selected_dataitem; The user can add his/her interested dataitems in terms of "paradigms", "modules", "hyperparameters" and "metrics", so that the selected columns will be shown.|
-|save_mode|yes|save mode of selected and all dataitems in workspace `./rank`; Type: string; Value Constraint: Currently the options of value are as follows: 1> "selected_and_all": save selected and all dataitems. 2> "selected_only": save selected dataitems.|
+|save_mode|no, defaults to "selected_and_all"|save mode of selected and all dataitems in workspace `./rank`; Type: string; Value Constraint: one of "selected_and_all", "selected_only", "selected_and_all_and_picture". 1> "selected_and_all": save selected and all dataitems. 2> "selected_only": save selected dataitems. 3> "selected_and_all_and_picture": save selected and all dataitems, and additionally draw a heatmap picture per matrix-type system metric.|
 
 For example:
 

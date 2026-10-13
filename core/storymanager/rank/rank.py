@@ -33,6 +33,13 @@ class Rank:
 
     """
 
+    #: save modes supported by :meth:`save`.
+    VALID_SAVE_MODES = (
+        "selected_and_all",
+        "selected_only",
+        "selected_and_all_and_picture",
+    )
+
     def __init__(self, config):
         self.sort_by: list = []
         self.visualization: dict = {"mode": "selected_only", "method": "print_table"}
@@ -85,10 +92,17 @@ class Rank:
         if not self.selected_dataitem.get("metrics"):
             raise ValueError("not found metrics of selected_dataitem in rank.")
 
-        if not self.save_mode and not isinstance(self.save_mode, list):
+        if not isinstance(self.save_mode, str) or not self.save_mode:
             raise ValueError(
                 f"rank's save_mode({self.save_mode}) "
-                f"must be provided and be list type."
+                f"must be provided and be string type."
+            )
+
+        if self.save_mode not in self.VALID_SAVE_MODES:
+            raise ValueError(
+                f"rank's save_mode({self.save_mode}) is not supported. "
+                f"the supported save modes are "
+                f"{', '.join(self.VALID_SAVE_MODES)}."
             )
 
     @classmethod
@@ -279,13 +293,20 @@ class Rank:
             self._save_all()
             self._save_selected(test_cases, test_results)
 
-        if self.save_mode == "selected_only":
+        elif self.save_mode == "selected_only":
             self._save_selected(test_cases, test_results)
 
-        if self.save_mode == "selected_and_all_and_picture":
+        elif self.save_mode == "selected_and_all_and_picture":
             self._save_all()
             self._save_selected(test_cases, test_results)
             self._draw_pictures(test_cases, test_results)
+
+        else:
+            raise ValueError(
+                f"rank's save_mode({self.save_mode}) is not supported. "
+                f"the supported save modes are "
+                f"{', '.join(self.VALID_SAVE_MODES)}."
+            )
 
     def plot(self):
         """
