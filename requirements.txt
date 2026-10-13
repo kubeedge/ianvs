@@ -5,3 +5,5 @@ pandas
 tqdm
 matplotlib
 onnx
+colorlog>=6.0.0
+pyyaml>=6.0.0
