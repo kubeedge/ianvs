@@ -124,7 +124,17 @@ class BenchmarkingJob:
                             f"error: {err}") from err
 
     def _parse_rank_config(self, config):
+        if not isinstance(config, dict):
+            raise ValueError(
+                f"benchmarkingjob's rank({config}) must be dict type, "
+                f"got {type(config).__name__}.")
+
         self.rank = Rank(config)
 
     def _parse_simulation_config(self, simulation_config):
+        if not isinstance(simulation_config, dict):
+            raise ValueError(
+                f"benchmarkingjob's simulation({simulation_config}) must be dict type, "
+                f"got {type(simulation_config).__name__}.")
+
         self.simulation = Simulation(simulation_config)
