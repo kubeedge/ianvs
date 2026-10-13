@@ -183,8 +183,33 @@ python -m pip install kaggle
 kaggle datasets download kubeedgeianvs/the-robodk-palletizing-dataset
 
 # Unzip the dataset
-unzip RoboDK_Palletizing_Dataset.zip
+unzip the-robodk-palletizing-dataset.zip
 ```
+**Important — dataset path portability:**
+
+Some distributions of the RoboDK Palletizing Dataset contain absolute paths in
+`train_index.txt` and `test_index.txt`
+(e.g. `/root/ianvs/project/data/dataset/RoboDK_Palletizing_Dataset/...`).
+These paths may not match your local environment, causing the example to fail
+to locate dataset files until the index files are converted.
+
+Before running the benchmark, convert the index files to relative paths using
+the helper script included with this example:
+
+```bash
+python ./examples/RoboDK\ Palletizing/singletask_learning_bench/scripts/convert_dataset_indices.py \
+    /path/to/RoboDK_Palletizing_Dataset
+```
+
+This script is idempotent, so it is safe to run even if the paths are already
+relative. Once converted, Ianvs will correctly resolve the dataset relative to
+wherever you placed it (see the `testenv.yaml` configuration below).
+
+Then update `testenv.yaml` so that `train_index` and `test_index` point to
+your local dataset directory.
+
+*A future release of the dataset may ship with portable paths already, making
+this step unnecessary.*
 
 ##### Model Preparation
 
