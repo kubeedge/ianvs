@@ -20,12 +20,17 @@ class TaskAllocationByOrigin:
 
     def __init__(self, **kwargs):
         self.default_origin = kwargs.get("default", None)
+        self.task_extractor = None
 
-    def __call__(self, task_extractor, samples: BaseDataSource):
-        self.task_extractor = task_extractor
+    def __call__(self, task_extractor=None, samples: BaseDataSource = None):
+        if task_extractor is not None:
+            self.task_extractor = task_extractor
+        if self.task_extractor is None:
+            self.task_extractor = {"real": 0, "sim": 1}
+
         if self.default_origin:
             return samples, [int(self.task_extractor.get(
-                self.default_origin))] * len(samples.x)
+                self.default_origin, 0))] * len(samples.x)
 
         cities = [
             "aachen",
@@ -50,16 +55,14 @@ class TaskAllocationByOrigin:
 
         sample_origins = []
         for _x in samples.x:
-            is_real = False
-            for city in cities:
-                if city in _x[0]:
-                    is_real = True
-                    sample_origins.append("real")
-                    break
-            if not is_real:
-                sample_origins.append("sim")
+            if _x is None or (hasattr(_x, '__len__') and len(_x) == 0):
+                sample_origins.append("real")
+                continue
+            sample_path = _x[0] if isinstance(_x, (list, tuple)) else str(_x)
+            is_real = any(city in sample_path for city in cities)
+            sample_origins.append("real" if is_real else "sim")
 
-        allocations = [int(self.task_extractor.get(sample_origin))
-                       for sample_origin in sample_origins]
+        allocations = [int(self.task_extractor.get(origin, 0))
+                       for origin in sample_origins]
 
         return samples, allocations
