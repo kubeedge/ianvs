@@ -2,11 +2,11 @@ benchmarkingjob:
   # job name of bechmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  workspace: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/workspace"
+  workspace: "./workspace"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/singletask_learning_bench/testenv/testenv.yaml"
+  testenv: "./examples/cloud_VLA_finetune/singletask_learning_bench/testenv/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -19,7 +19,7 @@ benchmarkingjob:
       - name: "vla_dataselect"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
-        url: "/inspire/hdd/global_user/chaimingxu-240108540141/jwq-test/ianvs/examples/cloud_VLA_finetune/singletask_learning_bench/testalgorithms/vla_dataselect/vla_algorithm.yaml"
+        url: "./examples/cloud_VLA_finetune/singletask_learning_bench/testalgorithms/vla_dataselect/vla_algorithm.yaml"
   rank:
     sort_by: [ { "rouge1_metric": "descend" } ]
     
