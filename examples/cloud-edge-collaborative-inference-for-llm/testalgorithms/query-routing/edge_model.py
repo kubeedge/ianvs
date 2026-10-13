@@ -18,7 +18,7 @@ import os
 
 from core.common.log import LOGGER
 from sedna.common.class_factory import ClassType, ClassFactory
-from models import HuggingfaceLLM, APIBasedLLM, VllmLLM, EagleSpecDecModel, LadeSpecDecLLM
+from models import HuggingfaceLLM, APIBasedLLM, VllmLLM, EagleSpecDecModel
 
 os.environ['BACKEND_TYPE'] = 'TORCH'
 
@@ -73,8 +73,6 @@ class EdgeModel:
                 self.model = APIBasedLLM(**self.kwargs)
             elif self.backend == "EagleSpecDec":
                 self.model = EagleSpecDecModel(**self.kwargs)
-            elif self.backend == "LadeSpecDec":
-                self.model = LadeSpecDecLLM(**self.kwargs)
         except Exception as e:
             LOGGER.error(f"Failed to initialize model backend `{self.backend}`: {str(e)}")
             raise RuntimeError(f"Model loading failed for backend `{self.backend}`.") from e
