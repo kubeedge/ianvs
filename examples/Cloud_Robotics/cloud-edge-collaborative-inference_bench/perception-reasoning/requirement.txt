@@ -3,4 +3,4 @@ transformers>=4.30.0
 numpy
 Pillow
 pytorch
-dashscope=1.24.5
+dashscope==1.24.5
