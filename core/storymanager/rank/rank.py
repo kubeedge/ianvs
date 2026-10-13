@@ -135,12 +135,22 @@ class Rank:
         sort_metric_list = []
         is_ascend_list = []
         for ele in self.sort_by:
-            metric_name = next(iter(ele))
+            if isinstance(ele, str):
+                metric_name = ele
+                order = "ascend"
+            elif isinstance(ele, dict):
+                metric_name = next(iter(ele))
+                order = ele.get(metric_name)
+            else:
+                continue
 
-            if metric_name not in all_metric_names:
+            if metric_name not in all_metric_names and metric_name not in all_df.columns:
                 continue
             sort_metric_list.append(metric_name)
-            is_ascend_list.append(ele.get(metric_name) == "ascend")
+            is_ascend_list.append(order == "ascend")
+
+        if not sort_metric_list:
+            return all_df
 
         return all_df.sort_values(by=sort_metric_list, ascending=is_ascend_list)
 
