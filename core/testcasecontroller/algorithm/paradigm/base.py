@@ -19,7 +19,7 @@ import os
 from sedna.core.incremental_learning import IncrementalLearning
 from sedna.core.lifelong_learning import LifelongLearning
 from sedna.core.joint_inference import JointInference
-from core.common.constant import ModuleType, ParadigmType
+from core.common.constant import EnvKey, ModuleType, ParadigmType
 from .sedna_federated_learning import FederatedLearning
 
 
@@ -54,7 +54,7 @@ class ParadigmBase:
         self.workspace = workspace
         self.system_metric_info = {}
         self.module_instances = self._get_module_instances()
-        os.environ["LOCAL_TEST"] = "TRUE"
+        os.environ[EnvKey.LOCAL_TEST] = "TRUE"
 
     def dataset_output_dir(self):
         """

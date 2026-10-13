@@ -16,7 +16,7 @@
 
 import os
 import subprocess
-from core.common.constant import ParadigmType
+from core.common.constant import EnvKey, ParadigmType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 
 
@@ -117,7 +117,7 @@ class SingleTaskLearning(ParadigmBase):
 
     def _train(self, job, initial_model):
         train_output_dir = os.path.join(self.workspace, "output/train/")
-        os.environ["BASE_MODEL_URL"] = initial_model
+        os.environ[EnvKey.BASE_MODEL_URL] = initial_model
 
         train_dataset = self.dataset.load_data(self.dataset.train_url, "train")
         job.train(train_dataset)
@@ -127,7 +127,7 @@ class SingleTaskLearning(ParadigmBase):
     def _inference(self, job, trained_model):
         inference_dataset = self.dataset.load_data(self.dataset.test_url, "inference")
         inference_output_dir = os.path.join(self.workspace, "output/inference/")
-        os.environ["RESULT_SAVED_URL"] = inference_output_dir
+        os.environ[EnvKey.RESULT_SAVED_URL] = inference_output_dir
         job.load(trained_model)
         if hasattr(inference_dataset, 'need_other_info'):
             infer_res = job.predict(inference_dataset)
