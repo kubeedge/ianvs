@@ -1,0 +1,16 @@
+# LLM Agent Example Dependencies
+# Single-task learning benchmark using LLM fine-tuning with LoRA
+
+# Core ML/DL packages
+torch>=1.8.0
+numpy>=1.19.0
+
+# Hugging Face ecosystem
+transformers>=4.28.1
+datasets>=2.0.0
+evaluate>=0.3.0
+peft>=0.3.0
+accelerate>=0.20.0
+
+# Evaluation metrics
+rouge-score>=0.1.2
