@@ -6,7 +6,7 @@ benchmarkingjob:
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/bdd/lifelong_learning_bench/testenv/testenv.yaml"
+  testenv: "./examples/bdd/lifelong_learning_bench/curb-detection/testenv/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -19,7 +19,7 @@ benchmarkingjob:
       - name: "yolo_lifelong_learning_five_model_750data"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
-        url: "./examples/bdd/lifelong_learning_bench/testalgorithms/yolo/yolo_algorithm.yaml"
+        url: "./examples/bdd/lifelong_learning_bench/curb-detection/testalgorithms/yolo/yolo_algorithm.yaml"
 
   # the configuration of ranking leaderboard
   rank:
