@@ -19,8 +19,8 @@ import os
 import sys
 import time
 
+import inspect
 from importlib import import_module
-from inspect import getfullargspec
 import yaml
 
 
@@ -30,27 +30,42 @@ def is_local_file(url):
 
 
 def is_local_dir(url):
-    """Check if the url is a dir and already exists locally."""
+    """Check if the url is a directory and already exists locally."""
     return os.path.isdir(url)
 
 
 def get_file_format(url):
-    """Get file format of the url."""
-    # Check if the url
+    """Get file format."""
+    if os.path.basename(url) == "data_info.json":
+        return "json"
+
     if os.path.basename(url) == "metadata.json":
         return "jsonforllm"
 
     # Check if the url
     return os.path.splitext(url)[-1][1:]
 
+
 def parse_kwargs(func, **kwargs):
     """Get valid parameters of the func in kwargs."""
     if not callable(func):
         return kwargs
-    need_kw = getfullargspec(func)
-    if need_kw.varkw == 'kwargs':
+    try:
+        sig = inspect.signature(func)
+    except (TypeError, ValueError):
         return kwargs
-    return {k: v for k, v in kwargs.items() if k in need_kw.args}
+
+    for param in sig.parameters.values():
+        if param.kind == inspect.Parameter.VAR_KEYWORD:
+            return kwargs
+
+    valid_args = {
+        name for name, param in sig.parameters.items()
+        if param.kind in (inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY)
+    }
+    if not valid_args:
+        return kwargs
+    return {k: v for k, v in kwargs.items() if k in valid_args}
 
 
 def get_local_time():
