@@ -51,14 +51,14 @@ class BenchmarkingJob:
         self._parse_config(config)
 
     def _check_fields(self):
-        if not self.name and not isinstance(self.name, str):
+        if not self.name or not isinstance(self.name, str):
             raise ValueError(f"benchmarkingjob's name({self.name}) must be provided"
                              f" and be string type.")
 
         if not isinstance(self.workspace, str):
             raise ValueError(f"benchmarkingjob's workspace({self.workspace}) must be string type.")
 
-        if not self.test_object and not isinstance(self.test_object, dict):
+        if not self.test_object or not isinstance(self.test_object, dict):
             raise ValueError(f"benchmarkingjob's test_object({self.test_object})"
                              f" must be dict type.")
 
