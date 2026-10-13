@@ -114,12 +114,13 @@ class BaseModel:
             if isinstance(valid_data.y, np.ndarray):
                 valid_data.y = valid_data.y.tolist()
 
+        tmp_dir = None
         try:
             # Method: Direct data dictionary (no yaml file needed!)
             if hasattr(train_data, 'x') and hasattr(train_data, 'y'):
                 # Prepare data in the format YOLOv8 expects
-                data_yaml_path = self._prepare_data_dict(train_data, valid_data)
-                
+                data_yaml_path, tmp_dir = self._prepare_data_dict(train_data, valid_data)
+
                 # Train directly with data dictionary
                 self.model.train(
                     data=data_yaml_path,  # Direct dictionary instead of yaml path
@@ -158,10 +159,17 @@ class BaseModel:
             self.checkpoint_path = str(self.best_weight_path)
             logging.info(f"Training completed. Best model saved at: {self.checkpoint_path}")
             return self.checkpoint_path
-            
+
         except Exception as e:
             logging.error(f"Training failed: {str(e)}")
             raise
+        finally:
+            if tmp_dir is not None:
+                try:
+                    shutil.rmtree(tmp_dir, ignore_errors=True)
+                    logging.info(f"Cleaned up temporary data directory: {tmp_dir}")
+                except Exception as cleanup_err:
+                    logging.warning(f"Failed to clean up temporary directory {tmp_dir}: {cleanup_err}")
     
     def _prepare_data_dict(self, train_data, valid_data=None):
         """
@@ -180,11 +188,9 @@ class BaseModel:
         
         # Extract image and label paths
         train_images = train_data.x if hasattr(train_data, 'x') else []
-        train_labels = train_data.y if hasattr(train_data, 'y') else []
         
         # Prepare validation data if available
         val_images = valid_data.x if hasattr(valid_data, 'x') else []
-        val_labels = valid_data.y if hasattr(valid_data, 'y') else []
         
         # quick check: ensure strings
         train_images = [str(p) for p in train_images]
@@ -279,11 +285,11 @@ class BaseModel:
 
         """
         if data is None or (isinstance(data, (list, tuple, dict, str)) and len(data) == 0):
-            return []
-        
+            return {}
+
         if isinstance(data, np.ndarray):
             if data.size == 0:
-                return []
+                return {}
             # if numpy, convert to list first
             data = data.tolist()
 
