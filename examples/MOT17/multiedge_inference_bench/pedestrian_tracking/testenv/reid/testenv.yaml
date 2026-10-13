@@ -11,16 +11,16 @@ testenv:
       # metric name; string type;
     - name: "mAP"
       # the url address of python file
-      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/reid/mAP.py"
+      url: "./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/testenv/reid/mAP.py"
     - name: "rank_1"
       # the url address of python file
-      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/reid/rank_1.py"
+      url: "./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/testenv/reid/rank_1.py"
     - name: "rank_2"
       # the url address of python file
-      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/reid/rank_2.py"
+      url: "./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/testenv/reid/rank_2.py"
     - name: "rank_5"
       # the url address of python file
-      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/reid/rank_5.py"
+      url: "./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/testenv/reid/rank_5.py"
     - name: "cmc"
       # the url address of python file
-      url: "./examples/pedestrian_tracking/multiedge_inference_bench/testenv/reid/cmc.py"
+      url: "./examples/MOT17/multiedge_inference_bench/pedestrian_tracking/testenv/reid/cmc.py"

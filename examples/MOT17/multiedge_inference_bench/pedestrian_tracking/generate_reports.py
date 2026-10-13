@@ -90,7 +90,7 @@ def main():
         reid_result = reid_rank.sort_values(by="time", ascending=False).iloc[0]
         pdf = PDF()
         pdf.print_page([tracking_result, reid_result])
-        output_dir = Path("./examples/pedestrian_tracking/multiedge_inference_bench/reports")
+        output_dir = Path(__file__).resolve().parent / "reports"
         output_dir.mkdir(parents=True, exist_ok=True)
         pdf.output(Path(output_dir, datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ".pdf"), "F")
     except Exception as err:
