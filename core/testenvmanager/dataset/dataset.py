@@ -88,34 +88,60 @@ class Dataset:
             )
 
     @classmethod
+    def _is_path_token(cls, word, root):
+        if not word:
+            return False
+        if os.path.isabs(word):
+            return True
+        if "/" in word or "\\" in word or word.startswith("."):
+            return True
+        ext = os.path.splitext(word)[1].lower()
+        if ext and len(ext) > 1 and ext[1:].isalnum() and not ext[1:].isdigit():
+            return True
+        if os.path.isfile(os.path.join(root, word)):
+            return True
+        return False
+
+    @classmethod
     def _process_txt_index_file(cls, file_url):
         """
         convert the index info of data from relative path to absolute path in txt index file
         """
+        import re
+
         flag = False
         new_file = file_url
+        root = os.path.dirname(file_url)
         with open(file_url, "r", encoding="utf-8") as file:
             lines = file.readlines()
             for line in lines:
-                if not os.path.isabs(line.split(" ")[0]):
-                    flag = True
+                stripped_line = line.strip()
+                if not stripped_line:
+                    continue
+                tokens = [t for t in re.split(r"[\t ]+", stripped_line) if t]
+                for token in tokens:
+                    if cls._is_path_token(token, root) and not os.path.isabs(token):
+                        flag = True
+                        break
+                if flag:
                     break
         if flag:
-            root = os.path.dirname(file_url)
             tmp_file = os.path.join(tempfile.mkdtemp(), "index.txt")
             with open(tmp_file, "w", encoding="utf-8") as file:
                 for line in lines:
-                    # copy all the files in the line
-                    line = line.strip()
-                    words = line.split(" ")
-                    length = len(words)
-                    words[-1] = words[-1] + "\n"
-                    for i in range(length):
-                        file.writelines(
-                            f"{os.path.abspath(os.path.join(root, words[i]))}"
-                        )
-                        if i < length - 1:
-                            file.writelines(" ")
+                    stripped_line = line.strip()
+                    if not stripped_line:
+                        file.write("\n")
+                        continue
+                    delimiter = "\t" if "\t" in line else " "
+                    tokens = [t for t in re.split(r"[\t ]+", stripped_line) if t]
+                    processed_tokens = []
+                    for token in tokens:
+                        if cls._is_path_token(token, root) and not os.path.isabs(token):
+                            processed_tokens.append(os.path.abspath(os.path.join(root, token)))
+                        else:
+                            processed_tokens.append(token)
+                    file.write(delimiter.join(processed_tokens) + "\n")
 
             new_file = tmp_file
 
