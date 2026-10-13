@@ -1,0 +1,16 @@
+# Additional dependencies for the ERFNet semantic-segmentation lifelong
+# learning example, not covered by the repo-root requirements.txt.
+#
+# torch/torchvision/scipy/pydantic left unbounded above their floors:
+# pinned ceilings either had no wheels for modern Python, or (pydantic)
+# actively conflicted with the fastapi version sedna itself pulls in,
+# which requires Pydantic v2. All verified via failed install attempts.
+torch>=1.13.0
+torchvision>=0.14.0
+Pillow>=9.0.0
+opencv-python>=4.5.0
+scipy>=1.7.0
+seaborn>=0.11.0
+fastapi>=0.95.0
+uvicorn>=0.20.0
+pydantic>=2.0.0
