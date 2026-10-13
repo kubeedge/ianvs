@@ -1,7 +1,7 @@
 testenv:
   dataset:
-    train_data: "ianvs/government/objective/train_data/data.jsonl"
-    test_data: "ianvs/government/objective/test_data/data.jsonl"
+    train_data: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/dataset/train_data/data.jsonl"
+    test_data: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/dataset/test_data/data.jsonl"
   use_gpu: false
   metrics:
     - name: "latency"
