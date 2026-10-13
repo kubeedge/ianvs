@@ -223,20 +223,20 @@ class Trainer(object):
             tbar.set_description('Train loss: %.3f' % (train_loss / (i + 1)))
             self.writer.add_scalar('train/total_loss_iter', loss.item(), i + num_img_tr * epoch)
             # Show 10 * 3 inference results each epoch
-            if i % (num_img_tr // 10 + 1) == 0:
-                global_step = i + num_img_tr * epoch
-                if self.args.depth:
-                    self.summary.visualize_image(self.writer, self.args.dataset, image, target, output, global_step)
+            # if i % (num_img_tr // 10 + 1) == 0:
+            #     global_step = i + num_img_tr * epoch
+            #     if self.args.depth:
+            #         self.summary.visualize_image(self.writer, self.args.dataset, image, target, output, global_step)
 
-                    depth_display = depth[0].cpu().unsqueeze(0)
-                    depth_display = depth_display.mul_(self.std_depth).add_(self.mean_depth)
-                    depth_display = depth_display.numpy()
-                    depth_display = depth_display*255
-                    depth_display = depth_display.astype(np.uint8)
-                    self.writer.add_image('Depth', depth_display, global_step)
+            #         depth_display = depth[0].cpu().unsqueeze(0)
+            #         depth_display = depth_display.mul_(self.std_depth).add_(self.mean_depth)
+            #         depth_display = depth_display.numpy()
+            #         depth_display = depth_display*255
+            #         depth_display = depth_display.astype(np.uint8)
+            #         self.writer.add_image('Depth', depth_display, global_step)
 
-                else:
-                    self.summary.visualize_image(self.writer, self.args.dataset, image, target, output, global_step)
+            #     else:
+            #         self.summary.visualize_image(self.writer, self.args.dataset, image, target, output, global_step)
 
         self.writer.add_scalar('train/total_loss_epoch', train_loss, epoch)
         print('[Epoch: %d, numImages: %5d]' % (epoch, i * self.args.batch_size + image.data.shape[0]))
