@@ -104,8 +104,11 @@ class EagleSpecDecModel(BaseLLM):
         text = generated_text
         completion_tokens = output_ids.shape[1] - prompt_tokens
         
-        internal_token_latency = sum(internal_token_latency) / completion_tokens
-        
+        if completion_tokens > 0:
+            internal_token_latency = sum(internal_token_latency) / completion_tokens
+        else:
+            internal_token_latency = 0.0
+
         if internal_token_latency != 0:
             throughput = 1 / internal_token_latency
         else:

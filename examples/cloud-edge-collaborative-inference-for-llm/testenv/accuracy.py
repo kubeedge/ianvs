@@ -47,6 +47,9 @@ def acc(y_true, y_pred):
 
     infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
 
+    if not infer_res:
+        return 0.0
+
     y_pred = [get_last_letter(pred.result.completion) for pred in infer_res]
     y_true = [get_last_letter(y) for y in y_true]
 
