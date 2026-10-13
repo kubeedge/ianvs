@@ -5,3 +5,6 @@ pandas
 tqdm
 matplotlib
 onnx
+transformers
+accelerate
+openai

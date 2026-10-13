@@ -12,25 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Base model for government subjective singletask learning benchmark."""
+
 from __future__ import absolute_import, division
 
-import os
-import tempfile
-import time
-import zipfile
 import logging
+import os
 
-import numpy as np
-import random
-from tqdm import tqdm
-from sedna.common.config import Context
-from sedna.common.class_factory import ClassType, ClassFactory
-from core.common.log import LOGGER
+# pylint: disable=import-error
+import torch
 from openai import OpenAI
-
+from sedna.common.class_factory import ClassFactory, ClassType
+from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
-device = "cuda" # the device to load the model onto
 
+from core.common.log import LOGGER
+
+# pylint: disable=invalid-name
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 logging.disable(logging.WARNING)
 
@@ -41,33 +40,41 @@ os.environ['BACKEND_TYPE'] = 'TORCH'
 
 @ClassFactory.register(ClassType.GENERAL, alias="gen")
 class BaseModel:
+    """Base model wrapper for causal language model inference & subjective judgment."""
 
+    # pylint: disable=unused-argument
     def __init__(self, **kwargs):
+        model_name = os.environ.get("BASE_MODEL_URL") or "Qwen/Qwen2-0.5B-Instruct"
+        device_map = "auto" if torch.cuda.is_available() else None
         self.model = AutoModelForCausalLM.from_pretrained(
-            "/home/icyfeather/models/Qwen2-0.5B-Instruct",
+            model_name,
             torch_dtype="auto",
-            device_map="auto"
+            device_map=device_map
         )
-        self.tokenizer = AutoTokenizer.from_pretrained("/home/icyfeather/models/Qwen2-0.5B-Instruct")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 
+    # pylint: disable=unused-argument
     def train(self, train_data, valid_data=None, **kwargs):
+        """Train model (not implemented)."""
         LOGGER.info("BaseModel train")
-        
 
+    # pylint: disable=unused-argument
     def save(self, model_path):
+        """Save model (not implemented)."""
         LOGGER.info("BaseModel save")
 
+    # pylint: disable=unused-argument
     def predict(self, data, input_shape=None, **kwargs):
+        """Predict results and evaluate them using DeepSeek LLM judge."""
         LOGGER.info("BaseModel predict")
-        LOGGER.info(f"Dataset: {data.dataset_name}")
-        LOGGER.info(f"Description: {data.description}")
-        LOGGER.info(f"Data Level 1 Dim: {data.level_1_dim}")
-        LOGGER.info(f"Data Level 2 Dim: {data.level_2_dim}")
-        
+        LOGGER.info("Dataset: %s", data.dataset_name)
+        LOGGER.info("Description: %s", data.description)
+        LOGGER.info("Data Level 1 Dim: %s", data.level_1_dim)
+        LOGGER.info("Data Level 2 Dim: %s", data.level_2_dim)
+
         answer_list = []
         for line in tqdm(data.x, desc="Processing", unit="question"):
-            history = []
-            history.append({"role": "user", "content": line})
+            history = [{"role": "user", "content": line}]
             response = self._infer(history)
             answer_list.append(response)
 
@@ -81,12 +88,16 @@ class BaseModel:
 
         return judgement_list
 
+    # pylint: disable=unused-argument
     def load(self, model_url=None):
+        """Load model (not implemented)."""
         LOGGER.info("BaseModel load")
 
+    # pylint: disable=unused-argument
     def evaluate(self, data, model_path, **kwargs):
+        """Evaluate model (not implemented)."""
         LOGGER.info("BaseModel evaluate")
-        
+
     def _infer(self, messages):
         text = self.tokenizer.apply_chat_template(
             messages,
@@ -94,20 +105,23 @@ class BaseModel:
             add_generation_prompt=True
         )
         model_inputs = self.tokenizer([text], return_tensors="pt").to(device)
-        
+
         generated_ids = self.model.generate(
             model_inputs.input_ids,
             max_new_tokens=512,
-            temperature = 0.1,
-            top_p = 0.9
+            temperature=0.1,
+            top_p=0.9
         )
         generated_ids = [
-            output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+            output_ids[len(input_ids):]
+            for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
         ]
-        
-        response = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
-        return response
 
+        response = self.tokenizer.batch_decode(
+            generated_ids,
+            skip_special_tokens=True
+        )[0]
+        return response
 
     def _openai_generate(self, user_question, system=None):
         key = os.getenv("DEEPSEEK_API_KEY")
@@ -127,5 +141,6 @@ class BaseModel:
         )
 
         res = response.choices[0].message.content
-
         return res
+
+# end of file
