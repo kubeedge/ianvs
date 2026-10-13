@@ -116,6 +116,7 @@ def validate_example(repo_root: Path, example: Mapping[str, object]) -> ExampleR
     files = _example_files(root)
     _check_yaml_syntax(report, files)
     _check_repo_path_references(report, repo_root, files)
+    _check_dataset_config_paths(report, repo_root, benchmark_file)
     _check_hardcoded_paths(report, repo_root, files)
     _check_local_model_paths(report, repo_root, files)
     _check_cuda_only_assumptions(report, repo_root, files)
@@ -430,6 +431,112 @@ def _check_repo_path_references(
         ),
         pass_message="Repository-local non-code path reference parent folders resolve.",
         failure_status=WARNING,
+    )
+
+
+def _check_dataset_config_paths(
+    report: ExampleReport,
+    repo_root: Path,
+    benchmark_file: str,
+) -> None:
+    """Validate dataset paths declared by the benchmark's testenv config."""
+    try:
+        import yaml
+    except ImportError:
+        _append_check(
+            report,
+            name="Dataset configuration paths",
+            status=SKIP,
+            message="PyYAML is unavailable; dataset path validation was skipped.",
+        )
+        return
+
+    benchmark_path = repo_root / benchmark_file
+    if not benchmark_path.is_file():
+        return
+
+    try:
+        benchmark = yaml.safe_load(
+            benchmark_path.read_text(encoding="utf-8")
+        ) or {}
+    except yaml.YAMLError:
+        return
+
+    job = benchmark.get("benchmarkingjob")
+    if not isinstance(job, Mapping):
+        return
+
+    testenv_ref = job.get("testenv")
+    if not isinstance(testenv_ref, str) or not testenv_ref.strip():
+        return
+
+    testenv_path = Path(testenv_ref)
+    if not testenv_path.is_absolute():
+        testenv_path = repo_root / _normalize_repo_path(testenv_ref)
+
+    try:
+        if not testenv_path.is_file():
+            return
+    except OSError:
+        return
+
+    try:
+        testenv = yaml.safe_load(
+            testenv_path.read_text(encoding="utf-8")
+        ) or {}
+    except yaml.YAMLError:
+        return
+
+    payload = testenv.get("testenv", {})
+    if not isinstance(payload, Mapping):
+        return
+
+    dataset = payload.get("dataset", {})
+    if not isinstance(dataset, Mapping):
+        return
+
+    dataset_keys = (
+        "train_url",
+        "test_url",
+        "train_index",
+        "test_index",
+        "train_data",
+        "test_data",
+        "train_data_info",
+        "test_data_info",
+    )
+
+    issues = []
+    for key in dataset_keys:
+        value = dataset.get(key)
+        if not isinstance(value, str) or not value.strip():
+            continue
+
+        value = value.strip()
+
+        if Path(value).is_absolute():
+            issues.append(
+                "{}:{} -> {} (dataset path is absolute and machine-specific)".format(
+                    _repo_display_path(testenv_path),
+                    key,
+                    value,
+                )
+            )
+            continue
+
+
+    _append_issue_check(
+        report,
+        name="Dataset configuration paths",
+        issues=sorted(set(issues)),
+        fail_message=(
+            "Invalid dataset configuration paths found. Impact: Ianvs may fail "
+            "during dataset initialization on another machine or from a clean checkout."
+        ),
+        pass_message=(
+            "Dataset configuration paths are portable or external dataset paths."
+        ),
+        failure_status=ERROR,
     )
 
 
