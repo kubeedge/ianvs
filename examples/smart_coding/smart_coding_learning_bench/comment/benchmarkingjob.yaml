@@ -2,11 +2,11 @@ benchmarkingjob:
   # job name of bechmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  workspace: "/home/xiebo/ianvs/workspace"
+  workspace: "./workspace"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "/home/xiebo/ianvs/examples/smart_coding/smart_coding_learning_bench/comment/testenv/testenv.yaml"
+  testenv: "./examples/smart_coding/smart_coding_learning_bench/comment/testenv/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -19,7 +19,7 @@ benchmarkingjob:
       - name: "code_comment_bench_singletask_learning"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml;
-        url: "/home/xiebo/ianvs/examples/smart_coding/smart_coding_learning_bench/comment/testalgorithms/gen/gen_algorithm.yaml"
+        url: "./examples/smart_coding/smart_coding_learning_bench/comment/testalgorithms/gen/gen_algorithm.yaml"
 
   # the configuration of ranking leaderboard
   rank:

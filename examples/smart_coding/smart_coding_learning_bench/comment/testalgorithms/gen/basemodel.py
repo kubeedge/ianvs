@@ -28,9 +28,10 @@ from sedna.common.class_factory import ClassType, ClassFactory
 from core.common.log import LOGGER
 from openai import OpenAI
 
+import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-device = "cuda"  # the device to load the model onto
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 logging.disable(logging.WARNING)
 
@@ -43,12 +44,16 @@ os.environ['BACKEND_TYPE'] = 'TORCH'
 class BaseModel:
 
     def __init__(self, **kwargs):
-        self.model = AutoModelForCausalLM.from_pretrained(
-            "/home/xiebo/model/Qwen2.5-Coder-1.5B-Instruct",
-            torch_dtype="auto",
-            device_map="auto"
+        model_name = os.getenv(
+            "IANVS_COMMENT_MODEL",
+            "Qwen/Qwen2.5-Coder-1.5B-Instruct",
         )
-        self.tokenizer = AutoTokenizer.from_pretrained("/home/xiebo/model/Qwen2.5-Coder-1.5B-Instruct")
+        self.model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype="auto",
+            device_map="auto",
+        )
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     def train(self, train_data, valid_data=None, **kwargs):
         LOGGER.info("BaseModel train")
