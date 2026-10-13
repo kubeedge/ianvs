@@ -20,7 +20,7 @@ import torch
 import torch.nn.functional as F
 from ai2thor.controller import Controller
 from ai2thor.hooks.procedural_asset_hook import ProceduralAssetHookRunner
-from langchain import OpenAI
+from langchain_openai import OpenAI
 from procthor.constants import FLOOR_Y
 from procthor.utils.types import Vector3
 
