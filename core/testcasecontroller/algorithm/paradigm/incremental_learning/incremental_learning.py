@@ -16,7 +16,6 @@
 
 import os
 import shutil
-import tempfile
 
 import numpy as np
 
@@ -96,7 +95,7 @@ class IncrementalLearning(ParadigmBase):
             if len(hard_examples) <= 0:
                 continue
 
-            train_dataset_file = self._get_train_dataset(hard_examples, inference_dataset_file)
+            train_dataset_file = self._get_train_dataset(hard_examples, inference_dataset_file, r)
 
             new_model = self._train(current_model, train_dataset_file, r)
 
@@ -146,12 +145,14 @@ class IncrementalLearning(ParadigmBase):
 
         return inference_results, hard_examples
 
-    def _get_train_dataset(self, hard_examples, data_label_file):
+    def _get_train_dataset(self, hard_examples, data_label_file, rounds):
         # pylint: disable=W0012
         # pylint: disable=E0606
         data_labels = self.dataset.load_data(data_label_file, "train label")
-        temp_dir = tempfile.mkdtemp()
-        train_dataset_file = os.path.join(temp_dir, os.path.basename(data_label_file))
+        train_dataset_dir = os.path.join(self.workspace, f"output/train/{rounds}/dataset")
+        if not is_local_dir(train_dataset_dir):
+            os.makedirs(train_dataset_dir)
+        train_dataset_file = os.path.join(train_dataset_dir, os.path.basename(data_label_file))
         with open(train_dataset_file, "w", encoding="utf-8") as file:
             for old, new in hard_examples:
                 index = np.where(data_labels.x == old)

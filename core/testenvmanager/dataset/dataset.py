@@ -14,7 +14,9 @@
 
 """Dataset"""
 
+import atexit
 import os
+import shutil
 import tempfile
 
 import pandas as pd
@@ -88,7 +90,7 @@ class Dataset:
             )
 
     @classmethod
-    def _process_txt_index_file(cls, file_url):
+    def _process_txt_index_file(cls, file_url, output_dir=None):
         """
         convert the index info of data from relative path to absolute path in txt index file
         """
@@ -102,7 +104,15 @@ class Dataset:
                     break
         if flag:
             root = os.path.dirname(file_url)
-            tmp_file = os.path.join(tempfile.mkdtemp(), "index.txt")
+            if output_dir:
+                tmp_dir = output_dir
+                os.makedirs(tmp_dir, exist_ok=True)
+            else:
+                tmp_dir = tempfile.mkdtemp()
+                # fallback for standalone calls outside a workspace
+                atexit.register(shutil.rmtree, tmp_dir, ignore_errors=True)
+
+            tmp_file = os.path.join(tmp_dir, os.path.basename(file_url) if os.path.basename(file_url) else "index.txt")
             with open(tmp_file, "w", encoding="utf-8") as file:
                 for line in lines:
                     # copy all the files in the line
@@ -121,10 +131,10 @@ class Dataset:
 
         return new_file
 
-    def _process_index_file(self, file_url):
+    def _process_index_file(self, file_url, output_dir=None):
         file_format = utils.get_file_format(file_url)
         if file_format == DatasetFormat.TXT.value:
-            return self._process_txt_index_file(file_url)
+            return self._process_txt_index_file(file_url, output_dir=output_dir)
         if file_format == DatasetFormat.JSON.value:
             return file_url
 
@@ -146,7 +156,7 @@ class Dataset:
             f"but the current file is {file_url}."
         )
 
-    def process_dataset(self):
+    def process_dataset(self, output_dir=None):
         """
         process dataset:
         process train dataset and test dataset for testcase;
@@ -155,7 +165,8 @@ class Dataset:
 
         """
         if self.train_index:
-            self.train_url = self._process_index_file(self.train_index)
+            train_output_dir = os.path.join(output_dir, "train") if output_dir else None
+            self.train_url = self._process_index_file(self.train_index, output_dir=train_output_dir)
         elif self.train_data:
             self.train_url = self._process_data_file(self.train_data)
         elif self.train_data_info:
@@ -165,7 +176,8 @@ class Dataset:
             raise NotImplementedError('not one of train_index/train_data/train_data_info')
 
         if self.test_index:
-            self.test_url = self._process_index_file(self.test_index)
+            test_output_dir = os.path.join(output_dir, "test") if output_dir else None
+            self.test_url = self._process_index_file(self.test_index, output_dir=test_output_dir)
         elif self.test_data:
             self.test_url = self._process_data_file(self.test_data)
         elif self.test_data_info:
