@@ -64,8 +64,10 @@ def py2dict(url):
         module_name = os.path.basename(url)[:-3]
         config_dir = os.path.dirname(url)
         sys.path.insert(0, config_dir)
-        mod = import_module(module_name)
-        sys.path.pop(0)
+        try:
+            mod = import_module(module_name)
+        finally:
+            sys.path.pop(0)
         raw_dict = {
             name: value
             for name, value in mod.__dict__.items()
@@ -98,6 +100,7 @@ def load_module(url):
     sys.path.insert(0, module_path)
     try:
         importlib.import_module(module_name)
-        sys.path.pop(0)
     except Exception as err:
         raise RuntimeError(f"load module(url={url}) failed, error: {err}") from err
+    finally:
+        sys.path.pop(0)
