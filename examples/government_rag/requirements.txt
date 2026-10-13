@@ -1,0 +1,8 @@
+langchain-core>=0.3.0
+langchain-chroma>=0.1.0
+langchain-huggingface>=1.0.0
+langchain-text-splitters>=0.3.0
+chromadb>=0.5.0
+transformers>=4.40.0
+torch>=2.0.0
+tqdm>=4.66.0
