@@ -1,0 +1,14 @@
+# Smart Coding Learning Bench Dependencies
+# LLM-based code generation benchmark for KubeEdge Ianvs
+
+# Core ML/AI packages
+numpy>=1.19.0
+tqdm>=4.60.0
+
+# LLM inference and model loading
+torch>=1.8.0
+transformers>=4.20.0
+accelerate>=0.20.0
+
+# OpenAI API client
+openai>=1.0.0
