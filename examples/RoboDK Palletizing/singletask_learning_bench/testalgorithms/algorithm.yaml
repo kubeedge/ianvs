@@ -4,7 +4,7 @@ algorithm:
   modules:
     - type: "basemodel"
       name: "YOLOv8n"
-      url: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testalgorithms/basemodel.py"
+      url: "./examples/RoboDK Palletizing/singletask_learning_bench/testalgorithms/basemodel.py"
       
       hyperparameters:
         - learning_rate:
