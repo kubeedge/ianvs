@@ -273,8 +273,10 @@ class Dataset:
             with open(data_file, "w", encoding="utf-8") as file:
                 for line in data:
                     file.writelines(line + "\n")
-        if data_format == DatasetFormat.CSV.value:
+        elif data_format == DatasetFormat.CSV.value:
             data.to_csv(data_file, index=None)
+        else:
+            raise ValueError(f"Unsupported data format for writing: {data_format}")
 
     @classmethod
     def _read_data_file(cls, data_file, data_format):
@@ -284,9 +286,10 @@ class Dataset:
             with open(data_file, "r", encoding="utf-8") as file:
                 data = [line.strip() for line in file.readlines()]
 
-        if data_format == DatasetFormat.CSV.value:
+        elif data_format == DatasetFormat.CSV.value:
             data = pd.read_csv(data_file)
-
+        else:
+            raise ValueError(f"Unsupported data format for reading: {data_format}")
         return data
 
     def _get_dataset_file(self, data, output_dir, dataset_type, index, dataset_format):
