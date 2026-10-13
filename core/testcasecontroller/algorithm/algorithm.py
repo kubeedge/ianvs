@@ -21,6 +21,8 @@ from core.common.utils import load_module
 from core.testcasecontroller.algorithm.module import Module
 from core.testcasecontroller.algorithm.paradigm import (
     SingleTaskLearning,
+    SingleTaskLearningTTA,
+    SingleTaskLearningACBoost,
     IncrementalLearning,
     MultiedgeInference,
     LifelongLearning,
@@ -108,6 +110,12 @@ class Algorithm:
             config.update({k: v})
         if self.paradigm_type == ParadigmType.SINGLE_TASK_LEARNING.value:
             return SingleTaskLearning(workspace, **config)
+
+        if self.paradigm_type == ParadigmType.SINGLE_TASK_LEARNING_TTA.value:
+            return SingleTaskLearningTTA(workspace, **config)
+
+        if self.paradigm_type == ParadigmType.SINGLE_TASK_LEARNING_ACTIVE_BOOST.value:
+            return SingleTaskLearningACBoost(workspace, **config)
 
         if self.paradigm_type == ParadigmType.INCREMENTAL_LEARNING.value:
             return IncrementalLearning(workspace, **config)

@@ -14,3 +14,5 @@
 
 # pylint: disable=missing-module-docstring
 from .singletask_learning import SingleTaskLearning
+from .singletask_learning_tta import SingleTaskLearningTTA
+from .singletask_learning_active_boost import SingleTaskLearningACBoost

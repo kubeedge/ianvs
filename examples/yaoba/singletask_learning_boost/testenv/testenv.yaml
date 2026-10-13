@@ -15,7 +15,9 @@ testenv:
     # string type; the same as above known_data_url;
     unknown_dataset_url: "examples/yaoba/singletask_learning_boost/resource/json/NG_labeled.json"
     # the image folder URL address of known and unknown datasets above;
-    image_folder_url: "/home/wjj/wjj/Public/code/ianvs/dataset/yaoba/images"
+    # relative to the ianvs project root; place the downloaded dataset images here
+    # (see examples/yaoba/singletask_learning_boost/readme/README.md for dataset setup)
+    image_folder_url: "examples/yaoba/singletask_learning_boost/dataset/images"
   # metrics configuration for test case's evaluation; list type;
   metrics:
     # metric name; string type;

@@ -36,6 +36,8 @@ class ParadigmType(Enum):
     """
 
     SINGLE_TASK_LEARNING = "singletasklearning"
+    SINGLE_TASK_LEARNING_TTA = "singletasklearning_tta"
+    SINGLE_TASK_LEARNING_ACTIVE_BOOST = "singletasklearning_acboost"
     INCREMENTAL_LEARNING = "incrementallearning"
     MULTIEDGE_INFERENCE = "multiedgeinference"
     LIFELONG_LEARNING = "lifelonglearning"
