@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Internal token latency metric for cloud-edge LLM benchmark."""
 
 from sedna.common.class_factory import ClassType, ClassFactory
 from result_parser import JointInferenceResult
@@ -32,10 +33,11 @@ def internal_token_latency(_, y_pred):
         Average Internal Token Latency (s) of the system
     """
 
-
-
     infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
 
-    average_itl = sum([pred.result.internal_token_latency for pred in infer_res]) / len(infer_res)
+    if not infer_res:
+        return 0.0
 
-    return round(average_itl,3)
+    average_itl = sum(pred.result.internal_token_latency for pred in infer_res) / len(infer_res)
+
+    return round(average_itl, 3)
