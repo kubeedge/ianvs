@@ -355,7 +355,7 @@ class NewGovernmentPosterAgent:
                 results.append(result)
                 
             except Exception as e:
-                self.logger.error(f"Error processing document {i+1}: {str(e)}")
+                self.logger.error(f"Error processing document {i+1}: {str(e)}", exc_info=True)
                 results.append({
                     'input_file': data_item,
                     'error': str(e),
@@ -383,7 +383,8 @@ class NewGovernmentPosterAgent:
                     results.append(result)
                     self.logger.info(f"Document {index+1} processing completed")
                 except Exception as e:
-                    self.logger.error(f"Error processing document {index+1}: {str(e)}")
+                    self.logger.error(f"Error processing document {index+1}: {str(e)}", exc_info=True)
+
                     results.append({
                         'input_file': dataset[index],
                         'error': str(e),
@@ -396,16 +397,15 @@ class NewGovernmentPosterAgent:
         results.sort(key=lambda x: dataset_list.index(x.get('input_file', '')) if x.get('input_file') in dataset_list else 999)
         
         return self._format_results(results)
-    
     def _get_poster_path_from_jsonl(self, index: int) -> Optional[str]:
         """
         Read poster_path for specified index directly from JSONL file
-        
+
         Parameters
         ----------
         index: int
             Data item index
-            
+
         Returns
         -------
         str or None
@@ -417,45 +417,49 @@ class NewGovernmentPosterAgent:
             if not test_data_path:
                 # Try to get from environment variable or default path
                 test_data_path = os.path.join('examples', 'new_government_agent', 'resources', 'datasets', 'test', 'data.jsonl')
-            
+
             if not os.path.exists(test_data_path):
                 self.logger.warning(f'Test data file does not exist: {test_data_path}')
                 return None
-            
+
             # Read JSONL file
             with open(test_data_path, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
-                
-            if index >= len(lines):
+
+            # Convert 1-based index to 0-based index if needed
+            line_idx = index - 1 if index > 0 else 0
+
+            if line_idx >= len(lines):
                 self.logger.warning(f'Index {index} exceeds data range (total {len(lines)} lines)')
                 return None
-                
+
             # Parse JSON data of specified line
-            line = lines[index].strip()
+            line = lines[line_idx].strip()
             if not line:
                 return None
-                
+
             data = json.loads(line)
             poster_path = data.get('poster_path')
-            
+
             if poster_path:
-                self.logger.info(f'Retrieved poster_path from JSONL line {index+1}: {poster_path}')
+                self.logger.info(f'Retrieved poster_path from JSONL line {line_idx+1}: {poster_path}')
                 return poster_path
             else:
-                self.logger.warning(f'JSONL line {index+1} has no poster_path field')
+                self.logger.warning(f'JSONL line {line_idx+1} has no poster_path field')
                 return None
-                
+
         except Exception as e:
-            self.logger.error(f'Failed to read poster_path from JSONL file: {str(e)}')
-            return None
-    
+            self.logger.warning(f'Failed to read poster_path from JSONL: {str(e)}')
+            return None    
     def _process_single_document(self, data_item, index: int) -> Dict[str, Any]:
         """Process single document (supports iterative optimization)"""
         start_time = time.time()
         
         # Step 1: Parse government document
         parsed_data = self.parser.parse_document(data_item)
-
+        if parsed_data is None:
+            self.logger.warning("parsed_data is None; falling back to empty dict.")
+            parsed_data = {}
         # If evaluate_only mode, skip planner/painter, only use existing poster_path for evaluation
         poster_result = None
         if self.evaluate_only:
@@ -742,15 +746,21 @@ class NewGovernmentPosterAgent:
                 evaluation_result = self.evaluator.evaluate_poster(parsed_data, poster_result)
                 optimization_history = []
         
+        if poster_result is None:
+            poster_result = {}
+        
         # If no evaluation result yet, perform final evaluation
         if evaluation_result is None:
             evaluation_result = self.evaluator.evaluate_poster(
                 parsed_data, 
                 poster_result
             )
-        
+    
         processing_time = time.time() - start_time
-        
+
+        if poster_result is None:
+            poster_result = {}
+
         return {
             "input_file": data_item,
             "rule_type": parsed_data.get('rule_type'),
