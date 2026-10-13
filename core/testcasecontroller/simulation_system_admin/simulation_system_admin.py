@@ -15,6 +15,7 @@
 
 """simulation system admin"""
 
+import os
 import subprocess
 
 from core.common.log import LOGGER
@@ -26,24 +27,23 @@ def check_host_docker():
     If Docker is not installed, try to install Docker with one-click installation script.
     """
 
-    shell_cmd = "docker version | head -n 2"
-    check_docker = subprocess.run(shell_cmd, shell=True, check=True)
+    check_docker = subprocess.run(
+        ["docker", "version"], capture_output=True, check=False)
 
     if check_docker.returncode != 0:
         # trying to install docker
         LOGGER.info("trying to install docker")
-        try:
-            shell_install_docker = "curl -fsSL https://get.docker.com | \
-bash -s docker --mirror Aliyun"
-            install_docker = subprocess.run(
-                shell_install_docker, shell=True, check=True)
+        with subprocess.Popen(
+                ["curl", "-fsSL", "https://get.docker.com"],
+                stdout=subprocess.PIPE) as curl_proc:
+            try:
+                subprocess.run(
+                    ["bash", "-s", "docker", "--mirror", "Aliyun"],
+                    stdin=curl_proc.stdout, check=True)
+            except subprocess.CalledProcessError as err:
+                raise RuntimeError(f"install docker failed, error: {err}.") from err
 
-            if install_docker.returncode == 0:
-                LOGGER.info("successfully installed docker")
-            else:
-                raise RuntimeError("install docker failed")
-        except Exception as err:
-            raise RuntimeError(f"install docker failed, error: {err}.") from err
+        LOGGER.info("successfully installed docker")
 
     LOGGER.info("check docker successful")
 
@@ -54,26 +54,23 @@ def check_host_kind():
     If Kind is not installed, try to install Kind with one-click installation script.
     """
 
-    shell_cmd = "kind version"
-    check_kind = subprocess.run(shell_cmd, shell=True, check=True)
+    check_kind = subprocess.run(
+        ["kind", "version"], capture_output=True, check=False)
 
     if check_kind.returncode == 0:
         LOGGER.info("check Kind successful")
-    else:
-        try:
-            shell_install_kind = "curl -Lo ./kind \
-https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64 && \
-chmod +x ./kind && mv ./kind /usr/local/bin/kind"
-            install_kind = subprocess.run(
-                shell_install_kind, shell=True, check=True)
+        return
 
-            if install_kind.returncode == 0:
-                LOGGER.info("successfully installed kind")
-            else:
-                LOGGER.exception("install kind failed")
-                raise RuntimeError("install kind failed")
-        except Exception as err:
-            raise RuntimeError(f"install kind failed, error: {err}.") from err
+    try:
+        subprocess.run(
+            ["curl", "-Lo", "./kind",
+             "https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64"], check=True)
+        subprocess.run(["chmod", "+x", "./kind"], check=True)
+        subprocess.run(["mv", "./kind", "/usr/local/bin/kind"], check=True)
+    except subprocess.CalledProcessError as err:
+        raise RuntimeError(f"install kind failed, error: {err}.") from err
+
+    LOGGER.info("successfully installed kind")
 
 
 def get_host_free_memory_size():
@@ -154,22 +151,26 @@ def build_simulation_enviroment(simulation):
 
     check_host_enviroment()         # check the enviroment
 
-    shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
-/master/scripts/installation/all-in-one.sh | " \
-        f"NUM_CLOUD_WORKER_NODES={simulation.cloud_number} " \
-        f"NUM_EDGE_NODES={simulation.edge_number} " \
-        f"KUBEEDGE_VERSION={simulation.kubeedge_version} " \
-        f"SEDNA_VERSION={simulation.sedna_version} " \
-        f"CLUSTER_NAME={simulation.cluster_name} bash -"
+    install_env = os.environ.copy()
+    install_env.update({
+        "NUM_CLOUD_WORKER_NODES": str(simulation.cloud_number),
+        "NUM_EDGE_NODES": str(simulation.edge_number),
+        "KUBEEDGE_VERSION": str(simulation.kubeedge_version),
+        "SEDNA_VERSION": str(simulation.sedna_version),
+        "CLUSTER_NAME": str(simulation.cluster_name),
+    })
 
-    build_simulation_env_ret = subprocess.run(
-        shell_cmd, shell=True, check=True)
+    with subprocess.Popen(
+            ["curl", "https://raw.githubusercontent.com/kubeedge/sedna"
+                     "/master/scripts/installation/all-in-one.sh"],
+            stdout=subprocess.PIPE) as curl_proc:
+        try:
+            subprocess.run(["bash", "-"], stdin=curl_proc.stdout,
+                           env=install_env, check=True)
+        except subprocess.CalledProcessError as err:
+            raise RuntimeError("The simulation enviroment build failed.") from err
 
-    if build_simulation_env_ret.returncode == 0:
-        LOGGER.info(
-            "Congratulation! The simulation enviroment build successful!")
-    else:
-        raise RuntimeError("The simulation enviroment build failed.")
+    LOGGER.info("Congratulation! The simulation enviroment build successful!")
 
 
 def destory_simulation_enviroment(simulation):
@@ -177,10 +178,14 @@ def destory_simulation_enviroment(simulation):
     build the simulation enviroment
 
     """
-    shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
-/main/scripts/installation/all-in-one.sh | " \
-        f"CLUSTER_NAME={simulation.cluster_name} bash /dev/stdin clean"
+    destroy_env = os.environ.copy()
+    destroy_env["CLUSTER_NAME"] = str(simulation.cluster_name)
 
-    retcode = subprocess.call(shell_cmd, shell=True)
+    with subprocess.Popen(
+            ["curl", "https://raw.githubusercontent.com/kubeedge/sedna"
+                     "/main/scripts/installation/all-in-one.sh"],
+            stdout=subprocess.PIPE) as curl_proc:
+        result = subprocess.run(["bash", "/dev/stdin", "clean"],
+                                stdin=curl_proc.stdout, env=destroy_env, check=False)
 
-    return retcode
+    return result.returncode
