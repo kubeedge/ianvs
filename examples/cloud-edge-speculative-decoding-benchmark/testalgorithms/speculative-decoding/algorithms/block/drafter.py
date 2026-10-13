@@ -7,6 +7,7 @@ import sys
 
 import torch
 from sedna.common.class_factory import ClassFactory, ClassType
+from core.common.device import supports_bf16
 from transformers import DynamicCache
 
 MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -61,7 +62,9 @@ class SpeculativeBlockDraftModel(BaseSpeculativeDrafter):
 
     def load_core(self):
         """Load the block draft model."""
-        self.dtype = torch.bfloat16 if self.device == "cuda" else torch.float32
+        self.dtype = (
+            torch.bfloat16 if self.device == "cuda" and supports_bf16() else torch.float32
+        )
         self.model = DFlashDraftModel.from_pretrained(
             self.model_name,
             attn_implementation=self.attn_implementation,
