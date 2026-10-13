@@ -88,7 +88,7 @@ class Dataset:
             )
 
     @classmethod
-    def _process_txt_index_file(cls, file_url):
+    def _process_txt_index_file(cls, file_url, output_dir=None):
         """
         convert the index info of data from relative path to absolute path in txt index file
         """
@@ -102,7 +102,13 @@ class Dataset:
                     break
         if flag:
             root = os.path.dirname(file_url)
-            tmp_file = os.path.join(tempfile.mkdtemp(), "index.txt")
+            if not output_dir:
+                tmp_dir = tempfile.mkdtemp()
+            else:
+                tmp_dir = output_dir
+                os.makedirs(tmp_dir, exist_ok=True)
+
+            tmp_file = os.path.join(tmp_dir, "index.txt")
             with open(tmp_file, "w", encoding="utf-8") as file:
                 for line in lines:
                     # copy all the files in the line
@@ -121,10 +127,10 @@ class Dataset:
 
         return new_file
 
-    def _process_index_file(self, file_url):
+    def _process_index_file(self, file_url, output_dir=None):
         file_format = utils.get_file_format(file_url)
         if file_format == DatasetFormat.TXT.value:
-            return self._process_txt_index_file(file_url)
+            return self._process_txt_index_file(file_url, output_dir=output_dir)
         if file_format == DatasetFormat.JSON.value:
             return file_url
 
@@ -146,7 +152,7 @@ class Dataset:
             f"but the current file is {file_url}."
         )
 
-    def process_dataset(self):
+    def process_dataset(self, output_dir=None):
         """
         process dataset:
         process train dataset and test dataset for testcase;
@@ -155,7 +161,8 @@ class Dataset:
 
         """
         if self.train_index:
-            self.train_url = self._process_index_file(self.train_index)
+            train_output_dir = os.path.join(output_dir, "train") if output_dir else None
+            self.train_url = self._process_index_file(self.train_index, output_dir=train_output_dir)
         elif self.train_data:
             self.train_url = self._process_data_file(self.train_data)
         elif self.train_data_info:
@@ -165,7 +172,8 @@ class Dataset:
             raise NotImplementedError('not one of train_index/train_data/train_data_info')
 
         if self.test_index:
-            self.test_url = self._process_index_file(self.test_index)
+            test_output_dir = os.path.join(output_dir, "test") if output_dir else None
+            self.test_url = self._process_index_file(self.test_index, output_dir=test_output_dir)
         elif self.test_data:
             self.test_url = self._process_data_file(self.test_data)
         elif self.test_data_info:
@@ -173,7 +181,6 @@ class Dataset:
             # raise NotImplementedError('to be done')
         else:
             raise NotImplementedError('not one of test_index/test_data/test_data_info')
-
 
     # pylint: disable=too-many-arguments
     def split_dataset(
@@ -219,6 +226,18 @@ class Dataset:
 
         """
 
+        if not isinstance(times, int) or times < 1:
+            raise ValueError(f"dataset splitting parameter 'times' ({times}) must be an integer >= 1.")
+
+        if not isinstance(ratio, (int, float)) or not (0.0 < ratio < 1.0):
+            raise ValueError(f"dataset splitting parameter 'ratio' ({ratio}) must be a float strictly between 0.0 and 1.0.")
+
+        if method == "city_splitting" and times < 2:
+            raise ValueError(f"dataset splitting method 'city_splitting' requires times >= 2, but got {times}.")
+
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+
         if method == "default":
             return self._splitting_more_times(
                 dataset_url,
@@ -260,7 +279,7 @@ class Dataset:
 
         raise ValueError(
             f"dataset splitting method({method}) is not supported,"
-            f"currently, method supports 'default'."
+            f"currently supported methods: ['default', 'city_splitting', 'fwt_splitting', 'hard-example_splitting']."
         )
 
     @classmethod
@@ -269,12 +288,18 @@ class Dataset:
 
     @classmethod
     def _write_data_file(cls, data, data_file, data_format):
+        dir_name = os.path.dirname(data_file)
+        if dir_name:
+            os.makedirs(dir_name, exist_ok=True)
+
         if data_format in (DatasetFormat.TXT.value, DatasetFormat.JSONL.value):
             with open(data_file, "w", encoding="utf-8") as file:
                 for line in data:
-                    file.writelines(line + "\n")
-        if data_format == DatasetFormat.CSV.value:
+                    file.writelines(str(line) + "\n")
+        elif data_format == DatasetFormat.CSV.value:
             data.to_csv(data_file, index=None)
+        else:
+            raise ValueError(f"unsupported data format ({data_format}) for dataset writing.")
 
     @classmethod
     def _read_data_file(cls, data_file, data_format):
@@ -284,12 +309,19 @@ class Dataset:
             with open(data_file, "r", encoding="utf-8") as file:
                 data = [line.strip() for line in file.readlines()]
 
-        if data_format == DatasetFormat.CSV.value:
+        elif data_format == DatasetFormat.CSV.value:
             data = pd.read_csv(data_file)
+        else:
+            raise ValueError(f"unsupported dataset format ({data_format}) for dataset reading.")
+
+        if data is None:
+            raise ValueError(f"failed to read dataset from file ({data_file}) with format ({data_format}).")
 
         return data
 
     def _get_dataset_file(self, data, output_dir, dataset_type, index, dataset_format):
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
         data_file = self._get_file_url(output_dir, dataset_type, index, dataset_format)
 
         self._write_data_file(data, data_file, dataset_format)
@@ -304,6 +336,8 @@ class Dataset:
 
         if not output_dir:
             output_dir = tempfile.mkdtemp()
+        else:
+            os.makedirs(output_dir, exist_ok=True)
 
         all_data = self._read_data_file(data_file, data_format)
 
@@ -351,6 +385,8 @@ class Dataset:
 
         if not output_dir:
             output_dir = tempfile.mkdtemp()
+        else:
+            os.makedirs(output_dir, exist_ok=True)
 
         all_data = self._read_data_file(data_file, data_format)
 
@@ -409,6 +445,8 @@ class Dataset:
 
         if not output_dir:
             output_dir = tempfile.mkdtemp()
+        else:
+            os.makedirs(output_dir, exist_ok=True)
 
         all_data = self._read_data_file(data_file, data_format)
 
@@ -482,6 +520,8 @@ class Dataset:
 
         if not output_dir:
             output_dir = tempfile.mkdtemp()
+        else:
+            os.makedirs(output_dir, exist_ok=True)
 
         all_data = self._read_data_file(data_file, data_format)
 
