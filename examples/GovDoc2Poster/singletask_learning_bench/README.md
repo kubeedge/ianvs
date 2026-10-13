@@ -107,7 +107,7 @@ New Government Poster Agent System
 
 ### Step 1: Configure API Key
 
-Edit the 64th line in `basemodel.py`:
+Edit line 65 in `basemodel.py`:
 
 ```bash
 vim singletask_learning_bench/testalgorithms/gen/basemodel.py
@@ -138,7 +138,7 @@ cd /home/linux/Desktop/ianvs
 ### Step 3: Run the System
 
 ```bash
-ianvs -f examples/GovDoc2Poster/singletask_learning_bench/testalgorithms/gen/government_data_source.yaml
+ianvs -f examples/GovDoc2Poster/singletask_learning_bench/benchmarkingjob.yaml
 ```
 
 ✅ Done! The system will automatically parse the government documents from the dataset and generate visual posters.
@@ -160,7 +160,7 @@ ianvs -f examples/GovDoc2Poster/singletask_learning_bench/testalgorithms/gen/gov
 
 1. **Navigate to the project directory**
    ```bash
-   cd ./ianvs/examples/new_government_agent
+   cd ./ianvs/examples/GovDoc2Poster
    ```
 
 2. **Install dependencies**
@@ -238,7 +238,7 @@ Each evaluation report includes:
 ## Project Structure
 
 ```
-new_government_agent/
+GovDoc2Poster/
 └── singletask_learning_bench/
     ├── benchmarkingjob.yaml
     ├── testalgorithms/
