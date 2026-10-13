@@ -21,7 +21,7 @@ import colorlog
 # pylint: disable=too-few-public-methods
 class Logger:
     """
-    Deafult logger in ianvs
+    Default logger in ianvs
     Args:
         name(str) : Logger name, default is 'ianvs'
     """

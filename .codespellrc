@@ -1,0 +1,4 @@
+[codespell]
+# examples/ and docs/proposals/ contain pre-existing issues from many
+# contributors; they are tracked separately. CI focuses on core/ only.
+skip = *.pyc,__pycache__,*.egg-info,.git

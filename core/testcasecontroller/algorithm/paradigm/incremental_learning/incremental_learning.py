@@ -147,17 +147,19 @@ class IncrementalLearning(ParadigmBase):
         return inference_results, hard_examples
 
     def _get_train_dataset(self, hard_examples, data_label_file):
-        # pylint: disable=W0012
-        # pylint: disable=E0606
         data_labels = self.dataset.load_data(data_label_file, "train label")
+        label_index = {path: lbl for path, lbl in zip(data_labels.x, data_labels.y)}
+
         temp_dir = tempfile.mkdtemp()
         train_dataset_file = os.path.join(temp_dir, os.path.basename(data_label_file))
         with open(train_dataset_file, "w", encoding="utf-8") as file:
             for old, new in hard_examples:
-                index = np.where(data_labels.x == old)
-                if len(index[0]) == 1:
-                    label = data_labels.y[index[0][0]]
-                file.write(f"{new} {label}\n")
+                if old not in label_index:
+                    raise RuntimeError(
+                        f"Hard example '{old}' has no matching label in '{data_label_file}'. "
+                        f"This would write a stale or unbound label, corrupting training data."
+                    )
+                file.write(f"{new} {label_index[old]}\n")
 
         return train_dataset_file
 
