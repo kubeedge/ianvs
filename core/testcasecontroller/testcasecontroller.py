@@ -22,6 +22,9 @@ from core.testcasecontroller.algorithm import Algorithm
 from core.testcasecontroller.testcase import TestCase
 
 
+from core.common.log import LOGGER
+
+
 class TestCaseController:
     """
     Test Case Controller:
@@ -49,14 +52,22 @@ class TestCaseController:
         """
         succeed_results = {}
         succeed_testcases = []
+        failed_testcases = []
+
         for testcase in self.test_cases:
             try:
                 res, time = (testcase.run(workspace), utils.get_local_time())
+                succeed_results[testcase.id] = (res, time)
+                succeed_testcases.append(testcase)
             except Exception as err:
-                raise RuntimeError(f"testcase(id={testcase.id}) runs failed, error: {err}") from err
+                LOGGER.error(f"testcase(id={testcase.id}) run failed, error: {err}")
+                failed_testcases.append((testcase, err))
 
-            succeed_results[testcase.id] = (res, time)
-            succeed_testcases.append(testcase)
+        if not succeed_testcases and failed_testcases:
+            first_case, first_err = failed_testcases[0]
+            raise RuntimeError(
+                f"All testcases failed. First failure (id={first_case.id}): {first_err}"
+            ) from first_err
 
         return succeed_testcases, succeed_results
 
