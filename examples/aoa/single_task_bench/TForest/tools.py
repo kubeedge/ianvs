@@ -1,17 +1,21 @@
 import os
 import numpy as np
 import pandas as pd
+from pathlib import Path
 from sklearn.model_selection import train_test_split
+
+# Base directory relative to this file
+BASE_DIR = Path(__file__).resolve().parent
 
 
 def data_io(data_index=1):
-    path = 'data/processed/'
+    data_dir = BASE_DIR / 'data' / 'processed'
     # names = [str(i) for i in range(64, 86)] #64~86
     # CHANNEL_NUM = 52
     names = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42]
-
-    all_data = np.loadtxt(os.path.join(path + str(names[data_index]) + '.txt'), delimiter=',')
-#     print(os.path.join(path + str(names[data_index]) + '.txt'))
+    file_path = data_dir / f'{names[data_index]}.txt'
+    all_data = np.loadtxt(file_path, delimiter=',')
+#     print(file_path)
 # #     all_data = all_data.sample(frac=1.0)
 #     print(all_data.shape)
     # snr = all_data[:, 6:10]
@@ -40,7 +44,13 @@ def data_io(data_index=1):
     return all_features, all_labels
 
 
-def load_test(test_file='seq/seq83_new.txt'):
+def load_test(test_file=None):
+    if test_file is None:
+        test_file = BASE_DIR / "seq" / "seq83_new.txt"
+    else:
+        test_file = Path(test_file)
+        if not test_file.is_absolute():
+            test_file = BASE_DIR / test_file
     CHANNEL_NUM = 52
     test_seq = np.array(pd.read_table(test_file, header = None, sep=','))
     snr = test_seq[:, 6:10]
