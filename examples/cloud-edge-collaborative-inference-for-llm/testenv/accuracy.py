@@ -47,13 +47,17 @@ def acc(y_true, y_pred):
 
     infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
 
+    if not infer_res or not y_true:
+        return 0.0
+
     y_pred = [get_last_letter(pred.result.completion) for pred in infer_res]
     y_true = [get_last_letter(y) for y in y_true]
 
-    # 使用列表推导来比较两个列表中的元素是否相同
-    same_elements = [y_pred[i] == y_true[i] for i in range(len(y_pred))]
+    same_elements = [y_pred[i] == y_true[i] for i in range(min(len(y_pred), len(y_true)))]
 
-    # 计算相同元素的数量
+    if not same_elements:
+        return 0.0
+
     acc = sum(same_elements) / len(same_elements)
 
     return round(acc * 100, 2)
