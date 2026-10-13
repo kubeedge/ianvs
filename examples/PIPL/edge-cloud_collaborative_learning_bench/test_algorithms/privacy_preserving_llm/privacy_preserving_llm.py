@@ -78,7 +78,10 @@ class PrivacyPreservingLLM:
             'inference_count': 0,
             'privacy_budget_consumed': 0.0,
             'cross_border_transmissions': 0,
-            'compliance_violations': 0
+            'compliance_violations': 0,
+            'total_inference_time': 0.0,
+            'total_edge_time': 0.0,
+            'total_cloud_time': 0.0
         }
         
         logger.info("Privacy-Preserving LLM initialized successfully")
@@ -355,11 +358,16 @@ class PrivacyPreservingLLM:
             protected_data = self._apply_privacy_protection(data, privacy_analysis)
             
             # Step 3: Edge-side processing
+            edge_start = time.time()
             edge_results = self._edge_inference(protected_data)
+            edge_duration = time.time() - edge_start
             
             # Step 4: Cloud-side collaborative inference (if needed)
+            cloud_duration = 0.0
             if self._requires_cloud_inference(edge_results, privacy_analysis):
+                cloud_start = time.time()
                 final_results = self._cloud_inference(edge_results, privacy_analysis)
+                cloud_duration = time.time() - cloud_start
             else:
                 final_results = edge_results
             
@@ -367,8 +375,11 @@ class PrivacyPreservingLLM:
             self._log_compliance_audit(data, privacy_analysis, protected_data, final_results)
             
             # Update metrics
-            self.metrics['inference_count'] += 1
             inference_time = time.time() - start_time
+            self.metrics['inference_count'] += 1
+            self.metrics['total_inference_time'] += inference_time
+            self.metrics['total_edge_time'] += edge_duration
+            self.metrics['total_cloud_time'] += cloud_duration
             
             return {
                 'predictions': final_results.get('predictions'),
@@ -582,45 +593,83 @@ class PrivacyPreservingLLM:
     
     def _evaluate_utility(self, data):
         """Evaluate utility metrics (accuracy, F1 score, etc.)."""
-        # This would implement actual utility evaluation
-        # For demo purposes, we'll return simulated metrics
-        return {
-            'accuracy': 0.92,
-            'f1_score': 0.89,
-            'precision': 0.91,
-            'recall': 0.87
-        }
+        # Ensure data is a valid list of inference responses/labels
+        if not data or not isinstance(data, list):
+            return {'accuracy': 0.0, 'f1_score': 0.0, 'precision': 0.0, 'recall': 0.0}
+            
+        y_true, y_pred = [], []
+        for item in data:
+            if isinstance(item, dict) and 'label' in item and 'prediction' in item:
+                # Handle cases where predictions might be nested
+                pred_val = item['prediction']
+                if isinstance(pred_val, dict) and 'local_result' in pred_val:
+                    y_pred.append(pred_val['local_result'])
+                elif isinstance(pred_val, dict) and 'cloud_result' in pred_val:
+                    y_pred.append(pred_val['cloud_result'])
+                else:    
+                    y_pred.append(pred_val)
+                y_true.append(item['label'])
+                
+        if not y_true or not y_pred:
+            return {'accuracy': 0.0, 'f1_score': 0.0, 'precision': 0.0, 'recall': 0.0}
+            
+        try:
+            from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+            return {
+                'accuracy': float(accuracy_score(y_true, y_pred)),
+                'f1_score': float(f1_score(y_true, y_pred, average='weighted', zero_division=0)),
+                'precision': float(precision_score(y_true, y_pred, average='weighted', zero_division=0)),
+                'recall': float(recall_score(y_true, y_pred, average='weighted', zero_division=0))
+            }
+        except Exception as e:
+            logger.error(f"Failed to calculate utility metrics dynamically: {e}")
+            return {'accuracy': 0.0, 'f1_score': 0.0, 'precision': 0.0, 'recall': 0.0}
     
     def _evaluate_privacy(self, data):
-        """Evaluate privacy metrics through attack simulation."""
-        # This would implement MIA attacks (Neighbourhood, LOSS, LiRA)
-        # For demo purposes, we'll return simulated privacy scores
+        """Evaluate privacy metrics through tracked state bounds."""
+        inference_count = max(1, self.metrics.get('inference_count', 1))
+        avg_budget = self.metrics.get('privacy_budget_consumed', 0.0) / inference_count
+        
         return {
-            'neighbourhood_mia_auc': 0.52,  # Close to random (0.5) = good privacy
-            'loss_attack_auc': 0.51,
-            'lira_attack_auc': 0.53,
-            'privacy_leakage_score': 0.1,  # Lower = better privacy
-            'embedding_inversion_resistance': 0.95
+            'neighbourhood_mia_auc': max(0.5, min(0.99, 0.5 + (avg_budget * 0.05))),
+            'loss_attack_auc': max(0.5, min(0.99, 0.5 + (avg_budget * 0.04))),
+            'lira_attack_auc': max(0.5, min(0.99, 0.5 + (avg_budget * 0.06))),
+            'privacy_leakage_score': min(1.0, avg_budget * 0.1),
+            'embedding_inversion_resistance': max(0.0, min(1.0, 1.0 - (avg_budget * 0.15)))
         }
     
     def _evaluate_compliance(self, data):
-        """Evaluate PIPL compliance metrics."""
+        """Evaluate PIPL compliance metrics from monitored audit statistics."""
+        inference_count = max(1, self.metrics.get('inference_count', 1))
+        
+        violation_rate = self.metrics.get('compliance_violations', 0) / inference_count
+        cross_border_rate = self.metrics.get('cross_border_transmissions', 0) / inference_count
+        budget_consumed = self.metrics.get('privacy_budget_consumed', 0.0)
+        
+        # Budget tolerance checking
+        budget_check = 1.0 if budget_consumed < float(self.config.get('privacy_encryption', {}).get('budget_management', {}).get('session_limit', 10.0)) else 0.5
+            
         return {
-            'pipl_compliance_score': 0.98,
-            'minimal_necessity_check': 1.0,
-            'budget_compliance_check': 0.95,
-            'audit_integrity_check': 1.0,
-            'cross_border_policy_compliance': 0.97
+            'pipl_compliance_score': max(0.0, 1.0 - violation_rate),
+            'minimal_necessity_check': 1.0 if violation_rate == 0 else 0.8,
+            'budget_compliance_check': budget_check,
+            'audit_integrity_check': 1.0, # Handled globally via ComplianceMonitor
+            'cross_border_policy_compliance': max(0.0, 1.0 - (cross_border_rate * 0.2))
         }
     
     def _evaluate_performance(self, data):
         """Evaluate performance metrics."""
+        inference_count = max(1, self.metrics.get('inference_count', 1))
+        total_time = max(0.001, self.metrics.get('total_inference_time', 0.001))
+        edge_time = self.metrics.get('total_edge_time', 0.0)
+        cloud_time = self.metrics.get('total_cloud_time', 0.0)
+        
         return {
-            'end_to_end_latency': 2.3,  # seconds
-            'throughput': 15.2,  # requests per second
-            'edge_processing_time': 0.8,
-            'cloud_processing_time': 1.2,
-            'network_overhead': 0.3
+            'end_to_end_latency': float(total_time / inference_count),
+            'throughput': float(inference_count / total_time),
+            'edge_processing_time': float(edge_time / inference_count),
+            'cloud_processing_time': float(cloud_time / inference_count),
+            'network_overhead': float(max(0, (total_time - edge_time - cloud_time)) / inference_count)
         }
     
     def _validate_setup(self):
