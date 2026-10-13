@@ -130,7 +130,7 @@ self.api_key = 'your_api_key_here'
 ### Step 2: Enter Ianvs Directory
 
 ```bash
-cd /home/linux/Desktop/ianvs
+cd <path-to-your-ianvs-clone>
 ```
 
 ---
@@ -138,7 +138,7 @@ cd /home/linux/Desktop/ianvs
 ### Step 3: Run the System
 
 ```bash
-ianvs -f examples/GovDoc2Poster/singletask_learning_bench/testalgorithms/gen/government_data_source.yaml
+ianvs -f examples/GovDoc2Poster/singletask_learning_bench/benchmarkingjob.yaml
 ```
 
 ✅ Done! The system will automatically parse the government documents from the dataset and generate visual posters.
@@ -160,7 +160,7 @@ ianvs -f examples/GovDoc2Poster/singletask_learning_bench/testalgorithms/gen/gov
 
 1. **Navigate to the project directory**
    ```bash
-   cd ./ianvs/examples/new_government_agent
+   cd ./ianvs/examples/GovDoc2Poster
    ```
 
 2. **Install dependencies**
@@ -215,7 +215,7 @@ ianvs -f examples/GovDoc2Poster/singletask_learning_bench/testalgorithms/gen/gov
 ### Output Directory
 
 ```
-new_government_agent_output/
+GovDoc2Poster_output/
 ├── posters/                # Generated posters (.png/.pptx)
 ├── images/                 # Extracted image elements
 ├── logs/                   # Processing logs
@@ -238,7 +238,7 @@ Each evaluation report includes:
 ## Project Structure
 
 ```
-new_government_agent/
+GovDoc2Poster/
 └── singletask_learning_bench/
     ├── benchmarkingjob.yaml
     ├── testalgorithms/
