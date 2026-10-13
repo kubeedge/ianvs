@@ -48,9 +48,10 @@ def parse_kwargs(func, **kwargs):
     if not callable(func):
         return kwargs
     need_kw = getfullargspec(func)
-    if need_kw.varkw == 'kwargs':
+    if need_kw.varkw is not None:
         return kwargs
-    return {k: v for k, v in kwargs.items() if k in need_kw.args}
+    valid_args = set(need_kw.args or []) | set(need_kw.kwonlyargs or [])
+    return {k: v for k, v in kwargs.items() if k in valid_args}
 
 
 def get_local_time():
