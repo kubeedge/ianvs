@@ -188,6 +188,13 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         """
         test_dataset = self.dataset.load_data(self.dataset.test_url, "eval")
         all_data = len(test_dataset.x)
+        if all_data < split_time:
+            raise ValueError(
+                f"the test dataset only has {all_data} samples, "
+                f"which is less than the number of incremental rounds ({split_time}). "
+                f"every round needs at least one test sample for evaluation, "
+                f"please use a larger test dataset or fewer incremental rounds."
+            )
         step = all_data // split_time
         test_datasets_files = []
         index = 1
@@ -269,8 +276,15 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         current_forget_rate = 0.0
         max_acc_sum = 0
         self.accuracy_per_round.append(old_class_acc_list)
+        if not old_class_acc_list:
+            # np.mean of an empty list is nan, which would silently pollute the
+            # task average accuracy, so report 0.0 with a warning instead.
+            LOGGER.warning(
+                f"no test sample is evaluated in round {incremental_round}, "
+                f"the task average accuracy and the forget rate are set to 0.0"
+            )
         self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value]["accuracy"] = (
-            np.mean(old_class_acc_list)
+            np.mean(old_class_acc_list) if old_class_acc_list else 0.0
         )
         # caculate the forget rate
         for i in range(len(old_class_acc_list)):
@@ -283,7 +297,7 @@ class FederatedClassIncrementalLearning(FederatedLearning):
                     )
             max_acc_sum += max_acc_diff
         current_forget_rate = (
-            max_acc_sum / len(old_class_acc_list) if incremental_round > 0 else 0.0
+            max_acc_sum / len(old_class_acc_list) if old_class_acc_list else 0.0
         )
         tavk_avg_acc = self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value][
             "accuracy"
