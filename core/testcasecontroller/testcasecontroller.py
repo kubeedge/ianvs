@@ -19,6 +19,7 @@ import copy
 from core.common import utils
 from core.common.constant import TestObjectType
 from core.testcasecontroller.algorithm import Algorithm
+from core.testcasecontroller.simulation import SimulationController
 from core.testcasecontroller.testcase import TestCase
 
 
@@ -43,9 +44,43 @@ class TestCaseController:
             for algorithm in algorithms:
                 self.test_cases.append(TestCase(test_env, algorithm))
 
-    def run_testcases(self, workspace):
+    def run_testcases(self, workspace, sandbox=None, simulation=None):
         """
         Run all test cases.
+
+        Parameters
+        ----------
+        workspace : str
+            Benchmarking job workspace.
+        sandbox : SandboxConfig, optional
+            When present and enabled, every test case is executed inside the
+            simulation sandbox: its own worker process, its own transient
+            runtime and its own CPU/memory envelope. When absent or disabled,
+            execution is byte-for-byte identical to the previous behaviour.
+        simulation : Simulation, optional
+            Cluster topology, required only by the cluster tier.
+
+        Returns
+        -------
+        (succeed_testcases, succeed_results) : tuple
+        """
+        if sandbox is not None and getattr(sandbox, "enabled", False):
+            controller = SimulationController(
+                sandbox_config=sandbox,
+                simulation=simulation,
+                workspace=workspace,
+            )
+            return controller.run_testcases(self.test_cases, workspace)
+
+        return self._run_testcases_inline(workspace)
+
+    def _run_testcases_inline(self, workspace):
+        """
+        The original, unsandboxed execution path. Unchanged.
+
+        Kept as the default so that adding the sandbox cannot regress any of
+        the existing examples: with no sandbox block configured, this is the
+        code that runs.
         """
         succeed_results = {}
         succeed_testcases = []

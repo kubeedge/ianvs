@@ -1,4 +1,4 @@
-# Copyright 2022 The KubeEdge Authors.
+# Copyright 2026 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=missing-module-docstring
-from .simulation_system_admin import build_simulation_enviroment
-from .simulation_system_admin import destory_simulation_enviroment
+"""Sandbox backends: process tier (default) and cluster tier."""
+
+from core.testcasecontroller.simulation.sandbox.base import Sandbox
+
+__all__ = ["Sandbox"]

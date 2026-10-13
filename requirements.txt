@@ -5,3 +5,4 @@ pandas
 tqdm
 matplotlib
 onnx
+psutil>=5.9.0 # BSD - system metrics profiling for the simulation sandbox

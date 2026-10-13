@@ -1,4 +1,4 @@
-# Copyright 2022 The KubeEdge Authors.
+# Copyright 2026 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,13 +12,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Simulation"""
+"""Simulation cluster topology configuration.
+
+Hardened against the defects verified in ``verify_legacy_simulation.py``:
+B2 (booleans silently passed the int check), B3 (unknown keys were dropped
+instead of rejected), B4 (an empty cluster_name produced a malformed
+``CLUSTER_NAME=`` shell argument) and B12 (node counts were never checked
+against the Sedna all-in-one backend's own hard ceiling, so a value that
+passed every Ianvs-side check still failed deep inside a piped shell
+script). Attribute names and ``Simulation.__name__`` are unchanged from the
+2022 implementation, since ``BenchmarkingJob`` dispatches on
+``str.lower(Simulation.__name__)``.
+"""
+
+import re
+
+# The Sedna all-in-one installer hard-codes these ceilings and aborts above
+# them (see docs/proposals/simulation/sandbox-engine/ianvs-simulation-sandbox.md
+# section 2.3, defect B12). Ianvs now rejects larger values at config-parse
+# time instead of letting them fail inside the provisioning script.
+SEDNA_MAX_CLOUD_WORKER_NODES = 2
+SEDNA_MAX_EDGE_NODES = 3
+
+_FIELDS = (
+    "cloud_number", "edge_number", "cluster_name",
+    "kubeedge_version", "sedna_version",
+)
+
+# Kubernetes-style RFC 1123 DNS label: lowercase alphanumerics and '-',
+# starting and ending with an alphanumeric character.
+_RFC1123_LABEL = re.compile(r"^[a-z0-9]([-a-z0-9]*[a-z0-9])?$")
 
 
 # pylint: disable=too-few-public-methods
 class Simulation:
     """
-    Simulation: The simulation enviroment, e.g. config of simulation.
+    Simulation: the simulation environment, e.g. config of simulation.
 
     Parameters
     ----------
@@ -26,7 +55,7 @@ class Simulation:
         number of the cloud worker.
     edge_number : int
         number of the edge nodes.
-    cluster_name : int
+    cluster_name : string
         name of the simulation cluster.
     kubeedge_version : string
         version of kubeedge, e.g. 1.8.0, latest.
@@ -47,8 +76,17 @@ class Simulation:
         parse the simulation config.
         """
         for attribute, value in simulation_config.items():
-            if attribute in self.__dict__:
-                self.__dict__[attribute] = value
+            if attribute not in _FIELDS:
+                raise ValueError(
+                    f"simulation config has unknown field({attribute}); "
+                    f"expected one of {_FIELDS}.")
+            self.__dict__[attribute] = value
+
+        # The all-in-one installer only resolves the newest release when the
+        # variable is empty; the literal string 'latest' 404s on the release
+        # asset, so normalise it here rather than passing it through.
+        if self.kubeedge_version == "latest":
+            self.kubeedge_version = ""
 
         self._check_fields()
 
@@ -56,24 +94,36 @@ class Simulation:
         """
         check the fields of simulation config.
         """
-        if not isinstance(self.cloud_number, int):
-            raise ValueError(
-                f"simulation cloud_number"
-                f"({self.cloud_number} must be int type.")
+        for field in ("cloud_number", "edge_number"):
+            value = getattr(self, field)
+            if isinstance(value, bool) or not isinstance(value, int):
+                raise ValueError(
+                    f"simulation {field}({value}) must be int type.")
 
-        if not isinstance(self.edge_number, int):
-            raise ValueError(
-                f"simulation edge_number"
-                f"({self.edge_number} must be int type.")
+        for field in ("cluster_name", "kubeedge_version", "sedna_version"):
+            value = getattr(self, field)
+            if not isinstance(value, str):
+                raise ValueError(
+                    f"simulation {field}({value}) must be string type.")
 
-        if not isinstance(self.cluster_name, str):
+        if not self.cluster_name:
             raise ValueError(
-                f"simulation ({self.cluster_name}) must be string type.")
+                "simulation cluster_name must be a non-empty string.")
 
-        if not isinstance(self.kubeedge_version, str):
+        if not _RFC1123_LABEL.match(self.cluster_name):
             raise ValueError(
-                f"simulation ({self.kubeedge_version}) must be string type.")
+                f"simulation cluster_name({self.cluster_name}) must be a "
+                "valid RFC 1123 label: lowercase alphanumeric characters or "
+                "'-', starting and ending with an alphanumeric character.")
 
-        if not isinstance(self.sedna_version, str):
+        if not 1 <= self.cloud_number <= SEDNA_MAX_CLOUD_WORKER_NODES:
             raise ValueError(
-                f"simulation ({self.sedna_version}) must be string type.")
+                f"simulation cloud_number({self.cloud_number}) is out of "
+                f"range: the Sedna all-in-one backend supports 1-"
+                f"{SEDNA_MAX_CLOUD_WORKER_NODES} cloud worker nodes.")
+
+        if not 1 <= self.edge_number <= SEDNA_MAX_EDGE_NODES:
+            raise ValueError(
+                f"simulation edge_number({self.edge_number}) is out of "
+                f"range: the Sedna all-in-one backend supports 1-"
+                f"{SEDNA_MAX_EDGE_NODES} edge nodes.")

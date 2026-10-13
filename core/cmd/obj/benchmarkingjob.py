@@ -21,12 +21,11 @@ from core.common import utils
 from core.common.constant import TestObjectType
 from core.testenvmanager.testenv import TestEnv
 from core.storymanager.rank import Rank
-from core.testcasecontroller.simulation import Simulation
-from core.testcasecontroller.simulation_system_admin import build_simulation_enviroment
+from core.testcasecontroller.simulation import Simulation, SandboxConfig
 from core.testcasecontroller.testcasecontroller import TestCaseController
 
 
-# pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods,too-many-instance-attributes
 class BenchmarkingJob:
     """
     BenchmarkingJob:
@@ -47,6 +46,7 @@ class BenchmarkingJob:
         self.rank = None
         self.test_env = None
         self.simulation = None
+        self.sandbox = SandboxConfig.disabled()
         self.testcase_controller = TestCaseController()
         self._parse_config(config)
 
@@ -83,15 +83,22 @@ class BenchmarkingJob:
         """
         self.workspace = os.path.join(self.workspace, self.name)
 
-        if self.simulation is not None:
-            build_simulation_enviroment(self.simulation)
-
         self.test_env.prepare()
 
         self.testcase_controller.build_testcases(test_env=self.test_env,
                                                  test_object=self.test_object)
 
-        succeed_testcases, test_results = self.testcase_controller.run_testcases(self.workspace)
+        # The simulation environment is provisioned and torn down inside
+        # TestCaseController.run_testcases, so that teardown is guaranteed by a
+        # finally block even when a test case raises. The 2022 implementation
+        # built the cluster here and never destroyed it: destory_simulation_
+        # enviroment() was defined and exported but had no call site anywhere
+        # in the repository, so every run leaked a kind cluster.
+        succeed_testcases, test_results = self.testcase_controller.run_testcases(
+            self.workspace,
+            sandbox=self.sandbox,
+            simulation=self.simulation,
+        )
 
         if test_results:
             self.rank.save(succeed_testcases, test_results, output_dir=self.workspace)
@@ -106,6 +113,8 @@ class BenchmarkingJob:
                 self._parse_rank_config(v)
             elif k == str.lower(Simulation.__name__):
                 self._parse_simulation_config(v)
+            elif k == "sandbox":
+                self._parse_sandbox_config(v)
             else:
                 if k in self.__dict__:
                     self.__dict__[k] = v
@@ -128,3 +137,6 @@ class BenchmarkingJob:
 
     def _parse_simulation_config(self, simulation_config):
         self.simulation = Simulation(simulation_config)
+
+    def _parse_sandbox_config(self, sandbox_config):
+        self.sandbox = SandboxConfig(sandbox_config)
