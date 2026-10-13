@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Edge ratio metric for cloud-edge LLM benchmark."""
 
 from sedna.common.class_factory import ClassType, ClassFactory
 from result_parser import JointInferenceResult
@@ -34,9 +35,14 @@ def edge_ratio(_, y_pred):
 
     infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
 
-    y_pred = [pred.is_hard_example for pred in infer_res]
+    if not infer_res:
+        return 0.0
 
-    edge_ratio = 1 - sum(y_pred) / len(y_pred)
+    y_pred_list = [pred.is_hard_example for pred in infer_res]
 
-    return round(edge_ratio * 100,2)
+    if not y_pred_list:
+        return 0.0
 
+    ratio_val = 1 - sum(y_pred_list) / len(y_pred_list)
+
+    return round(ratio_val * 100, 2)

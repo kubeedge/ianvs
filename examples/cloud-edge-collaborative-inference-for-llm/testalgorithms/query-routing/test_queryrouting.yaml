@@ -29,7 +29,7 @@ algorithm:
             #  2> "vllm": vLLM backend;
             #  3> "api": OpenAI API backend;
             #  4> "EagleSpecDec": EAGLE Speculative Decoding framework;
-            #  5> "LadeSepcDec": Lookahead Decoding framework;
+            #  5> "LadeSpecDec": Lookahead Decoding framework;
             values:
               - "huggingface"
               - "vllm"
