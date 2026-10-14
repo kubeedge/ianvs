@@ -20,6 +20,6 @@ def build():
     io.copy(src="./", dest="/home/ianvs")
     run(commands=[
       "apt-get update",
-      "cd /home/ianvs && pip install ./examples/resources/third_party/*",
+      "cd /home/ianvs && pip install ./resources/third_party/*",
       "cd /home/ianvs && python setup.py install"
     ])
