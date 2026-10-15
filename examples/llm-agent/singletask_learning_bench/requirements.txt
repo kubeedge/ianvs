@@ -1,5 +1,5 @@
 torch
-transformers<5.0
+transformers
 peft
 datasets<3.0
 evaluate

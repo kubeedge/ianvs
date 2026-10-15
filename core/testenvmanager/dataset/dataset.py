@@ -191,7 +191,7 @@ class Dataset:
             raise NotImplementedError('not one of test_index/test_data/test_data_info')
 
 
-    # pylint: disable=too-many-arguments,too-many-positional-arguments
+    # pylint: disable=too-many-arguments
     def split_dataset(
         self,
         dataset_url,
