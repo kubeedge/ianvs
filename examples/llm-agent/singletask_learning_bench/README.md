@@ -34,23 +34,48 @@ Create and activate a Python 3.10 virtual environment:
 python3.10 -m venv ianvs_env
 source ianvs_env/bin/activate
 ```
+### 2.2 Install PyTorch for CPU or GPU
 
-### 2.2 Install CPU PyTorch and Ianvs
+Choose one of the following PyTorch installation options, depending on your environment. Install PyTorch before installing the repository and example dependencies.
 
-For the CPU workflow described here, install the CPU build of PyTorch first:
+**CPU-only**
+
+For CPU-only environments, install the CPU build of PyTorch:
 
 ```bash
 pip install torch --index-url https://download.pytorch.org/whl/cpu
 ```
 
-Then install the repository dependencies and Ianvs:
+**GPU (CUDA 12.6)**
+
+For a machine with a compatible NVIDIA GPU and driver, install the CUDA-enabled PyTorch build:
+
+```bash
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+```
+
+For other CUDA versions, consult the [official PyTorch installation guide](https://pytorch.org/get-started/locally/) and select the appropriate installation command for your operating system and hardware.
+
+**Verify the installation**
+
+Run the following command to check whether PyTorch can access a CUDA-enabled GPU:
+
+```bash
+python -c "import torch; print('CUDA available:', torch.cuda.is_available()); print('GPU:', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'Not available')"
+```
+
+If `CUDA available` is `False`, check that the machine has a compatible NVIDIA GPU, that its drivers are installed, and that the selected PyTorch build supports the environment. Installing CUDA-enabled PyTorch alone does not provide GPU hardware.
+
+**Install Ianvs**
+
+After installing the appropriate PyTorch build, install the repository dependencies and Ianvs:
 
 ```bash
 pip install -r requirements.txt
 pip install .
 ```
 
-The CPU installation command is specific to this workflow. A GPU environment requires a PyTorch build appropriate for that environment; GPU execution was not validated in the run documented below.
+The benchmark documented in this README was validated on CPU. GPU execution has not yet been validated for this example.
 
 ### 2.3 Install the bundled KubeEdge Sedna wheel
 
