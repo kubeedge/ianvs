@@ -161,14 +161,35 @@ examples:
     prepare_script: null
 - name: rfnet_lifelong_learning
   example: "cityscapes-synthia"
-  status: unvalidated
-  python_version: null
+  status: active
+  python_version: "3.8"
   path: "examples/cityscapes-synthia/lifelong_learning_bench/curb-detection"
   readme_file: "examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/README.md"
   benchmark_file: "examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/benchmarkingjob.yaml"
-  requirements_file: null
+  requirements_file: "examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/requirements.txt"
+  prepare_env:
+    working_directory: "examples/cityscapes-synthia/lifelong_learning_bench/curb-detection"
+    steps:
+      - name: install_requirements
+        type: dependency
+        script: "scripts/01_install_requirements.sh"
+        args:
+          - "requirements.txt"
+        timeout: 1200
+      - name: prepare_dataset
+        type: dataset
+        script: "scripts/02_prepare_dataset.py"
+        args:
+          - "--output-dir"
+          - "../../../../dataset/curb-detection-smoke"
+          - "--overwrite"
+          - "--smoke"
+        timeout: 300
   dataset:
-    prepare_script: null
+    root: "dataset/curb-detection-smoke"
+    structure:
+      - "train_data/index.txt"
+      - "test_data/index.txt"
 - name: rfnet_lifelong_learning_full_test
   example: "cityscapes-synthia"
   status: unvalidated
