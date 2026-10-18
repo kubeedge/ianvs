@@ -18,11 +18,13 @@ class TaskAllocationByOrigin:
         label with a finite values.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, task_extractor=None, **kwargs):
+        # Sedna 0.6 passes task_extractor when it builds the allocator and
+        # then calls it with the samples only.
+        self.task_extractor = task_extractor
         self.default_origin = kwargs.get("default", None)
 
-    def __call__(self, task_extractor, samples: BaseDataSource):
-        self.task_extractor = task_extractor
+    def __call__(self, samples: BaseDataSource):
         if self.default_origin:
             return samples, [int(self.task_extractor.get(
                 self.default_origin))] * len(samples.x)

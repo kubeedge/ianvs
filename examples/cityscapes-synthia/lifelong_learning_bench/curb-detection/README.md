@@ -68,8 +68,12 @@ we have done that for you and the interested readers can refer to [testenv.yaml]
 
 Related algorithm is also ready in this quick start. 
 ``` shell
-export PYTHONPATH=$PYTHONPATH:/ianvs/project/ianvs/examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/testalgorithms/rfnet/RFNet
+export RFNET_DIR=/ianvs/project/ianvs/examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/testalgorithms/rfnet
+export PYTHONPATH=$PYTHONPATH:$RFNET_DIR/RFNet:$RFNET_DIR
 ```
+
+Both entries are needed: `RFNet` for its own imports, and its parent directory for the data-loader
+worker processes, which start fresh on macOS and must be able to import `RFNet`.
 
 The URL address of this algorithm then should be filled in the configuration file ``algorithm.yaml``. In this quick
 start, we have done that for you and the interested readers can refer to [algorithm.yaml](https://ianvs.readthedocs.io/en/latest/guides/how-to-test-algorithms.html#step-1-test-environment-preparation) for more details.
