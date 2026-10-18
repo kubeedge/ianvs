@@ -1,4 +1,13 @@
 import os
+import sys
+
+# RFNet imports its own modules (e.g. `mypath`) as top-level names, and data
+# loader workers must be able to import `RFNet`. Spawned workers inherit
+# sys.path, so this replaces the PYTHONPATH export.
+_RFNET_PARENT = os.path.dirname(os.path.abspath(__file__))
+for _path in (os.path.join(_RFNET_PARENT, "RFNet"), _RFNET_PARENT):
+    if _path not in sys.path:
+        sys.path.insert(0, _path)
 
 import numpy as np
 import torch
