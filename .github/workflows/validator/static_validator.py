@@ -52,6 +52,11 @@ REPO_PATH_RE = re.compile(
     r"(?:\.yaml|\.yml|\.py|\.txt|\.json|\.jsonl|\.whl|\.zip)?)"
 )
 STATIC_VALIDATED_FILE_SUFFIXES = (".yaml", ".yml", ".py")
+LEGACY_DATASET_KEYS = {"train_url": "train_index", "test_url": "test_index"}
+LIFELONG_PARADIGM = "lifelonglearning"
+# Mirrors core: Dataset.split_dataset() methods and TestEnv's rounds check.
+LIFELONG_SPLITTING_METHODS = ("default", "city_splitting", "fwt_splitting", "hard-example_splitting")
+MIN_INCREMENTAL_ROUNDS = 2
 
 
 @dataclass
@@ -120,6 +125,7 @@ def validate_example(repo_root: Path, example: Mapping[str, object]) -> ExampleR
     _check_local_model_paths(report, repo_root, files)
     _check_cuda_only_assumptions(report, repo_root, files)
     _check_metric_empty_pair_guard(report, repo_root, example_path)
+    _check_lifelong_config(report, repo_root, files)
 
     return report
 
@@ -550,6 +556,93 @@ def _check_metric_empty_pair_guard(report: ExampleReport, repo_root: Path, examp
         pass_message="Metric files include an empty-pair guard or do not divide by a collection length.",
         pass_details=guarded,
         failure_status=WARNING,
+    )
+
+
+def _check_lifelong_config(report: ExampleReport, repo_root: Path, files: Sequence[Path]) -> None:
+    """Module ①, the Lifelong Config Guard: dataset keys and lifelong settings."""
+    try:
+        import yaml
+    except ImportError:
+        return
+
+    legacy = []
+    invalid = []
+    lifelong_algorithms = []
+    testenvs = []
+    for path in files:
+        if path.suffix not in YAML_SUFFIXES:
+            continue
+        try:
+            data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except yaml.YAMLError:
+            continue  # reported by the YAML syntax check
+        if not isinstance(data, dict):
+            continue
+        testenv = data.get("testenv")
+        if isinstance(testenv, dict):
+            testenvs.append((path, testenv))
+            dataset = testenv.get("dataset")
+            if isinstance(dataset, dict):
+                for key, replacement in LEGACY_DATASET_KEYS.items():
+                    if key in dataset:
+                        legacy.append(
+                            f"{_repo_display_path(path)}: `{key}` is deprecated as an input; "
+                            f"use `{replacement}`"
+                        )
+        algorithm = data.get("algorithm")
+        if isinstance(algorithm, dict) and str(algorithm.get("paradigm_type", "")).lower() == LIFELONG_PARADIGM:
+            lifelong_algorithms.append((path, algorithm))
+
+    _append_issue_check(
+        report,
+        name="Legacy dataset keys",
+        issues=legacy,
+        fail_message=(
+            "Dataset inputs use the legacy `train_url`/`test_url` keys. Impact: core maps them "
+            "to `train_index`/`test_index` with a deprecation warning; new configurations should "
+            "use the modern keys."
+        ),
+        pass_message="No legacy dataset input keys found.",
+        failure_status=WARNING,
+    )
+
+    if not lifelong_algorithms:
+        return
+    for path, algorithm in lifelong_algorithms:
+        setting = algorithm.get("lifelong_learning_data_setting") or {}
+        if not isinstance(setting, dict):
+            invalid.append(f"{_repo_display_path(path)}: `lifelong_learning_data_setting` must be a mapping")
+            continue
+        method = setting.get("splitting_method", "default")
+        if method not in LIFELONG_SPLITTING_METHODS:
+            invalid.append(
+                f"{_repo_display_path(path)}: `splitting_method` `{method}` is not one of "
+                f"{', '.join(LIFELONG_SPLITTING_METHODS)}"
+            )
+        ratio = setting.get("train_ratio", 0.8)
+        if isinstance(ratio, bool) or not isinstance(ratio, (int, float)) or not 0 < ratio < 1:
+            invalid.append(
+                f"{_repo_display_path(path)}: `train_ratio` `{ratio}` must be a number between 0 and 1"
+            )
+    for path, testenv in testenvs:
+        rounds = testenv.get("incremental_rounds", MIN_INCREMENTAL_ROUNDS)
+        if isinstance(rounds, bool) or not isinstance(rounds, int) or rounds < MIN_INCREMENTAL_ROUNDS:
+            invalid.append(
+                f"{_repo_display_path(path)}: `incremental_rounds` `{rounds}` must be an integer "
+                f"of at least {MIN_INCREMENTAL_ROUNDS}"
+            )
+
+    _append_issue_check(
+        report,
+        name="Lifelong learning configuration",
+        issues=invalid,
+        fail_message=(
+            "Invalid lifelong-learning settings. Impact: the round loop fails or splits the "
+            "dataset incorrectly, usually long after the run starts."
+        ),
+        pass_message="Lifelong-learning rounds, splitting method and train ratio are valid.",
+        failure_status=ERROR,
     )
 
 
