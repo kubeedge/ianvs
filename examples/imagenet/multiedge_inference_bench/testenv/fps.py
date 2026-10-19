@@ -5,7 +5,7 @@ from sedna.common.class_factory import ClassType, ClassFactory
 
 import matplotlib.pyplot as plt
 
-__all__ = ('fps')
+__all__ = ["fps"]
 
 @ClassFactory.register(ClassType.GENERAL, alias="fps")
 def fps(y_true, y_pred, **kwargs):

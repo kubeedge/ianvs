@@ -20,7 +20,7 @@ from RFNet.dataloaders import make_data_loader
 from RFNet.utils.metrics import Evaluator
 from RFNet.utils.args import ValArgs
 
-__all__ = ('accuracy')
+__all__ = ["accuracy"]
 
 
 @ClassFactory.register(ClassType.GENERAL, alias="accuracy")

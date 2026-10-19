@@ -5,7 +5,7 @@ from sedna.common.class_factory import ClassType, ClassFactory
 
 import matplotlib.pyplot as plt
 
-__all__ = ('peak_power')
+__all__ = ["peak_power"]
 
 @ClassFactory.register(ClassType.GENERAL, alias="peak_power")
 def peak_power(y_true, y_pred, **kwargs):

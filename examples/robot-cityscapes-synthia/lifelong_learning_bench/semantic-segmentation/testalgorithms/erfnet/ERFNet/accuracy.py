@@ -4,7 +4,7 @@ from tqdm import tqdm
 from dataloaders import make_data_loader
 from sedna.common.class_factory import ClassType, ClassFactory
 
-__all__ = ('accuracy')
+__all__ = ["accuracy"]
 
 
 @ClassFactory.register(ClassType.GENERAL)
