@@ -202,3 +202,39 @@ def test_update_keeps_data_path_prefix_for_other_indexes(monkeypatch):
     job.update("train-data")
 
     assert seen == [base_config.data_path_prefix]
+
+
+def _capture_edge_dir_during_init(monkeypatch):
+    import os
+    from sedna.core.lifelong_learning import LifelongLearning
+    seen = []
+
+    def fake_init(self, *args, **kwargs):
+        seen.append(os.environ.get("EDGE_OUTPUT_URL"))
+        self.cloud_knowledge_management = SimpleNamespace(local_task_index_url="index.pkl")
+
+    monkeypatch.setattr(LifelongLearning, "__init__", fake_init)
+    return seen
+
+
+def test_edge_dir_defaults_to_a_writable_temp_dir(monkeypatch):
+    # Sedna's default edge directory is /var/lib/sedna/kb, which a non-root
+    # CI runner cannot create.
+    import os
+    monkeypatch.delenv("EDGE_OUTPUT_URL", raising=False)
+    monkeypatch.delenv("edge_output_url", raising=False)
+    seen = _capture_edge_dir_during_init(monkeypatch)
+
+    IanvsLifelongLearning()
+
+    assert seen[0] and not seen[0].startswith("/var/lib/sedna")
+    assert os.access(seen[0], os.W_OK)
+
+
+def test_configured_edge_dir_is_kept(monkeypatch, tmp_path):
+    monkeypatch.setenv("EDGE_OUTPUT_URL", str(tmp_path / "edge"))
+    seen = _capture_edge_dir_during_init(monkeypatch)
+
+    IanvsLifelongLearning()
+
+    assert seen == [str(tmp_path / "edge")]

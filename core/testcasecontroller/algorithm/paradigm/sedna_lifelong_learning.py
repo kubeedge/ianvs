@@ -36,6 +36,12 @@ class IanvsLifelongLearning(LifelongLearning):
     """Sedna's LifelongLearning with the additions Ianvs's standalone runs need."""
 
     def __init__(self, *args, **kwargs):
+        # Sedna creates its edge knowledge-base directory on construction,
+        # defaulting to /var/lib/sedna/kb, which a non-root user cannot
+        # create. Standalone runs do not use the edge knowledge base, so
+        # default it to a temporary directory unless one is configured.
+        if not Context.get_parameters("edge_output_url"):
+            os.environ["EDGE_OUTPUT_URL"] = tempfile.mkdtemp(prefix="ianvs-edge-kb-")
         super().__init__(*args, **kwargs)
         # Sedna keeps its local copy of the knowledge-base index at "index.pkl"
         # in the current directory and reuses it if present, so a later round
