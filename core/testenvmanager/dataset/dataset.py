@@ -28,6 +28,7 @@ from sedna.datasources import (
 
 from core.common import utils
 from core.common.constant import DatasetFormat
+from core.common.log import LOGGER
 
 # pylint: disable=too-many-instance-attributes
 class Dataset:
@@ -67,8 +68,25 @@ class Dataset:
         if self.test_data_info:
             self._check_dataset_url(self.test_data_info)
 
+    # train_url/test_url used to be dataset inputs; they are now outputs
+    # computed by process_dataset(). Configs that still declare them as
+    # inputs, with no modern key alongside, are mapped to the modern key.
+    _LEGACY_INPUTS = {
+        "train_url": ("train_index", ("train_index", "train_data", "train_data_info")),
+        "test_url": ("test_index", ("test_index", "test_data", "test_data_info")),
+    }
+
     def _parse_config(self, config):
         for attr, value in config.items():
+            if attr in self._LEGACY_INPUTS:
+                target, modern_keys = self._LEGACY_INPUTS[attr]
+                if not any(config.get(key) for key in modern_keys):
+                    LOGGER.warning(
+                        "dataset field `%s` is deprecated as an input; "
+                        "treating it as `%s`. Rename it in the config.",
+                        attr, target)
+                    self.__dict__[target] = value
+                    continue
             if attr in self.__dict__:
                 self.__dict__[attr] = value
 

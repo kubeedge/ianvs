@@ -124,7 +124,10 @@ class Module:
             try:
                 utils.load_module(self.url)
 
-                if class_factory_type == ClassType.HEM:
+                # Sedna resolves HEM and the lifelong-only module types
+                # (STP, KM, UTP, UTD) from a {"method", "param"} dict; only
+                # GENERAL modules such as basemodel are passed as instances.
+                if class_factory_type != ClassType.GENERAL:
                     func = {"method": self.name, "param":self.hyperparameters}
                 else:
                     func = ClassFactory.get_cls(

@@ -17,10 +17,10 @@
 import os
 
 from sedna.core.incremental_learning import IncrementalLearning
-from sedna.core.lifelong_learning import LifelongLearning
 from sedna.core.joint_inference import JointInference
 from core.common.constant import ModuleType, ParadigmType
 from .sedna_federated_learning import FederatedLearning
+from .sedna_lifelong_learning import IanvsLifelongLearning
 
 
 class ParadigmBase:
@@ -104,7 +104,7 @@ class ParadigmBase:
             )
 
         if paradigm_type == ParadigmType.LIFELONG_LEARNING.value:
-            return LifelongLearning(
+            return IanvsLifelongLearning(
                 seen_estimator=self.module_instances.get(
                     ModuleType.BASEMODEL.value
                 ),
