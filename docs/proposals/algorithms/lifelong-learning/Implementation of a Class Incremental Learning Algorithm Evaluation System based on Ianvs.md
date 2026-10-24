@@ -97,7 +97,7 @@ All in all, we use the three class-different datasets to conduct training (i.e.,
 
 This project will use three datasets, namely **Cityscapes**, **SYNTHIA**, and KubeEdge SIG AI's **Cloud-Robotics** dataset (**CS**, **SYN**, **CR**).
 
-Ianvs has already provides [Cityscapes and SYNTHIA datasets](https://github.com/kubeedge/ianvs/blob/main/docs/proposals/algorithms/lifelong-learning/Additional-documentation/curb_detetion_datasets.md). The following two images are examples from them respectively.
+Ianvs has already provides [Cityscapes and SYNTHIA datasets](https://github.com/kubeedge/ianvs/blob/main/docs/proposals/algorithms/lifelong-learning/Additional-documentation/curb_detection_datasets.md). The following two images are examples from them respectively.
 
 |                          CS Example                          |                         SYN Example                          |
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
