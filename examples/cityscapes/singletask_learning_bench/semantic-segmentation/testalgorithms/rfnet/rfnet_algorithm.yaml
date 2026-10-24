@@ -5,7 +5,7 @@ algorithm:
   modules:
     - type: "basemodel"
       name: "RFNet"
-      url: "./examples/cityscapes/singletask_learning_bench/testalgorithms/rfnet/basemodel.py"
+      url: "./examples/cityscapes/singletask_learning_bench/semantic-segmentation/testalgorithms/rfnet/basemodel.py"
 
       hyperparameters:
         - momentum:
