@@ -1,0 +1,28 @@
+benchmarkingjob:
+  name: "sandbox_example"
+  workspace: "./workspace/sandbox_example"
+  testenv: "./tests/simulation/sandbox_example/testenv/testenv.yaml"
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "threshold_classifier"
+        url: "./tests/simulation/sandbox_example/testalgorithms/algorithm.yaml"
+  rank:
+    sort_by: [ { "accuracy": "descend" } ]
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+    selected_dataitem:
+      paradigms: [ "all" ]
+      modules: [ "all" ]
+      hyperparameters: [ "all" ]
+      metrics: [ "accuracy" ]
+    save_mode: "selected_and_all"
+  simulation:
+    cloud_number: 1
+    edge_number: 1
+    cluster_name: "ianvs-sandbox"
+    kubeedge_version: "v1.21.0"
+  # run each test case as a job on the simulation cluster
+  sandbox_profile:
+    enabled: true

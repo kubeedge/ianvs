@@ -44,16 +44,21 @@ class TestCaseController:
             for algorithm in algorithms:
                 self.test_cases.append(TestCase(test_env, algorithm))
 
-    def run_testcases(self, workspace):
+    def run_testcases(self, workspace, simulation_controller=None):
         """
-        Run all test cases.
+        Run all test cases; with a simulation controller, each runs as a simulation
+        job in the simulation cluster instead of in this process.
         """
         succeed_results = {}
         succeed_testcases = []
         failed = []
         for testcase in self.test_cases:
             try:
-                res, time = (testcase.run(workspace), utils.get_local_time())
+                if simulation_controller is None:
+                    res = testcase.run(workspace)
+                else:
+                    res = simulation_controller.run_sandboxed(testcase, workspace)
+                time = utils.get_local_time()
             except Exception as err:  # pylint: disable=broad-except
                 # contain the failure so completed results still reach the ranking layer
                 LOGGER.error("testcase(id=%s) runs failed, error: %s", testcase.id, err)
@@ -80,6 +85,8 @@ class TestCaseController:
             try:
                 config = utils.yaml2dict(config_file)
                 algorithm = Algorithm(name, config)
+                # a simulation job rebuilds the algorithm from its config file
+                algorithm.config_url = config_file
                 algorithms.append(algorithm)
             except Exception as err:
                 raise RuntimeError(f"algorithm config file({config_file} is not supported, "
@@ -87,9 +94,10 @@ class TestCaseController:
 
         new_algorithms = []
         for algorithm in algorithms:
-            for modules in algorithm.modules_list:
+            for index, modules in enumerate(algorithm.modules_list):
                 new_algorithm = copy.deepcopy(algorithm)
                 new_algorithm.modules = modules
+                new_algorithm.modules_index = index
                 new_algorithms.append(new_algorithm)
 
         return new_algorithms
