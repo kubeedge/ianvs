@@ -11,7 +11,7 @@ on:
 jobs:
   detect-change-examples:
     if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     outputs:
       mode: ${{ steps.check_examples.outputs.mode }}
@@ -49,7 +49,7 @@ jobs:
   static-code-requirement-base:
     needs: detect-change-examples
     if: ${{ github.event_name == 'pull_request' && needs.detect-change-examples.outputs.base_examples_changed == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     strategy:
       fail-fast: false
@@ -107,7 +107,7 @@ jobs:
   static-code-requirement-pr:
     needs: detect-change-examples
     if: ${{ needs.detect-change-examples.outputs.head_examples_changed == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     strategy:
       fail-fast: false
@@ -158,7 +158,7 @@ jobs:
       - static-code-requirement-base
       - static-code-requirement-pr
     if: ${{ always() && github.event_name == 'pull_request' && needs.detect-change-examples.outputs.examples_changed == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     steps:
       - uses: actions/checkout@v7
@@ -221,7 +221,7 @@ jobs:
       - regression-static-code-requirement
       - static-code-requirement-pr
     if: ${{ always() && needs.detect-change-examples.outputs.examples_changed == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     steps:
       - uses: actions/checkout@v7

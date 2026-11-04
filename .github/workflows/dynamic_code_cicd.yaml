@@ -21,7 +21,7 @@ on:
 jobs:
   plan-scheduled-validation:
     if: ${{ github.event_name == 'schedule' || github.event_name == 'push' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       actions: read
       contents: read
@@ -81,7 +81,7 @@ jobs:
 
   detect-change-examples:
     if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     outputs:
       mode: ${{ steps.check_examples.outputs.mode }}
@@ -119,7 +119,7 @@ jobs:
   dynamic-code-requirement-base:
     needs: detect-change-examples
     if: ${{ github.event_name == 'pull_request' && needs.detect-change-examples.outputs.base_examples_changed == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     strategy:
       fail-fast: false
@@ -193,7 +193,7 @@ jobs:
   dynamic-code-requirement-pr:
     needs: detect-change-examples
     if: ${{ github.event_name != 'schedule' && needs.detect-change-examples.outputs.head_examples_changed == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     strategy:
       fail-fast: false
@@ -258,7 +258,7 @@ jobs:
       - dynamic-code-requirement-base
       - dynamic-code-requirement-pr
     if: ${{ always() && github.event_name == 'pull_request' && needs.detect-change-examples.outputs.examples_changed == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     steps:
       - uses: actions/checkout@v7
@@ -321,7 +321,7 @@ jobs:
       - regression-dynamic-code-requirement
       - dynamic-code-requirement-pr
     if: ${{ always() && needs.detect-change-examples.outputs.examples_changed == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     steps:
       - uses: actions/checkout@v7
@@ -390,7 +390,7 @@ jobs:
       - detect-change-examples
       - dynamic-code-requirement-base
     if: ${{ always() && github.event_name == 'pull_request' && needs.detect-change-examples.outputs.run_all == 'true' && needs.detect-change-examples.outputs.examples_changed == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     steps:
       - uses: actions/checkout@v7
@@ -460,7 +460,7 @@ jobs:
   publish-tier2-example-health:
     needs: plan-scheduled-validation
     if: ${{ needs.plan-scheduled-validation.outputs.action == 'publish_tier2' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       actions: read
       contents: write
@@ -522,7 +522,7 @@ jobs:
   select-tier3-examples:
     needs: plan-scheduled-validation
     if: ${{ needs.plan-scheduled-validation.outputs.action == 'run_tier3' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     outputs:
       examples: ${{ steps.select.outputs.changed_examples }}
@@ -549,7 +549,7 @@ jobs:
       - plan-scheduled-validation
       - select-tier3-examples
     if: ${{ needs.plan-scheduled-validation.outputs.action == 'run_tier3' && needs.select-tier3-examples.outputs.examples_changed == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: read-all
     strategy:
       fail-fast: false
@@ -606,7 +606,7 @@ jobs:
       - select-tier3-examples
       - tier3-example-validation
     if: ${{ always() && needs.plan-scheduled-validation.outputs.action == 'run_tier3' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       actions: read
       contents: write
