@@ -159,11 +159,15 @@ class FederatedLearning(ParadigmBase):
         LOGGER.info("train_dataset_file: %s", train_dataset_file)
         train_datasets = None
         if isinstance(train_dataset_file, str):
-            train_datasets = self.dataset.load_data(train_dataset_file, "train")
+            train_datasets = self.dataset.load_data(
+                train_dataset_file, "train", label=self.dataset.label
+            )
         if isinstance(train_dataset_file, list):
             train_datasets = []
             for file in train_dataset_file:
-                train_datasets.append(self.dataset.load_data(file, "train"))
+                train_datasets.append(
+                    self.dataset.load_data(file, "train", label=self.dataset.label)
+                )
         assert train_datasets is not None, "train_dataset is None"
         # translate file to real data that can be used in train
         # - provide a default method to read data from file to npy
@@ -189,7 +193,9 @@ class FederatedLearning(ParadigmBase):
         train_datasets = None
         if isinstance(train_dataset_file, str):
             if get_file_format(train_dataset_file) == "jsonl":
-                train_datasets = self.dataset.load_data(train_dataset_file, data_type="train")
+                train_datasets = self.dataset.load_data(
+                    train_dataset_file, data_type="train", label=self.dataset.label
+                )
             else:
                 raise ValueError(
                     f"LLM Unsupported file format: {get_file_format(train_dataset_file)}. "
@@ -336,11 +342,15 @@ class FederatedLearning(ParadigmBase):
         if self.mode:
             rename_keys_jsonl(test_dataset_file)
         if isinstance(test_dataset_file, str):
-            test_dataset = self.dataset.load_data(test_dataset_file, "eval")
+            test_dataset = self.dataset.load_data(
+                test_dataset_file, "eval", label=self.dataset.label
+            )
         if isinstance(test_dataset_file, list):
             test_dataset = []
             for file in test_dataset_file:
-                test_dataset.append(self.dataset.load_data(file, "eval"))
+                test_dataset.append(
+                    self.dataset.load_data(file, "eval", label=self.dataset.label)
+                )
         assert test_dataset is not None, "test_dataset is None"
         LOGGER.info(" begin predict")
         job = self.get_global_model()
