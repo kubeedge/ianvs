@@ -43,7 +43,7 @@ class BaseModel:
 
     def train(self, train_data, valid_data=None, **kwargs):
         self.trainer = Trainer(self.train_args, train_data=train_data)
-        print("Total epoches:", self.trainer.args.epochs)
+        LOGGER.info("Total epochs: %s", self.trainer.args.epochs)
         for epoch in range(
                 self.trainer.args.start_epoch,
                 self.trainer.args.epochs):

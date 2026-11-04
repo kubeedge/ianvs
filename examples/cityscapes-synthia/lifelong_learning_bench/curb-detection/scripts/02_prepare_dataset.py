@@ -21,6 +21,7 @@ It checks that the pipeline runs end to end; its accuracy is meaningless.
 """
 
 import argparse
+import logging
 import sys
 import urllib.request
 import zipfile
@@ -32,6 +33,8 @@ DATASET_URL = "https://kubeedge.obs.cn-north-1.myhuaweicloud.com/ianvs/curb-dete
 CITIES = ("aachen", "berlin", "bochum", "bremen", "cologne", "darmstadt")
 NUM_LABEL_IDS = 19  # Cityscapes train ids 0..18; 255 is "ignore"
 IMAGE_SIZE = (512, 256)
+
+LOGGER = logging.getLogger("prepare_dataset")
 
 
 def _generate_split(split_dir: Path, samples_per_origin: int, rng) -> int:
@@ -61,7 +64,7 @@ def _generate_split(split_dir: Path, samples_per_origin: int, rng) -> int:
 def _download(dataset_root: Path) -> None:
     archive = dataset_root.parent / "curb-detection.zip"
     dataset_root.parent.mkdir(parents=True, exist_ok=True)
-    print(f"Downloading {DATASET_URL} (about 2 GB) ...")
+    LOGGER.info("Downloading %s (about 2 GB) ...", DATASET_URL)
     urllib.request.urlretrieve(DATASET_URL, archive)
     with zipfile.ZipFile(archive) as zipped:
         zipped.extractall(dataset_root.parent)
@@ -97,15 +100,16 @@ def main():
         help="Smoke mode: training samples per origin (real, sim). Default 8.",
     )
     args = parser.parse_args()
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
     train_index = args.dataset_root / "train_data" / "index.txt"
     if train_index.exists() and not args.overwrite:
-        print(f"{train_index} already exists; use --overwrite to replace it.", file=sys.stderr)
+        LOGGER.error("%s already exists; use --overwrite to replace it.", train_index)
         return 1
 
     if not args.smoke:
         _download(args.dataset_root)
-        print(f"Prepared {args.dataset_root}")
+        LOGGER.info("Prepared %s", args.dataset_root)
         return 0
 
     import numpy as np
@@ -114,7 +118,8 @@ def main():
     n_train = _generate_split(args.dataset_root / "train_data", args.samples_per_origin, rng)
     n_test = _generate_split(args.dataset_root / "test_data",
                              max(1, args.samples_per_origin // 4), rng)
-    print(f"Prepared smoke dataset in {args.dataset_root}: {n_train} train, {n_test} test samples")
+    LOGGER.info("Prepared smoke dataset in %s: %d train, %d test samples",
+                args.dataset_root, n_train, n_test)
     return 0
 
 
