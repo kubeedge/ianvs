@@ -52,8 +52,6 @@ class SingleTaskLearning(ParadigmBase):
         self.mode = kwargs.get("mode")
         self.quantization_type = kwargs.get("quantization_type")
         self.llama_quantize_path = kwargs.get("llama_quantize_path")
-        if kwargs.get("use_gpu", True):
-            os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
     def run(self):
         """
