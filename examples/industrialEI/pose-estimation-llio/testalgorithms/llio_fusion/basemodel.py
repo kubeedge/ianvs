@@ -197,7 +197,7 @@ class BaseModel:
             for seq_path in all_sequences:
                 try:
                     # Extract date and drive from sequence path
-                    path_parts = str(seq_path).split(os.sep)
+                    path_parts = str(seq_path).split('/')
                     dataname = None
                     datadrive = None
                     
@@ -240,7 +240,7 @@ class BaseModel:
                 # print(f"Training on sequence {seq_idx + 1}/{len(all_sequences)}: {sequence_path}")
                 
                 # Extract date and drive from the sequence path
-                path_parts = str(sequence_path).split(os.sep)
+                path_parts = str(sequence_path).split('/')
                 dataname = None
                 datadrive = None
                 
@@ -572,7 +572,7 @@ class BaseModel:
             for seq_path in all_sequences:
                 try:
                     # Extract date and drive from sequence path
-                    path_parts = str(seq_path).split(os.sep)
+                    path_parts = str(seq_path).split('/')
                     dataname = None
                     datadrive = None
                     
@@ -614,7 +614,7 @@ class BaseModel:
                 # print(f"Processing sequence {seq_idx + 1}/{len(all_sequences)}: {sequence_path}")
                 
                 # Extract date and drive from the sequence path
-                path_parts = str(sequence_path).split(os.sep)
+                path_parts = str(sequence_path).split('/')
                 dataname = None
                 datadrive = None
                 
