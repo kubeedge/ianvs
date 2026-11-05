@@ -67,7 +67,7 @@ class BaseModel:
         self.trainer = Trainer(self.train_cfgs)
         self.trainer.saver = Saver(self.train_cfgs)
         self.checkpoint_path = self.load(
-            Context.get_parameters("base_model_url"))
+            Context.get_parameters("initial_model_url"))
 
     def train(self, train_data, valid_data=None, **kwargs):
         if train_data is None or train_data.x is None or train_data.y is None:
