@@ -1,0 +1,21 @@
+# This config is consumed by scripts/benchmark.py run --config, not by ianvs -f.
+# Supply IANVS_TARGET_MODEL_DIR or --model-dir with a complete local snapshot.
+pilot:
+  scenario: [S1, S2, S3, S4, S5]
+  repeat: 3
+  agent: triage
+  agent_url: http://127.0.1.1:8002/v1
+  agent_model: Qwen2.5-1.5B-Instruct
+  backend: kubeedge
+  kubeconfig: workspace/infra-repair/kubeconfig
+  device: cuda
+  dtype: float16
+  startup_timeout: 240
+  budget_seconds: 600
+  max_calls: 12
+  samples: 9
+  warmup_seconds: 120
+  max_p95_seconds: 10
+  max_ttft_seconds: 2
+  max_latency_ratio: 3.0
+  approval: policy

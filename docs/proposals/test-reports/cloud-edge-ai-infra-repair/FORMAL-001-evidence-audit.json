@@ -1,0 +1,165 @@
+{
+  "passed": true,
+  "scope": "both complete cohorts",
+  "runs_checked": 30,
+  "checks": [
+    "aggregate_matches_original",
+    "source_matches_frozen_identity",
+    "audit_decisions_complete",
+    "exact_target_policy",
+    "successful_token_regression",
+    "independent_rollback_verification"
+  ],
+  "runs": [
+    {
+      "cohort": "reference",
+      "scenario": "S1",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S1",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S1",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S2",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S2",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S2",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S3",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S3",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S3",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S4",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S4",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S4",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S5",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S5",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "reference",
+      "scenario": "S5",
+      "tool_decisions": 4
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S1",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S1",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S1",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S2",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S2",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S2",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S3",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S3",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S3",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S4",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S4",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S4",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S5",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S5",
+      "tool_decisions": 0
+    },
+    {
+      "cohort": "rollback",
+      "scenario": "S5",
+      "tool_decisions": 0
+    }
+  ]
+}

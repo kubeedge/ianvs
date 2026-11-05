@@ -1,0 +1,122 @@
+{
+  "passed": true,
+  "scope": "Single-host real KubeEdge/GPU controlled benchmark; not community certification",
+  "checks": {
+    "reference_complete": true,
+    "reference_unique": true,
+    "reference_injection": true,
+    "reference_cleanup": true,
+    "reference_real_backend": true,
+    "reference_safety": true,
+    "reference_contract": true,
+    "reference_artifacts": true,
+    "reference_implementation_identity": true,
+    "reference_runtime_identity": true,
+    "rollback_complete": true,
+    "rollback_unique": true,
+    "rollback_injection": true,
+    "rollback_cleanup": true,
+    "rollback_real_backend": true,
+    "rollback_safety": true,
+    "rollback_contract": true,
+    "rollback_artifacts": true,
+    "rollback_implementation_identity": true,
+    "rollback_runtime_identity": true,
+    "disjoint_cohorts": true,
+    "reference_model": true,
+    "rollback_exercised": true,
+    "matching_workload": true,
+    "matching_artifacts": true,
+    "matching_implementation_identity": true,
+    "matching_runtime_identity": true,
+    "reference_failed_runs_restored": true,
+    "repair_target": true,
+    "diagnosis_target": true,
+    "strict_diagnosis": true,
+    "streaming_slo": true
+  },
+  "reference_summary": {
+    "runs": 15,
+    "acceptance_eligible": false,
+    "scope": "Batch summary; use acceptance with a separate complete rollback cohort",
+    "repair_rate": 0.9333333333333333,
+    "root_cause_accuracy": 0.7333333333333333,
+    "injection_rate": 1.0,
+    "cleanup_rate": 1.0,
+    "rollback_rate": 1.0,
+    "rollback_exercises": 1,
+    "mean_success_repair_seconds": 78.80315179121433,
+    "tool_calls": 60,
+    "denied_calls": 0,
+    "unauthorized_executions": 0,
+    "per_scenario": {
+      "S1": {
+        "runs": 3,
+        "repair_rate": 1.0,
+        "root_cause_accuracy": 1.0
+      },
+      "S2": {
+        "runs": 3,
+        "repair_rate": 1.0,
+        "root_cause_accuracy": 0.0
+      },
+      "S3": {
+        "runs": 3,
+        "repair_rate": 1.0,
+        "root_cause_accuracy": 1.0
+      },
+      "S4": {
+        "runs": 3,
+        "repair_rate": 1.0,
+        "root_cause_accuracy": 1.0
+      },
+      "S5": {
+        "runs": 3,
+        "repair_rate": 0.6666666666666666,
+        "root_cause_accuracy": 0.6666666666666666
+      }
+    }
+  },
+  "rollback_summary": {
+    "runs": 15,
+    "acceptance_eligible": false,
+    "scope": "Batch summary; use acceptance with a separate complete rollback cohort",
+    "repair_rate": 0.0,
+    "root_cause_accuracy": 0.0,
+    "injection_rate": 1.0,
+    "cleanup_rate": 1.0,
+    "rollback_rate": 1.0,
+    "rollback_exercises": 15,
+    "mean_success_repair_seconds": null,
+    "tool_calls": 0,
+    "denied_calls": 0,
+    "unauthorized_executions": 0,
+    "per_scenario": {
+      "S1": {
+        "runs": 3,
+        "repair_rate": 0.0,
+        "root_cause_accuracy": 0.0
+      },
+      "S2": {
+        "runs": 3,
+        "repair_rate": 0.0,
+        "root_cause_accuracy": 0.0
+      },
+      "S3": {
+        "runs": 3,
+        "repair_rate": 0.0,
+        "root_cause_accuracy": 0.0
+      },
+      "S4": {
+        "runs": 3,
+        "repair_rate": 0.0,
+        "root_cause_accuracy": 0.0
+      },
+      "S5": {
+        "runs": 3,
+        "repair_rate": 0.0,
+        "root_cause_accuracy": 0.0
+      }
+    }
+  }
+}

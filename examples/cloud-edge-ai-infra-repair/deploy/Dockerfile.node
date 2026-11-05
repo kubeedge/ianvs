@@ -1,0 +1,9 @@
+FROM kubeedge/installation-package:v1.23.1 AS installation
+FROM kubeedge/cloudcore:v1.23.1 AS cloud
+FROM kindest/node:v1.32.2
+COPY --from=installation /usr/local/bin/edgecore /usr/local/bin/edgecore
+COPY --from=installation /usr/local/bin/keadm /usr/local/bin/keadm
+COPY --from=cloud /usr/local/bin/cloudcore /usr/local/bin/cloudcore
+COPY *.service /etc/systemd/system/
+COPY crds/ /etc/kubeedge/crds/
+RUN mkdir -p /etc/kubeedge/config

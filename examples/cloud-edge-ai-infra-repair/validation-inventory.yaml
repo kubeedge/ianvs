@@ -1,0 +1,9 @@
+examples:
+- name: ai_infra_repair_pilot
+  example: "cloud-edge-ai-infra-repair"
+  status: onGoing
+  python_version: '3.12'
+  path: "examples/cloud-edge-ai-infra-repair"
+  readme_file: "examples/cloud-edge-ai-infra-repair/README.md"
+  benchmark_file: "examples/cloud-edge-ai-infra-repair/pilot.yaml"
+  requirements_file: "examples/cloud-edge-ai-infra-repair/requirements.txt"
