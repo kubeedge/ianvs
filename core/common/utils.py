@@ -26,12 +26,12 @@ import yaml
 
 def is_local_file(url):
     """Check if the url is a file and already exists locally."""
-    return os.path.isfile(url)
+    return os.path.isfile(os.path.expanduser(url))
 
 
 def is_local_dir(url):
     """Check if the url is a dir and already exists locally."""
-    return os.path.isdir(url)
+    return os.path.isdir(os.path.expanduser(url))
 
 
 def get_file_format(url):
