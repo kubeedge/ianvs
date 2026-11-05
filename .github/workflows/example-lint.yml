@@ -1,0 +1,72 @@
+name: Example Lint
+
+on:
+  pull_request:
+    paths:
+      - 'examples/**'
+      - 'core/**'
+      - 'requirements.txt'
+
+jobs:
+  example-pylint:
+    runs-on: ubuntu-22.04
+    name: pylint
+    strategy:
+      matrix:
+        python-version: [ "3.9", "3.10", "3.11" ]
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libgl1-mesa-glx -y
+          python -m pip install pip==24.0
+          python -m pip install pylint
+          python -m pip install ${{github.workspace}}/resources/third_party/*
+          python -m pip install -r ${{github.workspace}}/requirements.txt
+      - name: Analysing example code with pylint
+        # `--max-positional-arguments=10` is set for Python 3.9 to avoid `R0917: too-many-positional-arguments`.
+        # See details at https://github.com/kubeedge/ianvs/issues/157
+        # continue-on-error: the examples/ backlog is not pylint-clean yet, so this check
+        # is currently advisory only. Remove continue-on-error once examples reach a
+        # baseline passing state, so this becomes a real PR-blocking gate.
+        # Tracked in kubeedge/ianvs#995.
+        continue-on-error: true
+        run: |
+          if [ "${{ matrix.python-version }}" = "3.9" ]; then
+            pylint --max-positional-arguments=10 '${{github.workspace}}/examples'
+          else
+            pylint '${{github.workspace}}/examples'
+          fi
+
+  requirements-check:
+    runs-on: ubuntu-22.04
+    name: requirements.txt presence check
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check each example with benchmarkingjob.yaml has requirements.txt
+        # continue-on-error: most of the examples/ backlog is still missing a
+        # requirements.txt, so this check is currently advisory only. Remove
+        # continue-on-error once examples reach a baseline passing state, so
+        # this becomes a real PR-blocking gate.
+        # Tracked in kubeedge/ianvs#995.
+        continue-on-error: true
+        run: |
+          missing=0
+          while IFS= read -r -d '' job_file; do
+            example_dir=$(dirname "$job_file")
+            if [ ! -f "$example_dir/requirements.txt" ]; then
+              echo "::error file=$job_file::Missing requirements.txt in $example_dir"
+              missing=1
+            fi
+          done < <(find "${{ github.workspace }}/examples" -name "benchmarkingjob.yaml" -print0)
+
+          if [ "$missing" -eq 1 ]; then
+            echo "One or more example directories with a benchmarkingjob.yaml are missing a requirements.txt."
+            exit 1
+          fi
+          echo "All example directories with benchmarkingjob.yaml have requirements.txt."

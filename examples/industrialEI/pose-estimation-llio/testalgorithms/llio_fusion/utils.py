@@ -7,8 +7,20 @@ from functools import wraps
 import time
 from core.common.log import LOGGER
 
-MATPLOTLIB_AVAILABLE = False
-OPEN3D_AVAILABLE = False
+try:
+    import matplotlib
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Ellipse
+    from matplotlib.collections import PatchCollection
+    MATPLOTLIB_AVAILABLE = True
+except ImportError:
+    MATPLOTLIB_AVAILABLE = False
+
+try:
+    import open3d as o3d
+    OPEN3D_AVAILABLE = True
+except ImportError:
+    OPEN3D_AVAILABLE = False
 
 
 def timeit(func):
