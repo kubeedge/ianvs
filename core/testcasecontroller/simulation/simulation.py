@@ -46,6 +46,11 @@ class Simulation:
         """
         parse the simulation config.
         """
+        if not isinstance(simulation_config, dict):
+            raise ValueError(
+                f"simulation config({simulation_config}) must be dict type, "
+                f"got {type(simulation_config).__name__}.")
+
         for attribute, value in simulation_config.items():
             if attribute in self.__dict__:
                 self.__dict__[attribute] = value
