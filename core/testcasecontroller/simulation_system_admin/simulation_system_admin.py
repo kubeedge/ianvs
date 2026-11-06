@@ -137,7 +137,7 @@ def check_host_cpu():
 
 def check_host_enviroment():
     """
-    check the host enviroment, includes docker, kind, cpu and memory.
+    check the host enviroment, includes docker, kind, memory and cpu.
 
     """
     check_host_docker()
