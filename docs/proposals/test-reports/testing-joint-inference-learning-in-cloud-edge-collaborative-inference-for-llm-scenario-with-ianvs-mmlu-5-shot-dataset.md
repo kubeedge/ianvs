@@ -229,4 +229,4 @@ benchmarkingjob:
 
 ## Benchmark Result
 
-We released the leaderboard [here](../leaderboards/leaderboard-in-cloud-edge-collaborative-inference-for-llm/leaderboard-of-cloud-edge-collaborative-inference-for-llm.md).
+We released the leaderboard [here](../../leaderboards/leaderboard-in-cloud-edge-collaborative-inference-for-llm/leaderboard-of-cloud-edge-collaborative-inference-for-llm.md).

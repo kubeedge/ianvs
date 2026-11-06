@@ -116,7 +116,7 @@ Efficient resource utilization is critical for running LLMs on edge devices with
 
 The architecture of this proposal is shown in the figure below. We leverage the existed TestEnvManager, TestCaseController and StoryManager in Ianvs. 
 
-![Architecture Diagram](./images/llm-ianvs.png)
+![Architecture Diagram](./images/llm-edge-ianvs.png)
 1. **TestEnvManager**, add MMLU and CMMLU as LLM benchmark and Accuracy, Latency, Throughput, Bandwith as metrics.
 
 2. **TestCaseController**, Incorporate INT8 quantization, FP16 mixed precision, sparsity methods,

@@ -103,13 +103,13 @@ This project will create a custom dataset for a complete, end-to-end industrial 
 ### What is Deformable Component Assembly ?
 
 Modern gadgets like smartphones and laptops contain motherboards with increasingly small and delicate components. Assembling these parts requires a level of precision and consistency that is difficult to achieve with manual labor. This is the core challenge of deformable component assembly.
-[the industrial scenario](images/industrial_assembly.png) [assembled motherboard](images\an_assembled_motherboard.png)
+[the industrial scenario](images/industrial_assembly.png) [assembled motherboard](images/an_assembled_motherboard.png)
 
 This picture denotes the real industrial scene of deformable component assembly:
-[Real world robotic arm](images\robotic_arm.png)
+[Real world robotic arm](images/robotic_arm.png)
 
 This picture denotes the pybullet simulated deformable component assembly:
-[Simulated robotic arm](images\robotic_arm_simulation.png)
+[Simulated robotic arm](images/robotic_arm_simulation.png)
 
 ### What do this dataset do ?
 
@@ -158,7 +158,7 @@ This picture denotes the pybullet simulated deformable component assembly:
 
 The deformable component algorithm is designed to integrate seamlessly with the Ianvs framework through its three core components, as illustrated in the following architecture diagram:
 
-![Ianvs Framework Architecture](images\benchmarking_architecture.png)
+![Ianvs Framework Architecture](images/benchmarking_architecture.png)
 *Figure above: Ianvs framework architecture showing the integration of Test Environment Manager, Test Case Controller, and Story Manager for benchmarking embodied intelligence in industrial environments.*
 
 The initial focus is on configuring the custom, multi-modal `Intelligent Assembly Dataset` within the Test Environment Manager and establishing the multi-stage performance metrics. Simultaneously, the `Test Case Controller` will be implemented with a new multi-stage Assembly Workflow. This paradigm will perform comprehensive benchmark tests on the custom dataset, evaluating the full, end-to-end workflow—from component positioning with `YOLOv8`.
@@ -221,8 +221,8 @@ The Single-Task, multi-stage Paradigm works as follows:
 
 1.A developer deploys an application that orchestrates the entire assembly process.
 2.The application launches the full workflow, which executes a series of interdependent, sequential tasks.
-3.The robotic arm uses **YOLOv8** to perform real-time object detection on components from the panel and Cnn for final inspection.[CNN inspection](images\CNN_of_motherboard.png)
-4.The robot then executes a force-controlled assembly task using its touch sensors to place the components on the motherboard precisely.[touch sensors](images\force_sensors.png)
+3.The robotic arm uses **YOLOv8** to perform real-time object detection on components from the panel and Cnn for final inspection.[CNN inspection](images/CNN_of_motherboard.png)
+4.The robot then executes a force-controlled assembly task using its touch sensors to place the components on the motherboard precisely.[touch sensors](images/force_sensors.png)
 5.The system then generates a final test report and updates the leaderboard, concluding the process.
 
 [the ianvs architecture](images/benchmarking_architecture.png)
