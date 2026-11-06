@@ -19,17 +19,33 @@ import subprocess
 
 from core.common.log import LOGGER
 
+# Single source of truth for the sedna all-in-one installer script, so the
+# build and teardown paths can never point at different branches again.
+SEDNA_INSTALL_SCRIPT_URL = (
+    "https://raw.githubusercontent.com/kubeedge/sedna/main/"
+    "scripts/installation/all-in-one.sh"
+)
+
 
 def check_host_docker():
     """
-    check whether Docker is installed on the host.
+    check whether Docker is installed and reachable on the host.
     If Docker is not installed, try to install Docker with one-click installation script.
     """
 
-    shell_cmd = "docker version | head -n 2"
-    check_docker = subprocess.run(shell_cmd, shell=True, check=True)
+    try:
+        check_docker = subprocess.run(
+            ["docker", "version"],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        docker_available = check_docker.returncode == 0
+    except FileNotFoundError:
+        # the docker binary itself is not on PATH
+        docker_available = False
 
-    if check_docker.returncode != 0:
+    if not docker_available:
         # trying to install docker
         LOGGER.info("trying to install docker")
         try:
@@ -54,10 +70,19 @@ def check_host_kind():
     If Kind is not installed, try to install Kind with one-click installation script.
     """
 
-    shell_cmd = "kind version"
-    check_kind = subprocess.run(shell_cmd, shell=True, check=True)
+    try:
+        check_kind = subprocess.run(
+            ["kind", "version"],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        kind_available = check_kind.returncode == 0
+    except FileNotFoundError:
+        # the kind binary itself is not on PATH
+        kind_available = False
 
-    if check_kind.returncode == 0:
+    if kind_available:
         LOGGER.info("check Kind successful")
     else:
         try:
@@ -82,8 +107,8 @@ def get_host_free_memory_size():
     """
     shell_cmd = "cat /proc/meminfo | grep MemFree"   # in kB
     with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_memory_info:
-        memory_info = get_memory_info.stdout.read()
-        memory_free = int(str(memory_info).split(":")[1].strip().split(" ")[0])
+        memory_info = get_memory_info.stdout.read().decode("utf-8")
+        memory_free = int(memory_info.split(":")[1].strip().split(" ")[0])
         return memory_free
 
 
@@ -110,11 +135,17 @@ def get_host_number_of_cpus():
     return the number of cpus
 
     """
-    shell_cmd = "lscpu | grep CPU:"
+    # `LC_ALL=C` keeps the label stable across locales. The anchored
+    # `^CPU(s):` avoids matching unrelated lines such as `NUMA node0 CPU(s):`,
+    # whose value is a core range rather than a count. Modern util-linux
+    # reports the label as `CPU(s):`, not the legacy `CPU:`.
+    shell_cmd = "LC_ALL=C lscpu | grep '^CPU(s):'"
     with subprocess.Popen(shell_cmd, shell=True, stdout=subprocess.PIPE) as get_cpu_info:
-        cpu_info = get_cpu_info.stdout.read()
-        number_of_cpus = int(str(cpu_info).split(":")[
-                             1].strip().split("\\")[0])
+        cpu_info = get_cpu_info.stdout.read().decode("utf-8")
+        if not cpu_info.strip():
+            raise RuntimeError(
+                "Unable to determine the number of host CPUs from lscpu output.")
+        number_of_cpus = int(cpu_info.split(":")[1].strip())
         return number_of_cpus
 
 
@@ -154,8 +185,7 @@ def build_simulation_enviroment(simulation):
 
     check_host_enviroment()         # check the enviroment
 
-    shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
-/master/scripts/installation/all-in-one.sh | " \
+    shell_cmd = f"curl {SEDNA_INSTALL_SCRIPT_URL} | " \
         f"NUM_CLOUD_WORKER_NODES={simulation.cloud_number} " \
         f"NUM_EDGE_NODES={simulation.edge_number} " \
         f"KUBEEDGE_VERSION={simulation.kubeedge_version} " \
@@ -177,8 +207,7 @@ def destory_simulation_enviroment(simulation):
     build the simulation enviroment
 
     """
-    shell_cmd = "curl https://raw.githubusercontent.com/kubeedge/sedna\
-/main/scripts/installation/all-in-one.sh | " \
+    shell_cmd = f"curl {SEDNA_INSTALL_SCRIPT_URL} | " \
         f"CLUSTER_NAME={simulation.cluster_name} bash /dev/stdin clean"
 
     retcode = subprocess.call(shell_cmd, shell=True)
