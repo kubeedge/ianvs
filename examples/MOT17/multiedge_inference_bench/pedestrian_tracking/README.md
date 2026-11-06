@@ -2,7 +2,7 @@
 
 Person Re-ID based on Cloud-edge collaborative architecture is an example feature that [Sedna](https://github.com/kubeedge/sedna) supports, which can continuously recognize, track and search the target person provided by the user in the source video, and push the video containing the search results to the streaming media server. This guide provides users with the actual performance test of the AI algorithm as a reference. To simulate the workflow in Sedna, the benchmarking process consists of a tracking job and a Re-ID job. The MOT17 dataset is used as the input for both tracking and Re-ID. After running benchmarking jobs, a report will be generated.
 
-With Ianvs installed and related environment prepared, users is then able to run the benchmarking process using the following steps. If you haven't installed Ianvs, please refer to [how-to-install-ianvs](../../docs/guides/how-to-install-ianvs.md).
+With Ianvs installed and related environment prepared, users is then able to run the benchmarking process using the following steps. If you haven't installed Ianvs, please refer to [how-to-install-ianvs](../../../../docs/guides/how-to-install-ianvs.md).
 
 ## Prerequisites
 
@@ -110,11 +110,11 @@ If the reader is ready to explore more on this example, e.g. upload custom algor
 
 [Sedna's ReID feature](https://github.com/kubeedge/sedna/tree/main/examples/multiedgeinference/pedestrian_tracking)
 
-[How to test algorithms](../../docs/guides/how-to-test-algorithms.md)
+[How to test algorithms](../../../../docs/guides/how-to-test-algorithms.md)
 
-[How to contribute algorithms](../../docs/guides/how-to-contribute-algorithms.md)
+[How to contribute algorithms](../../../../docs/guides/how-to-contribute-algorithms.md)
 
-[How to contribute test environments](../../docs/guides/how-to-contribute-test-environments.md)
+[How to contribute test environments](../../../../docs/guides/how-to-contribute-test-environments.md)
 
 If any problems happen, the user can refer to [the issue page on Github](https://github.com/kubeedge/ianvs/issues) for help and are also welcome to raise any new issue.
 
