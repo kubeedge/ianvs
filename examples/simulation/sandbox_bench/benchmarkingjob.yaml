@@ -1,0 +1,104 @@
+benchmarkingjob:
+  # job name of benchmarking; string type;
+  name: "sandbox_bench"
+
+  # the url address of job workspace that will reserve the output of tests; string type;
+  workspace: "./workspace/sandbox_bench"
+
+  # the url address of test environment configuration file; string type;
+  testenv: "./examples/pcb-aoi/singletask_learning_bench/fault_detection/testenv/testenv.yaml"
+
+  # the configuration of test object
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "fpn_singletask_learning"
+        url: "./examples/pcb-aoi/singletask_learning_bench/fault_detection/testalgorithms/fpn/fpn_algorithm.yaml"
+
+  # ---------------------------------------------------------------------------
+  # NEW: the simulation sandbox. This whole block is optional.
+  #
+  # Remove it, or set enabled: false, and Ianvs executes exactly as it does
+  # today -- same code path, same behaviour, same results. Nothing about the
+  # existing examples changes.
+  # ---------------------------------------------------------------------------
+  sandbox:
+    # Turn the sandbox on. Default: false.
+    enabled: true
+
+    # Which tier to run.
+    #   process  each test case gets its own worker process, its own transient
+    #            Python runtime and its own CPU/memory envelope. No root, no
+    #            Docker, no Kubernetes. Works on Linux, macOS and CI runners.
+    #   cluster  kind + KubeEdge edgecore + Sedna, for real edge-cloud
+    #            topology. Requires the 'simulation' block below, plus Docker,
+    #            kind and kubectl on a Linux host.
+    #   auto     use cluster when the host can support it, else process.
+    mode: "process"
+
+    # Dependency isolation within the process tier.
+    #   venv  build a throwaway virtualenv per test case, seeded from the
+    #         parent's site-packages so heavy shared deps are not
+    #         re-downloaded. If the example ships a requirements.txt next to
+    #         its algorithm yaml, it is installed on top -- which is how two
+    #         examples with conflicting pins can run in the same job.
+    #   none  reuse the parent interpreter; process and resource isolation
+    #         only. Faster; use when you know deps do not conflict.
+    isolation: "venv"
+
+    # Keep the transient workdir after the run, for debugging. Default: false.
+    keep_workdir: false
+
+    # Abort the whole job on the first test case failure. Default: false,
+    # which is the point: a crashing test case no longer discards the results
+    # of every test case that already succeeded.
+    fail_fast: false
+
+    # Resource ceiling applied to each test case, emulating an edge node.
+    # Enforced with cgroup v2 where available, otherwise RLIMIT_AS plus
+    # sampling-based enforcement.
+    resources:
+      memory: "2Gi"      # k8s-style quantity: 2Gi, 512Mi, 1GB, or plain bytes
+      cpus: 2            # cores; fractional values allowed
+      timeout: 3600      # wall-clock seconds before SIGTERM then SIGKILL
+
+    # Which system metrics to merge into the leaderboard alongside the
+    # algorithm metrics. Use ["all"] for everything the profiler collected.
+    metrics:
+      - "peak_memory"        # -> peak_memory_mb
+      - "cpu_utilization"    # -> cpu_utilization_pct (100 == one core busy)
+      - "wall_time"          # -> wall_time_s
+
+  # ---------------------------------------------------------------------------
+  # Cluster topology. Only read when sandbox.mode is 'cluster' or 'auto'.
+  # Schema is unchanged from the 2022 implementation, so existing configs that
+  # already carry this block keep working untouched.
+  #
+  # Note the ceilings: the Sedna all-in-one backend supports at most 2 cloud
+  # worker nodes and 3 edge nodes, and Ianvs now rejects anything above that
+  # at parse time rather than failing inside the provisioning script.
+  # ---------------------------------------------------------------------------
+  simulation:
+    cloud_number: 1
+    edge_number: 2
+    cluster_name: "ianvs-sim"
+    kubeedge_version: ""     # empty => resolve the newest release
+    sedna_version: ""        # empty => resolve the newest release
+
+  # the configuration of ranking leaderboard
+  rank:
+    sort_by: [ { "f1_score": "descend" }, { "peak_memory_mb": "ascend" } ]
+
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+
+    selected_dataitem:
+      paradigms: [ "all" ]
+      modules: [ "all" ]
+      hyperparameters: [ "all" ]
+      # System metrics appear here exactly like algorithm metrics, because the
+      # sandbox merges both into one flat dict before StoryManager sees them.
+      metrics: [ "f1_score", "peak_memory_mb", "cpu_utilization_pct", "wall_time_s" ]
+
+    save_mode: "selected_and_all"

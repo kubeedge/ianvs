@@ -96,6 +96,14 @@ class SystemMetricType(Enum):
     MATRIX = "MATRIX"
     FORGET_RATE = "forget_rate"
 
+    # System-wise metrics produced by the simulation sandbox profiler.
+    PEAK_MEMORY_MB = "peak_memory_mb"
+    MEAN_MEMORY_MB = "mean_memory_mb"
+    CPU_UTILIZATION_PCT = "cpu_utilization_pct"
+    CPU_TIME_S = "cpu_time_s"
+    WALL_TIME_S = "wall_time_s"
+    MEMORY_HEADROOM_PCT = "memory_headroom_pct"
+
 
 class TestObjectType(Enum):
     """
@@ -103,3 +111,30 @@ class TestObjectType(Enum):
     """
 
     ALGORITHMS = "algorithms"
+
+
+class SandboxMode(Enum):
+    """
+    Execution tier for the simulation sandbox.
+
+    PROCESS  transient runtime + resource-bounded subprocess on one host.
+             No root, no Docker, no Kubernetes. Works on Linux, macOS and CI.
+    CLUSTER  kind + KubeEdge edgecore + Sedna, for true edge-cloud topology.
+    AUTO     prefer CLUSTER when the host supports it, else fall back.
+    """
+
+    PROCESS = "process"
+    CLUSTER = "cluster"
+    AUTO = "auto"
+
+
+class IsolationLevel(Enum):
+    """
+    Dependency isolation strength within the process tier.
+
+    NONE  reuse the parent interpreter; process and resource isolation only.
+    VENV  build a transient venv per test case so conflicting pins coexist.
+    """
+
+    NONE = "none"
+    VENV = "venv"
