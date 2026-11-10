@@ -48,15 +48,33 @@ def samples_transfer_ratio_func(system_metric_info: dict):
     return round(float(transfer_num) / (inference_num + 1), 4)
 
 
+def _mean_score_gap(pairs):
+    """
+    Average the accuracy gap of (minuend, subtrahend) score pairs,
+    skipping pairs without accuracy. Returns NaN if no pair is usable.
+    """
+
+    gaps = [
+        minuend["accuracy"] - subtrahend["accuracy"]
+        for minuend, subtrahend in pairs
+        if "accuracy" in minuend and "accuracy" in subtrahend
+    ]
+    return float(np.mean(gaps)) if gaps else np.nan
+
+
 def compute(key, matrix):
     """
     Compute BWT and FWT scores for a given matrix.
+
+    matrix[0][j] is the score on task j+1 before learning any task, and
+    matrix[i][j] (i >= 1) is the score on task j+1 after learning task i.
+    With R(i, j) = matrix[i][j-1] and T tasks:
+        BWT = 1/(T-1) * sum_{i=1}^{T-1} R(T, i) - R(i, i)
+        FWT = 1/(T-1) * sum_{i=2}^{T} R(i-1, i) - R(0, i)
+    Both are NaN when fewer than two tasks are available.
     """
 
     length = len(matrix)
-    accuracy = 0.0
-    bwt_score = 0.0
-    fwt_score = 0.0
     flag = True
 
     for row in matrix:
@@ -69,19 +87,13 @@ def compute(key, matrix):
         fwt_score = np.nan
         return bwt_score, fwt_score
 
-    for i in range(length - 1):
-        for j in range(length - 1):
-            if "accuracy" in matrix[i + 1][j] and "accuracy" in matrix[i][j]:
-                accuracy += matrix[i + 1][j]["accuracy"]
-                bwt_score += matrix[i + 1][j]["accuracy"] - matrix[i][j]["accuracy"]
-
-    for i in range(0, length - 1):
-        if "accuracy" in matrix[i][i] and "accuracy" in matrix[0][i]:
-            fwt_score += matrix[i][i]["accuracy"] - matrix[0][i]["accuracy"]
-
-    accuracy = accuracy / ((length - 1) * (length - 1))
-    bwt_score = bwt_score / ((length - 1) * (length - 1))
-    fwt_score = fwt_score / (length - 1)
+    num_tasks = length - 1
+    bwt_score = _mean_score_gap(
+        (matrix[num_tasks][i - 1], matrix[i][i - 1]) for i in range(1, num_tasks)
+    )
+    fwt_score = _mean_score_gap(
+        (matrix[i - 1][i - 1], matrix[0][i - 1]) for i in range(2, num_tasks + 1)
+    )
 
     print(f"{key} BWT_score: {bwt_score}")
     print(f"{key} FWT_score: {fwt_score}")
