@@ -18,7 +18,9 @@ Lifelong learning is the paradigm that hands control to Sedna, and Sedna is
 vendored as a wheel rather than declared as a dependency. This module checks
 that the vendored wheel is present, that the installed `sedna` is that
 vendored version (not the unrelated PyPI package), and that every Sedna
-symbol Ianvs core imports resolves in the installed Sedna.
+symbol Ianvs core imports resolves in the installed Sedna. Imports guarded by
+`try` / `except ImportError` are alternatives: one of them must resolve, and a
+fallback without a Sedna import makes the import optional.
 
 The installed Sedna is inspected in a subprocess using the runtime Python, so
 the validator process never imports it.
@@ -53,8 +55,7 @@ if version is not None:
             for part in [p for p in attribute.split(".") if p]:
                 target = getattr(target, part)
         except Exception as exc:  # report every failure, not only ImportError
-            missing.append(f"{module_name}{'.' + attribute if attribute else ''}: "
-                           f"{type(exc).__name__}: {exc}")
+            missing.append([module_name, attribute, f"{type(exc).__name__}: {exc}"])
 print(json.dumps({"version": version, "missing": missing}))
 """
 
@@ -79,15 +80,23 @@ def vendored_versions(repo_root: Path) -> List[str]:
     return versions
 
 
-def core_sedna_symbols(repo_root: Path) -> List[Tuple[str, str]]:
-    """(module, attribute) pairs for every `sedna` import in Ianvs core."""
-    symbols = set()
+_IMPORT_ERRORS = {"ImportError", "ModuleNotFoundError", "Exception", "BaseException"}
+
+
+def _core_trees(repo_root: Path) -> List[ast.AST]:
+    trees = []
     for path in sorted((repo_root / "core").rglob("*.py")):
         try:
-            tree = ast.parse(path.read_text(encoding="utf-8"))
+            trees.append(ast.parse(path.read_text(encoding="utf-8")))
         except (SyntaxError, UnicodeDecodeError):
             continue
-        for node in ast.walk(tree):
+    return trees
+
+
+def _sedna_symbols_in(nodes: Sequence[ast.AST]) -> List[Tuple[str, str]]:
+    symbols = set()
+    for root in nodes:
+        for node in ast.walk(root):
             if isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
                 if node.module == "sedna" or node.module.startswith("sedna."):
                     for alias in node.names:
@@ -98,6 +107,47 @@ def core_sedna_symbols(repo_root: Path) -> List[Tuple[str, str]]:
                     if alias.name == "sedna" or alias.name.startswith("sedna."):
                         symbols.add((alias.name, ""))
     return sorted(symbols)
+
+
+def _catches_import_error(handler: ast.ExceptHandler) -> bool:
+    if handler.type is None:
+        return True
+    types = handler.type.elts if isinstance(handler.type, ast.Tuple) else [handler.type]
+    return any(getattr(t, "id", getattr(t, "attr", None)) in _IMPORT_ERRORS for t in types)
+
+
+def _guarded_tries(tree: ast.AST) -> List[ast.Try]:
+    return [node for node in ast.walk(tree)
+            if isinstance(node, ast.Try) and any(map(_catches_import_error, node.handlers))]
+
+
+def core_sedna_symbols(repo_root: Path) -> List[Tuple[str, str]]:
+    """(module, attribute) pairs for every unguarded `sedna` import in Ianvs core."""
+    symbols = set()
+    for tree in _core_trees(repo_root):
+        guarded = set(_sedna_symbols_in(_guarded_tries(tree)))
+        symbols.update(set(_sedna_symbols_in([tree])) - guarded)
+    return sorted(symbols)
+
+
+def core_sedna_alternatives(repo_root: Path) -> List[List[List[Tuple[str, str]]]]:
+    """For each `try` / `except ImportError` around a `sedna` import in Ianvs
+    core, the symbols of each branch: the `try` body first, then each handler.
+    An empty branch is a fallback that needs no Sedna."""
+    groups = []
+    for tree in _core_trees(repo_root):
+        for node in _guarded_tries(tree):
+            branches = [_sedna_symbols_in(node.body)] + [
+                _sedna_symbols_in(handler.body)
+                for handler in node.handlers if _catches_import_error(handler)]
+            if any(branches):
+                groups.append(branches)
+    return groups
+
+
+def _describe(symbol: Tuple[str, str], error: str) -> str:
+    module_name, attribute = symbol
+    return f"{module_name}{'.' + attribute if attribute else ''}: {error}"
 
 
 def check_sedna_contract(
@@ -119,7 +169,9 @@ def check_sedna_contract(
         ),
     ))
 
-    symbols = sorted(set(core_sedna_symbols(repo_root)) | set(extra_symbols))
+    required = set(core_sedna_symbols(repo_root)) | set(extra_symbols)
+    groups = core_sedna_alternatives(repo_root)
+    symbols = sorted(required | {s for branches in groups for b in branches for s in b})
     try:
         completed = subprocess.run(
             [python or sys.executable, "-c", _PROBE, json.dumps(symbols)],
@@ -155,15 +207,22 @@ def check_sedna_contract(
 
     if installed is None:
         return results
-    missing = probe.get("missing", [])
+    errors = {(module_name, attribute): error
+              for module_name, attribute, error in probe.get("missing", [])}
+    missing = [_describe(s, errors[s]) for s in sorted(required) if s in errors]
+    for branches in groups:
+        # A group fails only when no branch resolves; an empty branch always does.
+        if all(any(s in errors for s in branch) for branch in branches):
+            missing.extend(_describe(s, errors[s]) for s in branches[0] if s in errors)
     results.append(ContractResult(
         name="Sedna symbols used by core resolve",
         status="FAIL" if missing else "PASS",
         message=(
-            f"{len(missing)} of {len(symbols)} Sedna symbols imported by core do not resolve. "
+            f"{len(missing)} Sedna symbols imported by core do not resolve. "
             "Impact: the paradigm fails when it reaches them."
             if missing else
-            f"All {len(symbols)} Sedna symbols imported by core resolve."
+            f"All {len(required)} Sedna symbols imported by core resolve, and each of the "
+            f"{len(groups)} imports guarded by `except ImportError` has a working alternative."
         ),
         details=missing,
     ))

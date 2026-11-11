@@ -65,6 +65,29 @@ def test_core_symbols_are_extracted_from_imports(tmp_path):
     ]
 
 
+GUARDED_SOURCE = (
+    "try:\n"
+    "    from sedna.datasources import BaseDataSource\n"
+    "except ImportError:\n"
+    "    from sedna.core.base import BaseDataSource\n"
+    "try:\n"
+    "    from sedna.datasources import NoSuchParse\n"
+    "except ImportError:\n"
+    "    NoSuchParse = None\n"
+    "from sedna.core.lifelong_learning import LifelongLearning\n"
+)
+
+
+def test_guarded_imports_are_alternatives_not_requirements(tmp_path):
+    repo = _repo(tmp_path, core_source=GUARDED_SOURCE)
+
+    assert sc.core_sedna_symbols(repo) == [("sedna.core.lifelong_learning", "LifelongLearning")]
+    assert sc.core_sedna_alternatives(repo) == [
+        [[("sedna.datasources", "BaseDataSource")], [("sedna.core.base", "BaseDataSource")]],
+        [[("sedna.datasources", "NoSuchParse")], []],
+    ]
+
+
 def test_vendored_versions_read_from_wheel_names(tmp_path):
     repo = _repo(tmp_path, wheel_version="0.6.0.1")
 
@@ -117,6 +140,33 @@ def test_unresolvable_symbols_fail_and_are_listed(tmp_path):
     assert len(check.details) == 3
     assert any("NoSuchClass" in detail for detail in check.details)
     assert any("my_inference" in detail for detail in check.details)
+
+
+@needs_sedna
+def test_guarded_import_passes_when_one_alternative_resolves(tmp_path):
+    # The sedna.core.base fallback does not resolve on Sedna 0.6, nor does the
+    # optional NoSuchParse, but core still works.
+    results = _by_name(sc.check_sedna_contract(
+        _repo(tmp_path, core_source=GUARDED_SOURCE), python=sys.executable))
+
+    assert results["Sedna symbols used by core resolve"].status == "PASS"
+
+
+@needs_sedna
+def test_guarded_import_fails_when_no_alternative_resolves(tmp_path):
+    repo = _repo(tmp_path, core_source=(
+        "try:\n"
+        "    from sedna.no_such_module import Thing\n"
+        "except ImportError:\n"
+        "    from sedna.core.base import NoSuchClass\n"
+    ))
+
+    check = _by_name(sc.check_sedna_contract(repo, python=sys.executable))[
+        "Sedna symbols used by core resolve"]
+
+    assert check.status == "FAIL"
+    assert len(check.details) == 1
+    assert "sedna.no_such_module.Thing" in check.details[0]
 
 
 def test_probe_that_cannot_run_is_an_error(tmp_path):
