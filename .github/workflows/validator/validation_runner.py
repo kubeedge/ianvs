@@ -286,7 +286,7 @@ def example_matches_selectors(
 
 
 def normalize_selector(value: str) -> str:
-    value = value.strip().strip("\"'")
+    value = value.strip().strip("\"'").replace("\\", "/")
     if value.startswith("./"):
         value = value[2:]
     return value.rstrip("/")

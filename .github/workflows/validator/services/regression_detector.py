@@ -35,6 +35,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
+try:
+    from result_contract import validate_result_payload
+except ImportError:  # Support importing as services.regression_detector.
+    from services.result_contract import validate_result_payload
+
 
 PASS = "PASS"
 ERROR = "ERROR"
@@ -447,7 +452,10 @@ def load_results(
     units: Dict[Tuple[str, str], ValidationUnit] = {}
     checks: Dict[Tuple[str, str, str], CheckResult] = {}
     for path in paths:
-        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload = validate_result_payload(
+            json.loads(path.read_text(encoding="utf-8")),
+            path,
+        )
         for raw_example in payload.get("examples", []):
             if not isinstance(raw_example, dict):
                 continue
