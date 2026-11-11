@@ -377,14 +377,17 @@ def compare_results(
     head_units, head_checks = load_results(head_paths)
     comparisons = []
     line_mapper = GitLineMapper(base_ref, head_ref) if base_ref and head_ref else None
-    skipped_units = dynamic_skipped_units(base_checks) | dynamic_skipped_units(
-        head_checks
-    )
+    base_skipped_units = dynamic_skipped_units(base_checks)
+    head_skipped_units = dynamic_skipped_units(head_checks)
 
     base_unit_ids = set(base_units)
     head_unit_ids = set(head_units)
     added_unit_ids = head_unit_ids - base_unit_ids
+    # Newly enabled examples use the existing Added report.
+    added_unit_ids |= (base_skipped_units - head_skipped_units) & head_unit_ids
     removed_unit_ids = base_unit_ids - head_unit_ids
+    # Disabled examples use the existing Removed report.
+    removed_unit_ids |= (head_skipped_units - base_skipped_units) & base_unit_ids
     example_changes = [
         added_example_change(head_units[identity], head_checks)
         for identity in sorted(added_unit_ids)
@@ -392,15 +395,20 @@ def compare_results(
         removed_example_change(base_units[identity], base_checks)
         for identity in sorted(removed_unit_ids)
     ]
+    for identity in sorted(set(base_checks) | set(head_checks)):
+        example_name, example_path, check_name = identity
+        unit_identity = (example_name, example_path)
 
-    identities = sorted(
-        identity
-        for identity in set(base_checks) | set(head_checks)
-        if identity[:2] not in removed_unit_ids
-        and identity[:2] not in skipped_units
-    )
-    for identity in identities:
+        if unit_identity in removed_unit_ids:
+            continue
+        if unit_identity in head_skipped_units:
+            continue
+
         base_check = base_checks.get(identity)
+        if unit_identity in base_skipped_units:
+            # A newly activated unit has no executed baseline to compare.
+            base_check = None
+
         head_check = head_checks.get(identity)
         comparison = compare_check(
             base_check=base_check,
