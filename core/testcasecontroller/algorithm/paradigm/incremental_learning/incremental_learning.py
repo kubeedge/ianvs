@@ -130,7 +130,9 @@ class IncrementalLearning(ParadigmBase):
         hard_example_saved_dir = self._prepare_inference(model, rounds)
 
         job = self.build_paradigm_job(ParadigmType.INCREMENTAL_LEARNING.value)
-        inference_dataset = self.dataset.load_data(data_index_file, "inference")
+        inference_dataset = self.dataset.load_data(
+            data_index_file, "inference", label=self.dataset.label
+        )
         inference_dataset_x = inference_dataset.x
 
         inference_results = {}
@@ -149,7 +151,9 @@ class IncrementalLearning(ParadigmBase):
     def _get_train_dataset(self, hard_examples, data_label_file):
         # pylint: disable=W0012
         # pylint: disable=E0606
-        data_labels = self.dataset.load_data(data_label_file, "train label")
+        data_labels = self.dataset.load_data(
+            data_label_file, "train label", label=self.dataset.label
+        )
         temp_dir = tempfile.mkdtemp()
         train_dataset_file = os.path.join(temp_dir, os.path.basename(data_label_file))
         with open(train_dataset_file, "w", encoding="utf-8") as file:
@@ -170,7 +174,9 @@ class IncrementalLearning(ParadigmBase):
         os.environ["BASE_MODEL_URL"] = model
 
         job = self.build_paradigm_job(ParadigmType.INCREMENTAL_LEARNING.value)
-        train_dataset = self.dataset.load_data(data_index_file, "train")
+        train_dataset = self.dataset.load_data(
+            data_index_file, "train", label=self.dataset.label
+        )
         new_model = job.train(train_dataset)
         del job
 
@@ -182,7 +188,9 @@ class IncrementalLearning(ParadigmBase):
         model_metric = model_eval_info.get("model_metric")
 
         job = self.build_paradigm_job(ParadigmType.INCREMENTAL_LEARNING.value)
-        eval_dataset = self.dataset.load_data(data_index_file, "eval")
+        eval_dataset = self.dataset.load_data(
+            data_index_file, "eval", label=self.dataset.label
+        )
         eval_results = job.evaluate(eval_dataset, metric=get_metric_func(model_metric))
         del job
 

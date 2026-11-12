@@ -186,7 +186,9 @@ class FederatedClassIncrementalLearning(FederatedLearning):
         Returns:
             list : the test dataset for each round [{x: [], y: []}, ...]
         """
-        test_dataset = self.dataset.load_data(self.dataset.test_url, "eval")
+        test_dataset = self.dataset.load_data(
+            self.dataset.test_url, "eval", label=self.dataset.label
+        )
         all_data = len(test_dataset.x)
         step = all_data // split_time
         test_datasets_files = []

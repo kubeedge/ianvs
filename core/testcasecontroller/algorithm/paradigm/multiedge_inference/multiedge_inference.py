@@ -80,17 +80,23 @@ class MultiedgeInference(ParadigmBase):
         return inference_result, self.system_metric_info
 
     def _inference(self, job, trained_model):
-        train_dataset = self.dataset.load_data(self.dataset.train_url, "train")
+        train_dataset = self.dataset.load_data(
+            self.dataset.train_url, "train", label=self.dataset.label
+        )
         os.environ["BASE_MODEL_URL"] = trained_model
-        inference_dataset = self.dataset.load_data(self.dataset.test_url, "inference")
-        inference_output_dir = os.path.join(self.workspace, "output/inference/")
-        os.environ["RESULT_SAVED_URL"] = inference_output_dir
+        inference_dataset = self.dataset.load_data(
+            self.dataset.test_url, "inference", label=self.dataset.label
+        )
+        out_dir = os.path.join(self.workspace, "output/inference/")
+        os.environ["RESULT_SAVED_URL"] = out_dir
         job.load(trained_model)
         infer_res = job.predict(inference_dataset.x, train_dataset=train_dataset)
         return infer_res
 
     def _inference_mp(self, job, models_dir, map_info):
-        inference_dataset = self.dataset.load_data(self.dataset.test_url, "inference")
+        inference_dataset = self.dataset.load_data(
+            self.dataset.test_url, "inference", label=self.dataset.label
+        )
         inference_output_dir = os.path.join(self.workspace, "output/inference/")
         os.environ["RESULT_SAVED_URL"] = inference_output_dir
         job.load(models_dir, map_info)
