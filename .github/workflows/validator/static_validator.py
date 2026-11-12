@@ -51,6 +51,9 @@ REPO_PATH_RE = re.compile(
     r"(?P<path>(?:\./)?(?:examples|\.github|resources)/[A-Za-z0-9_./-]+"
     r"(?:\.yaml|\.yml|\.py|\.txt|\.json|\.jsonl|\.whl|\.zip)?)"
 )
+REMOTE_URI_RE = re.compile(
+    r"(?<![A-Za-z0-9_./+-])[A-Za-z][A-Za-z0-9+.-]*://[^\s'\"`<>]+"
+)
 STATIC_VALIDATED_FILE_SUFFIXES = (".yaml", ".yml", ".py")
 
 
@@ -386,7 +389,7 @@ def _check_repo_path_references(
     missing_code_or_config = []
     missing_parent_references = []
     for path in files:
-        text = _read_text(path)
+        text = _mask_remote_uri_contents(path, _read_text(path))
         for match in REPO_PATH_RE.finditer(text):
             repo_path = _normalize_repo_path(match.group("path"))
             if _looks_like_generated_dataset_path(repo_path):
@@ -431,6 +434,37 @@ def _check_repo_path_references(
         pass_message="Repository-local non-code path reference parent folders resolve.",
         failure_status=WARNING,
     )
+
+
+def _mask_remote_uri_contents(path: Path, text: str) -> str:
+    """Ignore URI contents without consuming adjacent YAML flow elements."""
+    def mask(value: str) -> str:
+        # Preserve offsets and line numbers used by the path diagnostics.
+        return REMOTE_URI_RE.sub(lambda match: " " * len(match.group(0)), value)
+
+    if path.suffix not in YAML_SUFFIXES:
+        return mask(text)
+
+    try:
+        import yaml
+        from yaml.tokens import ScalarToken
+    except ImportError:
+        return text
+    try:
+        scalars = [token for token in yaml.scan(text) if isinstance(token, ScalarToken)]
+    except yaml.YAMLError:
+        # YAML syntax validation reports malformed documents separately.
+        return text
+
+    parts = []
+    cursor = 0
+    for scalar in scalars:
+        start, end = scalar.start_mark.index, scalar.end_mark.index
+        parts.append(mask(text[cursor:start]))
+        parts.append(mask(text[start:end]))
+        cursor = end
+    parts.append(mask(text[cursor:]))
+    return "".join(parts)
 
 
 def _check_hardcoded_paths(
