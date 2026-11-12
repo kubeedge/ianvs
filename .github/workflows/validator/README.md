@@ -115,6 +115,25 @@ standalone dataset checks, reports, timeouts, affected-example detection, and
 troubleshooting, see the
 [local validation guide](../../../docs/example_validator/local_validation.md).
 
+### Timeout cleanup
+
+Preparation steps, legacy dataset preparation, and smoke commands run in a
+private POSIX process group. On timeout or interruption the validator kills the
+group and reaps the direct child, including when the group leader has already
+exited. Timeout reports retain captured output for diagnosis. Output draining
+after a timeout is limited to one additional second.
+
+This cleanup covers ordinary child processes, not processes that deliberately
+detach into another session or remote jobs launched by a script. On non-POSIX
+platforms cleanup terminates only the direct child.
+
+Run the process-timeout regression tests without model downloads or a cluster:
+
+```bash
+PYTHONPATH=.github/workflows/validator python -m unittest discover \
+  -s .github/workflows/validator/tests -p 'test_smoke_timeouts.py' -v
+```
+
 ## Validation Reports
 
 Current workflows publish a Markdown report to the GitHub Step Summary and
