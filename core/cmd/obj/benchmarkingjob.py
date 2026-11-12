@@ -22,7 +22,8 @@ from core.common.constant import TestObjectType
 from core.testenvmanager.testenv import TestEnv
 from core.storymanager.rank import Rank
 from core.testcasecontroller.simulation import Simulation
-from core.testcasecontroller.simulation_system_admin import build_simulation_enviroment
+from core.testcasecontroller.simulation_system_admin import (
+    build_simulation_environment, destroy_simulation_environment)
 from core.testcasecontroller.testcasecontroller import TestCaseController
 
 
@@ -51,7 +52,7 @@ class BenchmarkingJob:
         self._parse_config(config)
 
     def _check_fields(self):
-        if not self.name and not isinstance(self.name, str):
+        if not self.name or not isinstance(self.name, str):
             raise ValueError(f"benchmarkingjob's name({self.name}) must be provided"
                              f" and be string type.")
 
@@ -84,18 +85,23 @@ class BenchmarkingJob:
         self.workspace = os.path.join(self.workspace, self.name)
 
         if self.simulation is not None:
-            build_simulation_enviroment(self.simulation)
+            build_simulation_environment(self.simulation)
 
-        self.test_env.prepare()
+        try:
+            self.test_env.prepare()
 
-        self.testcase_controller.build_testcases(test_env=self.test_env,
-                                                 test_object=self.test_object)
+            self.testcase_controller.build_testcases(test_env=self.test_env,
+                                                     test_object=self.test_object)
 
-        succeed_testcases, test_results = self.testcase_controller.run_testcases(self.workspace)
+            succeed_testcases, test_results = self.testcase_controller.run_testcases(
+                self.workspace)
 
-        if test_results:
-            self.rank.save(succeed_testcases, test_results, output_dir=self.workspace)
-            self.rank.plot()
+            if test_results:
+                self.rank.save(succeed_testcases, test_results, output_dir=self.workspace)
+                self.rank.plot()
+        finally:
+            if self.simulation is not None:
+                destroy_simulation_environment(self.simulation)
 
     def _parse_config(self, config: dict):
         # pylint: disable=C0103

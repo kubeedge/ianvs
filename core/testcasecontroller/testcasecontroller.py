@@ -17,6 +17,7 @@
 import copy
 
 from core.common import utils
+from core.common.log import LOGGER
 from core.common.constant import TestObjectType
 from core.testcasecontroller.algorithm import Algorithm
 from core.testcasecontroller.testcase import TestCase
@@ -49,14 +50,21 @@ class TestCaseController:
         """
         succeed_results = {}
         succeed_testcases = []
+        failed = []
         for testcase in self.test_cases:
             try:
                 res, time = (testcase.run(workspace), utils.get_local_time())
-            except Exception as err:
-                raise RuntimeError(f"testcase(id={testcase.id}) runs failed, error: {err}") from err
+            except Exception as err:  # pylint: disable=broad-except
+                # contain the failure so completed results still reach the ranking layer
+                LOGGER.error("testcase(id=%s) runs failed, error: %s", testcase.id, err)
+                failed.append(f"{testcase.id}: {err}")
+                continue
 
             succeed_results[testcase.id] = (res, time)
             succeed_testcases.append(testcase)
+
+        if failed and not succeed_testcases:
+            raise RuntimeError(f"all testcases failed: {'; '.join(failed)}")
 
         return succeed_testcases, succeed_results
 
