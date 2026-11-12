@@ -126,7 +126,10 @@ class LifelongLearning(ParadigmBase):
                         score_list = tmp_dict.get(entry, ['' for i in range(rounds)])
                         score_list[j-1] = scores
                         tmp_dict[entry] = score_list
-                    task_avg_score['accuracy'] = task_avg_score['accuracy']/i
+                    if i > 0:
+                        task_avg_score['accuracy'] /= i
+                    else:
+                        LOGGER.warning("task_avg_score accuracy denominator is zero; defaulting to 0.0")
                     score_list = tmp_dict.get("task_avg", [{'accuracy':0.0} for i in range(rounds)])
                     score_list[j-1] = task_avg_score
                     tmp_dict["task_avg"] = score_list
@@ -148,7 +151,10 @@ class LifelongLearning(ParadigmBase):
                 entry = detail.entry
                 LOGGER.info(f"{entry} scores: {scores}")
                 task_avg_score['accuracy'] += scores['accuracy']
-            task_avg_score['accuracy'] = task_avg_score['accuracy']/i
+            if i > 0:
+                task_avg_score['accuracy'] /= i
+            else:
+                LOGGER.warning("task_avg_score accuracy denominator is zero; defaulting to 0.0")
             self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value] = task_avg_score
             LOGGER.info(task_avg_score)
             job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
@@ -224,7 +230,10 @@ class LifelongLearning(ParadigmBase):
                         score_list = tmp_dict.get(entry, ['' for i in range(rounds)])
                         score_list[j-1] = scores
                         tmp_dict[entry] = score_list
-                    task_avg_score['accuracy'] = task_avg_score['accuracy']/i
+                    if i > 0:
+                        task_avg_score['accuracy'] /= i
+                    else:
+                        LOGGER.warning("task_avg_score accuracy denominator is zero; defaulting to 0.0")
                     score_list = tmp_dict.get("task_avg", [{'accuracy':0.0} for i in range(rounds)])
                     score_list[j-1] = task_avg_score
                     tmp_dict["task_avg"] = score_list
@@ -247,7 +256,10 @@ class LifelongLearning(ParadigmBase):
                 entry = detail.entry
                 LOGGER.info(f"{entry} scores: {scores}")
                 task_avg_score['accuracy'] += scores['accuracy']
-            task_avg_score['accuracy'] = task_avg_score['accuracy']/i
+            if i > 0:
+                task_avg_score['accuracy'] /= i
+            else:
+                LOGGER.warning("task_avg_score accuracy denominator is zero; defaulting to 0.0")
             self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value] = task_avg_score
             LOGGER.info(task_avg_score)
             test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
