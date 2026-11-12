@@ -1,0 +1,8 @@
+testenv:
+  dataset:
+    # jsonl lines {"question": x, "answer": label}
+    train_data: "./tests/simulation/sandbox_example/samples/train.jsonl"
+    test_data: "./tests/simulation/sandbox_example/samples/test.jsonl"
+  metrics:
+    - name: "accuracy"
+      url: "./tests/simulation/sandbox_example/testenv/accuracy.py"

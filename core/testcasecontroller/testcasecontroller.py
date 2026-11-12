@@ -44,29 +44,42 @@ class TestCaseController:
             for algorithm in algorithms:
                 self.test_cases.append(TestCase(test_env, algorithm))
 
-    def run_testcases(self, workspace):
+    def run_testcases(self, workspace, simulation_controller=None):
         """
-        Run all test cases.
+        Run all test cases; with a simulation controller, each runs as a simulation
+        job in the simulation cluster instead of in this process, and a test case that
+        fails there (OOM_FAILURE, EXEC_FAILURE, TIMEOUT) is still ranked, as a row with
+        its status and the system metrics measured before the failure.
         """
-        succeed_results = {}
-        succeed_testcases = []
+        ranked_results = {}
+        ranked_testcases = []
         failed = []
         for testcase in self.test_cases:
             try:
-                res, time = (testcase.run(workspace), utils.get_local_time())
+                if simulation_controller is None:
+                    res = testcase.run(workspace)
+                else:
+                    res = simulation_controller.run_sandboxed(testcase, workspace)
+                time = utils.get_local_time()
             except Exception as err:  # pylint: disable=broad-except
                 # contain the failure so completed results still reach the ranking layer
                 LOGGER.error("testcase(id=%s) runs failed, error: %s", testcase.id, err)
                 failed.append(f"{testcase.id}: {err}")
-                continue
+                status = getattr(err, "status", None)
+                if simulation_controller is None or not status:
+                    continue
+                res = {"status": status, **getattr(err, "metrics", {})}
+                time = utils.get_local_time()
 
-            succeed_results[testcase.id] = (res, time)
-            succeed_testcases.append(testcase)
+            ranked_results[testcase.id] = (res, time)
+            ranked_testcases.append(testcase)
 
-        if failed and not succeed_testcases:
+        if failed and not ranked_testcases:
             raise RuntimeError(f"all testcases failed: {'; '.join(failed)}")
+        if failed:
+            LOGGER.warning("%d of %d test cases failed", len(failed), len(self.test_cases))
 
-        return succeed_testcases, succeed_results
+        return ranked_testcases, ranked_results
 
     @classmethod
     def _parse_algorithms_config(cls, config):
@@ -80,6 +93,8 @@ class TestCaseController:
             try:
                 config = utils.yaml2dict(config_file)
                 algorithm = Algorithm(name, config)
+                # a simulation job rebuilds the algorithm from its config file
+                algorithm.config_url = config_file
                 algorithms.append(algorithm)
             except Exception as err:
                 raise RuntimeError(f"algorithm config file({config_file} is not supported, "
@@ -87,9 +102,10 @@ class TestCaseController:
 
         new_algorithms = []
         for algorithm in algorithms:
-            for modules in algorithm.modules_list:
+            for index, modules in enumerate(algorithm.modules_list):
                 new_algorithm = copy.deepcopy(algorithm)
                 new_algorithm.modules = modules
+                new_algorithm.modules_index = index
                 new_algorithms.append(new_algorithm)
 
         return new_algorithms

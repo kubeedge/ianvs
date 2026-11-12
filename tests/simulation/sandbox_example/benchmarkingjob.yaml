@@ -1,0 +1,35 @@
+benchmarkingjob:
+  name: "sandbox_example"
+  workspace: "./workspace/sandbox_example"
+  testenv: "./tests/simulation/sandbox_example/testenv/testenv.yaml"
+  test_object:
+    type: "algorithms"
+    algorithms:
+      - name: "threshold_classifier"
+        url: "./tests/simulation/sandbox_example/testalgorithms/algorithm.yaml"
+  rank:
+    sort_by: [ { "accuracy": "descend" } ]
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
+    selected_dataitem:
+      paradigms: [ "all" ]
+      modules: [ "all" ]
+      hyperparameters: [ "all" ]
+      # system metrics are listed like any other metric; all_rank.csv has all of them
+      metrics: [ "accuracy", "wall_time_s", "peak_memory_mb", "cpu_utilization_avg",
+                 "network_profile" ]
+    save_mode: "selected_and_all"
+  simulation:
+    cloud_number: 1
+    edge_number: 1
+    cluster_name: "ianvs-sandbox"
+    kubeedge_version: "v1.21.0"
+  # run each test case as a job on the simulation cluster
+  sandbox_profile:
+    enabled: true
+    system_metrics: "all"
+  # the edge device: the paradigm's memory/CPU defaults, and a constrained network
+  device_simulation:
+    network_bandwidth_mbps: 50
+    network_latency_ms: 20
