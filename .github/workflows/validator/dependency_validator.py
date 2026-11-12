@@ -32,6 +32,7 @@ from pathlib import Path
 from typing import Dict, List, Mapping, Optional, Sequence, Set, Tuple
 
 from services.inventory_loader import DEFAULT_INVENTORY_PATH, load_inventory_examples
+from services.sedna_contract import check_sedna_contract
 from static_validator import (
     FAIL,
     PASS,
@@ -59,6 +60,12 @@ PROJECT_PROVIDED_IMPORTS = {
     "testalgorithms",
     "testenv",
 }
+LIFELONG_PARADIGM = "lifelonglearning"
+# Sedna methods that core's lifelong paradigm calls on its job, beyond imports.
+LIFELONG_SEDNA_METHODS = tuple(
+    ("sedna.core.lifelong_learning", f"LifelongLearning.{method}")
+    for method in ("train", "evaluate", "update")
+)
 IMPORT_PACKAGE_ALIASES = {
     "PIL": "pillow",
     "cv2": "opencv-python",
@@ -97,6 +104,20 @@ def validate_example(
     example_path = _normalize_repo_path(str(example.get("path", "")))
     example_name = str(example.get("name") or example_path)
     report = ExampleReport(name=example_name, path=example_path)
+
+    if _is_lifelong_example(repo_root / example_path):
+        for result in check_sedna_contract(
+            repo_root,
+            timeout_seconds=timeout_seconds,
+            extra_symbols=LIFELONG_SEDNA_METHODS,
+        ):
+            _append_check(
+                report,
+                name=result.name,
+                status=result.status,
+                message=result.message,
+                details=result.details,
+            )
 
     requirements_file = _optional_example_file(example, "requirements_file")
     if not requirements_file:
@@ -635,6 +656,25 @@ def _optional_example_file(example: Mapping[str, object], key: str) -> Optional[
     if not value:
         return None
     return _normalize_repo_path(str(value))
+
+
+def _is_lifelong_example(example_root: Path) -> bool:
+    """True when an algorithm config under the example uses the lifelong paradigm."""
+    try:
+        import yaml
+    except ImportError:
+        return False
+    if not example_root.is_dir():
+        return False
+    for path in example_root.rglob("*.y*ml"):
+        try:
+            data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except (yaml.YAMLError, UnicodeDecodeError, OSError):
+            continue
+        algorithm = data.get("algorithm") if isinstance(data, dict) else None
+        if isinstance(algorithm, dict) and str(algorithm.get("paradigm_type", "")).lower() == LIFELONG_PARADIGM:
+            return True
+    return False
 
 
 def _normalize_repo_path(value: str) -> str:
