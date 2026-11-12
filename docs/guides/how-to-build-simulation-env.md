@@ -124,6 +124,59 @@ See Pod status: kubectl -n sedna get pod
 
 In the end. You get an all-in-one environment of sedna.
 
+## Running the test cases in the simulation cluster
+
+By default the test cases still run on the host. Add a `sandbox_profile` to run each test case as a Kubernetes Job in the simulation cluster instead, with the memory and CPU limits of an edge device:
+
+```yaml
+benchmarkingjob:
+  ...
+  simulation:
+    cloud_number: 1
+    edge_number: 1
+    cluster_name: "ianvs-sandbox"
+
+  sandbox_profile:
+    enabled: true
+    # optional, all keys below
+    image: ""                          # a prebuilt image; empty builds one
+    base_image: "python:3.9-slim"      # base of the built image
+    requirements: ["./examples/my-example/requirements.txt"]   # requirement files or local .whl files
+    data_paths: ["./dataset/extra"]    # paths the algorithm reads besides those in its configs
+    timeout: 3600                      # seconds per test case
+
+  # optional; overrides the paradigm's default limits field by field
+  device_simulation:
+    max_memory_mb: 2048
+    max_cpu_cores: 2
+```
+
+A `sandbox_profile` needs a `simulation` block, and `device_simulation` needs a `sandbox_profile`. Invalid values are rejected when the config is parsed.
+
+How a test case runs:
+
+1. Before the first test case, the `Simulation Job Administrator` builds the image from the Ianvs `core`, `requirements.txt`, the wheels in `resources/third_party` and the `requirements` entries (requirement files or local `.whl` files). A local wheel is installed without the dependencies it declares, as examples install their algorithm wheels on the host; list what it needs in a requirements file. The image is tagged by the digest of those files, so an unchanged image is not rebuilt. The image is imported straight into the node's containerd, so no registry is needed.
+2. The test cases run on an edge node if the cluster has one, else on a cloud worker, else on the control plane.
+3. The files a test case reads (its test environment and algorithm configs, the paths they reference, and `data_paths`) are copied onto the node and mounted at the same absolute paths. They are copied once per run and shared by the test cases, so a large dataset is not copied again for each test case. The Job runs from the host's working directory, so relative paths in the configs resolve as they do on the host.
+4. The Job's memory and CPU limits come from `device_simulation`, or else from the paradigm's defaults:
+
+   | Paradigm | Memory (MiB) | CPU cores |
+   |---|---|---|
+   | singletasklearning | 1024 | 1 |
+   | incrementallearning | 1536 | 2 |
+   | lifelonglearning | 3072 | 2 |
+   | federatedlearning | 2048 | 4 |
+   | federatedclassincrementallearning | 2560 | 4 |
+   | jointinference | 4096 | 2 |
+   | multiedgeinference | 2048 | 2 |
+
+   Swap is turned off for the node's pods, so a test case over its memory limit is OOM-killed instead of swapping.
+5. The pod reports its metrics in its termination message, which the node reports to the API server. Pods on KubeEdge edge nodes cannot reach the API server themselves, so they cannot write the result to a ConfigMap. The test case's output directory is copied back to the host workspace, together with `sandbox_result.json` and the pod's log, `sandbox.log`.
+
+A test case that fails in the sandbox fails alone, as on the host. It is reported as `OOM_FAILURE` (it exceeded its memory limit), `EXEC_FAILURE` (it raised an error, with the error in the log) or `TIMEOUT`. The other test cases are still ranked. A failed test case keeps what it wrote before it failed, its `sandbox.log`, and a `sandbox_result.json` with its status and error.
+
+`network_bandwidth_mbps` and `network_latency_ms` in `device_simulation` are accepted but not applied yet; network emulation and the system metrics profiler come in a later stage.
+
 ## Troubleshooting
 
 | Message or symptom | Cause | What to do |
@@ -136,3 +189,7 @@ In the end. You get an all-in-one environment of sedna.
 | `The current free memory is insufficient ...` or `The number of cpus is insufficient ...` | The host, or the container Ianvs runs in, has less than 4 GB of available memory or fewer than 4 CPU cores. | Free memory, raise the container's limits, or use a larger host. The message shows the current and required values. |
 | The build fails while pulling `kubeedge/sedna-allinone-node:v1.30.0` | The node image is not available from Docker Hub. | Build it locally with Sedna's `scripts/installation/build-allinone-image.sh` (about 2 minutes), then run Ianvs again. |
 | The edge nodes fail to join with a `kubeedge_version` other than v1.21.0 | The node image's `keadm` is built for KubeEdge v1.21.0. | Use the default `v1.21.0`, or a node image built for your version. |
+| A test case fails with `OOM_FAILURE` | It needed more memory than its limit in the sandbox. | Raise `device_simulation` `max_memory_mb`, or reduce what the test case loads. |
+| A test case fails with `EXEC_FAILURE` and `No module named ...` | A package the algorithm needs is not in the sandbox image. | List the example's requirements file, or its local wheel, in `sandbox_profile` `requirements`. |
+| A test case fails with `EXEC_FAILURE` and a missing file | The algorithm reads a path that none of its configs reference. | Add the path to `sandbox_profile` `data_paths`. |
+| A test case fails with `TIMEOUT` | It ran longer than `sandbox_profile` `timeout`. | Raise `timeout`. |

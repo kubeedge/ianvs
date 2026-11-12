@@ -25,9 +25,10 @@ from core.testcasecontroller.simulation import Simulation
 from core.testcasecontroller.simulation_system_admin import (
     build_simulation_environment, destroy_simulation_environment)
 from core.testcasecontroller.testcasecontroller import TestCaseController
+from core.simulationcontroller import SandboxProfile, SimulationController
 
 
-# pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods,too-many-instance-attributes
 class BenchmarkingJob:
     """
     BenchmarkingJob:
@@ -48,6 +49,9 @@ class BenchmarkingJob:
         self.rank = None
         self.test_env = None
         self.simulation = None
+        self.sandbox_profile = None
+        self.device_simulation = None
+        self.testenv_url = ""
         self.testcase_controller = TestCaseController()
         self._parse_config(config)
 
@@ -93,8 +97,14 @@ class BenchmarkingJob:
             self.testcase_controller.build_testcases(test_env=self.test_env,
                                                      test_object=self.test_object)
 
+            simulation_controller = None
+            if self.sandbox_profile is not None and self.sandbox_profile.enabled:
+                simulation_controller = SimulationController(
+                    self.simulation, self.sandbox_profile, self.testenv_url)
+                simulation_controller.prepare()
+
             succeed_testcases, test_results = self.testcase_controller.run_testcases(
-                self.workspace)
+                self.workspace, simulation_controller)
 
             if test_results:
                 self.rank.save(succeed_testcases, test_results, output_dir=self.workspace)
@@ -117,6 +127,7 @@ class BenchmarkingJob:
                     self.__dict__[k] = v
 
         self._check_fields()
+        self._parse_sandbox_config()
 
     def _parse_testenv_config(self, config_file):
         if not utils.is_local_file(config_file):
@@ -125,6 +136,7 @@ class BenchmarkingJob:
         try:
             config = utils.yaml2dict(config_file)
             self.test_env = TestEnv(config)
+            self.testenv_url = config_file
         except Exception as err:
             raise RuntimeError(f"testenv config file({config_file}) is not supported, "
                             f"error: {err}") from err
@@ -134,3 +146,14 @@ class BenchmarkingJob:
 
     def _parse_simulation_config(self, simulation_config):
         self.simulation = Simulation(simulation_config)
+
+    def _parse_sandbox_config(self):
+        """sandbox_profile (opt-in) runs the test cases in the simulation cluster."""
+        if self.sandbox_profile is None:
+            if self.device_simulation is not None:
+                raise ValueError("benchmarkingjob's device_simulation needs a sandbox_profile.")
+            return
+        self.sandbox_profile = SandboxProfile(self.sandbox_profile, self.device_simulation)
+        if self.sandbox_profile.enabled and self.simulation is None:
+            raise ValueError("benchmarkingjob's sandbox_profile runs the test cases in the "
+                             "simulation cluster; add a simulation block to build it.")
