@@ -998,7 +998,7 @@ def render_dynamic_markdown(
 ) -> str:
     skipped_examples = dynamic_skipped_examples(report)
     runnable_examples = [
-        example for example in report.examples if example.path not in skipped_examples
+        example for example in report.examples if example.identity not in skipped_examples
     ]
     result = PASS if all(
         not example.has_blocking_errors for example in runnable_examples
@@ -1068,23 +1068,31 @@ def append_dynamic_skipped_examples(
         "| Example | Reason |",
         "|---|---|",
     ]
-    for example_path, reason in sorted(skipped_examples.items()):
-        lines.append("| `{}` | {} |".format(escape_table(example_path), reason))
+    for (example_name, example_path), reason in sorted(skipped_examples.items()):
+        lines.append("| `{}` (`{}`) | {} |".format(
+            escape_table(example_path), escape_table(example_name), reason
+        ))
     lines.extend(["", "</details>"])
     return rendered.rstrip() + "\n" + "\n".join(lines).rstrip() + "\n"
 
 
-def dynamic_skipped_examples(report: CombinedReport) -> Dict[str, str]:
+def dynamic_skipped_examples(report: CombinedReport) -> Dict[Tuple[str, str], str]:
     skipped = {}
     for example in report.examples:
         reason = dynamic_skip_reason(example)
         if reason:
-            skipped[example.path] = reason
+            skipped[example.identity] = reason
     return skipped
 
 
 def dynamic_skipped_example_paths(report: CombinedReport) -> List[str]:
-    return sorted(dynamic_skipped_examples(report))
+    skipped_paths = {path for _, path in dynamic_skipped_examples(report)}
+    runnable_paths = {
+        example.identity[1]
+        for example in report.examples
+        if not dynamic_skip_reason(example)
+    }
+    return sorted(skipped_paths - runnable_paths)
 
 
 def dynamic_skip_reason(example: ExampleResult) -> str:

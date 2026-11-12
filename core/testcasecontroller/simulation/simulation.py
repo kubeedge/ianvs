@@ -14,6 +14,21 @@
 
 """Simulation"""
 
+from core.common.log import LOGGER
+
+
+# limits enforced by the sedna all-in-one installer
+MAX_CLOUD_WORKER_NODES = 2
+MAX_EDGE_WORKER_NODES = 3
+# The sedna all-in-one node image (kubeedge/sedna-allinone-node:v1.30.0,
+# Kubernetes v1.30) bundles keadm v1.21.0, so it deploys KubeEdge v1.21.0;
+# another version needs a node image built for it. Pinned with Sedna v0.7.0,
+# the versions the installer is tested with.
+DEFAULT_KUBEEDGE_VERSION = "v1.21.0"
+# newest Sedna release; pinned so runs are reproducible.
+# "latest" lets the installer pick the newest release.
+DEFAULT_SEDNA_VERSION = "v0.7.0"
+
 
 # pylint: disable=too-few-public-methods
 class Simulation:
@@ -26,29 +41,39 @@ class Simulation:
         number of the cloud worker.
     edge_number : int
         number of the edge nodes.
-    cluster_name : int
+    cluster_name : string
         name of the simulation cluster.
     kubeedge_version : string
-        version of kubeedge, e.g. 1.8.0, latest.
+        version of kubeedge, v1.21.0 (default), the version keadm in the
+        sedna all-in-one node image is built for. "latest" is rejected.
     sedna_version : string
-        version of sedna, e.g. 0.4.3, latest.
+        version of sedna, e.g. v0.7.0 (default), or latest for the newest
+        release as resolved by the installer.
     """
 
     def __init__(self, simulation_config):
         self.cloud_number = 0
         self.edge_number = 0
         self.cluster_name = ""
-        self.kubeedge_version = ""
-        self.sedna_version = ""
+        self.kubeedge_version = DEFAULT_KUBEEDGE_VERSION
+        self.sedna_version = DEFAULT_SEDNA_VERSION
         self._parse_config(simulation_config)
 
     def _parse_config(self, simulation_config):
         """
         parse the simulation config.
         """
+        if not isinstance(simulation_config, dict):
+            raise ValueError(
+                f"simulation config ({simulation_config}) must be a dict.")
+
         for attribute, value in simulation_config.items():
             if attribute in self.__dict__:
+                if isinstance(value, str) and not value.strip():
+                    raise ValueError(f"simulation {attribute} must not be empty.")
                 self.__dict__[attribute] = value
+            else:
+                LOGGER.warning("unknown simulation config key ignored: %s", attribute)
 
         self._check_fields()
 
@@ -56,24 +81,34 @@ class Simulation:
         """
         check the fields of simulation config.
         """
-        if not isinstance(self.cloud_number, int):
-            raise ValueError(
-                f"simulation cloud_number"
-                f"({self.cloud_number} must be int type.")
+        for name in ("cloud_number", "edge_number"):
+            value = getattr(self, name)
+            # bool is a subclass of int, so reject it explicitly
+            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                raise ValueError(
+                    f"simulation {name} ({value}) must be a non-negative int.")
 
-        if not isinstance(self.edge_number, int):
+        if str(self.kubeedge_version).strip().lower() == "latest":
             raise ValueError(
-                f"simulation edge_number"
-                f"({self.edge_number} must be int type.")
+                "simulation kubeedge_version must be a release such as "
+                f"{DEFAULT_KUBEEDGE_VERSION}; the newest KubeEdge needs a newer "
+                "sedna all-in-one node image.")
+        if str(self.kubeedge_version).strip().lstrip("v") != DEFAULT_KUBEEDGE_VERSION.lstrip("v"):
+            LOGGER.warning("simulation kubeedge_version %s: the sedna all-in-one node "
+                           "image is built for KubeEdge %s; another version needs a "
+                           "node image built for it.", self.kubeedge_version,
+                           DEFAULT_KUBEEDGE_VERSION)
 
-        if not isinstance(self.cluster_name, str):
+        if self.cloud_number > MAX_CLOUD_WORKER_NODES:
             raise ValueError(
-                f"simulation ({self.cluster_name}) must be string type.")
+                f"simulation cloud_number ({self.cloud_number}) must be at most "
+                f"{MAX_CLOUD_WORKER_NODES}.")
+        if self.edge_number > MAX_EDGE_WORKER_NODES:
+            raise ValueError(
+                f"simulation edge_number ({self.edge_number}) must be at most "
+                f"{MAX_EDGE_WORKER_NODES}.")
 
-        if not isinstance(self.kubeedge_version, str):
-            raise ValueError(
-                f"simulation ({self.kubeedge_version}) must be string type.")
-
-        if not isinstance(self.sedna_version, str):
-            raise ValueError(
-                f"simulation ({self.sedna_version}) must be string type.")
+        for name in ("cluster_name", "kubeedge_version", "sedna_version"):
+            value = getattr(self, name)
+            if not isinstance(value, str):
+                raise ValueError(f"simulation {name} ({value}) must be string type.")
