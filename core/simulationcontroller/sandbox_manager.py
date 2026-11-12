@@ -16,9 +16,14 @@
 
 from core.common.constant import ParadigmType
 from core.common.log import LOGGER
+from core.simulationcontroller.system_metrics_profiler import SYSTEM_METRIC_NAMES
 
 DEFAULT_BASE_IMAGE = "python:3.9-slim"
 DEFAULT_TIMEOUT_S = 3600
+# the network condition when device_simulation sets none (proposal §6.11): a network
+# constraint is a deliberate test condition, so the default is flat across paradigms
+DEFAULT_NETWORK_BANDWIDTH_MBPS = 100
+DEFAULT_NETWORK_LATENCY_MS = 0
 
 # paradigm-aware defaults (max_memory_mb, max_cpu_cores), applied field by field when
 # device_simulation does not set them; starting estimates, to be tuned with measured usage
@@ -32,14 +37,26 @@ PARADIGM_RESOURCE_DEFAULTS = {
     ParadigmType.MULTIEDGE_INFERENCE.value: (2048, 2),
 }
 
-# keys accepted now but applied by later stages (network emulation, metrics profiler)
-_DEFERRED_DEVICE_KEYS = ("network_bandwidth_mbps", "network_latency_ms")
-
-
-def _positive_number(name, value):
+def _positive_number(name, value, allow_zero=False):
     # bool is a subclass of int, so reject it explicitly
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or value <= 0:
-        raise ValueError(f"{name} ({value}) must be a positive number.")
+    if isinstance(value, bool) or not isinstance(value, (int, float)) \
+            or value < 0 or (value == 0 and not allow_zero):
+        kind = "a non-negative" if allow_zero else "a positive"
+        raise ValueError(f"{name} ({value}) must be {kind} number.")
+    return value
+
+
+def _system_metrics(value):
+    """'all', or a list of system metric names (an empty list reports none)."""
+    if value == "all":
+        return value
+    if not isinstance(value, list) or not all(isinstance(v, str) for v in value):
+        raise ValueError(f"sandbox_profile system_metrics ({value}) must be \"all\" "
+                         "or a list of metric names.")
+    unknown = [v for v in value if v not in SYSTEM_METRIC_NAMES]
+    if unknown:
+        raise ValueError(f"sandbox_profile system_metrics: unknown metrics {unknown}; "
+                         f"known: {', '.join(SYSTEM_METRIC_NAMES)}")
     return value
 
 
@@ -59,10 +76,12 @@ class SandboxProfile:
     config : dict
         the sandbox_profile block of the benchmarking job, keys:
         enabled (bool), image (prebuilt image, else one is built), base_image,
-        requirements (extra pip requirement files or local .whl files), data_paths (extra host paths
-        the algorithm reads), timeout (seconds per test case), system_metrics.
+        requirements (extra pip requirement files or local .whl files), data_paths
+        (extra host paths the algorithm reads), timeout (seconds per test case),
+        system_metrics ("all" or a list of the system metrics to report).
     device_simulation : dict
-        optional device_simulation block: max_memory_mb, max_cpu_cores.
+        optional device_simulation block: max_memory_mb, max_cpu_cores,
+        network_bandwidth_mbps, network_latency_ms.
     """
 
     def __init__(self, config, device_simulation=None):
@@ -95,6 +114,7 @@ class SandboxProfile:
         _str_list("requirements", self.requirements)
         _str_list("data_paths", self.data_paths)
         _positive_number("sandbox_profile timeout", self.timeout)
+        _system_metrics(self.system_metrics)
 
     @staticmethod
     def _parse_device_simulation(config):
@@ -102,14 +122,20 @@ class SandboxProfile:
             raise ValueError(f"device_simulation ({config}) must be a dict.")
         parsed = {}
         for key, value in config.items():
-            if key in ("max_memory_mb", "max_cpu_cores"):
+            if key in ("max_memory_mb", "max_cpu_cores", "network_bandwidth_mbps"):
                 parsed[key] = _positive_number(f"device_simulation {key}", value)
-            elif key in _DEFERRED_DEVICE_KEYS:
-                LOGGER.warning("device_simulation %s is not applied yet; "
-                               "network emulation is part of a later stage", key)
+            elif key == "network_latency_ms":
+                parsed[key] = _positive_number(f"device_simulation {key}", value,
+                                               allow_zero=True)
             else:
                 LOGGER.warning("unknown device_simulation key ignored: %s", key)
         return parsed
+
+    def network(self):
+        """the emulated network condition: (bandwidth_mbps, latency_ms)."""
+        return (self.device_simulation.get("network_bandwidth_mbps",
+                                           DEFAULT_NETWORK_BANDWIDTH_MBPS),
+                self.device_simulation.get("network_latency_ms", DEFAULT_NETWORK_LATENCY_MS))
 
     def resources(self, paradigm_type):
         """

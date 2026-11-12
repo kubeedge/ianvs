@@ -32,6 +32,7 @@ import tempfile
 import time
 
 from core.common.log import LOGGER
+from core.simulationcontroller.runner import NETWORK_READY_FILE
 
 DEFAULT_CLUSTER_NAME = "sedna-mini"
 EDGE_ROLE_LABEL = "node-role.kubernetes.io/edge"
@@ -46,7 +47,7 @@ NODE_STAGE_ROOT = "/var/lib/ianvs-sandbox"
 INPUT_STAGE_ROOT = f"{NODE_STAGE_ROOT}/inputs"
 # where the kubelet (edgecore on an edge node) keeps the log of a job's container
 POD_LOG_GLOB = "/var/log/pods/default_{job}-*_*/testcase/*.log"
-POLL_INTERVAL_S = 3
+POLL_INTERVAL_S = 2
 EDGE_READY_TIMEOUT_S = 120
 # the Ianvs repo files the image needs, relative to the repo root
 _IMAGE_SOURCES = ("core", "requirements.txt", os.path.join("resources", "third_party"))
@@ -67,6 +68,8 @@ class JobFailure(RuntimeError):
     def __init__(self, status, message):
         super().__init__(f"{status}: {message}")
         self.status = status
+        # the system metrics measured before the failure, for the leaderboard row
+        self.metrics = {}
 
 
 def _run(cmd, **kwargs):
@@ -322,9 +325,14 @@ class SimulationJobAdministrator:
             },
         }
 
-    def run_job(self, manifest, timeout):
+    def run_job(self, manifest, timeout, on_poll=None):
         """
         create the Job and watch its pod until it terminates.
+
+        Parameters
+        ----------
+        on_poll : callable
+            called with the pod (as JSON) at every poll, e.g. to sample it
 
         Returns
         -------
@@ -338,6 +346,8 @@ class SimulationJobAdministrator:
             pods = json.loads(self.kubectl("get", "pods", "-l", f"job-name={job_name}",
                                            "-o", "json"))["items"]
             for pod in pods:
+                if on_poll is not None:
+                    on_poll(pod)
                 for status in pod.get("status", {}).get("containerStatuses", []):
                     terminated = status.get("state", {}).get("terminated")
                     if terminated:
@@ -349,6 +359,86 @@ class SimulationJobAdministrator:
                                          f"{waiting['reason']}: {waiting.get('message', '')}")
             time.sleep(POLL_INTERVAL_S)
         raise JobFailure("TIMEOUT", f"job {job_name} did not finish within {timeout} s")
+
+    @staticmethod
+    def pod_cgroup(container, pod_uid):
+        """
+        the cgroup directory of a pod on its node, e.g.
+        /sys/fs/cgroup/kubepods.slice/kubepods-pod<uid>.slice (systemd driver, with the
+        uid's dashes as underscores) or /sys/fs/cgroup/kubepods/pod<uid> (cgroupfs).
+        """
+        names = f"-name '*pod{pod_uid}*' -o -name '*pod{pod_uid.replace('-', '_')}*'"
+        found = _run(["docker", "exec", container, "sh", "-c",
+                      f"find /sys/fs/cgroup -maxdepth 5 -type d \\( {names} \\) | head -1"],
+                     text=True).stdout.strip()
+        if not found:
+            raise RuntimeError(f"cgroup of pod {pod_uid} not found on {container}")
+        return found
+
+    @staticmethod
+    def pod_pid(container, cgroup):
+        """a process of the pod, for entering its network namespace."""
+        pid = _run(["docker", "exec", container, "sh", "-c",
+                    f"cat {cgroup}/*/cgroup.procs {cgroup}/cgroup.procs 2>/dev/null | head -1"],
+                   text=True).stdout.strip()
+        if not pid:
+            raise RuntimeError(f"no process in cgroup {cgroup}")
+        return pid
+
+    @staticmethod
+    def pod_ip(container, pid):
+        """the pod's IPv4 address, read in its network namespace on the node; "" until
+        its network is set up. Edge nodes report a pod's status to the API server late,
+        so the node, not the API, tells when the pod can be shaped."""
+        try:
+            return _run(["docker", "exec", container, "sh", "-c",
+                         f"nsenter -t {pid} -n ip -4 -o addr show eth0 2>/dev/null"
+                         " | awk '{print $4}' | cut -d/ -f1"], text=True).stdout.strip()
+        except RuntimeError:
+            return ""
+
+    @staticmethod
+    def apply_network(container, pid, pod_ip, bandwidth_mbps, latency_ms):
+        """
+        emulate a network condition for a pod with tc/netem: on the pod's eth0 (the
+        traffic it sends) the bandwidth and the added round-trip delay, and on the
+        node's side of its veth pair (the traffic it receives) the bandwidth.
+        """
+        rate = f"rate {bandwidth_mbps:g}mbit"
+        delay = f"delay {latency_ms:g}ms " if latency_ms else ""
+        script = (
+            f"nsenter -t {pid} -n tc qdisc replace dev eth0 root netem {delay}{rate} && "
+            f"dev=$(ip -o route get {pod_ip} | sed -n 's/.* dev \\([^ ]*\\).*/\\1/p') && "
+            f"[ -n \"$dev\" ] && tc qdisc replace dev \"$dev\" root netem {rate} && echo \"$dev\"")
+        peer = _run(["docker", "exec", container, "sh", "-c", script], text=True).stdout.strip()
+        LOGGER.info("network emulation for pod %s: %s mbit/s, +%s ms (pod eth0, node %s)",
+                    pod_ip, f"{bandwidth_mbps:g}", f"{latency_ms:g}", peer)
+
+    @staticmethod
+    def signal_network_ready(container, stage, output_dir):
+        """tell the job's runner that its network emulation is in place."""
+        _run(["docker", "exec", container, "touch",
+              f"{stage}{output_dir}/{NETWORK_READY_FILE}"])
+
+    @staticmethod
+    def sample_pod(container, cgroup, pid, du_path):
+        """
+        one resource sample of a pod: the node's time, memory current/peak (bytes), CPU
+        usage (µs), block I/O read/written (bytes), eth0 received/sent (bytes) and the
+        size of a directory (KiB), as key=value lines (see parse_sample).
+        """
+        script = (
+            f"c={cgroup}; echo t=$(date +%s.%N); "
+            "echo mem=$(cat $c/memory.current 2>/dev/null); "
+            "echo peak=$(cat $c/memory.peak 2>/dev/null); "
+            "echo cpu=$(awk '/^usage_usec/ {print $2}' $c/cpu.stat 2>/dev/null); "
+            "echo io=$(awk '{for (i = 2; i <= NF; i++) {split($i, a, \"=\"); "
+            "if (a[1] == \"rbytes\") r += a[2]; if (a[1] == \"wbytes\") w += a[2]}} "
+            "END {print r + 0, w + 0}' $c/io.stat 2>/dev/null); "
+            f"echo net=$(nsenter -t {pid} -n cat /proc/net/dev 2>/dev/null | "
+            "awk '/eth0:/ {sub(/.*eth0:/, \"\"); print $1, $9}'); "
+            f"echo du=$(du -sk {du_path} 2>/dev/null | cut -f1)")
+        return _run(["docker", "exec", container, "sh", "-c", script], text=True).stdout
 
     @staticmethod
     def collect(container, stage, path):

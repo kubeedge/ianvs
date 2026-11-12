@@ -1,6 +1,7 @@
 """Tests for the simulation sandbox: profile, job administrator, controller and runner."""
 import importlib.util
 import json
+from datetime import datetime, timezone
 import os
 import tempfile
 import unittest
@@ -8,7 +9,9 @@ import uuid
 from unittest import mock
 
 from core.simulationcontroller import runner
+from core.simulationcontroller import simulation_controller as sc
 from core.simulationcontroller import simulation_job_administrator as sja
+from core.simulationcontroller import system_metrics_profiler as smp
 from core.simulationcontroller.sandbox_manager import SandboxProfile
 from core.simulationcontroller.simulation_controller import (
     SimulationController, mount_paths, referenced_paths)
@@ -35,9 +38,20 @@ class SandboxProfileTest(unittest.TestCase):
                                ({"timeout": 0}, None), ({"requirements": "r.txt"}, None),
                                ({"data_paths": [""]}, None), ({"base_image": ""}, None),
                                ({}, {"max_memory_mb": -1}), ({}, {"max_cpu_cores": True}),
-                               ({}, "x")):
+                               ({}, "x"), ({"system_metrics": "some"}, None),
+                               ({"system_metrics": ["peak_memory_mb", "nope"]}, None),
+                               ({}, {"network_bandwidth_mbps": 0}),
+                               ({}, {"network_latency_ms": -5})):
             with self.assertRaises(ValueError):
                 SandboxProfile(config, device)
+
+    def test_network_and_system_metrics(self):
+        self.assertEqual(SandboxProfile({}).network(), (100, 0))
+        profile = SandboxProfile({"system_metrics": ["peak_memory_mb", "wall_time_s"]},
+                                 {"network_bandwidth_mbps": 50, "network_latency_ms": 0})
+        self.assertEqual(profile.network(), (50, 0))
+        self.assertEqual(profile.system_metrics, ["peak_memory_mb", "wall_time_s"])
+        self.assertEqual(SandboxProfile({"system_metrics": []}).system_metrics, [])
 
 
 class PathsTest(unittest.TestCase):
@@ -265,10 +279,17 @@ class ControllerRunTest(unittest.TestCase):
     def test_inputs_are_staged_once(self):
         admin = self.controller.admin
         admin.run_job.return_value = {"exitCode": 0, "message": json.dumps(
-            {"status": "SUCCESS", "metrics": {"accuracy": 1.0}})}
+            {"status": "SUCCESS", "metrics": {"accuracy": 1.0}, "wall_time_s": 12.5})}
         for _ in range(2):
-            self.assertEqual(self.controller.run_sandboxed(self._testcase(), self.workspace),
-                             {"accuracy": 1.0})
+            result = self.controller.run_sandboxed(self._testcase(), self.workspace)
+            # the test case's metrics, its status, then the system metrics
+            self.assertEqual(list(result)[:3], ["accuracy", "status", "wall_time_s"])
+            self.assertEqual((result["accuracy"], result["status"], result["wall_time_s"]),
+                             (1.0, "SUCCESS", 12.5))
+            self.assertEqual(result["network_profile"], "100mbps-0ms")
+            self.assertEqual(result["gpu_utilization_avg"], "N/A")
+        # the runner waits for the network emulation
+        self.assertIn("--wait-network", admin.job_manifest.call_args[0][3])
         input_calls = [c for c in admin.stage_paths.call_args_list
                        if c[0][1] == sja.INPUT_STAGE_ROOT]
         self.assertEqual(len(input_calls), 1)
@@ -291,10 +312,193 @@ class ControllerRunTest(unittest.TestCase):
         out = os.path.join(self.workspace, "algo", str(testcase.id))
         self.assertEqual(admin.save_logs.call_args[0][2], os.path.join(out, "sandbox.log"))
         with open(os.path.join(out, runner.RESULT_FILE), encoding="utf-8") as file:
-            self.assertEqual(json.load(file)["status"], "TIMEOUT")
+            record = json.load(file)
+        self.assertEqual(record["status"], "TIMEOUT")
+        self.assertIn("peak_memory_mb", record["system_metrics"])
+
+    def test_oom_failure_carries_system_metrics(self):
+        admin = self.controller.admin
+        admin.run_job.return_value = {"exitCode": 137, "reason": "Error",
+                                      "message": "a log line"}
+        with self.assertRaises(JobFailure) as ctx:
+            self.controller.run_sandboxed(self._testcase(), self.workspace)
+        self.assertEqual(ctx.exception.status, "OOM_FAILURE")
+        # killed at its limit (single-task default 1024 MiB), even without a sample
+        self.assertTrue(ctx.exception.metrics["oom_failure"])
+        self.assertEqual(ctx.exception.metrics["peak_memory_mb"], 1024)
+
+    def test_selected_system_metrics(self):
+        self.controller.profile = SandboxProfile({"system_metrics": ["peak_memory_mb"]})
+        self.controller.admin.run_job.return_value = {"exitCode": 0, "message": json.dumps(
+            {"status": "SUCCESS", "metrics": {"accuracy": 1.0}})}
+        result = self.controller.run_sandboxed(self._testcase(), self.workspace)
+        self.assertEqual(sorted(result), ["accuracy", "peak_memory_mb", "status"])
 
 
-class RunnerTest(unittest.TestCase):
+def _sample(t, mem, cpu_usec, io=(0, 0), net=(0, 0), du_kb=0, peak=None):
+    return (f"t={t}\nmem={mem}\npeak={peak or mem}\ncpu={cpu_usec}\nio={io[0]} {io[1]}\n"
+            f"net={net[0]} {net[1]}\ndu={du_kb}\n")
+
+
+class ProfilerTest(unittest.TestCase):
+    def test_parse_sample(self):
+        self.assertEqual(smp.parse_sample("t=1.5\nmem=100\nio=10 20\nnet=\ndu=x\npeak=\n"),
+                         {"t": 1.5, "mem": 100.0, "io_in": 10.0, "io_out": 20.0})
+
+    def test_metrics(self):
+        mib = smp.MB
+        profiler = smp.SystemMetricsProfiler((1024, 2), (50, 20))
+        # 10 s, 2 CPU cores: 5 CPU-s in the first 5 s (0.5), 9 more in the next 5 s (0.9)
+        for text in (_sample(0, 100 * mib, 0, net=(0, 0), du_kb=1024),
+                     _sample(5, 300 * mib, 5e6, io=(10 * mib, 0), net=(1e6, 1e6), du_kb=4096),
+                     _sample(10, 200 * mib, 14e6, io=(20 * mib, 5 * mib), net=(2e6, 3e6),
+                             du_kb=2048, peak=512 * mib)):
+            profiler.add(smp.parse_sample(text))
+        with tempfile.TemporaryDirectory() as out:
+            with open(os.path.join(out, "model.pth"), "wb") as file:
+                file.write(b"0" * mib)
+            open(os.path.join(out, "notes.txt"), "w", encoding="utf-8").close()
+            metrics = profiler.metrics({}, False, out)
+        self.assertEqual(metrics["wall_time_s"], 10)
+        self.assertEqual(metrics["cpu_utilization_avg"], 0.7)
+        self.assertEqual(metrics["cpu_utilization_max"], 0.9)
+        self.assertEqual(metrics["cpu_cores_used_avg"], 1.4)
+        self.assertEqual(metrics["peak_memory_mb"], 512)
+        self.assertEqual(metrics["memory_utilization_avg"], round(200 / 1024, 4))
+        self.assertEqual((metrics["disk_read_bytes"], metrics["disk_write_bytes"]),
+                         (20 * mib, 5 * mib))
+        self.assertEqual(metrics["disk_read_mb_s_avg"], 2.0)
+        self.assertEqual(metrics["disk_usage_peak_mb"], 4)
+        self.assertEqual(metrics["model_artifact_size_mb"], 1)
+        # 5 MB in 10 s = 4 Mbit/s; the busiest interval moves 3 MB in 5 s = 4.8 Mbit/s
+        self.assertEqual(metrics["network_bandwidth_mbps_avg"], 4.0)
+        self.assertEqual(metrics["network_bandwidth_mbps_peak"], 4.8)
+        self.assertEqual((metrics["network_latency_ms"], metrics["network_profile"]),
+                         (20, "50mbps-20ms"))
+        self.assertFalse(metrics["oom_failure"])
+        self.assertEqual(metrics["gpu_energy_joules"], "N/A")
+        self.assertEqual(list(metrics), list(smp.SYSTEM_METRIC_NAMES))
+
+    def test_rates_use_the_container_lifetime(self):
+        # 1.8 CPU-s in a 3 s container on 1 core, of which the test case itself ran 1.4 s
+        profiler = smp.SystemMetricsProfiler((1024, 1), (100, 0))
+        profiler.add(smp.parse_sample(_sample(0, 1, 0)))
+        profiler.add(smp.parse_sample(_sample(2, 1, 1.8e6)))
+        metrics = profiler.metrics({"startedAt": "2026-11-12T08:00:00Z",
+                                    "finishedAt": "2026-11-12T08:00:03Z"}, False, "", 1.4)
+        self.assertEqual(metrics["wall_time_s"], 1.4)
+        self.assertEqual(metrics["cpu_cores_used_avg"], 0.6)
+        self.assertLessEqual(metrics["cpu_utilization_avg"], 1.0)
+
+    def test_wall_time_sources(self):
+        profiler = smp.SystemMetricsProfiler((1024, 1), (100, 0))
+        self.assertEqual(profiler.wall_time({}, 3.25), 3.25)
+        container = {"startedAt": "2026-11-12T08:00:00Z", "finishedAt": "2026-11-12T08:01:30Z"}
+        self.assertEqual(profiler.wall_time(container), 90)
+        self.assertEqual(profiler.wall_time({}), 0.0)
+        # a killed test case: from when its network was ready (08:01:00) to the finish
+        profiler.started = datetime(2026, 11, 12, 8, 1, tzinfo=timezone.utc).timestamp()
+        self.assertEqual(profiler.wall_time(container), 30)
+        self.assertEqual(profiler.container_span(container), 90)
+
+    def test_select_metrics(self):
+        metrics = {"a": 1, "b": 2}
+        self.assertEqual(smp.select_metrics(metrics, "all"), metrics)
+        self.assertEqual(smp.select_metrics(metrics, ["b", "c"]), {"b": 2})
+        self.assertEqual(smp.select_metrics(metrics, []), {})
+
+
+class ObserverTest(unittest.TestCase):
+    def _observer(self):
+        admin = mock.Mock()
+        admin.pod_cgroup.return_value = "/sys/fs/cgroup/kubepods.slice/kubepods-podx.slice"
+        admin.pod_pid.return_value = "42"
+        admin.pod_ip.return_value = "10.0.0.5"
+        admin.sample_pod.return_value = _sample(1, 100, 10)
+        profiler = smp.SystemMetricsProfiler((1024, 1), (50, 20))
+        return admin, profiler, sc._JobObserver(  # pylint: disable=protected-access
+            admin, "c-edge0", "/stage/job", "/ws/out", profiler)
+
+    def test_network_once_then_samples(self):
+        admin, profiler, observer = self._observer()
+        # the edge node still reports the pod as Pending, but it runs on the node
+        pending = {"metadata": {"uid": "u"}, "status": {"phase": "Pending"}}
+        for _ in range(3):
+            observer.on_poll(pending)
+        admin.apply_network.assert_called_once_with("c-edge0", "42", "10.0.0.5", 50, 20)
+        admin.signal_network_ready.assert_called_once_with("c-edge0", "/stage/job", "/ws/out")
+        self.assertEqual(len(profiler.samples), 3)
+        # the test case starts with the first sample after the network is ready
+        self.assertEqual(profiler.started, 1.0)
+
+    def test_waits_for_the_pod_and_its_network(self):
+        admin, profiler, observer = self._observer()
+        pod = {"metadata": {"uid": "u"}, "status": {"phase": "Pending"}}
+        admin.pod_cgroup.side_effect = [RuntimeError("not found"), admin.pod_cgroup.return_value]
+        admin.pod_ip.side_effect = ["", "10.0.0.5"]
+        observer.on_poll(pod)   # not on the node yet
+        observer.on_poll(pod)   # on the node, no IP yet
+        admin.apply_network.assert_not_called()
+        self.assertEqual(profiler.samples, [])
+        observer.on_poll(pod)
+        admin.apply_network.assert_called_once()
+        self.assertEqual(len(profiler.samples), 1)
+
+    def test_network_failure_fails_the_job(self):
+        admin, _, observer = self._observer()
+        admin.apply_network.side_effect = RuntimeError("tc: not found")
+        with self.assertRaises(JobFailure) as ctx:
+            observer.on_poll({"metadata": {"uid": "u"},
+                              "status": {"phase": "Running", "podIP": "10.0.0.5"}})
+        self.assertEqual(ctx.exception.status, "EXEC_FAILURE")
+        self.assertIn("network emulation", str(ctx.exception))
+
+
+class NetworkAndSamplingCommandsTest(unittest.TestCase):
+    def test_apply_network(self):
+        with mock.patch.object(sja, "_run", return_value=mock.Mock(stdout="veth1\n")) as run:
+            SimulationJobAdministrator.apply_network("c-edge0", "42", "10.0.0.5", 50, 20)
+        script = run.call_args[0][0][-1]
+        self.assertIn("nsenter -t 42 -n tc qdisc replace dev eth0 root netem delay 20ms "
+                      "rate 50mbit", script)
+        self.assertIn("ip -o route get 10.0.0.5", script)
+        self.assertIn('tc qdisc replace dev "$dev" root netem rate 50mbit', script)
+        with mock.patch.object(sja, "_run", return_value=mock.Mock(stdout="veth1\n")) as run:
+            SimulationJobAdministrator.apply_network("c-edge0", "42", "10.0.0.5", 100, 0)
+        self.assertNotIn("delay", run.call_args[0][0][-1])
+
+    def test_pod_cgroup(self):
+        found = "/sys/fs/cgroup/kubepods.slice/kubepods-poda_b.slice\n"
+        with mock.patch.object(sja, "_run", return_value=mock.Mock(stdout=found)) as run:
+            self.assertEqual(SimulationJobAdministrator.pod_cgroup("c", "a-b"), found.strip())
+        self.assertIn("*poda_b*", run.call_args[0][0][-1])
+        with mock.patch.object(sja, "_run", return_value=mock.Mock(stdout="")):
+            with self.assertRaises(RuntimeError):
+                SimulationJobAdministrator.pod_cgroup("c", "a-b")
+
+
+class RunnerNetworkTest(unittest.TestCase):
+    def test_wait_for_network(self):
+        with tempfile.TemporaryDirectory() as out:
+            self.assertFalse(runner.wait_for_network(out, timeout=0.05, interval=0.01))
+            open(os.path.join(out, runner.NETWORK_READY_FILE), "w", encoding="utf-8").close()
+            self.assertTrue(runner.wait_for_network(out, timeout=1, interval=0.01))
+            # the marker is removed, so it is not copied back with the outputs
+            self.assertFalse(os.path.exists(os.path.join(out, runner.NETWORK_READY_FILE)))
+
+    def test_network_not_ready_is_reported(self):
+        with tempfile.TemporaryDirectory() as out:
+            log = os.path.join(out, "termination-log")
+            with mock.patch.object(runner, "wait_for_network", return_value=False):
+                code = runner.main(["--testenv", "t", "--algorithm-name", "a",
+                                    "--algorithm-url", "a", "--modules-index", "0",
+                                    "--testcase-id", "x", "--workspace", out,
+                                    "--output-dir", out, "--wait-network"],
+                                   termination_log=log)
+            self.assertEqual(code, 1)
+            with open(log, encoding="utf-8") as file:
+                self.assertIn("network emulation", json.load(file)["error"])
+
     def test_to_jsonable(self):
         class Scalar:  # pylint: disable=too-few-public-methods
             def item(self):
@@ -337,18 +541,61 @@ class RunnerTest(unittest.TestCase):
 
 
 class RunTestcasesTest(unittest.TestCase):
-    def test_sandbox_failure_is_contained(self):
+    def test_sandbox_failure_is_ranked(self):
         from core.testcasecontroller.testcasecontroller import TestCaseController
         controller = TestCaseController()
-        controller.test_cases = [mock.Mock(id="ok"), mock.Mock(id="oom")]
+        controller.test_cases = [mock.Mock(id="ok"), mock.Mock(id="oom"),
+                                 mock.Mock(id="broken")]
         sandbox = mock.Mock()
-        sandbox.run_sandboxed.side_effect = [{"accuracy": 1.0},
-                                             JobFailure("OOM_FAILURE", "limit")]
+        oom = JobFailure("OOM_FAILURE", "limit")
+        oom.metrics = {"peak_memory_mb": 1024, "oom_failure": True}
+        sandbox.run_sandboxed.side_effect = [{"accuracy": 1.0, "status": "SUCCESS"}, oom,
+                                             RuntimeError("could not stage")]
         testcases, results = controller.run_testcases("/ws", sandbox)
-        self.assertEqual([t.id for t in testcases], ["ok"])
-        self.assertEqual(results["ok"][0], {"accuracy": 1.0})
+        # a failure with a status becomes a leaderboard row; other errors do not
+        self.assertEqual([t.id for t in testcases], ["ok", "oom"])
+        self.assertEqual(results["oom"][0], {"status": "OOM_FAILURE", "peak_memory_mb": 1024,
+                                             "oom_failure": True})
         for testcase in controller.test_cases:
             testcase.run.assert_not_called()
+
+    def test_host_failure_is_not_ranked(self):
+        from core.testcasecontroller.testcasecontroller import TestCaseController
+        controller = TestCaseController()
+        ok, bad = mock.Mock(id="ok"), mock.Mock(id="bad")
+        ok.run.return_value = {"accuracy": 1.0}
+        bad.run.side_effect = JobFailure("EXEC_FAILURE", "x")
+        controller.test_cases = [ok, bad]
+        testcases, _ = controller.run_testcases("/ws")
+        self.assertEqual([t.id for t in testcases], ["ok"])
+
+
+class RankTest(unittest.TestCase):
+    def test_failure_rows_and_status_column(self):
+        from core.storymanager.rank.rank import Rank
+        rank = Rank({"sort_by": [{"accuracy": "descend"}],
+                     "selected_dataitem": {"paradigms": ["all"], "modules": ["all"],
+                                           "hyperparameters": ["all"],
+                                           "metrics": ["accuracy", "peak_memory_mb"]}})
+
+        def testcase(name):
+            case = mock.Mock(id=name, output_dir=f"/ws/{name}")
+            case.algorithm.name, case.algorithm.paradigm_type = "algo", "singletasklearning"
+            case.algorithm.modules = {"basemodel": mock.Mock(hyperparameters={"mode": name})}
+            case.algorithm.modules["basemodel"].name = "Model"
+            return case
+
+        cases = [testcase("oom"), testcase("ok")]
+        results = {"oom": ({"status": "OOM_FAILURE", "peak_memory_mb": 1024.0}, "t1"),
+                   "ok": ({"accuracy": 0.9, "status": "SUCCESS", "peak_memory_mb": 310.5}, "t2")}
+        with tempfile.TemporaryDirectory() as out:
+            rank.save(cases, results, out)
+            with open(os.path.join(out, "rank", "selected_rank.csv"), encoding="utf-8") as file:
+                lines = file.read().splitlines()
+        self.assertTrue(lines[0].startswith("rank,algorithm,status,accuracy,peak_memory_mb"))
+        # the successful test case ranks first; the failed one follows, with N/A
+        self.assertIn("SUCCESS,0.9,310.5", lines[1])
+        self.assertIn("OOM_FAILURE,N/A,1024.0", lines[2])
 
 
 if __name__ == "__main__":
