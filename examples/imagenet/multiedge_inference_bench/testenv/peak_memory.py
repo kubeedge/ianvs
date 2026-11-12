@@ -5,10 +5,10 @@ from sedna.common.class_factory import ClassType, ClassFactory
 
 import matplotlib.pyplot as plt
 
-__all__ = ('peak_memory')
+__all__ = ["peak_memory"]
 
 @ClassFactory.register(ClassType.GENERAL, alias="peak_memory")
-def peak_power(y_true, y_pred, **kwargs):
+def peak_memory(y_true, y_pred, **kwargs):
     mem_usage_per_device = y_pred.get("mem_usage_per_device")
     plt.figure()
     peak_mem = -sys.maxsize
