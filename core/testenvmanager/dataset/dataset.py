@@ -32,13 +32,19 @@ try:
         JSONDataParse,
     )
 except ImportError:
-    # Sedna 0.1.0 legacy layout
-    from sedna.core.base import (
-        BaseDataSource,
-        CSVDataParse,
-        TxtDataParse,
-        JSONDataParse,
-    )
+    try:
+        # Sedna 0.1.0 legacy layout
+        from sedna.core.base import (
+            BaseDataSource,
+            CSVDataParse,
+            TxtDataParse,
+            JSONDataParse,
+        )
+    except ImportError:
+        BaseDataSource = None
+        CSVDataParse = None
+        TxtDataParse = None
+        JSONDataParse = None
 
 try:
     from sedna.datasources import JSONMetaDataParse
@@ -145,17 +151,21 @@ class Dataset:
         file_format = utils.get_file_format(file_url)
         if file_format == DatasetFormat.TXT.value:
             return self._process_txt_index_file(file_url)
-        if file_format == DatasetFormat.JSON.value:
+        if file_format in (DatasetFormat.JSON.value, DatasetFormat.CSV.value):
             return file_url
 
-        return None
+        raise ValueError(
+            f"index file format ({file_format}) is not supported."
+        )
 
     def _process_data_file(self, file_url):
         file_format = utils.get_file_format(file_url)
-        if file_format == DatasetFormat.JSONL.value:
+        if file_format in (DatasetFormat.JSONL.value, DatasetFormat.CSV.value):
             return file_url
 
-        return None
+        raise ValueError(
+            f"data file format ({file_format}) is not supported."
+        )
 
     def _process_data_info_file(self, file_url):
         file_format = utils.get_file_format(file_url)
@@ -592,14 +602,20 @@ class Dataset:
 
         data = None
         if data_format == DatasetFormat.CSV.value:
+            if CSVDataParse is None:
+                raise ImportError("CSV datasets require Sedna.")
             data = CSVDataParse(data_type=data_type, func=feature_process)
             data.parse(file, label=label)
 
         if data_format == DatasetFormat.TXT.value:
+            if TxtDataParse is None:
+                raise ImportError("TXT datasets require Sedna.")
             data = TxtDataParse(data_type=data_type, func=feature_process)
             data.parse(file, use_raw=use_raw)
 
         if data_format == DatasetFormat.JSON.value:
+            if JSONDataParse is None:
+                raise ImportError("JSON datasets require Sedna.")
             data = JSONDataParse(data_type=data_type, func=feature_process)
             data.parse(file)
 
