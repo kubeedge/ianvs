@@ -16,6 +16,7 @@
 
 import importlib
 import os
+import re
 import sys
 import time
 
@@ -78,11 +79,26 @@ def py2dict(url):
     raise RuntimeError('config file must be the py format')
 
 
+class IanvsSafeLoader(yaml.SafeLoader):
+    """Custom YAML SafeLoader supporting scientific notation without decimal points."""
+
+
+SCIENTIFIC_FLOAT_PATTERN = re.compile(
+    r"^[-+]?(?:[0-9][0-9_]*)(?:\.[0-9_]*)?[eE][-+]?[0-9]+$"
+)
+
+IanvsSafeLoader.add_implicit_resolver(
+    "tag:yaml.org,2002:float",
+    SCIENTIFIC_FLOAT_PATTERN,
+    list("-+0123456789")
+)
+
+
 def yaml2dict(url):
     """Convert yaml file to the dict."""
     if url.endswith('.yaml') or url.endswith('.yml'):
         with open(url, "rb") as file:
-            raw_dict = yaml.load(file, Loader=yaml.SafeLoader)
+            raw_dict = yaml.load(file, Loader=IanvsSafeLoader)
 
         return raw_dict
 
