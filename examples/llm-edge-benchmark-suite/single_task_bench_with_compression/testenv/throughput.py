@@ -12,19 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+"""Report request throughput in requests per second."""
 
 from sedna.common.class_factory import ClassType, ClassFactory
 
 __all__ = ["throughput"]
 
+
 @ClassFactory.register(ClassType.GENERAL, alias="throughput")
-def throughput(y_true, y_pred):
-    # total_time = y_pred.get('avg_total_time', [])
-    results_list = y_pred.get('results', [])
-    num_requests = len(results_list)
-    total_latency = 0.0
-    for result in results_list:
-        total_latency += result['total_time']
-    avg_throughput = num_requests /total_latency
-    return avg_throughput
+def throughput(y_true, y_pred):  # pylint: disable=unused-argument
+    """Compute throughput from the total elapsed request time."""
+    results_list = y_pred.get("results", [])
+    total_latency = sum(result["total_time"] for result in results_list)
+    if total_latency <= 0:
+        return 0.0
+    return len(results_list) * 1000 / total_latency
