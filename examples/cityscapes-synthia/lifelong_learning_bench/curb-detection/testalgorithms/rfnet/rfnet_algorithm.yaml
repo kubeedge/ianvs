@@ -24,7 +24,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "BaseModel"
       # the url address of python module; string type;
-      url: "./examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/basemodel.py"
+      url: "./examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/testalgorithms/rfnet/basemodel.py"
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
         # name of the hyperparameter; string type;
@@ -34,12 +34,24 @@ algorithm:
         - epochs:
             values:
               - 1
+        - base_size:
+            values:
+              - 1024
+        - crop_size:
+            values:
+              - 768
+        - batch_size:
+            values:
+              - 4
+        - workers:
+            values:
+              - 4
     #  2> "task_definition": define lifelong task ; optional module;
     - type: "task_definition"
       # name of python module; string type;
       name: "TaskDefinitionByOrigin"
       # the url address of python module; string type;
-      url: "./examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/task_definition_by_origin.py"
+      url: "./examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/testalgorithms/rfnet/task_definition_by_origin.py"
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
         # name of the hyperparameter; string type;
@@ -52,7 +64,7 @@ algorithm:
       # name of python module; string type;
       name: "TaskAllocationByOrigin"
       # the url address of python module; string type;
-      url: "./examples/curb-detection/lifelong_learning_bench/testalgorithms/rfnet/task_allocation_by_origin.py"
+      url: "./examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/testalgorithms/rfnet/task_allocation_by_origin.py"
       # hyperparameters configuration for the python module; list type;
       hyperparameters:
         # name of the hyperparameter; string type;

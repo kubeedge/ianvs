@@ -1,4 +1,10 @@
 import os
+import sys
+
+# Add RFNet directory to sys.path so its internal imports (mypath, dataloaders, etc.) resolve
+_rfnet_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "RFNet")
+if _rfnet_dir not in sys.path:
+    sys.path.insert(0, _rfnet_dir)
 
 import numpy as np
 import torch
@@ -70,7 +76,7 @@ class BaseModel:
             data = data.tolist()
 
         self.validator.test_loader = DataLoader(data, batch_size=self.val_args.test_batch_size, shuffle=False,
-                                                pin_memory=True)
+                                                pin_memory=False)
         return self.validator.validate()
 
     def evaluate(self, data, **kwargs):

@@ -268,7 +268,7 @@ class LifelongLearning(ParadigmBase):
                     train_dataset_file, eval_dataset_file = dataset_files[r - 1]
                     self.cloud_task_index = self._train(self.cloud_task_index,
                                                         train_dataset_file,
-                                                        r)
+                                                        0)
                     self.edge_task_index = self._eval(self.cloud_task_index,
                                                       eval_dataset_file,
                                                       r)
@@ -344,8 +344,8 @@ class LifelongLearning(ParadigmBase):
         del job
 
         unseen_task_train_samples = BaseDataSource(data_type="train")
-        unseen_task_train_samples.x = np.array(unseen_tasks)
-        unseen_task_train_samples.y = np.array(unseen_task_labels)
+        unseen_task_train_samples.x = np.array(unseen_tasks, dtype=object)
+        unseen_task_train_samples.y = np.array(unseen_task_labels, dtype=object)
 
         return inference_results, unseen_task_train_samples
 
@@ -389,7 +389,8 @@ class LifelongLearning(ParadigmBase):
 
         job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
         _, metric_func = get_metric_func(model_metric)
-        edge_task_index = job.evaluate(eval_dataset, metrics=metric_func)
+        job.evaluate(eval_dataset, metrics=metric_func)
+        edge_task_index = os.path.join(eval_output_dir, "index.pkl")
 
         del job
 
