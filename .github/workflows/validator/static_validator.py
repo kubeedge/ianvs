@@ -25,7 +25,7 @@ import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Mapping, Optional, Sequence
+from typing import List, Mapping, Optional, Sequence, Tuple
 
 
 PASS = "PASS"
@@ -50,6 +50,9 @@ CUDA_ONLY_RE = re.compile(
 REPO_PATH_RE = re.compile(
     r"(?P<path>(?:\./)?(?:examples|\.github|resources)/[A-Za-z0-9_./-]+"
     r"(?:\.yaml|\.yml|\.py|\.txt|\.json|\.jsonl|\.whl|\.zip)?)"
+)
+REMOTE_URL_RE = re.compile(
+    r"(?i)\b(?:https?|ftp)://[^\s'\"`<>)]+|//[^\s'\"`<>)]+"
 )
 STATIC_VALIDATED_FILE_SUFFIXES = (".yaml", ".yml", ".py")
 
@@ -378,6 +381,14 @@ def _check_yaml_syntax(report: ExampleReport, files: Sequence[Path]) -> None:
     )
 
 
+def _remote_url_spans(text: str) -> List[Tuple[int, int]]:
+    return [match.span() for match in REMOTE_URL_RE.finditer(text)]
+
+
+def _is_inside_spans(start: int, end: int, spans: Sequence[Tuple[int, int]]) -> bool:
+    return any(s_start <= start and end <= s_end for s_start, s_end in spans)
+
+
 def _check_repo_path_references(
     report: ExampleReport,
     repo_root: Path,
@@ -387,7 +398,10 @@ def _check_repo_path_references(
     missing_parent_references = []
     for path in files:
         text = _read_text(path)
+        url_spans = _remote_url_spans(text)
         for match in REPO_PATH_RE.finditer(text):
+            if _is_inside_spans(match.start("path"), match.end("path"), url_spans):
+                continue
             repo_path = _normalize_repo_path(match.group("path"))
             if _looks_like_generated_dataset_path(repo_path):
                 continue
