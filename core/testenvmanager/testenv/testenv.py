@@ -46,7 +46,9 @@ class TestEnv:
         self.round = 1
         self.client_number = 1
         self.dataset = None
-        self.use_gpu = False  # default false
+        # None means not configured, in which case ianvs does not touch the gpu
+        # visibility of the environment. Set it to false to force a cpu-only run.
+        self.use_gpu = None
         self._parse_config(config)
 
     def _check_fields(self):
