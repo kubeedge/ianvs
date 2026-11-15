@@ -9,7 +9,7 @@ benchmarkingjob:
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testenv/testenv.yaml"
+  testenv: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference_bench/perception-reasoning/testenv/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -22,7 +22,7 @@ benchmarkingjob:
       - name: "perception reasoning test"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml;
-        url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference-bench/perception-reasoning/testalgorithms/perception_reasoning.yaml"
+        url: "./examples/Cloud_Robotics/cloud-edge-collaborative-inference_bench/perception-reasoning/testalgorithms/perception_reasoning.yaml"
 
   # the configuration of ranking leaderboard
   rank:
