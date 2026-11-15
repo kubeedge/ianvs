@@ -551,8 +551,16 @@ def _declared_project_packages(repo_root: Path) -> Set[str]:
 
 
 def _read_requirement_lines(path: Path) -> List[Tuple[int, str]]:
+    raw_bytes = path.read_bytes()
+    if raw_bytes.startswith(b"\xef\xbb\xbf"):
+        text = raw_bytes.decode("utf-8-sig")
+    elif raw_bytes.startswith((b"\xff\xfe", b"\xfe\xff")):
+        text = raw_bytes.decode("utf-16")
+    else:
+        text = raw_bytes.decode("utf-8")
+
     lines = []
-    for index, raw_line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+    for index, raw_line in enumerate(text.splitlines(), 1):
         line = raw_line.strip()
         if not line or line.startswith("#"):
             continue
