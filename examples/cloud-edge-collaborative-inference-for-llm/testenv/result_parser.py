@@ -43,14 +43,16 @@ class Response:
         """
 
         if response:
+            usage = response.get("usage", {})
+            perf = response.get("perf", {})
             return cls(
-                response["completion"],
-                response["usage"]["prompt_tokens"],
-                response["usage"]["completion_tokens"],
-                response["usage"]["total_tokens"],
-                response["perf"]["time_to_first_token"],
-                response["perf"]["internal_token_latency"],
-                response["perf"]["throughput"]
+                response.get("completion", ""),
+                usage.get("prompt_tokens", 0),
+                usage.get("completion_tokens", 0),
+                usage.get("total_tokens", 0),
+                perf.get("time_to_first_token", 0),
+                perf.get("internal_token_latency", 0),
+                perf.get("throughput", 0)
             )
         else:
             return cls("", 0, 0, 0, 0, 0, 0)
