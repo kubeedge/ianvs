@@ -59,13 +59,13 @@ python -m pip install --upgrade pip
 
 cd ~/ianvs
 
-python -m pip install ./examples/resources/third_party/*
+python -m pip install ./resources/third_party/*
 python -m pip install -r requirements.txt
 ```
 
 ### Install ianvs 
 ```
-python setup.py install  
+python -m pip install .
 ```
 
 ### Check the installation
