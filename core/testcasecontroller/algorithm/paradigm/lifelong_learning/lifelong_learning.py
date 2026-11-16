@@ -19,7 +19,7 @@ import shutil
 import numpy as np
 from sedna.datasources import BaseDataSource
 from core.common.log import LOGGER
-from core.common.constant import ParadigmType, SystemMetricType
+from core.common.constant import EnvKey, ParadigmType, SystemMetricType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
 from core.testcasecontroller.metrics import get_metric_func
 from core.common.utils import get_file_format, is_local_dir
@@ -311,9 +311,9 @@ class LifelongLearning(ParadigmBase):
         if not is_local_dir(unseen_task_saved_dir):
             os.makedirs(unseen_task_saved_dir)
 
-        os.environ["INFERENCE_RESULT_DIR"] = output_dir
-        os.environ["OUTPUT_URL"] = output_dir
-        os.environ["MODEL_URLS"] = f"{edge_task_index}"
+        os.environ[EnvKey.INFERENCE_RESULT_DIR] = output_dir
+        os.environ[EnvKey.OUTPUT_URL] = output_dir
+        os.environ[EnvKey.MODEL_URLS] = f"{edge_task_index}"
 
         inference_dataset = self.dataset.load_data(data_index_file, "eval",
                                                    feature_process=_data_feature_process)
@@ -354,12 +354,12 @@ class LifelongLearning(ParadigmBase):
         if not is_local_dir(train_output_dir):
             os.makedirs(train_output_dir)
 
-        os.environ["CLOUD_KB_INDEX"] = cloud_task_index
-        os.environ["OUTPUT_URL"] = train_output_dir
+        os.environ[EnvKey.CLOUD_KB_INDEX] = str(cloud_task_index)
+        os.environ[EnvKey.OUTPUT_URL] = train_output_dir
         if rounds < 1:
-            os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'False'
+            os.environ[EnvKey.HAS_COMPLETED_INITIAL_TRAINING] = 'False'
         else:
-            os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'True'
+            os.environ[EnvKey.HAS_COMPLETED_INITIAL_TRAINING] = 'True'
 
         if isinstance(train_dataset, str):
             train_dataset = self.dataset.load_data(train_dataset, "train",
@@ -379,10 +379,10 @@ class LifelongLearning(ParadigmBase):
         model_eval_info = self.model_eval_config
         model_metric = model_eval_info.get("model_metric")
 
-        os.environ["OUTPUT_URL"] = eval_output_dir
-        os.environ["model_threshold"] = str(model_eval_info.get("threshold"))
-        os.environ["operator"] = model_eval_info.get("operator")
-        os.environ["MODEL_URLS"] = f"{cloud_task_index}"
+        os.environ[EnvKey.OUTPUT_URL] = eval_output_dir
+        os.environ[EnvKey.MODEL_THRESHOLD] = str(model_eval_info.get("threshold"))
+        os.environ[EnvKey.OPERATOR] = model_eval_info.get("operator")
+        os.environ[EnvKey.MODEL_URLS] = f"{cloud_task_index}"
 
         eval_dataset = self.dataset.load_data(data_index_file, "eval",
                                               feature_process=_data_feature_process)
@@ -406,10 +406,10 @@ class LifelongLearning(ParadigmBase):
         model_eval_info = self.model_eval_config
         model_metric = model_eval_info.get("model_metric")
 
-        os.environ["OUTPUT_URL"] = eval_output_dir
-        os.environ["model_threshold"] = str(model_eval_info.get("threshold"))
-        os.environ["operator"] = model_eval_info.get("operator")
-        os.environ["MODEL_URLS"] = f"{cloud_task_index}"
+        os.environ[EnvKey.OUTPUT_URL] = eval_output_dir
+        os.environ[EnvKey.MODEL_THRESHOLD] = str(model_eval_info.get("threshold"))
+        os.environ[EnvKey.OPERATOR] = model_eval_info.get("operator")
+        os.environ[EnvKey.MODEL_URLS] = f"{cloud_task_index}"
 
         eval_dataset = self.dataset.load_data(data_index_file, "eval",
                                               feature_process=_data_feature_process)
