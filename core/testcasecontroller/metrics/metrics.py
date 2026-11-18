@@ -20,6 +20,7 @@ from sedna.common.class_factory import ClassFactory, ClassType
 
 from core.common.constant import SystemMetricType
 from core.common.utils import load_module
+from core.common.log import LOGGER
 
 
 def samples_transfer_ratio_func(system_metric_info: dict):
@@ -83,8 +84,8 @@ def compute(key, matrix):
     bwt_score = bwt_score / ((length - 1) * (length - 1))
     fwt_score = fwt_score / (length - 1)
 
-    print(f"{key} BWT_score: {bwt_score}")
-    print(f"{key} FWT_score: {fwt_score}")
+    LOGGER.info(f"{key} BWT_score: {bwt_score}")
+    LOGGER.info(f"{key} FWT_score: {fwt_score}")
 
     my_matrix = []
     for i in range(length - 1):
