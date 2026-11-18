@@ -61,8 +61,15 @@ class NewGovernmentPosterAgent:
             max_optimization_iterations: Maximum optimization iteration times
             quality_threshold: Quality threshold
         """
-    # Prefer API key from environment for security and flexibility
-        self.api_key = 'your_api'
+        # Prefer API key from environment for security and flexibility.
+        # Fall back to the DASHSCOPE_API_KEY env var; fail fast if it is unset.
+        self.api_key = kwargs.get("api_key") or os.environ.get("DASHSCOPE_API_KEY") or ""
+
+        if not self.api_key or self.api_key == "your_api":
+            raise ValueError(
+                "API key not found. Set the DASHSCOPE_API_KEY "
+                "environment variable or pass api_key as a parameter."
+            )
         self.llm_base_url = 'https://dashscope.aliyuncs.com/compatible-mode/v1'
         self.vlm_base_url = 'https://dashscope.aliyuncs.com/compatible-mode/v1'
         self.llm_model = kwargs.get('llm_model', 'qwen-max')
@@ -88,8 +95,6 @@ class NewGovernmentPosterAgent:
         # Initialize logging
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
-        if not self.api_key:
-            self.logger.warning('DASHSCOPE API key is not set. Set DASHSCOPE_API_KEY env var or update basemodel.py')
         
         # Load hyperparameter configuration
         self._load_hyperparameters(kwargs)
