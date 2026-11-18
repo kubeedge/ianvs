@@ -59,7 +59,7 @@ class BenchmarkingJob:
         if not isinstance(self.workspace, str):
             raise ValueError(f"benchmarkingjob's workspace({self.workspace}) must be string type.")
 
-        if not self.test_object and not isinstance(self.test_object, dict):
+        if not self.test_object or not isinstance(self.test_object, dict):
             raise ValueError(f"benchmarkingjob's test_object({self.test_object})"
                              f" must be dict type.")
 
