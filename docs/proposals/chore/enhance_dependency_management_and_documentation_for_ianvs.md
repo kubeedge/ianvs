@@ -235,7 +235,7 @@ jobs:
         run: python -m pip install --upgrade pip
       - name: Install Ianvs dependencies
         run: |
-          python -m pip install ./examples/resources/third_party/*
+          python -m pip install ./resources/third_party/*
           python -m pip install -r requirements.txt
           python -m pip install -r ./examples/pcb-aoi/requirements.txt
       - name: Install Ianvs
@@ -253,7 +253,7 @@ jobs:
           unzip initial_model/model.zip -d initial_model/
           ls -lh initial_model/
       - name: Install FPN algorithm wheel
-        run: python -m pip install examples/resources/algorithms/FPN_TensorFlow-0.1-py3-none-any.whl
+        run: python -m pip install resources/algorithms/FPN_TensorFlow-0.1-py3-none-any.whl
       - name: Run Ianvs benchmarking
         run: |
           ianvs -f ./examples/pcb-aoi/singletask_learning_bench/fault_detection/benchmarkingjob.yaml

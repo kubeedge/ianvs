@@ -34,7 +34,7 @@ sudo apt-get install libgl1-mesa-glx -y
 python -m pip install --upgrade pip
 
 cd ianvs 
-python -m pip install ./examples/resources/third_party/*
+python -m pip install ./resources/third_party/*
 python -m pip install -r requirements.txt
 ```
 
@@ -89,7 +89,7 @@ pip install -r requirements.txt  # install
 yolo_hub_path= '/home/yourname/.cache/torch/hub/ultralytics_yolov5_master'
 ```
 
-4. We replace the `model/commom.py ` under yolo_hub_path with `examples/resources/algorithms/common.py`
+4. We replace the `model/commom.py ` under yolo_hub_path with `resources/algorithms/common.py`
 
 ### Selector Model Preparation
 
@@ -101,11 +101,11 @@ First, we config the model to select which models will be chose
 Then, we config the models which could be selected to realize multi-joint inference 
 
 - We download the models from  [百度网盘](https://pan.baidu.com/s/1HE10JVbQgnam264f4m57Nw), 提取码：p21x
-- The file called `yolo_model` need to be put under `examples/resources/`
+- The file called `yolo_model` need to be put under `resources/`
 
 ### Sedna preparation
 
-We replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.7/site-packages/sedna` with `examples/resources/sedna.zip`  
+We replace the file in `yourpath/anaconda3/envs/ianvs/lib/python3.7/site-packages/sedna` with `resources/sedna.zip`  
 
 
 

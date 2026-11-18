@@ -95,7 +95,7 @@ conda create -n ianvs-experiment python=3.8 rust -c conda-forge
 conda activate ianvs-experiment
 
 # Install Sedna
-pip install examples/resources/third_party/sedna-0.6.0.1-py3-none-any.whl
+pip install resources/third_party/sedna-0.6.0.1-py3-none-any.whl
 
 # Install dependencies for Ianvs Core.
 pip install -r requirements.txt
