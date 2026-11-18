@@ -9,14 +9,47 @@ import requests
 import torch
 from torch import nn
 from transformers import ViTConfig
-from transformers.models.vit.modeling_vit import (
-    ViTEmbeddings, ViTAttention, ViTMLP
-)
-from .. import ModuleShard, ModuleShardConfig
-from . import TransformerShardData
 
 
 logger = logging.getLogger(__name__)
+
+try:
+    from transformers.models.vit.modeling_vit import (
+        ViTEmbeddings, ViTAttention
+    )
+except ImportError as err:
+    raise ImportError(
+        "Ianvs ImageNet multiedge inference example requires ViTEmbeddings "
+        "and ViTAttention from transformers.models.vit.modeling_vit; this "
+        "transformers version is not supported."
+    ) from err
+
+try:
+    from transformers.models.vit.modeling_vit import ViTMLP
+except ImportError:
+    from transformers.activations import ACT2FN
+
+    logger.warning(
+        "transformers without ViTMLP detected: using Ianvs's bundled ViT MLP "
+        "implementation. Benchmark figures are not directly comparable with "
+        "runs against transformers versions that provide ViTMLP."
+    )
+
+    class ViTMLP(nn.Module):
+        def __init__(self, config):
+            super().__init__()
+            self.activation_fn = ACT2FN[config.hidden_act]
+            self.fc1 = nn.Linear(config.hidden_size, config.intermediate_size)
+            self.fc2 = nn.Linear(config.intermediate_size, config.hidden_size)
+
+        def forward(self, hidden_states):
+            hidden_states = self.fc1(hidden_states)
+            hidden_states = self.activation_fn(hidden_states)
+            hidden_states = self.fc2(hidden_states)
+            return hidden_states
+
+from .. import ModuleShard, ModuleShardConfig
+from . import TransformerShardData
 
 _WEIGHTS_URLS = {
     'google/vit-base-patch16-224': 'https://storage.googleapis.com/vit_models/imagenet21k%2Bimagenet2012/ViT-B_16-224.npz',
