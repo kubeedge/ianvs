@@ -80,13 +80,17 @@ class MultiedgeInference(ParadigmBase):
         return inference_result, self.system_metric_info
 
     def _inference(self, job, trained_model):
-        train_dataset = self.dataset.load_data(self.dataset.train_url, "train")
-        os.environ["BASE_MODEL_URL"] = trained_model
+        os.environ["BASE_MODEL_URL"] = str(trained_model) if trained_model is not None else ""
         inference_dataset = self.dataset.load_data(self.dataset.test_url, "inference")
         inference_output_dir = os.path.join(self.workspace, "output/inference/")
         os.environ["RESULT_SAVED_URL"] = inference_output_dir
         job.load(trained_model)
-        infer_res = job.predict(inference_dataset.x, train_dataset=train_dataset)
+        if hasattr(inference_dataset, 'need_other_info'):
+            infer_res = job.predict(inference_dataset)
+        else:
+            infer_res = job.predict(inference_dataset.x)
+        if infer_res is None:
+            LOGGER.warning("job.predict returned None during multi-edge inference.")
         return infer_res
 
     def _inference_mp(self, job, models_dir, map_info):
@@ -94,20 +98,38 @@ class MultiedgeInference(ParadigmBase):
         inference_output_dir = os.path.join(self.workspace, "output/inference/")
         os.environ["RESULT_SAVED_URL"] = inference_output_dir
         job.load(models_dir, map_info)
-        infer_res = job.predict(inference_dataset.x)
+        if hasattr(inference_dataset, 'need_other_info'):
+            infer_res = job.predict(inference_dataset)
+        else:
+            infer_res = job.predict(inference_dataset.x)
+        if infer_res is None:
+            LOGGER.warning("job.predict returned None during multi-edge model parallel inference.")
         return infer_res
 
     # pylint: disable=W0718, C0103
     def _partition(self, partition_point_list, initial_model_path, sub_model_dir):
+        if not partition_point_list:
+            raise ValueError("partition_point_list must be provided for model partitioning.")
+
+        sub_model_dir = sub_model_dir or os.path.join(self.workspace, "output/models")
+        if not os.path.exists(sub_model_dir):
+            os.makedirs(sub_model_dir, exist_ok=True)
+
         map_info = dict({})
         for idx, point in enumerate(partition_point_list):
-            input_names = point['input_names']
-            output_names = point['output_names']
-            sub_model_path = sub_model_dir + '/' + 'sub_model_' + str(idx+1) + '.onnx'
+            input_names = point.get('input_names')
+            output_names = point.get('output_names')
+            device_name = point.get('device_name')
+            sub_model_filename = f"sub_model_{idx+1}.onnx"
+            sub_model_path = os.path.join(sub_model_dir, sub_model_filename)
             try:
                 onnx.utils.extract_model(initial_model_path,
                                          sub_model_path, input_names, output_names)
             except Exception as e:
-                LOGGER.info(str(e))
-            map_info[sub_model_path.split('/')[-1]] = point['device_name']
+                LOGGER.error("failed to extract ONNX model for partition point %s: %s", idx, e)
+                raise RuntimeError(
+                    f"failed to extract ONNX sub-model ({sub_model_path}) from "
+                    f"{initial_model_path}, error: {e}"
+                ) from e
+            map_info[os.path.basename(sub_model_path)] = device_name
         return sub_model_dir, map_info
