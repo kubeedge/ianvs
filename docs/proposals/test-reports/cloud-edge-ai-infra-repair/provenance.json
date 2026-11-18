@@ -1,0 +1,49 @@
+{
+  "campaign": "FORMAL-001",
+  "date": "2026-09-16",
+  "source_commit": "fd7cd5c",
+  "original_local_source_commit": "e598fa1",
+  "runtime_source_equivalence": "All infra_repair module fingerprints match the frozen experiment; publication omits optional protected CI configuration.",
+  "reference_model": "Qwen2.5-1.5B-Instruct",
+  "adapter": "triage-runbook-v4",
+  "target_model": "Qwen2.5-0.5B-Instruct",
+  "reference_snapshot_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "target_snapshot_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "privacy": "Private paths and random run IDs replaced with normal experiment numbers. Numerical measurements, failures, integrity fingerprints and acceptance checks retained.",
+  "experiments": {
+    "reference": [
+      "EXP-029",
+      "EXP-030",
+      "EXP-031",
+      "EXP-032",
+      "EXP-033",
+      "EXP-034",
+      "EXP-035",
+      "EXP-036",
+      "EXP-037",
+      "EXP-038",
+      "EXP-039",
+      "EXP-040",
+      "EXP-041",
+      "EXP-042",
+      "EXP-043"
+    ],
+    "rollback": [
+      "EXP-044",
+      "EXP-045",
+      "EXP-046",
+      "EXP-047",
+      "EXP-048",
+      "EXP-049",
+      "EXP-050",
+      "EXP-051",
+      "EXP-052",
+      "EXP-053",
+      "EXP-054",
+      "EXP-055",
+      "EXP-056",
+      "EXP-057",
+      "EXP-058"
+    ]
+  }
+}

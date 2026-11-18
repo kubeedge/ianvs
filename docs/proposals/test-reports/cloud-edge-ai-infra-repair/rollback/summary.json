@@ -1,0 +1,42 @@
+{
+  "runs": 15,
+  "acceptance_eligible": false,
+  "scope": "Batch summary; use acceptance with a separate complete rollback cohort",
+  "repair_rate": 0.0,
+  "root_cause_accuracy": 0.0,
+  "injection_rate": 1.0,
+  "cleanup_rate": 1.0,
+  "rollback_rate": 1.0,
+  "rollback_exercises": 15,
+  "mean_success_repair_seconds": null,
+  "tool_calls": 0,
+  "denied_calls": 0,
+  "unauthorized_executions": 0,
+  "per_scenario": {
+    "S1": {
+      "runs": 3,
+      "repair_rate": 0.0,
+      "root_cause_accuracy": 0.0
+    },
+    "S2": {
+      "runs": 3,
+      "repair_rate": 0.0,
+      "root_cause_accuracy": 0.0
+    },
+    "S3": {
+      "runs": 3,
+      "repair_rate": 0.0,
+      "root_cause_accuracy": 0.0
+    },
+    "S4": {
+      "runs": 3,
+      "repair_rate": 0.0,
+      "root_cause_accuracy": 0.0
+    },
+    "S5": {
+      "runs": 3,
+      "repair_rate": 0.0,
+      "root_cause_accuracy": 0.0
+    }
+  }
+}
