@@ -152,8 +152,11 @@ class LifelongLearning(ParadigmBase):
             self.system_metric_info[SystemMetricType.TASK_AVG_ACC.value] = task_avg_score
             LOGGER.info(task_avg_score)
             job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
-            inference_dataset = self.dataset.load_data(self.dataset.test_url, "eval",
-                                                   feature_process=_data_feature_process)
+            inference_dataset = self.dataset.load_data(
+                self.dataset.test_url, "eval",
+                label=self.dataset.label,
+                feature_process=_data_feature_process
+            )
             kwargs = {}
             test_res = job.my_inference(inference_dataset, **kwargs)
             del job
@@ -315,8 +318,11 @@ class LifelongLearning(ParadigmBase):
         os.environ["OUTPUT_URL"] = output_dir
         os.environ["MODEL_URLS"] = f"{edge_task_index}"
 
-        inference_dataset = self.dataset.load_data(data_index_file, "eval",
-                                                   feature_process=_data_feature_process)
+        inference_dataset = self.dataset.load_data(
+            data_index_file, "eval",
+            label=self.dataset.label,
+            feature_process=_data_feature_process
+        )
 
         job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
 
@@ -362,8 +368,11 @@ class LifelongLearning(ParadigmBase):
             os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'True'
 
         if isinstance(train_dataset, str):
-            train_dataset = self.dataset.load_data(train_dataset, "train",
-                                                   feature_process=_data_feature_process)
+            train_dataset = self.dataset.load_data(
+                train_dataset, "train",
+                label=self.dataset.label,
+                feature_process=_data_feature_process
+            )
 
         job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
         cloud_task_index = job.train(train_dataset)
@@ -384,8 +393,11 @@ class LifelongLearning(ParadigmBase):
         os.environ["operator"] = model_eval_info.get("operator")
         os.environ["MODEL_URLS"] = f"{cloud_task_index}"
 
-        eval_dataset = self.dataset.load_data(data_index_file, "eval",
-                                              feature_process=_data_feature_process)
+        eval_dataset = self.dataset.load_data(
+            data_index_file, "eval",
+            label=self.dataset.label,
+            feature_process=_data_feature_process
+        )
 
         job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
         _, metric_func = get_metric_func(model_metric)
@@ -411,8 +423,11 @@ class LifelongLearning(ParadigmBase):
         os.environ["operator"] = model_eval_info.get("operator")
         os.environ["MODEL_URLS"] = f"{cloud_task_index}"
 
-        eval_dataset = self.dataset.load_data(data_index_file, "eval",
-                                              feature_process=_data_feature_process)
+        eval_dataset = self.dataset.load_data(
+            data_index_file, "eval",
+            label=self.dataset.label,
+            feature_process=_data_feature_process
+        )
 
         job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
         _, metric_func = get_metric_func(model_metric)
