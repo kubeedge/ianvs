@@ -7,7 +7,7 @@ algorithm:
     - type: "basemodel"
       
       name: "PhysSceneGen" 
-      url: "examples.phys_scene_gen.singletask_learning_bench.testalgorithms.ai2holodeck.phys_scene_generator"
+      url: "./examples/phys_scene_gen/singletask_learning_bench/testalgorithms/ai2holodeck/phys_scene_generator.py"
       
       hyperparameters:
         - openai_api_key:
