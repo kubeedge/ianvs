@@ -2,10 +2,31 @@
 
 # NOTE! OS: output stride, the ratio of input image resolution to final output resolution (OS16: output size is (img_h/16, img_w/16)) (OS8: output size is (img_h/8, img_w/8))
 
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
+
+
+def _maybe_load_weights(model, default_path, env_key):
+    """Load pretrained weights from an env-var path or a default path.
+
+    Falls back to random initialization (with a warning) when the checkpoint
+    is not available, so the example runs on machines that do not have the
+    original developer's local pretrained files.
+    """
+    candidate = os.environ.get(env_key) or default_path
+    if candidate and os.path.exists(candidate):
+        try:
+            model.load_state_dict(torch.load(candidate, map_location="cpu"), strict=False)
+            print(f"Loaded pretrained weights from {candidate}")
+        except Exception as e:
+            print(f"Warning: failed to load weights from '{candidate}' ({e}); "
+                  "using random initialization")
+    else:
+        print(f"Warning: {env_key} not found ('{candidate}'); using random initialization")
+
 
 def make_layer(block, in_channels, channels, num_blocks, stride=1, dilation=1):
     strides = [stride] + [1]*(num_blocks - 1) # (stride == 2, num_blocks == 4 --> strides == [2, 1, 1, 1])
@@ -96,7 +117,7 @@ class ResNet_Bottleneck_OS16(nn.Module):
         if num_layers == 50:
             resnet = models.resnet50()
             # load pretrained model:
-            resnet.load_state_dict(torch.load("/root/deeplabv3/pretrained_models/resnet/resnet50-19c8e357.pth"))
+            _maybe_load_weights(resnet, "/root/deeplabv3/pretrained_models/resnet/resnet50-19c8e357.pth", "RESNET50_WEIGHTS")
             # remove fully connected layer, avg pool and layer5:
             self.resnet = nn.Sequential(*list(resnet.children())[:-3])
 
@@ -104,7 +125,7 @@ class ResNet_Bottleneck_OS16(nn.Module):
         elif num_layers == 101:
             resnet = models.resnet101()
             # load pretrained model:
-            resnet.load_state_dict(torch.load("/root/deeplabv3/pretrained_models/resnet/resnet101-5d3b4d8f.pth"))
+            _maybe_load_weights(resnet, "/root/deeplabv3/pretrained_models/resnet/resnet101-5d3b4d8f.pth", "RESNET101_WEIGHTS")
             # remove fully connected layer, avg pool and layer5:
             self.resnet = nn.Sequential(*list(resnet.children())[:-3])
 
@@ -112,7 +133,7 @@ class ResNet_Bottleneck_OS16(nn.Module):
         elif num_layers == 152:
             resnet = models.resnet152()
             # load pretrained model:
-            resnet.load_state_dict(torch.load("/root/deeplabv3/pretrained_models/resnet/resnet152-b121ed2d.pth"))
+            _maybe_load_weights(resnet, "/root/deeplabv3/pretrained_models/resnet/resnet152-b121ed2d.pth", "RESNET152_WEIGHTS")
             # remove fully connected layer, avg pool and layer5:
             self.resnet = nn.Sequential(*list(resnet.children())[:-3])
 
@@ -139,7 +160,7 @@ class ResNet_BasicBlock_OS16(nn.Module):
         if num_layers == 18:
             resnet = models.resnet18()
             # load pretrained model:
-            resnet.load_state_dict(torch.load("/root/deeplabv3/pretrained_models/resnet/resnet18-5c106cde.pth"))
+            _maybe_load_weights(resnet, "/root/deeplabv3/pretrained_models/resnet/resnet18-5c106cde.pth", "RESNET18_WEIGHTS")
             # remove fully connected layer, avg pool and layer5:
             self.resnet = nn.Sequential(*list(resnet.children())[:-3])
 
@@ -148,7 +169,7 @@ class ResNet_BasicBlock_OS16(nn.Module):
         elif num_layers == 34:
             resnet = models.resnet34()
             # load pretrained model:
-            resnet.load_state_dict(torch.load("/root/deeplabv3/pretrained_models/resnet/resnet34-333f7ec4.pth"))
+            _maybe_load_weights(resnet, "/root/deeplabv3/pretrained_models/resnet/resnet34-333f7ec4.pth", "RESNET34_WEIGHTS")
             # remove fully connected layer, avg pool and layer5:
             self.resnet = nn.Sequential(*list(resnet.children())[:-3])
 
@@ -176,7 +197,7 @@ class ResNet_BasicBlock_OS8(nn.Module):
         if num_layers == 18:
             resnet = models.resnet18()
             # load pretrained model:
-            resnet.load_state_dict(torch.load("/home/nailtu/PycharmProjects/deeplabv3-master/pretrained_models/resnet/resnet18-5c106cde.pth"))
+            _maybe_load_weights(resnet, "/home/nailtu/PycharmProjects/deeplabv3-master/pretrained_models/resnet/resnet18-5c106cde.pth", "RESNET18_WEIGHTS")
             # remove fully connected layer, avg pool, layer4 and layer5:
             self.resnet = nn.Sequential(*list(resnet.children())[:-4])
 
@@ -186,7 +207,7 @@ class ResNet_BasicBlock_OS8(nn.Module):
         elif num_layers == 34:
             resnet = models.resnet34()
             # load pretrained model:
-            resnet.load_state_dict(torch.load("/root/deeplabv3/pretrained_models/resnet/resnet34-333f7ec4.pth"))
+            _maybe_load_weights(resnet, "/root/deeplabv3/pretrained_models/resnet/resnet34-333f7ec4.pth", "RESNET34_WEIGHTS")
             # remove fully connected layer, avg pool, layer4 and layer5:
             self.resnet = nn.Sequential(*list(resnet.children())[:-4])
 

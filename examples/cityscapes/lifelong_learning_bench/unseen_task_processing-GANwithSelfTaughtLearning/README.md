@@ -2,6 +2,24 @@
 
 Our algorithm is dedicated to solving the `small sample` and `heterogeneous data` issues in the Ianvs lifelong learning process via `Generative Adversarial Networks (GANs)` ans `Self-taught Learning (STL)`. Here we focus on how to deploy the algorithm in Ianvs. For the principle and algorithm details, please refer to [Unknown Task Processing Algorithm based on Lifelong Learning of Ianvs](../../../../docs/proposals/algorithms/lifelong-learning/Unknown_Task_Processing_Algorithm_based_on_Lifelong_Learning_of_Ianvs.md).  
 
+## Scientific Validity Notes
+
+> **Domain-transfer disclaimer.** In this example the Self-taught Learning encoder
+> is trained on GAN-generated *fake* images (`selftaughtlearning/train.py`) and is
+> then applied as a preprocessing step to *real* Cityscapes images during DeepLabV3
+> training and validation (`deeplabv3/train.py`). The segmentation network therefore
+> operates on **encoded image representations**, not the original images.
+>
+> As a result, metrics produced by this example represent a **distinct evaluation
+> protocol** and are **not directly comparable** to standard Cityscapes benchmarks,
+> which evaluate on original images. For a direct comparison, the encoder
+> preprocessing must be applied consistently at evaluation time, or the encoder must
+> be retrained on real images.
+>
+> The encoder preprocessing is applied identically in both the training and
+> validation loops, so train/validation losses are measured on the same input
+> distribution.
+
 ## Device Requirements and Ianvs Preparation
 
 For device requirements and Ianvs preparation, please refer to [lifelong_learning_bench](../../../cityscapes-synthia/lifelong_learning_bench/curb-detection/README.md).
