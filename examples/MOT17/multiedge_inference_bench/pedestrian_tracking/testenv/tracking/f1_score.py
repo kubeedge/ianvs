@@ -48,4 +48,13 @@ def metric(y_true, y_pred):
 
     precision = float(summary.iloc[-1][['precision']])
     recall = float(summary.iloc[-1][['recall']])
-    return round(2*((precision*recall)/(precision+recall)), 4)
+    
+    # Return 0 to gracefully handle cases and avoid a ZeroDivisionError
+    # when both precision and recall are exactly 0 (e.g., edge-cases or no matches).
+    if precision + recall == 0:
+        return 0.0
+
+    # Cleanly calculate the F1 score formula
+    f1_score = 2 * ((precision * recall) / (precision + recall))
+    
+    return round(f1_score, 4)
