@@ -15,9 +15,11 @@
 """Test Env"""
 
 from core.testenvmanager.dataset import Dataset
+from core.common.device import parse_capability, check_min_capability
 
 
 # pylint: disable=too-few-public-methods
+# pylint: disable=too-many-instance-attributes
 class TestEnv:
     """
     TestEnv:
@@ -47,6 +49,8 @@ class TestEnv:
         self.client_number = 1
         self.dataset = None
         self.use_gpu = False  # default false
+        # capability floor an example declares; None means it declared none.
+        self.min_compute_capability = None
         self._parse_config(config)
 
     def _check_fields(self):
@@ -67,6 +71,8 @@ class TestEnv:
                 self.dataset = Dataset(v)
             elif k == 'use_gpu':
                 self.use_gpu = bool(v)
+            elif k == 'min_compute_capability':
+                self.min_compute_capability = parse_capability(v)
             else:
                 self.__dict__[k] = v
 
@@ -74,6 +80,9 @@ class TestEnv:
 
     def prepare(self):
         """prepare env"""
+        # checked before the dataset is processed so that an unusable device is
+        # reported before anything is downloaded.
+        check_min_capability(self.min_compute_capability)
         try:
             self.dataset.process_dataset()
         except Exception as err:

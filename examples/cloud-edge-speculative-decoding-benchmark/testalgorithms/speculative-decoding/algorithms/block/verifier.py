@@ -7,6 +7,7 @@ import sys
 
 import torch
 from sedna.common.class_factory import ClassFactory, ClassType
+from core.common.device import supports_bf16
 from transformers import AutoModelForCausalLM, AutoTokenizer, DynamicCache
 from transformers.generation.streamers import BaseStreamer
 
@@ -106,7 +107,9 @@ class SpeculativeBlockVerifyModel(BaseSpeculativeVerifier):
 
     def load_core(self):
         """Load tokenizer and target model."""
-        self.dtype = torch.bfloat16 if self.device == "cuda" else torch.float32
+        self.dtype = (
+            torch.bfloat16 if self.device == "cuda" and supports_bf16() else torch.float32
+        )
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name,
             trust_remote_code=self.trust_remote_code,

@@ -38,6 +38,11 @@ Run all commands from the Ianvs repository root unless stated otherwise.
 
 This example requires Python `3.10+` and an NVIDIA GPU for the larger model configurations.
 
+The block algorithm selects `bfloat16` on CUDA. That dtype executes natively only on compute
+capability `8.0` or higher (Ampere or newer). On older cards Ianvs falls back to `float32` and
+logs a warning, because PyTorch would otherwise emulate `bfloat16` and the reported timings
+would describe the emulation rather than the hardware (see #888).
+
 ```bash
 git clone https://github.com/kubeedge/ianvs.git
 cd ianvs
@@ -311,7 +316,8 @@ Example console output:
 +------+----------------------------+---------------------+------------+------------------------+--------------------+-----------------+-------------------------------+------------------------+---------------------------+----------------+-------------------------------+--------------------------------+
 ```
 
-Actual numbers depend on dataset, model pair, GPU, software stack, and runtime configuration.
+Actual numbers depend on dataset, model pair, GPU, software stack, runtime configuration, and on
+the compute dtype actually used — see the note on `bfloat16` and compute capability above.
 
 ## Notes
 
