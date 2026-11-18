@@ -155,3 +155,4 @@ init_model/
 examples/imagenet/multiedge_inference_bench/testalgorithms/automatic/profiler_results.yml
 # Workspace output created by testenv/*.py metric scripts when run from repo root
 /multiedge_inference_bench/
+ianvs-env/
