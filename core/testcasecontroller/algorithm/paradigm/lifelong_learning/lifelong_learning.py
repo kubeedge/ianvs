@@ -155,7 +155,8 @@ class LifelongLearning(ParadigmBase):
             inference_dataset = self.dataset.load_data(self.dataset.test_url, "eval",
                                                    feature_process=_data_feature_process)
             kwargs = {}
-            test_res = job.my_inference(inference_dataset, **kwargs)
+            test_res, _, _ = job.inference_lifelong(inference_dataset,
+                                                    detect_unseen=False, **kwargs)
             del job
             for key in my_dict.keys():
                 LOGGER.info(f"{key} scores: {my_dict[key]}")
@@ -343,7 +344,9 @@ class LifelongLearning(ParadigmBase):
         for i, _ in enumerate(inference_dataset.x):
             data = BaseDataSource(data_type="test")
             data.x = inference_dataset.x[i:(i + 1)]
-            res, _, _ = job.inference_2(data, **kwargs)
+            # Unseen samples were found above for the whole batch, so skip
+            # per-sample detection here.
+            res, _, _ = job.inference_lifelong(data, detect_unseen=False, **kwargs)
             inference_results.append(res)
             if str(inference_dataset.x[i]) in unseen_x_set:
                 unseen_tasks.append(inference_dataset.x[i])
@@ -366,7 +369,16 @@ class LifelongLearning(ParadigmBase):
 
         os.environ["CLOUD_KB_INDEX"] = cloud_task_index
         os.environ["OUTPUT_URL"] = train_output_dir
-        if rounds < 1 or not os.path.isfile(cloud_task_index):
+        # Sedna builds the knowledge base on the initial training call and
+        # updates it afterwards. The default mode trains first in round 1;
+        # no-inference and hard-example-mining train first in round 0. Without
+        # an index file there is nothing to update, so train initially.
+        mode = (self.model_eval_config or {}).get("model_metric", {}).get("mode")
+        if mode in ("no-inference", "hard-example-mining"):
+            is_initial_training = rounds < 1
+        else:
+            is_initial_training = rounds <= 1
+        if is_initial_training or not os.path.isfile(cloud_task_index):
             os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'False'
         else:
             os.environ["HAS_COMPLETED_INITIAL_TRAINING"] = 'True'
@@ -376,7 +388,10 @@ class LifelongLearning(ParadigmBase):
                                                    feature_process=_data_feature_process)
 
         job = self.build_paradigm_job(ParadigmType.LIFELONG_LEARNING.value)
-        cloud_task_index = job.train(train_dataset)
+        # Sedna 0.6 train() returns the per-task model results; the index it
+        # saved is the cloud task index.
+        job.train(train_dataset)
+        cloud_task_index = job.cloud_task_index
         del job
 
         return cloud_task_index
