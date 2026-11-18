@@ -47,7 +47,7 @@ def acc_model(y_true, y_pred):
             real_locations.append(y_location[i])
 
     same_elements = [get_last_letter(real_y_pred[i]) == real_y_true[i] for i in range(len(real_y_pred))]
-    global_acc = sum(same_elements) / len(same_elements)
+    global_acc = sum(same_elements) / len(same_elements) if same_elements else 0.0
 
     province_acc = {}
     for i in range(len(real_y_pred)):
@@ -108,7 +108,7 @@ def acc_global(y_true, y_pred):
             real_locations.append(y_location[i])
 
     same_elements = [get_last_letter(real_y_pred[i]) == real_y_true[i] for i in range(len(real_y_pred))]
-    global_acc = sum(same_elements) / len(same_elements)
+    global_acc = sum(same_elements) / len(same_elements) if same_elements else 0.0
 
     province_acc = {}
     for i in range(len(real_y_pred)):
@@ -169,7 +169,7 @@ def acc_local(y_true, y_pred):
             real_locations.append(y_location[i])
 
     same_elements = [get_last_letter(real_y_pred[i]) == real_y_true[i] for i in range(len(real_y_pred))]
-    global_acc = sum(same_elements) / len(same_elements)
+    global_acc = sum(same_elements) / len(same_elements) if same_elements else 0.0
 
     province_acc = {}
     for i in range(len(real_y_pred)):
@@ -230,7 +230,7 @@ def acc_other(y_true, y_pred):
             real_locations.append(y_location[i])
 
     same_elements = [get_last_letter(real_y_pred[i]) == real_y_true[i] for i in range(len(real_y_pred))]
-    global_acc = sum(same_elements) / len(same_elements)
+    global_acc = sum(same_elements) / len(same_elements) if same_elements else 0.0
 
     province_acc = {}
     for i in range(len(real_y_pred)):
