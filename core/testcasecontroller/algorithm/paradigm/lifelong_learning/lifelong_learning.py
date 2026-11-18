@@ -91,7 +91,8 @@ class LifelongLearning(ParadigmBase):
 
         # in this mode, the inference period is skipped to accelerate training speed
         if mode == 'no-inference':
-            dataset_files = self._split_dataset(splitting_dataset_times=rounds)
+            dataset_files = self._split_dataset(splitting_dataset_times=rounds,
+                                                required_splits=rounds + 1)
             # pylint: disable=C0103
             # pylint: disable=C0206
             # pylint: disable=C0201
@@ -165,7 +166,8 @@ class LifelongLearning(ParadigmBase):
                 self.system_metric_info[SystemMetricType.MATRIX.value][key] = matrix
 
         elif mode == 'hard-example-mining':
-            dataset_files = self._split_dataset(splitting_dataset_times=rounds)
+            dataset_files = self._split_dataset(splitting_dataset_times=rounds,
+                                                required_splits=rounds + 1)
             # pylint: disable=C0103
             # pylint: disable=C0206
             # pylint: disable=C0201
@@ -422,18 +424,33 @@ class LifelongLearning(ParadigmBase):
 
         return edge_task_index, tasks_detail, res
 
-    def _split_dataset(self, splitting_dataset_times=1):
+    def _split_dataset(self, splitting_dataset_times=1, required_splits=None):
         # pylint:disable=duplicate-code
         train_dataset_ratio = self.incremental_learning_data_setting.get("train_ratio")
         splitting_dataset_method = self.incremental_learning_data_setting.get("splitting_method")
 
-        return self.dataset.split_dataset(self.dataset.train_url,
-                                          get_file_format(self.dataset.train_url),
-                                          train_dataset_ratio,
-                                          method=splitting_dataset_method,
-                                          dataset_types=("model_train", "model_eval"),
-                                          output_dir=self.dataset_output_dir(),
-                                          times=splitting_dataset_times)
+        dataset_files = self.dataset.split_dataset(self.dataset.train_url,
+                                                   get_file_format(self.dataset.train_url),
+                                                   train_dataset_ratio,
+                                                   method=splitting_dataset_method,
+                                                   dataset_types=("model_train", "model_eval"),
+                                                   output_dir=self.dataset_output_dir(),
+                                                   times=splitting_dataset_times)
+
+        # Splitting methods disagree on how many splits they return for a given
+        # `times`: those that prepend a round-0 baseline return `times + 1`,
+        # while "default" returns `times`. Report the shortfall here rather
+        # than letting the caller run off the end of the list mid-run.
+        if required_splits is not None and len(dataset_files) < required_splits:
+            raise RuntimeError(
+                f"lifelong learning needs {required_splits} dataset splits for "
+                f"{splitting_dataset_times} incremental rounds, but "
+                f"splitting_method({splitting_dataset_method}) produced "
+                f"{len(dataset_files)}. Methods that supply a round-0 baseline "
+                f"(fwt_splitting, city_splitting, hard-example_splitting) meet "
+                f"this requirement; default does not.")
+
+        return dataset_files
 
 
 def _data_feature_process(line: str):
