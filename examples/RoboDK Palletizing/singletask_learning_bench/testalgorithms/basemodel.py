@@ -52,6 +52,11 @@ class BaseModel:
         self.epochs = kwargs.get("epochs", 100)
         self.batch_size = kwargs.get("batch_size", 16)
         self.image_size = int(kwargs.get("infer_size", 640))
+        logging.info(
+            f"YOLOv8n configured to resize inputs to {self.image_size}x{self.image_size} "
+            f"for training/inference. This is independent of the dataset's actual raw image "
+            f"dimensions, which are handled separately by the evaluation metric scripts."
+        )
         self.conf_threshold = float(kwargs.get("conf_threshold", 0.25)) # 0.25
 
         self.device = kwargs.get("device", "cuda:0" if torch.cuda.is_available() else "cpu")
