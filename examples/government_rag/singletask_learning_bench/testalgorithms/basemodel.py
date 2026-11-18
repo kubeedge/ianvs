@@ -157,7 +157,7 @@ class BaseModel:
     def preprocess(self, **kwargs):
         print("BaseModel preprocess")
         # input('stop here preprocess')
-        self.rag = GovernmentRAG(model_name="/home/icyfeather/models/bge-m3", device="cuda", persist_directory="./chroma_db")
+        self.rag = GovernmentRAG(base_path=Context.get_parameters("base_path"), model_name=Context.get_parameters("model_name", "BAAI/bge-large-zh-v1.5"), device="cuda", persist_directory="./chroma_db")
         LOGGER.info("RAG initialized")
 
     def train(self, train_data, valid_data=None, **kwargs):
@@ -174,16 +174,18 @@ class BaseModel:
                 response = self.get_model_response(query)
             else:
                 with self.gpu_lock:
-                    if rag_type == "[global]":
-                        if self.rag is None:
-                            self.rag = GovernmentRAG(model_name="/home/icyfeather/models/bge-m3", device="cuda", persist_directory="./chroma_db")
-                    elif rag_type == "[local]":
-                        self.rag = GovernmentRAG(model_name="/home/icyfeather/models/bge-m3", device="cuda", persist_directory="./chroma_db", provinces=[location])
-                    else:  # [other]
-                        all_locations = set(self.all_locations)
-                        self.rag = GovernmentRAG(model_name="/home/icyfeather/models/bge-m3", device="cuda", persist_directory="./chroma_db", provinces=list(all_locations - set([location])))
+                    base_path = Context.get_parameters("base_path")
+                    model_name = Context.get_parameters("model_name", "BAAI/bge-large-zh-v1.5")
                     
-                    relevant_docs = self.rag.query(query, k=1)
+                    if rag_type == "[global]":
+                        rag = GovernmentRAG(base_path=base_path, model_name=model_name, device="cuda", persist_directory="./chroma_db")
+                    elif rag_type == "[local]":
+                        rag = GovernmentRAG(base_path=base_path, model_name=model_name, device="cuda", persist_directory="./chroma_db", provinces=[location])
+                    else:  # [other]
+                        all_locations = set(getattr(self, "all_locations", []))
+                        rag = GovernmentRAG(base_path=base_path, model_name=model_name, device="cuda", persist_directory="./chroma_db", provinces=list(all_locations - set([location])))
+                    
+                    relevant_docs = rag.query(query, k=1)
                     
                     # Clear GPU cache after query
                     if torch.cuda.is_available():
