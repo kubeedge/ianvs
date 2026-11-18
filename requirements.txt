@@ -5,3 +5,4 @@ pandas
 tqdm
 matplotlib
 onnx
+colorlog
