@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import codecs
 import re
 import subprocess
 import sys
@@ -52,6 +53,12 @@ INSTALL_MODES = (INSTALL_MODE_SKIP, INSTALL_MODE_DRY_RUN, INSTALL_MODE_INSTALL)
 PYTHON_FILE_SUFFIX = ".py"
 REQUIREMENTS_OPTIONS = ("-", "--")
 REQUIREMENTS_REFERENCE_PREFIXES = ("-r", "--requirement", "-c", "--constraint")
+# pip honours a byte order mark when it reads a requirements file.
+REQUIREMENTS_BOM_ENCODINGS = (
+    (codecs.BOM_UTF8, "utf-8"),
+    (codecs.BOM_UTF16_LE, "utf-16-le"),
+    (codecs.BOM_UTF16_BE, "utf-16-be"),
+)
 PROJECT_PROVIDED_IMPORTS = {
     "core",
     "examples",
@@ -123,7 +130,18 @@ def validate_example(
     if not requirements_path.is_file():
         return report
 
-    requirement_lines = _read_requirement_lines(requirements_path)
+    try:
+        requirement_lines = _read_requirement_lines(requirements_path)
+    except UnicodeDecodeError as error:
+        _append_check(
+            report,
+            name="Dependency file is readable",
+            status=FAIL,
+            file=requirements_file,
+            message="Dependency file cannot be decoded as text.",
+            details=[str(error)],
+        )
+        return report
     _check_dependency_file_not_empty(report, requirement_lines, requirements_file)
     parsed_requirements, syntax_errors = _parse_requirements(
         requirement_lines,
@@ -550,9 +568,17 @@ def _declared_project_packages(repo_root: Path) -> Set[str]:
     return _declared_packages(requirements)
 
 
+def _decode_requirements(data: bytes) -> str:
+    for bom, encoding in REQUIREMENTS_BOM_ENCODINGS:
+        if data.startswith(bom):
+            return data[len(bom) :].decode(encoding)
+    return data.decode("utf-8")
+
+
 def _read_requirement_lines(path: Path) -> List[Tuple[int, str]]:
     lines = []
-    for index, raw_line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+    text = _decode_requirements(path.read_bytes())
+    for index, raw_line in enumerate(text.splitlines(), 1):
         line = raw_line.strip()
         if not line or line.startswith("#"):
             continue
