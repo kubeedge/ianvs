@@ -1,15 +1,18 @@
+import torch
+
+
 class TrainArgs:
     def __init__(self, **kwargs):
         self.depth = False
         self.dataset = 'cityscapes'
-        self.workers = 4
-        self.base_size = 1024
-        self.crop_size = 768
+        self.workers = 0
+        self.base_size = 512
+        self.crop_size = 384
         self.loss_type = 'ce'
         self.epochs = kwargs.get("epochs", 2)
         self.start_epoch = 0
 
-        self.batch_size = 4
+        self.batch_size = 2
         self.val_batch_size = 1
         self.use_balanced_weights = False
         self.num_class = 30
@@ -26,16 +29,16 @@ class TrainArgs:
         self.ft = True
         self.eval_interval = kwargs.get("eval_interval", 50)
         self.no_val = kwargs.get("no_val", True)
-        self.cuda = True
+        self.cuda = torch.cuda.is_available()
 
 
 class ValArgs:
     def __init__(self, **kwargs):
         self.dataset = 'cityscapes'
         self.workers = 0
-        self.base_size = 1024
-        self.crop_size = 768
-        self.batch_size = 6
+        self.base_size = 512
+        self.crop_size = 384
+        self.batch_size = 2
         self.val_batch_size = 1
         self.test_batch_size = 1
         self.num_class = 30
@@ -49,4 +52,4 @@ class ValArgs:
         self.label_save_path = './test/label'
         self.merge = True
         self.depth = False
-        self.cuda = True
+        self.cuda = torch.cuda.is_available()
