@@ -20,6 +20,8 @@ from pathlib import Path
 
 import torch
 import torch.backends.cudnn as cudnn
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
 import motmetrics as mm
 from loguru import logger
 from sedna.common.class_factory import ClassType, ClassFactory
@@ -83,7 +85,11 @@ class BaseModel:
         self.args.experiment_name = self.exp.exp_name
 
         num_gpu = torch.cuda.device_count()
-        assert num_gpu <= torch.cuda.device_count()
+        if num_gpu < 1:
+            raise RuntimeError(
+                f"No CUDA-capable GPU detected (torch.cuda.device_count() = {num_gpu}). "
+                "The ByteTrack tracking job requires at least one CUDA GPU."
+            )
         self.is_distributed = num_gpu > 1
         # set environment variables for distributed training
         cudnn.benchmark = True
