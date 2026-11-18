@@ -33,6 +33,7 @@ class UnseenSampleRecognitionByScene:
         import torchvision
         from torchvision import transforms
         from PIL import Image
+        from models.wide_resnet_embedding import Wide_ResNet
         d_type = samples.data_type
         x_data = samples.x
         y_data = samples.y
@@ -43,14 +44,22 @@ class UnseenSampleRecognitionByScene:
         InferenceData=data_transforms(Image.open(x_data[0][0]))
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         pthfile = self.model_path
-        state_dict = torch.load(pthfile)
+        # Instantiate the scene-recognition model and load the trained weights
+        # into it. torch.load() returns only a state_dict (an OrderedDict),
+        # which is not callable; it must be loaded into a model instance before
+        # running inference. The architecture (WRN-28-10) and the binary
+        # seen/unseen head (num_classes=2) match the downstream logic below.
+        model = Wide_ResNet(28, 10, 0.3, 2).to(device)
+        model.load_state_dict(torch.load(pthfile, map_location=device))
+        model.eval()
         unseen_image = BaseDataSource(data_type=d_type)
         unseen_image.x, unseen_image.y = [], []
         seen_image = BaseDataSource(data_type=d_type)
         seen_image.x, seen_image.y = [], []
         InferenceData = InferenceData.to(device)
         InferenceData = torch.unsqueeze(InferenceData, 0)
-        outputs = state_dict(InferenceData)
+        with torch.no_grad():
+            outputs = model(InferenceData)
         a, predicted = outputs.max(1)
         predicted = predicted.cpu().numpy()
         if predicted[0] == 1:
