@@ -1,3 +1,5 @@
+"""Edge model servable module for LLM collaborative inference."""
+# pylint: disable=line-too-long,attribute-defined-outside-init,wrong-import-order,broad-exception-caught,duplicate-code
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,11 +20,15 @@ import os
 
 from core.common.log import LOGGER
 from sedna.common.class_factory import ClassType, ClassFactory
-from models import HuggingfaceLLM, APIBasedLLM, VllmLLM, EagleSpecDecModel, LadeSpecDecLLM
+from models import HuggingfaceLLM, APIBasedLLM, VllmLLM, EagleSpecDecModel
+try:
+    from models import LadeSpecDecLLM
+except ImportError:
+    LadeSpecDecLLM = None
 
 os.environ['BACKEND_TYPE'] = 'TORCH'
 
-__all__ = ["BaseModel"]
+__all__ = ["EdgeModel"]
 
 @ClassFactory.register(ClassType.GENERAL, alias="EdgeModel")
 class EdgeModel:
@@ -44,16 +50,17 @@ class EdgeModel:
         self.kwargs = kwargs
         self.model_name = kwargs.get("model", None)
         self.backend = kwargs.get("backend", "huggingface")
-        if self.backend not in ["huggingface", "vllm", "api"]:
+        if self.backend not in ["huggingface", "vllm", "api", "EagleSpecDec", "LadeSpecDec"]:
             raise ValueError(
-                f"Unsupported backend: {self.backend}. Supported options are: 'huggingface', 'vllm', 'api'."
+                f"Unsupported backend: {self.backend}. Supported options are: "
+                "'huggingface', 'vllm', 'api', 'EagleSpecDec', 'LadeSpecDec'."
             )
         self._set_config()
 
     def _set_config(self):
         """Set the model path in our environment variables due to Sedna’s [check](https://github.com/kubeedge/sedna/blob/ac623ab32dc37caa04b9e8480dbe1a8c41c4a6c2/lib/sedna/core/base.py#L132).
         """
-        
+
         os.environ["model_path"] = self.model_name
 
     def load(self, **kwargs):
@@ -68,13 +75,25 @@ class EdgeModel:
             if self.backend == "huggingface":
                 self.model = HuggingfaceLLM(**self.kwargs)
             elif self.backend == "vllm":
-                self.model = VllmLLM(**self.kwargs)
+                if VllmLLM is not None:
+                    self.model = VllmLLM(**self.kwargs)
+                else:
+                    LOGGER.warning("vLLM is not available on this platform. Falling back to HuggingfaceLLM.")
+                    self.model = HuggingfaceLLM(**self.kwargs)
             elif self.backend == "api":
                 self.model = APIBasedLLM(**self.kwargs)
             elif self.backend == "EagleSpecDec":
-                self.model = EagleSpecDecModel(**self.kwargs)
+                if EagleSpecDecModel is not None:
+                    self.model = EagleSpecDecModel(**self.kwargs)
+                else:
+                    LOGGER.warning("EagleSpecDec is not available on this platform. Falling back to HuggingfaceLLM.")
+                    self.model = HuggingfaceLLM(**self.kwargs)
             elif self.backend == "LadeSpecDec":
-                self.model = LadeSpecDecLLM(**self.kwargs)
+                if LadeSpecDecLLM is not None:
+                    self.model = LadeSpecDecLLM(**self.kwargs)
+                else:
+                    LOGGER.warning("LadeSpecDec is not available on this platform. Falling back to HuggingfaceLLM.")
+                    self.model = HuggingfaceLLM(**self.kwargs)
         except Exception as e:
             LOGGER.error(f"Failed to initialize model backend `{self.backend}`: {str(e)}")
             raise RuntimeError(f"Model loading failed for backend `{self.backend}`.") from e
@@ -95,12 +114,15 @@ class EdgeModel:
             Formatted Response. See `model._format_response()` for more details.
         """
 
+        if not isinstance(data, dict):
+            data = {"query": str(data)}
+
         try:
             return self.model.inference(data)
         except Exception as e:
             LOGGER.error(f"Inference failed: {e}")
             raise RuntimeError("Inference failed due to an internal error.") from e
-    
+
     def cleanup(self):
         """Save the cache and cleanup the model.
         """
