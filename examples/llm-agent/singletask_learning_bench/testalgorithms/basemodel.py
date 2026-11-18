@@ -24,9 +24,13 @@ os.environ['BACKEND_TYPE'] = 'TORCH'
 class BaseModel:
     def __init__(self, **kwargs):
         config=kwargs.get("config")
+        if config is None:
+            raise ValueError("BaseModel requires a 'config' path via kwargs (got None)")
         with open(config, 'r', encoding='utf-8') as file:
             self.config = json.load(file)
         train_config=kwargs.get("train_config")
+        if train_config is None:
+            raise ValueError("BaseModel requires a 'train_config' path via kwargs (got None)")
         with open(train_config, 'r', encoding='utf-8') as file:
             self.train_config = json.load(file)
 
@@ -87,10 +91,15 @@ class BaseModel:
 
     def load(self, model_url, **kwargs):
         if model_url:
-            logging.info("load model url: ",model_url)
+            logging.info("load model url: %s", model_url)
+            self.model = PeftModel.from_pretrained(self.model, model_url)
 
-    def save(self, model_path = None):
-        pass
+    def save(self, model_path=None):
+        if model_path is None:
+            return None
+        self.model.save_pretrained(model_path)
+        self.tokenizer.save_pretrained(model_path)
+        return model_path
 
 
     def preprocess(self, prompt=None, plan=None, MAX_LENGTH=None, tokenizer=None):
@@ -106,6 +115,12 @@ class BaseModel:
             input_ids=input_ids[:MAX_LENGTH]
             attention_mask=attention_mask[:MAX_LENGTH]
             labels=labels[:MAX_LENGTH]
+            if all(l == -100 for l in labels):
+                logging.warning(
+                    "Sample fully masked after truncation to MAX_LENGTH=%d "
+                    "(prompt alone exceeds MAX_LENGTH); this sample contributes "
+                    "zero training signal.", MAX_LENGTH
+                )
         return {
             "input_ids":input_ids,
             "attention_mask":attention_mask,
