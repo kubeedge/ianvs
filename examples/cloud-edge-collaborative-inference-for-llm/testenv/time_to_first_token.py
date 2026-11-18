@@ -34,6 +34,9 @@ def time_to_first_token(_, y_pred):
 
     infer_res = [JointInferenceResult.from_list(*pred) for pred in y_pred]
 
+    if not infer_res:
+        return 0.0
+
     average_ttft = sum([pred.result.time_to_first_token for pred in infer_res]) / len(infer_res)
 
     return round(average_ttft, 3)
