@@ -20,7 +20,8 @@ import time
 
 import matplotlib.pyplot as plt
 import numpy as np
-from langchain import PromptTemplate, OpenAI
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import OpenAI
 from shapely.geometry import Polygon, box, Point, LineString
 from shapely.ops import substring
 
