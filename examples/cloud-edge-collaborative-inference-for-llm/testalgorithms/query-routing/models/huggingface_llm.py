@@ -123,8 +123,11 @@ class HuggingfaceLLM(BaseLLM):
 
         text = generated_text.replace("<|im_end|>", "")
         prompt_tokens = len(model_inputs.input_ids[0])
-        internal_token_latency = sum(internal_token_latency) / len(internal_token_latency)
-        throughput = 1 / internal_token_latency
+        if internal_token_latency:
+            internal_token_latency = sum(internal_token_latency) / len(internal_token_latency)
+        else:
+            internal_token_latency = 0.0
+        throughput = (1.0 / internal_token_latency) if internal_token_latency > 0 else 0.0
 
         response = self._format_response(
             text,
