@@ -48,7 +48,8 @@ class SingleTaskLearningACBoost(SingleTaskLearning):
         # Load test set data
         img_prefix = self.dataset.image_folder_url
         ann_file_path = self.dataset.test_url
-        ann_file = json.load(open(ann_file_path, mode="r", encoding="utf-8"))
+        with open(ann_file_path, mode="r", encoding="utf-8") as file_handle:
+            ann_file = json.load(file_handle)
         test_set = []
         for i in ann_file['images']:
             test_set.append(os.path.join(img_prefix, i['file_name']))
