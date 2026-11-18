@@ -138,9 +138,20 @@ class BaseModel:
             else:
                 raise Exception("Train data must have 'x' (images) and 'y' (labels) attributes")
             
-            train_dirs = list(self.workspace.glob("yolov8_train*"))
+            candidate_dirs = [
+                self.workspace,
+                self.yolo_run_dir / self.workspace.name,
+            ]
+
+            train_dirs = []
+            for directory in candidate_dirs:
+                if directory.exists():
+                    train_dirs = list(directory.glob("yolov8_train*"))
+                    if train_dirs:
+                        break
+
             if not train_dirs:
-                raise FileNotFoundError(f"No training directories found in {self.workspace.absolute()}")
+                raise FileNotFoundError(f"No training directories found in {candidate_dirs}")
     
             latest_train_dir = max(train_dirs, key=lambda d: os.path.getctime(str(d)))
             logging.info(f"[Train]Latest training directory: {latest_train_dir.absolute()}")
