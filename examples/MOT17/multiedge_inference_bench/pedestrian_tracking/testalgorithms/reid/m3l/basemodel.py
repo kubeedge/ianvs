@@ -53,7 +53,13 @@ class BaseModel:
 
     def load(self, model_url=None):
         if model_url:
-            arch = re.compile("_([a-zA-Z]+).pth").search(model_url).group(1)
+            match = re.compile(r"_([a-zA-Z]+)\.pth").search(model_url)
+            if match is None:
+                raise ValueError(
+                    f"Cannot infer model architecture from filename: '{model_url}'. "
+                    "Expected format: '<name>_<arch>.pth'"
+                )
+            arch = match.group(1)
             # Create model
             self.model = models.create(
                 arch, num_features=0, dropout=0, norm=True, BNNeck=True
@@ -150,7 +156,7 @@ class BaseModel:
             torch.pow(x, 2).sum(dim=1, keepdim=True).expand(m, n)
             + torch.pow(y, 2).sum(dim=1, keepdim=True).expand(n, m).t()
         )
-        dist_m.addmm_(1, -2, x, y.t())
+        dist_m.addmm_(x, y.t(), beta=1, alpha=-2)
         return dist_m
 
     def to_numpy(self, tensor):
