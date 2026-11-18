@@ -166,6 +166,12 @@ class Module:
             if hp_name == "other_hyperparameters":
                 base_hps = self._parse_other_hyperparameters(hp_values)
             else:
+                if not isinstance(hp_values, list) or not hp_values:
+                    raise ValueError(
+                        f"hyperparameter '{hp_name}' is missing a non-empty 'values' "
+                        f"list in its config (got {hp_values!r}). Add a 'values:' "
+                        f"entry with at least one value under '{hp_name}'."
+                    )
                 hp_name_values_list.append((hp_name, hp_values))
 
         hp_combinations_list = get_full_combinations(hp_name_values_list)
