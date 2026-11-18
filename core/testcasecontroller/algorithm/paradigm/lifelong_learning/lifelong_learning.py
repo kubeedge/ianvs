@@ -71,8 +71,6 @@ class LifelongLearning(ParadigmBase):
         # pylint:disable=duplicate-code
         # pylint: disable=R0912
         # pylint: disable=R0915
-        # pylint: disable=W0012
-        # pylint: disable=E0606
         """
         run the test flow of incremental learning paradigm.
 
@@ -295,6 +293,8 @@ class LifelongLearning(ParadigmBase):
             test_res, unseen_task_train_samples = self._inference(self.edge_task_index,
                                                               self.dataset.test_url,
                                                               "test")
+        else:
+            raise ValueError(f"unsupported mode: {mode}")
 
         return test_res, self.system_metric_info
 
