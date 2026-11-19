@@ -1,8 +1,10 @@
+import torch as _torch
+
 class TrainArgs:
     def __init__(self, **kwargs):
         self.depth = False
         self.dataset = 'cityscapes'
-        self.workers = 4
+        self.workers = 0
         self.base_size = 1024
         self.crop_size = 768
         self.loss_type = 'ce'
@@ -17,7 +19,7 @@ class TrainArgs:
         self.lr_scheduler = 'cos'
         self.momentum = 0.9
         self.weight_decay = 2.5e-5
-        self.no_cuda = False
+        self.no_cuda = not _torch.cuda.is_available()
         self.gpu_ids = '0'
 
         self.seed = 1
@@ -26,20 +28,20 @@ class TrainArgs:
         self.ft = True
         self.eval_interval = kwargs.get("eval_interval", 2)
         self.no_val = kwargs.get("no_val", True)
-        self.cuda = True
+        self.cuda = _torch.cuda.is_available()
 
 
 class ValArgs:
     def __init__(self, **kwargs):
         self.dataset = 'cityscapes'
-        self.workers = 4
+        self.workers = 0
         self.base_size = 1024
         self.crop_size = 768
         self.batch_size = 6
         self.val_batch_size = 1
         self.test_batch_size = 1
         self.num_class = 24
-        self.no_cuda = False
+        self.no_cuda = not _torch.cuda.is_available()
         self.gpu_ids = '0'
         self.checkname = None
         self.weight_path = "./models/530_exp3_2.pth"
@@ -49,4 +51,4 @@ class ValArgs:
         self.label_save_path = './test/label'
         self.merge = True
         self.depth = False
-        self.cuda = True
+        self.cuda = _torch.cuda.is_available()

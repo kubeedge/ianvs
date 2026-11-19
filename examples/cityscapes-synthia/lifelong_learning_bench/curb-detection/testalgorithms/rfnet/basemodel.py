@@ -1,4 +1,13 @@
 import os
+import sys
+
+# RFNet imports its own modules (e.g. `mypath`) as top-level names, and data
+# loader workers must be able to import `RFNet`. Spawned workers inherit
+# sys.path, so this replaces the PYTHONPATH export.
+_RFNET_PARENT = os.path.dirname(os.path.abspath(__file__))
+for _path in (os.path.join(_RFNET_PARENT, "RFNet"), _RFNET_PARENT):
+    if _path not in sys.path:
+        sys.path.insert(0, _path)
 
 import numpy as np
 import torch
@@ -34,7 +43,7 @@ class BaseModel:
 
     def train(self, train_data, valid_data=None, **kwargs):
         self.trainer = Trainer(self.train_args, train_data=train_data)
-        print("Total epoches:", self.trainer.args.epochs)
+        LOGGER.info("Total epochs: %s", self.trainer.args.epochs)
         for epoch in range(
                 self.trainer.args.start_epoch,
                 self.trainer.args.epochs):
