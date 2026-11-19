@@ -26,6 +26,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Mapping, Optional, Sequence
 
+from services import lifelong_smoke
 from services.inventory_loader import DEFAULT_INVENTORY_PATH, load_inventory_examples
 from static_validator import (
     FAIL,
@@ -366,6 +367,22 @@ def validate_example(
     if not benchmark_path.is_file():
         return report
 
+    lifelong_settings = lifelong_smoke.load_lifelong_settings(repo_root, benchmark_file)
+    if lifelong_settings is not None:
+        with tempfile.TemporaryDirectory(prefix="ianvs-smoke-") as temp_dir:
+            _validate_lifelong_smoke(
+                report,
+                repo_root,
+                example,
+                lifelong_settings,
+                Path(temp_dir),
+                benchmark_file,
+                execute,
+                timeout_seconds,
+                smoke_command,
+            )
+        return report
+
     with tempfile.TemporaryDirectory(prefix="ianvs-smoke-") as temp_dir:
         dataset_config = _dataset_config_from_example(repo_root, example)
         temp_dataset_root = _temporary_dataset_root(temp_dir, dataset_config, example)
@@ -418,6 +435,78 @@ def validate_example(
 def render_smoke_markdown(report: StaticValidationReport) -> str:
     rendered = render_markdown(report)
     return rendered.replace("# Static Validation Report", "# Smoke Validation Report", 1)
+
+
+def _validate_lifelong_smoke(
+    report: ExampleReport,
+    repo_root: Path,
+    example: Mapping[str, object],
+    settings: "lifelong_smoke.LifelongSettings",
+    temp_dir: Path,
+    benchmark_file: str,
+    execute: bool,
+    timeout_seconds: int,
+    smoke_command: Sequence[str],
+) -> None:
+    """Module ③: run a lifelong unit on its smoke dataset and check every round."""
+    dataset_root = _dataset_root_from_inventory(example)
+    if not dataset_root:
+        _append_check(
+            report,
+            name="Lifelong smoke sizing",
+            status=FAIL,
+            file=benchmark_file,
+            message=(
+                "Lifelong units need `dataset.root` in the inventory: the smoke dataset "
+                "written by the prepare_dataset step."
+            ),
+        )
+        return
+
+    command_benchmark_file, train_index, workspace = lifelong_smoke.materialize_benchmark(
+        settings, repo_root / dataset_root, temp_dir
+    )
+    sizing = lifelong_smoke.check_sizing(train_index, settings)
+    _append_check(
+        report,
+        name="Lifelong smoke sizing",
+        status=sizing.status,
+        file=_display_path(train_index, repo_root),
+        message=sizing.message,
+        details=sizing.details,
+    )
+    if sizing.status != PASS:
+        return
+    if not execute:
+        _append_check(
+            report,
+            name="Runtime smoke test",
+            status=SKIP,
+            file=benchmark_file,
+            message="Runtime execution was not requested.",
+        )
+        return
+
+    _run_smoke_command(
+        report,
+        repo_root,
+        example,
+        command_benchmark_file,
+        None,
+        smoke_command,
+        timeout_seconds,
+    )
+    if report.checks[-1].status != PASS:
+        return
+    rounds = lifelong_smoke.check_round_completion(workspace, settings)
+    _append_check(
+        report,
+        name="Lifelong round completion",
+        status=rounds.status,
+        file=benchmark_file,
+        message=rounds.message,
+        details=rounds.details,
+    )
 
 
 def _prepare_dataset(
