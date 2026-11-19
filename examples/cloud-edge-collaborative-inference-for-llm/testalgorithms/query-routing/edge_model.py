@@ -96,6 +96,8 @@ class EdgeModel:
         """
 
         try:
+            if not hasattr(self, "model"):
+                self.load()
             return self.model.inference(data)
         except Exception as e:
             LOGGER.error(f"Inference failed: {e}")
@@ -106,7 +108,8 @@ class EdgeModel:
         """
 
         try:
-            self.model.save_cache()
-            self.model.cleanup()
+            if hasattr(self, "model"):
+                self.model.save_cache()
+                self.model.cleanup()
         except Exception as e:
             LOGGER.warning(f"Cleanup failed: {e}")

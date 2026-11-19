@@ -36,6 +36,9 @@ def edge_ratio(_, y_pred):
 
     y_pred = [pred.is_hard_example for pred in infer_res]
 
+    if not y_pred:
+        return 0.0
+
     edge_ratio = 1 - sum(y_pred) / len(y_pred)
 
     return round(edge_ratio * 100,2)
