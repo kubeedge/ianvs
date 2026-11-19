@@ -128,12 +128,11 @@ class JointInference(ParadigmBase):
         self.set_config()
 
         job = self.build_paradigm_job(ParadigmType.JOINT_INFERENCE.value)
-
-        inference_result = self._inference(job)
-
-        self._cleanup(job)
-
-        return inference_result, self.system_metric_info
+        try:
+            inference_result = self._inference(job)
+            return inference_result, self.system_metric_info
+        finally:
+            self._cleanup(job)
 
     def _cleanup(self, job):
         """Call module's cleanup method to release resources
@@ -152,8 +151,8 @@ class JointInference(ParadigmBase):
 
         # Special call is required for hard example mining module
         # since it is instantiated within the job.
-        mining_instance = job.hard_example_mining_algorithm
-        if hasattr(mining_instance, "cleanup"):
+        mining_instance = getattr(job, "hard_example_mining_algorithm", None)
+        if mining_instance and hasattr(mining_instance, "cleanup"):
             mining_instance.cleanup()
 
         del job
