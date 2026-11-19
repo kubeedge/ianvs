@@ -1,0 +1,13 @@
+# RFNet and its training utilities. Ianvs and the vendored Sedna wheel are
+# installed separately (see the Ianvs installation guide).
+torch>=1.10
+torchvision>=0.11
+tensorboard
+Pillow
+opencv-python
+numpy
+pandas
+scipy
+matplotlib
+seaborn
+tqdm
