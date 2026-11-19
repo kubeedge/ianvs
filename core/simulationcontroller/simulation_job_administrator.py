@@ -23,6 +23,7 @@ container on the host, so files and images reach a node with `docker cp` and
 no kubectl and no registry.
 """
 
+import glob
 import hashlib
 import json
 import os
@@ -70,6 +71,21 @@ class JobFailure(RuntimeError):
         self.status = status
         # the system metrics measured before the failure, for the leaderboard row
         self.metrics = {}
+
+
+def _keep_newest_wheel(directory, package):
+    """
+    remove all but the newest <package>-<version>-*.whl in directory. Several Sedna
+    wheels can ship side by side in resources/third_party (0.6.0.1 and 0.6.0.2), and
+    pip cannot install two versions of one package.
+    """
+    def version(wheel):
+        number = os.path.basename(wheel).split("-")[1]
+        return tuple(int(part) if part.isdigit() else 0 for part in number.split("."))
+
+    wheels = sorted(glob.glob(os.path.join(directory, f"{package}-*.whl")), key=version)
+    for wheel in wheels[:-1]:
+        os.remove(wheel)
 
 
 def _run(cmd, **kwargs):
@@ -200,6 +216,7 @@ class SimulationJobAdministrator:
                     shutil.copy2(src, dst)
                 else:
                     raise RuntimeError(f"cannot build the sandbox image: {src} not found")
+            _keep_newest_wheel(os.path.join(context, "resources", "third_party"), "sedna")
             extra = ""
             for i, requirement in enumerate(profile.requirements):
                 if not os.path.isfile(requirement):

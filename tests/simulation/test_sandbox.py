@@ -168,6 +168,18 @@ class JobAdministratorTest(unittest.TestCase):
         self.assertIn("pip install --no-cache-dir --no-deps wheels-1/algo-0.1-py3-none-any.whl",
                       dockerfiles[0])
 
+    def test_keep_newest_wheel(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            names = ["sedna-0.4.5-py3-none-any.whl", "sedna-0.6.0.1-py3-none-any.whl",
+                     "sedna-0.6.0.2-py3-none-any.whl", "other-1.0-py3-none-any.whl",
+                     "README.md"]
+            for name in names:
+                open(os.path.join(tmp, name), "w", encoding="utf-8").close()
+            sja._keep_newest_wheel(tmp, "sedna")
+            self.assertEqual(sorted(os.listdir(tmp)),
+                             ["README.md", "other-1.0-py3-none-any.whl",
+                              "sedna-0.6.0.2-py3-none-any.whl"])
+
     def test_cri_log_text(self):
         raw = ("2026-11-12T10:00:00.1Z stdout F epoch 1\n"
                "2026-11-12T10:00:00.2Z stderr P Traceback (most \n"
