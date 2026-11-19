@@ -139,8 +139,12 @@ dmypy.json
 .pyre/
 
 # generated files by MacOS
-.DS_Store 
+.DS_Store
 */.DS_Store
+
+# runtime-generated knowledge base index files
+index.pkl
+*.pkl
 
 # pycharm
 .idea
