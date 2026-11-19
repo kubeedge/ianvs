@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Model weights (too large for git)
+*.gguf
+models/qwen/
+
 # C extensions
 *.so
 
@@ -147,7 +151,6 @@ index.pkl
 .idea/misc.xml
 .idea/workspace.xml
 .idea/vcs.xml
-
 data/
 workspace/
 init_model/
