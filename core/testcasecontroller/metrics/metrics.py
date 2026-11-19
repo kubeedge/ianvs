@@ -79,8 +79,17 @@ def compute(key, matrix):
         if "accuracy" in matrix[i][i] and "accuracy" in matrix[0][i]:
             fwt_score += matrix[i][i]["accuracy"] - matrix[0][i]["accuracy"]
 
-    accuracy = accuracy / ((length - 1) * (length - 1))
-    bwt_score = bwt_score / ((length - 1) * (length - 1))
+    if length <= 1:
+        bwt_score = np.nan
+        fwt_score = np.nan
+        print(f"{key} BWT_score: {bwt_score}")
+        print(f"{key} FWT_score: {fwt_score}")
+        return [], bwt_score, fwt_score
+    
+    denom = (length - 1) * (length - 1)
+
+    accuracy = accuracy / denom
+    bwt_score = bwt_score / denom
     fwt_score = fwt_score / (length - 1)
 
     print(f"{key} BWT_score: {bwt_score}")
