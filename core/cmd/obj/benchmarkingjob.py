@@ -16,6 +16,7 @@
 """BenchmarkingJob"""
 
 import os
+import warnings
 
 from core.common import utils
 from core.common.constant import TestObjectType
@@ -115,6 +116,13 @@ class BenchmarkingJob:
             else:
                 if k in self.__dict__:
                     self.__dict__[k] = v
+                else:
+                    warnings.warn(
+                        f"Unknown benchmarkingjob setting '{k}' was ignored. "
+                        "Check the configuration nesting.",
+                        UserWarning,
+                        stacklevel=2,
+                    )
 
         self._check_fields()
 
