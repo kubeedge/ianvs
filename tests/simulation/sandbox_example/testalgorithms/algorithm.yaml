@@ -1,0 +1,13 @@
+algorithm:
+  paradigm_type: "singletasklearning"
+  initial_model_url: ""
+  modules:
+    - type: "basemodel"
+      name: "ThresholdClassifier"
+      url: "./tests/simulation/sandbox_example/testalgorithms/basemodel.py"
+      hyperparameters:
+        - mode:
+            values:
+              - "ok"
+              - "oom"
+              - "fail"
