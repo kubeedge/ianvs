@@ -2,13 +2,11 @@ benchmarkingjob:
   # job name of bechmarking; string type;
   name: "benchmarkingjob"
   # the url address of job workspace that will reserve the output of tests; string type;
-  workspace: "/home/shijing.hu/ianvs/lifelong_learning_bench/workspace"
+  workspace: "./workspace/semantic-segmentation"
 
   # the url address of test environment configuration file; string type;
   # the file format supports yaml/yml;
-  testenv: "./examples/semantic_segmentation/lifelong_learning_bench/testenv/testenv.yaml"
-  #testenv: "./examples/semantic_segmentation/lifelong_learning_bench/testenv/testenv-small.yaml"
-  #testenv: "./examples/semantic_segmentation/lifelong_learning_bench/testenv/testenv-full.yaml"
+  testenv: "./examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/testenv/testenv.yaml"
 
   # the configuration of test object
   test_object:
@@ -21,7 +19,7 @@ benchmarkingjob:
       - name: "rfnet_lifelong_learning"
         # the url address of test algorithm configuration file; string type;
         # the file format supports yaml/yml
-        url: "./examples/semantic_segmentation/lifelong_learning_bench/testalgorithms/rfnet/rfnet_algorithm.yaml"
+        url: "./examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/testalgorithms/rfnet/rfnet_algorithm.yaml"
 
   # the configuration of ranking leaderboard
   rank:
