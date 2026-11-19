@@ -10,19 +10,29 @@ class Saver(object):
 
     def __init__(self, args):
         self.args = args
-        self.directory = os.path.join('/tmp', args.dataset, args.checkname)
+        base_tmp = os.environ.get('TMPDIR', '/tmp')
+        self.directory = os.path.join(base_tmp, args.dataset, args.checkname)
         self.runs = sorted(glob.glob(os.path.join(self.directory, 'experiment_*')))
-        run_id = int(self.runs[-1].split('_')[-1]) + 1 if self.runs else 0
 
-        self.experiment_dir = os.path.join(self.directory, 'experiment_{}'.format(str(run_id)))
+        # Remove all previous experiment dirs to avoid filling the disk
+        for old_run in self.runs:
+            shutil.rmtree(old_run, ignore_errors=True)
+        self.runs = []
+
+        self.experiment_dir = os.path.join(self.directory, 'experiment_0')
         if not os.path.exists(self.experiment_dir):
             os.makedirs(self.experiment_dir)
+        self._last_checkpoint = None
 
     def save_checkpoint(self, state, is_best):  # filename from .pth.tar change to .pth?
         """Saves checkpoint to disk"""
         filename = f'checkpoint_{time.time()}.pth'
         checkpoint_path = os.path.join(self.experiment_dir, filename)
         torch.save(state, checkpoint_path)
+        # Delete the previous checkpoint to avoid accumulating GB of files
+        if self._last_checkpoint and os.path.exists(self._last_checkpoint):
+            os.remove(self._last_checkpoint)
+        self._last_checkpoint = checkpoint_path
         if is_best:
             best_pred = state['best_pred']
             with open(os.path.join(self.experiment_dir, 'best_pred.txt'), 'w') as f:
