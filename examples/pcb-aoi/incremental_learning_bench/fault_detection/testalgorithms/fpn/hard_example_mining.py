@@ -18,7 +18,7 @@ import abc
 
 from sedna.common.class_factory import ClassFactory, ClassType
 
-__all__ = ('IBTFilter')
+__all__ = ["IBTFilter"]
 
 
 class BaseFilter(metaclass=abc.ABCMeta):

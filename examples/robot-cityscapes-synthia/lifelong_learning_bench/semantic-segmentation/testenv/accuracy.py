@@ -20,7 +20,7 @@ from ERFNet.dataloaders import make_data_loader
 from ERFNet.utils.metrics import Evaluator
 from ERFNet.utils.args import ValArgs
 
-__all__ = ('accuracy')
+__all__ = ["accuracy"]
 
 
 @ClassFactory.register(ClassType.GENERAL, alias="accuracy")

@@ -7,7 +7,7 @@ from ultralytics.utils.metrics import ap_per_class, box_iou
 from sedna.common.class_factory import ClassType, ClassFactory
 
 logger = logging.getLogger(__name__)
-__all__ = ('map50')
+__all__ = ["map50"]
 
 def xywh2xyxy_rel(xywh):
     """
