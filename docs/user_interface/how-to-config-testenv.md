@@ -25,8 +25,14 @@ testenv:
 
 | Property | Required | Description |
 |----------|----------|-------------|
-|train_url|yes|The url address of train dataset index; Type: string|
-|test_url|yes|The url address of test dataset index; Type: string|
+|train_index|one of train_index, train_data, train_data_info|The url address of train dataset index; Type: string; Value Constraint: a txt or json file. Relative paths in a txt index are resolved against the directory of the index file.|
+|train_data|one of train_index, train_data, train_data_info|The url address of train data file; Type: string; Value Constraint: a jsonl file.|
+|train_data_info|one of train_index, train_data, train_data_info|The url address of train data info file; Type: string; Value Constraint: the file must be named `metadata.json`.|
+|test_index|one of test_index, test_data, test_data_info|The url address of test dataset index; Type: string; Value Constraint: a txt or json file. Relative paths in a txt index are resolved against the directory of the index file.|
+|test_data|one of test_index, test_data, test_data_info|The url address of test data file; Type: string; Value Constraint: a jsonl file.|
+|test_data_info|one of test_index, test_data, test_data_info|The url address of test data info file; Type: string; Value Constraint: the file must be named `metadata.json`.|
+
+If more than one of them is set, `*_index` is used first, then `*_data`, then `*_data_info`. The older `train_url` and `test_url` keys are still accepted: when none of the keys above is set, they are read as `train_index` and `test_index`, with a deprecation warning.
 
 For example:
 
@@ -35,8 +41,8 @@ For example:
 dataset:
   # the url address of train dataset index; string type;
   train_index: "./dataset/mmlu-5-shot/train_data/data.json"
-  # the url address of test dataset index; string type;
-  test_index: "./dataset/mmlu-5-shot/test_data/metadata.json"
+  # the url address of test data info file; string type;
+  test_data_info: "./dataset/mmlu-5-shot/test_data/metadata.json"
 ```
 
 ### The configuration of metrics
