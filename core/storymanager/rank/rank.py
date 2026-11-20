@@ -21,6 +21,7 @@ import numpy as np
 import pandas as pd
 
 from core.common import utils
+from core.common.constant import SystemMetricType
 from core.storymanager.visualization import get_visualization_func, draw_heatmap_picture
 
 
@@ -238,7 +239,7 @@ class Rank:
         for test_case in test_cases:
             out_put = test_case.output_dir
             test_result = test_results[test_case.id][0]
-            matrix = test_result.get("Matrix")
+            matrix = test_result.get(SystemMetricType.MATRIX.value)
             for key in matrix.keys():
                 draw_heatmap_picture(out_put, key, matrix[key])
 
