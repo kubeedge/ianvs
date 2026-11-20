@@ -11,9 +11,9 @@ benchmarkingjob:
         url: "./examples/llm-edge-benchmark-suite/single_task_bench_with_compression/testalgorithms/algorithm.yaml"
 
   rank:
-    sort_by: 
-      - { "latency": "descend" }
-      - { "throughput": "ascend" }
+    sort_by:
+      - { "latency": "ascend" }
+      - { "throughput": "descend" }
       - { "mem_usage": "ascend" }
       - { "prefill_latency": "ascend"}
 
@@ -25,6 +25,6 @@ benchmarkingjob:
       paradigms: [ "all" ]
       modules: [ "all" ]
       hyperparameters: [ "all" ]
-      metrics: [ "latency", "throughput", "prefill_latency" ]
+      metrics: [ "latency", "throughput", "mem_usage", "prefill_latency" ]
 
     save_mode: "selected_and_all"
