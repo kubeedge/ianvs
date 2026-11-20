@@ -4,7 +4,7 @@
 [![LICENSE SCAN](https://app.fossa.com/api/projects/custom%2B32178%2Fgithub.com%2Fkubeedge%2Fianvs.svg?type=shield)](https://app.fossa.com/projects/custom%2B32178%2Fgithub.com%2Fkubeedge%2Fianvs?ref=badge_shield)
 [![LICENSE](https://img.shields.io/github/license/kubeedge-sedna/ianvs.svg)](/LICENSE)
 
-Ianvs is a distributed synergy AI benchmarking project incubated in KubeEdge SIG AI. Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. More detailedly, Ianvs prepares not only test cases with datasets and corresponding algorithms, but also benchmarking tools including simulation and hyper-parameter searching. Ianvs also reveals best practices for developers and end users with presentation tools including leaderboards and test reports.
+Ianvs is a distributed synergy AI benchmarking project incubated in KubeEdge SIG AI. Ianvs aims to test the performance of distributed synergy AI solutions following recognized standards, in order to facilitate more efficient and effective development. More specifically, Ianvs prepares not only test cases with datasets and corresponding algorithms, but also benchmarking tools including simulation and hyper-parameter searching. Ianvs also reveals best practices for developers and end users with presentation tools including leaderboards and test reports.
 
 ## Scope
 
@@ -73,13 +73,13 @@ Follow the [Ianvs installation document](docs/guides/how-to-install-ianvs.md) to
 
   - Example PCB-AoI-2：[Testing incremental learning in industrial defect detection](docs/proposals/test-reports/testing-incremental-learning-in-industrial-defect-detection-with-pcb-aoi.md).
 
-- Scenario Cityscapes-Synthia: [Curb Detetion on Cityscapes-Synthia Dataset](docs/proposals/algorithms/lifelong-learning/Additional-documentation/curb_detetion_datasets.md)
+- Scenario Cityscapes-Synthia: [Curb Detection on Cityscapes-Synthia Dataset](docs/proposals/algorithms/lifelong-learning/Additional-documentation/curb_detetion_datasets.md)
 
   - Example Cityscapes-Synthia-1: [Lifelong learning in semantic segmentation](examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/README.md)
 
-  - Example Cityscapes-Synthia-2: [Lifelong learning in curb detetion](examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/README.md)
+  - Example Cityscapes-Synthia-2: [Lifelong learning in curb detection](examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/README.md)
 
-  - Example Cityscapes-Synthia-3: [Scene based unknown task recognition in curb detetion](examples/cityscapes-synthia/scene-based-unknown-task-recognition/curb-detection/README.md)
+  - Example Cityscapes-Synthia-3: [Scene based unknown task recognition in curb detection](examples/cityscapes-synthia/scene-based-unknown-task-recognition/curb-detection/README.md)
 
   - Example Cityscapes-Synthia-4: [Integrating GAN and Self-taught Learning into Ianvs Lifelong Learning](examples/cityscapes/lifelong_learning_bench/unseen_task_processing-GANwithSelfTaughtLearning/README.md)
 
