@@ -41,8 +41,8 @@ For example:
 dataset:
   # the url address of train dataset index; string type;
   train_index: "./dataset/mmlu-5-shot/train_data/data.json"
-  # the url address of test dataset index; string type;
-  test_index: "./dataset/mmlu-5-shot/test_data/metadata.json"
+  # the url address of test data info file; string type;
+  test_data_info: "./dataset/mmlu-5-shot/test_data/metadata.json"
 ```
 
 ### The configuration of metrics
