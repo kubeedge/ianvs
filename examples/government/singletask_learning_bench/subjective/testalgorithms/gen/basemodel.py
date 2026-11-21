@@ -135,6 +135,6 @@ class BaseModel:
             stream=False
         )
 
-        res = response.choices[0].message.content
-
-        return res
+        if not response.choices:
+            return ""
+        return response.choices[0].message.content
