@@ -22,6 +22,7 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -e .
+python -m pip install resources/third_party/sedna-0.6.0.1-py3-none-any.whl
 python -m pip install -r examples/government/singletask_learning_bench/requirements.txt
 ```
 
@@ -65,7 +66,21 @@ dataset/government
 
 The preparation step converts the current Kaggle folder names
 `government/multi-choice questions` and `government/subjective questions` into
-the paths expected by the Ianvs YAML files.
+the paths expected by the Ianvs YAML files. Objective options are added to each
+question, so the model sees them. Subjective rows may use `query`/`response` or
+`question`/`answer`, and each one needs a `judge_prompt`; the script stops on a row
+without one, because the judge would otherwise score the bare answer.
+
+To check the prepared data without a model or GPU, run:
+
+```powershell
+python -m pip install pytest
+python -m pytest examples/government/singletask_learning_bench/test_data_contract.py
+```
+
+It prepares a few fixture rows, loads them with the same Sedna parser Ianvs uses, and
+checks that the options reach the prompt, the judge prompt and dimensions survive
+loading, and judge scores are read in English and Chinese.
 
 ## Model Configuration
 
@@ -106,8 +121,9 @@ $env:DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 $env:DEEPSEEK_MODEL = "deepseek-chat"
 ```
 
-Outputs are written under `workspace/government/objective` and
-`workspace/government/subjective`.
+Ianvs adds the job name to the workspace, so outputs are written under
+`workspace/government/objective/benchmarkingjob` and
+`workspace/government/subjective/benchmarkingjob`.
 
 ## Data Format
 
