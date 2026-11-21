@@ -19,7 +19,6 @@ import argparse
 
 from core.common.log import LOGGER
 from core.common import utils
-from core.cmd.obj import BenchmarkingJob
 from core.__version__ import __version__
 
 
@@ -28,6 +27,12 @@ def main():
     try:
         parser = _generate_parser()
         args = parser.parse_args()
+
+        # Imported lazily: pulls in the full benchmarking stack (sedna, onnx,
+        # matplotlib). Deferring it keeps `ianvs -v` and `ianvs --help` fast,
+        # since argparse exits during parse_args() for those flags.
+        # pylint: disable=import-outside-toplevel
+        from core.cmd.obj import BenchmarkingJob
         config_file = args.benchmarking_config_file
         if not utils.is_local_file(config_file):
             raise SystemExit(f"not found benchmarking config({config_file}) file in local")
