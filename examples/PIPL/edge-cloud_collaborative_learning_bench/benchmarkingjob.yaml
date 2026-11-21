@@ -13,9 +13,9 @@ benchmarkingjob:
   rank:
     sort_by: [{"Accuracy": "descend"}, {"Privacy_Score": "descend"}]
   
-  visualization:
-    mode: "selected_only"
-    method: "print_table"
+    visualization:
+      mode: "selected_only"
+      method: "print_table"
     selected_dataitem:
       paradigms: ["all"]
       modules: ["privacy_preserving_llm", "privacy_detection", "privacy_encryption"]
@@ -29,4 +29,4 @@ benchmarkingjob:
         "MIA_Attack_Success_Rate", "Cross_Border_Payload_Size"
       ]
   
-  save_mode: "selected_and_all"
+    save_mode: "selected_and_all"
