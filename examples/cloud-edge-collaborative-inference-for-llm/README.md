@@ -192,6 +192,15 @@ kaggle datasets download -d kubeedgeianvs/ianvs-mmlu-5shot
 unzip -o ianvs-mmlu-5shot.zip
 rm -rf ianvs-mmlu-5shot.zip
 ```
+**GPQA-diamond** (no Kaggle account or auth token required):
+
+The canonical GPQA dataset on HuggingFace is gated and requires accepting terms of use before download. To avoid that friction, this example instead uses the same public, unauthenticated CSV mirror that OpenAI's own `simple-evals` benchmarking tool relies on. Run the provided helper script from the example directory:
+
+```bash
+python prepare_gpqa_dataset.py --output-dir ../../dataset/gpqa
+```
+
+This downloads `gpqa_diamond.csv` from `https://openaipublic.blob.core.windows.net/simple-evals/gpqa_diamond.csv`, converts it into Ianvs' expected `data.jsonl` / `metadata.json` format with a fixed random seed (for reproducible answer-choice shuffling), and writes it to `dataset/gpqa/`.
 
 2. Then, check the path of `train_data` and `test_data` in 
 `examples/cloud-edge-collaborative-inference-for-llm/testenv/testenv.yaml`.
