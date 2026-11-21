@@ -137,7 +137,16 @@ export OPENAI_BASE_URL="https://api.openai.com/v1"
 export OPENAI_API_KEY=sk_xxxxxxxx
 ```
 
-`Alternatively, for GROQ, use GROQ_BASE_URL and GROQ_API_KEY.`
+Alternatively, for GROQ, use:
+```bash
+export GROQ_BASE_URL="https://api.groq.com/openai/v1"
+export GROQ_API_KEY=gsk_xxxxxxxx
+```
+
+> **Note on API requirements**:
+> - Calling OpenAI models such as `gpt-4o-mini` requires an active account with a paid billing tier (credit balance); free accounts without credits will encounter API quota errors (`429 insufficient_quota`).
+> - You can alternatively use GROQ or any OpenAI-compatible server (e.g., local vLLM or Ollama server at `http://localhost:8000/v1`).
+> - If you want to run without active API keys or live calls, you can use the provided offline response cache (`workspace-mmlu`) described in Step 3.
 
 6. Run the Ianvs benchmark:
 ```bash 
@@ -299,7 +308,16 @@ export OPENAI_BASE_URL="https://api.openai.com/v1"
 export OPENAI_API_KEY=sk_xxxxxxxx
 ```
 
-`Alternatively, for GROQ, use GROQ_BASE_URL and GROQ_API_KEY.`
+Alternatively, for GROQ:
+```bash
+export GROQ_BASE_URL="https://api.groq.com/openai/v1"
+export GROQ_API_KEY=gsk_xxxxxxxx
+```
+
+> **Note**:
+> - OpenAI API requires an active credit balance (paid billing tier) for model inference (`gpt-4o-mini`).
+> - You may also point `OPENAI_BASE_URL` to any OpenAI-compatible local server (e.g. vLLM or Ollama).
+> - If live API access is unavailable, you can use the precomputed cached results from `workspace-mmlu`.
 
 For `CloudModel`, the open parameters are:
 
