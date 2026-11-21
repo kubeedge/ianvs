@@ -62,6 +62,18 @@ class Dataset:
          config of dataset, include: train url, test url and label, etc.
     """
 
+    ALLOWED_FIELDS = frozenset({
+        "train_url",
+        "test_url",
+        "train_index",
+        "test_index",
+        "train_data",
+        "test_data",
+        "train_data_info",
+        "test_data_info",
+        "label",
+    })
+
     def __init__(self, config):
         self.train_url: str = ""
         self.test_url: str = ""
@@ -98,17 +110,24 @@ class Dataset:
 
     def _parse_config(self, config):
         for attr, value in config.items():
-            if attr in self._LEGACY_INPUTS:
-                target, modern_keys = self._LEGACY_INPUTS[attr]
+            str_attr = str(attr)
+            if str_attr in self._LEGACY_INPUTS:
+                target, modern_keys = self._LEGACY_INPUTS[str_attr]
                 if not any(config.get(key) for key in modern_keys):
                     LOGGER.warning(
                         "dataset field `%s` is deprecated as an input; "
                         "treating it as `%s`. Rename it in the config.",
-                        attr, target)
-                    self.__dict__[target] = value
+                        attr, target,
+                    )
+                    setattr(self, target, value)
                     continue
-            if attr in self.__dict__:
-                self.__dict__[attr] = value
+            if str_attr in self.ALLOWED_FIELDS:
+                setattr(self, str_attr, value)
+            else:
+                LOGGER.warning(
+                    "Unknown dataset configuration field '%s' will be ignored.",
+                    attr,
+                )
 
         self._check_fields()
 

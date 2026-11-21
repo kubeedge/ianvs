@@ -66,7 +66,10 @@ class TestCase:
             test_env_config = {}
             # pylint: disable=C0103
             for k, v in self.test_env.__dict__.items():
-                test_env_config[k] = v
+                if k == "other_params" and isinstance(v, dict):
+                    test_env_config.update(v)
+                else:
+                    test_env_config[k] = v
 
             self.output_dir = self._get_output_dir(workspace)
             paradigm = self.algorithm.paradigm(workspace=self.output_dir,

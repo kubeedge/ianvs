@@ -31,6 +31,17 @@ class TestEnv:
 
     """
 
+    KNOWN_FIELDS = frozenset({
+        "model_eval",
+        "metrics",
+        "incremental_rounds",
+        "round",
+        "client_number",
+        "dataset",
+        "use_gpu",
+    })
+    RESERVED_KEYS = frozenset({"other_params"})
+
     def __init__(self, config):
         self.model_eval = {
             "model_metric": {
@@ -47,7 +58,14 @@ class TestEnv:
         self.client_number = 1
         self.dataset = None
         self.use_gpu = False  # default false
+        self.other_params = {}
         self._parse_config(config)
+
+    def __getattr__(self, name):
+        params = self.__dict__.get("other_params", {})
+        if name in params:
+            return params[name]
+        raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
     def _check_fields(self):
         if not self.metrics:
@@ -61,16 +79,55 @@ class TestEnv:
 
     def _parse_config(self, config):
         config_dict = config[str.lower(TestEnv.__name__)]
+        seen_keys = set()
         # pylint: disable=C0103
         for k, v in config_dict.items():
-            if k == str.lower(Dataset.__name__):
+            str_k = str(k)
+            if str_k in seen_keys:
+                raise ValueError(
+                    f"Duplicate testenv configuration key '{str_k}' detected."
+                )
+            seen_keys.add(str_k)
+
+            if str_k.startswith("_"):
+                raise ValueError(
+                    f"Invalid testenv configuration key '{k}': private attributes cannot be configured."
+                )
+
+            if str_k in self.RESERVED_KEYS or hasattr(type(self), str_k):
+                raise ValueError(
+                    f"Invalid testenv configuration key '{k}': cannot shadow core TestEnv attribute, method, or reserved state."
+                )
+
+            if str_k == str.lower(Dataset.__name__):
                 self.dataset = Dataset(v)
-            elif k == 'use_gpu':
-                self.use_gpu = bool(v)
+            elif str_k == 'use_gpu':
+                self.use_gpu = self._parse_bool(v, "use_gpu")
+            elif str_k in self.KNOWN_FIELDS:
+                setattr(self, str_k, v)
             else:
-                self.__dict__[k] = v
+                self.other_params[str_k] = v
 
         self._check_fields()
+
+    @staticmethod
+    def _parse_bool(value, field_name="field"):
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, (int, float)):
+            if value in (0, 1):
+                return bool(value)
+            raise ValueError(f"Invalid numeric boolean value for {field_name}: '{value}'")
+        if isinstance(value, str):
+            v_lower = value.strip().lower()
+            if v_lower in ("true", "1", "yes", "on"):
+                return True
+            if v_lower in ("false", "0", "no", "off"):
+                return False
+            raise ValueError(f"Invalid boolean value for {field_name}: '{value}'")
+        raise ValueError(
+            f"Expected boolean type for {field_name}, got {type(value).__name__}: '{value}'"
+        )
 
     def prepare(self):
         """prepare env"""
