@@ -11,7 +11,6 @@
 
 import argparse
 import json
-import shutil
 from pathlib import Path
 
 
@@ -95,16 +94,33 @@ def _prepare_subjective(source_dir, output_dir):
     if not source_metadata.is_file():
         raise FileNotFoundError(f"missing subjective metadata: {source_metadata}")
 
-    train_rows = [
-        {"question": row["query"], "answer": row["response"]}
-        for row in _read_jsonl(source_data)
-    ]
+    with source_metadata.open("r", encoding="utf-8") as file:
+        metadata = {**SUBJECTIVE_METADATA, **json.load(file)}
+
+    train_rows = []
+    test_rows = []
+    for number, row in enumerate(_read_jsonl(source_data), start=1):
+        query = row.get("query", row.get("question"))
+        response = row.get("response", row.get("answer"))
+        # Sedna loads a missing judge_prompt as "", and the judge would then score a bare answer
+        if not query or response is None or not row.get("judge_prompt"):
+            raise ValueError(
+                f"{source_data} line {number} needs query/question, "
+                "response/answer and judge_prompt"
+            )
+        train_rows.append({"question": query, "answer": response})
+        test_rows.append({
+            **row,
+            "query": query,
+            "response": response,
+            "level_3_dim": row.get("level_3_dim", metadata["level_3_dim"]),
+            "level_4_dim": row.get("level_4_dim", metadata["level_4_dim"]),
+        })
 
     target = output_dir / "subjective"
     _write_jsonl(target / "train_data" / "data.jsonl", train_rows)
-    (target / "test_data").mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(source_data, target / "test_data" / "data.jsonl")
-    shutil.copyfile(source_metadata, target / "test_data" / "metadata.json")
+    _write_jsonl(target / "test_data" / "data.jsonl", test_rows)
+    _write_json(target / "test_data" / "metadata.json", metadata)
 
 
 def main():

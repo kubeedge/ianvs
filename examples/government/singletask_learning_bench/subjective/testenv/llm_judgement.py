@@ -22,7 +22,7 @@ __all__ = ["llm_judgement"]
 
 def extract_comprehensive_score(input_str):
     patterns = [
-        r"['\"]Overall Points['\"]\s*:\s*(\d+)",
+        r"(?i)['\"]?Overall (?:Points|Score)['\"]?\s*[:：]\s*(\d+)",
         r"['\"]\u7efc\u5408\u5f97\u5206['\"]\s*[:\uff1a]\s*(\d+)",
         r"\u7efc\u5408(?:\u5f97\u5206|\u5206\u6570)\D{0,8}(\d+)",
     ]
