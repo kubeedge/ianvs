@@ -16,8 +16,41 @@
 
 import os
 import subprocess
+from contextlib import contextmanager
 from core.common.constant import ParadigmType
 from core.testcasecontroller.algorithm.paradigm.base import ParadigmBase
+
+_ENV_UNSET = object()
+
+
+@contextmanager
+def _scoped_base_model_url(initial_model):
+    """
+    Temporarily set (or clear) the ``BASE_MODEL_URL`` environment variable.
+
+    Some basemodels read ``BASE_MODEL_URL`` directly in their constructor, which
+    runs during ``ParadigmBase.__init__`` - before ``_train`` is ever called. If
+    a previous test case left a value behind, the next test case's basemodel
+    constructor would pick it up. This context manager scopes the variable to a
+    single test case and restores the previous state on exit, whether the body
+    succeeds or raises.
+
+    ``initial_model`` is checked for truthiness rather than ``is not None``
+    because ``Algorithm.initial_model_url`` defaults to ``""``, which should be
+    treated as "no initial model".
+    """
+    previous = os.environ.get("BASE_MODEL_URL", _ENV_UNSET)
+    if initial_model:
+        os.environ["BASE_MODEL_URL"] = initial_model
+    else:
+        os.environ.pop("BASE_MODEL_URL", None)
+    try:
+        yield
+    finally:
+        if previous is _ENV_UNSET:
+            os.environ.pop("BASE_MODEL_URL", None)
+        else:
+            os.environ["BASE_MODEL_URL"] = previous
 
 
 class SingleTaskLearning(ParadigmBase):
@@ -47,8 +80,11 @@ class SingleTaskLearning(ParadigmBase):
     """
 
     def __init__(self, workspace, **kwargs):
-        ParadigmBase.__init__(self, workspace, **kwargs)
         self.initial_model = kwargs.get("initial_model_url")
+        # Scope BASE_MODEL_URL around module construction: basemodels that read
+        # the variable in their constructor run inside ParadigmBase.__init__.
+        with _scoped_base_model_url(self.initial_model):
+            ParadigmBase.__init__(self, workspace, **kwargs)
         self.mode = kwargs.get("mode")
         self.quantization_type = kwargs.get("quantization_type")
         self.llama_quantize_path = kwargs.get("llama_quantize_path")
@@ -67,19 +103,20 @@ class SingleTaskLearning(ParadigmBase):
 
         """
 
-        job = self.build_paradigm_job(ParadigmType.SINGLE_TASK_LEARNING.value)
+        with _scoped_base_model_url(self.initial_model):
+            job = self.build_paradigm_job(ParadigmType.SINGLE_TASK_LEARNING.value)
 
-        self._preprocess(job)
+            self._preprocess(job)
 
-        trained_model = self._train(job, self.initial_model)
+            trained_model = self._train(job)
 
-        if trained_model is None:
-            trained_model = self.initial_model
+            if trained_model is None:
+                trained_model = self.initial_model
 
-        if self.mode == 'with_compression':
-            trained_model = self._compress(trained_model)
+            if self.mode == 'with_compression':
+                trained_model = self._compress(trained_model)
 
-        inference_result = self._inference(job, trained_model)
+            inference_result = self._inference(job, trained_model)
 
         return inference_result, self.system_metric_info
 
@@ -115,10 +152,10 @@ class SingleTaskLearning(ParadigmBase):
             return None
         return job.preprocess()
 
-    def _train(self, job, initial_model):
+    def _train(self, job):
         train_output_dir = os.path.join(self.workspace, "output/train/")
-        os.environ["BASE_MODEL_URL"] = initial_model
-
+        # BASE_MODEL_URL is managed by _scoped_base_model_url in run() so that it
+        # is also set during module construction and cleaned up on exceptions.
         train_dataset = self.dataset.load_data(self.dataset.train_url, "train")
         job.train(train_dataset)
         trained_model_path = job.save(train_output_dir)
