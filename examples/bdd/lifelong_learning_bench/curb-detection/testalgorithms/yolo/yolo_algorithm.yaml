@@ -24,7 +24,7 @@ algorithm:
       # example: basemodel.py has BaseModel module that the alias is "FPN" for this benchmarking;
       name: "BaseModel"
       # the url address of python module; string type;
-      url: "./examples/bdd/lifelong_learning_bench/testalgorithms/yolo/basemodel.py"
+      url: "./examples/bdd/lifelong_learning_bench/curb-detection/testalgorithms/yolo/basemodel.py"
       # hyperparameters configuration for the python module; list type;
 
     #  2> "task_allocation": allocate lifelong task ; optional module;
@@ -32,7 +32,7 @@ algorithm:
       # name of python module; string type;
       name: "TaskAllocationByOrigin"
       # the url address of python module; string type;
-      url: "./examples/bdd/lifelong_learning_bench/testalgorithms/yolo/task_allocation_by_origin.py"
+      url: "./examples/bdd/lifelong_learning_bench/curb-detection/testalgorithms/yolo/task_allocation_by_origin.py"
       # config_file: "/mnt/disk/shifan/ianvs/examples/bdd/lifelong_learning_bench/testalgorithms/yolo/model_selector/choose_net_b64.py"
       # checkpoint_file: "/mnt/disk/shifan/ianvs/examples/bdd/lifelong_learning_bench/testalgorithms/yolo/model_selector/adaptive_selector_7w5_6w.pth"
     
@@ -41,7 +41,7 @@ algorithm:
       # name of python module; string type;
       name: "TaskRemodeling"
       # the url address of python module; string type;
-      url: "./examples/bdd/lifelong_learning_bench/testalgorithms/yolo/task_remodeling.py"
+      url: "./examples/bdd/lifelong_learning_bench/curb-detection/testalgorithms/yolo/task_remodeling.py"
       # hyperparameters configuration for the python module; list type;
 
       #  4> "inference_integrate"
@@ -49,5 +49,5 @@ algorithm:
       # name of python module; string type;
       name: "InferenceIntegrate"
       # the url address of python module; string type;
-      url: "./examples/bdd/lifelong_learning_bench/testalgorithms/yolo/inference_integrate.py"
+      url: "./examples/bdd/lifelong_learning_bench/curb-detection/testalgorithms/yolo/inference_integrate.py"
       # hyperparameters configuration for the python module; list typ
