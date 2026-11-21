@@ -18,7 +18,12 @@ import os
 
 from core.common.log import LOGGER
 from sedna.common.class_factory import ClassType, ClassFactory
-from models import HuggingfaceLLM, APIBasedLLM, VllmLLM, EagleSpecDecModel, LadeSpecDecLLM
+from models import HuggingfaceLLM, APIBasedLLM, VllmLLM, EagleSpecDecModel
+
+try:
+    from models import LadeSpecDecLLM
+except ImportError:
+    LadeSpecDecLLM = None
 
 os.environ['BACKEND_TYPE'] = 'TORCH'
 
@@ -44,9 +49,10 @@ class EdgeModel:
         self.kwargs = kwargs
         self.model_name = kwargs.get("model", None)
         self.backend = kwargs.get("backend", "huggingface")
-        if self.backend not in ["huggingface", "vllm", "api"]:
+        if self.backend not in ["huggingface", "vllm", "api", "EagleSpecDec", "LadeSpecDec"]:
             raise ValueError(
-                f"Unsupported backend: {self.backend}. Supported options are: 'huggingface', 'vllm', 'api'."
+                f"Unsupported backend: {self.backend}. Supported options are: "
+                "'huggingface', 'vllm', 'api', 'EagleSpecDec', 'LadeSpecDec'."
             )
         self._set_config()
 
@@ -74,6 +80,10 @@ class EdgeModel:
             elif self.backend == "EagleSpecDec":
                 self.model = EagleSpecDecModel(**self.kwargs)
             elif self.backend == "LadeSpecDec":
+                if LadeSpecDecLLM is None:
+                    raise NotImplementedError(
+                        "LadeSpecDec backend is not available or not implemented in models."
+                    )
                 self.model = LadeSpecDecLLM(**self.kwargs)
         except Exception as e:
             LOGGER.error(f"Failed to initialize model backend `{self.backend}`: {str(e)}")
