@@ -80,7 +80,18 @@ Before using this example, you need to have the device ready:
 
 - 2 CPUs or more
 
-- 1 GPU with at least 6GB of memory, depends on the tested model
+- 1 GPU with at least 6GB of memory, depends on the tested model. The reference results
+  further down this page were produced with `tensor_parallel_size: 4`; a single GPU is enough
+  for the smaller model configurations
+
+- GPU compute capability `7.5` or higher (Turing or newer, e.g. T4 or RTX 20 series) if you use
+  the `vllm` backend. vLLM does not support older architectures, so memory alone is not a
+  sufficient requirement
+
+- GPU compute capability `8.0` or higher (Ampere or newer) for configurations that use
+  `bfloat16`, including the EAGLE speculative-decoding model. Below `8.0` PyTorch emulates
+  `bfloat16` rather than refusing it, which yields valid-looking but slower measurements;
+  Ianvs now falls back to `float32` and logs a warning instead (see #888)
 
 - 4GB+ free memory, depends on algorithm and simulation setting
 
