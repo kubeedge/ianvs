@@ -1,0 +1,5 @@
+FROM scratch
+ARG BINARY=gateway-amd64
+COPY ${BINARY} /gateway
+USER 65532:65532
+ENTRYPOINT ["/gateway"]
