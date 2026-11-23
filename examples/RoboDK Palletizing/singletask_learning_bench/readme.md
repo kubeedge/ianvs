@@ -163,18 +163,18 @@ For the motion information of the robot and the image information of the camera 
 
 ##### Dataset Configuration
 
-Firstly, we need to configure the RoboDK Palletizing Dataset and create a folder for the dataset. Please note that if you move the dataset to another location, some of the path configurations in this tutorial will also need to be modified.
+Firstly, we need to configure the RoboDK Palletizing Dataset and create a folder for the dataset. By default, `testenv.yaml` expects the dataset under `examples/RoboDK Palletizing/singletask_learning_bench/dataset/RoboDK_Palletizing_Dataset/`. If you place the dataset elsewhere, update `train_index` and `test_index` in `testenv.yaml` accordingly.
 
 The RoboDK Palletizing Dataset less than 100MB and is currently stored on Kaggle. You can download it locally and then upload it to the server.
 
 *DatasetURL*: [RoboDK Palletizing Dataset](https://www.kaggle.com/datasets/kubeedgeianvs/the-robodk-palletizing-dataset/data) 
 
-You can also use the Kaggle API to directly download it to the server. The command is as follows:
+You can also use the Kaggle API to directly download it to the server. The command is as follows (run from the repository root):
 
 ```bash
-# Create a dataset folder (path can be adjusted, but update YAML files accordingly)
-mkdir -p ~/data/datasets 
-cd ~/data/datasets
+# Create the dataset folder expected by testenv.yaml
+mkdir -p "examples/RoboDK Palletizing/singletask_learning_bench/dataset"
+cd "examples/RoboDK Palletizing/singletask_learning_bench/dataset"
 
 # Download the dataset via Kaggle API (≤100MB)
 python -m pip install kaggle
@@ -182,8 +182,11 @@ python -m pip install kaggle
 # Note: Place Kaggle API token (kaggle.json) in ~/.kaggle/ first (see Kaggle official guide)
 kaggle datasets download kubeedgeianvs/the-robodk-palletizing-dataset
 
-# Unzip the dataset
-unzip RoboDK_Palletizing_Dataset.zip
+# Unzip the dataset into the expected RoboDK_Palletizing_Dataset/ folder
+unzip the-robodk-palletizing-dataset.zip -d RoboDK_Palletizing_Dataset
+
+# Return to the repository root
+cd -
 ```
 
 ##### Model Preparation
@@ -204,14 +207,10 @@ pip install ultralytics
 
 ##### Run Example
 
-Assuming the current directory is `ianvs/project` created in Step 1, execute the following relative path command.(adjust path to match your installation)
+Assuming the current directory is `ianvs/project/ianvs` (the repository root cloned in Step 1), run:
 
 ```bash
-# Navigate to the single-task learning benchmark directory
-cd ianvs/project/ianvs/example/RoboDK_Palletizing/singletask_learning_bench/singletasklearning
-
-# Start benchmarking
-ianvs -f benchmarkingjob.yaml 
+ianvs -f "examples/RoboDK Palletizing/singletask_learning_bench/benchmarkingjob.yaml"
 ```
 
 ### Results
@@ -265,13 +264,13 @@ benchmarkingjob:
   name: "palletizing_bench"
   workspace: "./workspace/palletizing_bench"
 
-  testenv: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testenv/testenv.yaml"
+  testenv: "./examples/RoboDK Palletizing/singletask_learning_bench/testenv/testenv.yaml"
 
   test_object:
     type: "algorithms"
     algorithms:
       - name: "YOLOv8n"
-        url: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testalgorithms/algorithm.yaml"
+        url: "./examples/RoboDK Palletizing/singletask_learning_bench/testalgorithms/algorithm.yaml"
 
   rank:
     sort_by:
@@ -292,7 +291,7 @@ benchmarkingjob:
 
 ```
 
-*Note*: Replace all `/root/ianvs/...` paths with your actual installation path (use `pwd` to check current directory).
+*Note*: Paths above are root-relative to the `ianvs` repository root, so run `ianvs -f ...` from there (see Step 3).
 
 ### testenv.yaml
 
@@ -303,19 +302,19 @@ testenv:
   # dataset configuration
   dataset:
     # the url address of train dataset index; string type;
-    train_index: "/root/ianvs/project/data/dataset/RoboDK_Palletizing_Dataset/train_index.txt"
+    train_index: "./examples/RoboDK Palletizing/singletask_learning_bench/dataset/RoboDK_Palletizing_Dataset/train_index.txt"
     # the url address of val dataset index; string type;
-    test_index: "/root/ianvs/project/data/dataset/RoboDK_Palletizing_Dataset/test_index.txt"
+    test_index: "./examples/RoboDK Palletizing/singletask_learning_bench/dataset/RoboDK_Palletizing_Dataset/test_index.txt"
 
   # metrics configuration for test case's evaluation; list type;
   metrics:
       # metric name; string type;
     - name: "map50"
       # the url address of python file
-      url: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testenv/map50.py"
+      url: "./examples/RoboDK Palletizing/singletask_learning_bench/testenv/map50.py"
     - name: "map90"
       # the url address of python file
-      url: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testenv/map90.py"
+      url: "./examples/RoboDK Palletizing/singletask_learning_bench/testenv/map90.py"
 
 ```
 
@@ -330,7 +329,7 @@ algorithm:
   modules:
     - type: "basemodel"
       name: "YOLOv8n"
-      url: "/root/ianvs/project/ianvs-0.3.0/examples/Palletizing/singletask_learning_bench/testalgorithms/basemodel.py"
+      url: "./examples/RoboDK Palletizing/singletask_learning_bench/testalgorithms/basemodel.py"
       
       hyperparameters:
         - learning_rate:
