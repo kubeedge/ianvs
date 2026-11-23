@@ -165,7 +165,7 @@ conda create -n ianvs-experiment python=3.8 rust -c conda-forge
 conda activate ianvs-experiment
 
 # Install Sedna
-pip install examples/resources/third_party/sedna-0.6.0.1-py3-none-any.whl
+pip install resources/third_party/sedna-0.6.0.1-py3-none-any.whl
 
 # Install dependencies for Ianvs Core.
 pip install -r requirements.txt
@@ -174,7 +174,7 @@ pip install -r requirements.txt
 pip install -r examples/cloud-edge-collaborative-inference-for-llm/requirements.txt
 
 # Install ianvs
-python setup.py install
+pip install .
 ```
 
 If you want to use speculative decoding models like [EAGLE](https://github.com/SafeAILab/EAGLE), refer to the original repository for setup instructions.
