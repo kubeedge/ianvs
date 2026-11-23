@@ -116,7 +116,7 @@ To download the dataset from Kaggle:
 
 ```shell
 # Download the dataset from:
-# https://www.kaggle.com/datasets/kubeedgeianvs/deformable-assembly-dataset
+# https://www.kaggle.com/datasets/kubeedgeianvs/the-deformable-assembly-dataset
 
 
 mkdir -p /ianvs/datasets
