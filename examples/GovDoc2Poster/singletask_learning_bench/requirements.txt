@@ -6,11 +6,9 @@ ianvs>=0.1.0
 sedna>=0.1.0
 
 # Document processing (轻量级方案)
-PyPDF2>=3.0.0
-PyMuPDF>=1.23.0  # fitz
 python-docx>=0.8.11
 python-pptx>=0.6.21
-pdfplumber>=0.7.0  # 可选，用于更好的表格提取
+pdfplumber>=0.7.0
 
 # Image processing
 Pillow>=9.0.0

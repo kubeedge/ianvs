@@ -14,6 +14,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Import necessary libraries
 from dotenv import load_dotenv
+import pdfplumber
 from sedna.common.class_factory import ClassType, ClassFactory
 
 # Import custom tools
@@ -134,7 +135,7 @@ class NewGovernmentPosterAgent:
         else:
             # load poster index if exists so evaluate_only can lookup poster_path for string data items
             try:
-                index_path = os.path.join('examples', 'new_government_agent', 'resources', 'datasets', 'test', 'poster_index.json')
+                index_path = os.path.join('examples', 'GovDoc2Poster', 'resources', 'datasets', 'test', 'poster_index.json')
                 if os.path.exists(index_path):
                     with open(index_path, 'r', encoding='utf-8') as f:
                         self._poster_index = json.load(f)
@@ -143,9 +144,9 @@ class NewGovernmentPosterAgent:
             except Exception:
                 self._poster_index = {}
             # posters dir used for fallback search
-            self._posters_dir = os.path.join('examples', 'new_government_agent', 'posters')
+            self._posters_dir = os.path.join('examples', 'GovDoc2Poster', 'posters')
             # path to dataset file we'll persist into if we auto-fill
-            self._dataset_file = os.path.join('examples', 'new_government_agent', 'resources', 'datasets', 'test', 'data.jsonl')
+            self._dataset_file = os.path.join('examples', 'GovDoc2Poster', 'resources', 'datasets', 'test', 'data.jsonl')
         
         # Government document type rules (enhanced version)
         self.rule_types = {
@@ -416,7 +417,7 @@ class NewGovernmentPosterAgent:
             test_data_path = getattr(self, 'test_data_path', None)
             if not test_data_path:
                 # Try to get from environment variable or default path
-                test_data_path = os.path.join('examples', 'new_government_agent', 'resources', 'datasets', 'test', 'data.jsonl')
+                test_data_path = os.path.join('examples', 'GovDoc2Poster', 'resources', 'datasets', 'test', 'data.jsonl')
             
             if not os.path.exists(test_data_path):
                 self.logger.warning(f'Test data file does not exist: {test_data_path}')
@@ -449,12 +450,26 @@ class NewGovernmentPosterAgent:
             self.logger.error(f'Failed to read poster_path from JSONL file: {str(e)}')
             return None
     
+    def _extract_pdf_text(self, pdf_path: str) -> str:
+        """Extract text content from a PDF file using pdfplumber."""
+        try:
+            with pdfplumber.open(pdf_path) as pdf:
+                return "\n".join(page.extract_text() or "" for page in pdf.pages)
+        except Exception as e:
+            self.logger.warning(f"Failed to extract text from PDF ({pdf_path}): {e}")
+            return ""
+
     def _process_single_document(self, data_item, index: int) -> Dict[str, Any]:
         """Process single document (supports iterative optimization)"""
         start_time = time.time()
-        
+
         # Step 1: Parse government document
-        parsed_data = self.parser.parse_document(data_item)
+        text_content = (
+            self._extract_pdf_text(data_item)
+            if isinstance(data_item, str) and data_item.endswith('.pdf')
+            else data_item
+        )
+        parsed_data = self.parser.parse_document(text_content)
 
         # If evaluate_only mode, skip planner/painter, only use existing poster_path for evaluation
         poster_result = None
@@ -666,7 +681,7 @@ class NewGovernmentPosterAgent:
                                     self._poster_index[key_to_write] = candidate
                                     # write poster_index.json
                                     try:
-                                        with open(os.path.join('examples', 'new_government_agent', 'resources', 'datasets', 'test', 'poster_index.json'), 'w', encoding='utf-8') as idxf:
+                                        with open(os.path.join('examples', 'GovDoc2Poster', 'resources', 'datasets', 'test', 'poster_index.json'), 'w', encoding='utf-8') as idxf:
                                             json.dump(self._poster_index, idxf, ensure_ascii=False, indent=2)
                                     except Exception:
                                         pass
