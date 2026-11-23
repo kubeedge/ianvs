@@ -142,7 +142,7 @@ algorithm:
 ## Benchmark Result
 
 We release the
-leaderboard [here](../leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-incremental-learning.md)
+leaderboard [here](../../leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-incremental-learning.md)
 .
 
 ## Effect Display

@@ -88,4 +88,4 @@ algorithm:
 ## Benchmark Result
 
 We release the
-leaderboard [here](../leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning.md).
+leaderboard [here](../../leaderboards/leaderboard-in-industrial-defect-detection-of-PCB-AoI/leaderboard-of-single-task-learning.md).
