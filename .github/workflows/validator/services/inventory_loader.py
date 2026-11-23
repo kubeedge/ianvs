@@ -80,7 +80,8 @@ DEFAULT_TIER3_CADENCE_DAYS = 7
 
 
 def git_lines(args: Sequence[str]) -> List[str]:
-    return subprocess.check_output(["git", *args], text=True).splitlines()
+    output = subprocess.check_output(["git", *args])
+    return [os.fsdecode(path) for path in output.split(b"\0") if path]
 
 
 def normalize_path(value: str) -> str:
@@ -512,7 +513,7 @@ def detect_changes(
     inventory_path: Path,
     base_inventory_ref: str = "",
 ) -> dict:
-    changed_files = git_lines(["diff", "--name-only", base_ref, head_ref])
+    changed_files = git_lines(["diff", "--name-only", "-z", base_ref, head_ref])
     inventory_changed = (
         mode == MODE_DYNAMIC and inventory_path.as_posix() in changed_files
     )
