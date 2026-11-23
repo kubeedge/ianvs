@@ -157,7 +157,13 @@ class Algorithm:
                 f"algorithm initial_model_url({self.initial_model_url}) must be string type.")
 
     def _parse_config(self, config):
-        config_dict = config[str.lower(Algorithm.__name__)]
+        expected_key = str.lower(Algorithm.__name__)
+        if not isinstance(config, dict) or expected_key not in config:
+            raise ValueError(
+                f"algorithm config must have a top-level '{expected_key}' key; "
+                f"found: {list(config.keys()) if isinstance(config, dict) else config!r}"
+            )
+        config_dict = config[expected_key]
         # pylint: disable=C0103
         for k, v in config_dict.items():
             if k == str.lower(Module.__name__ + "s"):
