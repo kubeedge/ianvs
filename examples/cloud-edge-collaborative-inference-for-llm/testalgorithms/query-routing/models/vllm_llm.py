@@ -118,9 +118,12 @@ class VllmLLM(BaseLLM):
         # Time to First Token (s)
         time_to_first_token = metrics.first_token_time - metrics.arrival_time
         # Internal Token Latency (s)
-        internal_token_latency = (metrics.finished_time - metrics.first_token_time) / completion_tokens
+        if completion_tokens > 0:
+            internal_token_latency = (metrics.finished_time - metrics.first_token_time) / completion_tokens
+        else:
+            internal_token_latency = 0.0
         # Completion Throughput (Token/s)
-        throughput = 1 / internal_token_latency
+        throughput = (1.0 / internal_token_latency) if internal_token_latency > 0 else 0.0
 
         response = self._format_response(
             text,
