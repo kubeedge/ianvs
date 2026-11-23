@@ -40,11 +40,13 @@ from urllib.parse import quote, urlencode
 
 try:
     from inventory_loader import DEFAULT_INVENTORY_PATH, load_inventory_examples
+    from result_contract import validate_result_payload
 except ImportError:  # Support importing this file as services.report_generator.
     from services.inventory_loader import (
         DEFAULT_INVENTORY_PATH,
         load_inventory_examples,
     )
+    from services.result_contract import validate_result_payload
 
 
 PASS = "PASS"
@@ -365,7 +367,10 @@ def unique_paths(paths: Sequence[Path]) -> List[Path]:
 def load_combined_report(paths: Sequence[Path]) -> CombinedReport:
     examples = []
     for path in paths:
-        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload = validate_result_payload(
+            json.loads(path.read_text(encoding="utf-8")),
+            path,
+        )
         examples.extend(parse_examples(payload, source_path=path))
 
     examples = merge_duplicate_examples(examples)
