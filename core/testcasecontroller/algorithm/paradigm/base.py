@@ -53,8 +53,26 @@ class ParadigmBase:
         self.dataset = kwargs.get("dataset")
         self.workspace = workspace
         self.system_metric_info = {}
+        # note: this must be applied before _get_module_instances(), which imports
+        # and instantiates the algorithm module, because AI frameworks read
+        # CUDA_VISIBLE_DEVICES when they initialize their device list.
+        self._set_gpu_visibility(kwargs.get("use_gpu"))
         self.module_instances = self._get_module_instances()
         os.environ["LOCAL_TEST"] = "TRUE"
+
+    @classmethod
+    def _set_gpu_visibility(cls, use_gpu):
+        if use_gpu is None:
+            # use_gpu is not configured in testenv: leave the gpu visibility of
+            # the environment as it is, which is the behaviour ianvs has always had.
+            return
+
+        if use_gpu:
+            os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+        else:
+            # "-1" instead of "" because an empty value is read back as unset by
+            # some AI frameworks, which then fall back to using every device.
+            os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
     def dataset_output_dir(self):
         """
