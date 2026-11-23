@@ -3,7 +3,7 @@
 ## Overall contribution workflow
 
 1. Apply for a topic.
-   Once you have a new example, you can apply for a topic to discuss it on [SIG AI weekly meeting](http://github.com/kubeedge/ianvs.git).
+   Once you have a new example, you can apply for a topic to discuss it on [SIG AI weekly meeting](https://docs.google.com/document/d/12n3kGUWTkAH4q2Wv5iCVGPTA_KRWav_eakbFrF9iAww/edit).
 2. Submit proposal.
    After the idea is fully discussed, the former proposal PR is needed to submit to the [Ianvs repository](http://github.com/kubeedge/ianvs.git).
 3. Fix proposal review comments.  
