@@ -54,8 +54,8 @@ class BaseModel:
                     lora_dropout = 0.05
                     )
         model=get_peft_model(self.model,config_lora)
-        half = self.train_config["half_lora"]
-        if half==True:
+        half = str(self.train_config["half_lora"]).lower() == "true"
+        if half:
             model=model.half()
         del self.train_config["half_lora"]
         args=TrainingArguments(adam_epsilon=(1e-4 if half else 1e-8)
@@ -70,7 +70,7 @@ class BaseModel:
         results = []
         for text in data:
             prompt="\n".join(["user: ", str(text)])+"\n\nassistant: "
-            inputs=self.tokenizer(prompt, return_tensors="pt", truncation=True, max_length=self.MAX_LENGTH)
+            inputs=self.tokenizer(prompt, return_tensors="pt", truncation=True, max_length=self.MAX_LENGTH).to(self.model.device)
             input_len=inputs["input_ids"].shape[1]
             with torch.no_grad():
                 outputs=self.model.generate(**inputs, max_new_tokens=8, pad_token_id=self.tokenizer.eos_token_id)
