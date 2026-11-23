@@ -73,13 +73,13 @@ Follow the [Ianvs installation document](docs/guides/how-to-install-ianvs.md) to
 
   - Example PCB-AoI-2：[Testing incremental learning in industrial defect detection](docs/proposals/test-reports/testing-incremental-learning-in-industrial-defect-detection-with-pcb-aoi.md).
 
-- Scenario Cityscapes-Synthia: [Curb Detetion on Cityscapes-Synthia Dataset](docs/proposals/algorithms/lifelong-learning/Additional-documentation/curb_detetion_datasets.md)
+- Scenario Cityscapes-Synthia: [Curb Detection on Cityscapes-Synthia Dataset](docs/proposals/algorithms/lifelong-learning/Additional-documentation/curb_detetion_datasets.md)
 
   - Example Cityscapes-Synthia-1: [Lifelong learning in semantic segmentation](examples/cityscapes-synthia/lifelong_learning_bench/semantic-segmentation/README.md)
 
-  - Example Cityscapes-Synthia-2: [Lifelong learning in curb detetion](examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/README.md)
+  - Example Cityscapes-Synthia-2: [Lifelong learning in curb detection](examples/cityscapes-synthia/lifelong_learning_bench/curb-detection/README.md)
 
-  - Example Cityscapes-Synthia-3: [Scene based unknown task recognition in curb detetion](examples/cityscapes-synthia/scene-based-unknown-task-recognition/curb-detection/README.md)
+  - Example Cityscapes-Synthia-3: [Scene based unknown task recognition in curb detection](examples/cityscapes-synthia/scene-based-unknown-task-recognition/curb-detection/README.md)
 
   - Example Cityscapes-Synthia-4: [Integrating GAN and Self-taught Learning into Ianvs Lifelong Learning](examples/cityscapes/lifelong_learning_bench/unseen_task_processing-GANwithSelfTaughtLearning/README.md)
 
