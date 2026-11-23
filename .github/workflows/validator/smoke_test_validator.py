@@ -28,6 +28,7 @@ from typing import Dict, List, Mapping, Optional, Sequence
 
 from services import lifelong_smoke
 from services.inventory_loader import DEFAULT_INVENTORY_PATH, load_inventory_examples
+from services.process_runner import run_command
 from static_validator import (
     FAIL,
     PASS,
@@ -233,14 +234,10 @@ def _run_preparation_step(
         command = [str(script_path), *args]
 
     try:
-        completed = subprocess.run(
+        completed = run_command(
             command,
             cwd=str(workdir),
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
             timeout=timeout,
-            check=False,
         )
     except subprocess.TimeoutExpired as error:
         output = error.stdout or ""
@@ -545,16 +542,12 @@ def _prepare_dataset(
         command.append("--smoke")
 
     try:
-        completed = subprocess.run(
+        completed = run_command(
             command,
             cwd=str(repo_root),
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
             timeout=timeout_seconds,
-            check=False,
         )
-    except subprocess.TimeoutExpired:
+    except subprocess.TimeoutExpired as error:
         _append_check(
             report,
             name="Dataset preparation",
@@ -563,6 +556,7 @@ def _prepare_dataset(
             message="Dataset preparation timed out after {} seconds.".format(
                 timeout_seconds
             ),
+            details=_summarize_output(error.stdout or ""),
         )
         return None
 
@@ -788,23 +782,20 @@ def _run_smoke_command(
         return
 
     try:
-        completed = subprocess.run(
+        completed = run_command(
             command,
             cwd=str(repo_root),
             env=env,
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
             timeout=timeout_seconds,
-            check=False,
         )
-    except subprocess.TimeoutExpired:
+    except subprocess.TimeoutExpired as error:
         _append_check(
             report,
             name=check_name,
             status=FAIL,
             file=benchmark_file,
             message="Smoke test timed out after {} seconds.".format(timeout_seconds),
+            details=_summarize_output(error.stdout or ""),
         )
         return
 
