@@ -1,14 +1,23 @@
 import os
+import warnings
 from typing import List, Optional, Union
-from langchain_community.document_loaders import DirectoryLoader, TextLoader, UnstructuredWordDocumentLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.chains import RetrievalQA
-from langchain_community.llms import HuggingFacePipeline
+
+# Vector Store remains fully modern
+from langchain_chroma import Chroma
+
+# MODERN REPLACEMENT: Loaders natively extracted from modern standalone integration layers
+from langchain_core.documents import Document
+from langchain_unstructured.document_loaders import UnstructuredLoader
+
+# Modern text splitter setup
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+from langchain_huggingface import HuggingFaceEmbeddings
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from tqdm import tqdm
+
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 class GovernmentRAG:
     def __init__(
@@ -121,8 +130,7 @@ class GovernmentRAG:
             embedding=self.embeddings,
             persist_directory=self.persist_directory
         )
-
-        self.vector_store.persist()
+        # REMOVED: self.vector_store.persist() is deprecated/removed in modern langchain_chroma
         print(f"Vector database saved to {self.persist_directory}")
     
     def query(self, query: str, k: int = 4) -> str:
@@ -143,12 +151,12 @@ class GovernmentRAG:
             search_kwargs={"k": k}
         )
         
-        # Get relevant documents
-        docs = retriever.get_relevant_documents(query)
+        # UPDATED: Use modern .invoke() method instead of legacy get_relevant_documents()
+        docs = retriever.invoke(query)
         
         # Format the response
         response = "Relevant information:\n\n"
         for i, doc in enumerate(docs, 1):
             response += f"Document {i}:\n{doc.page_content}\n\n"
             
-        return response 
+        return response
