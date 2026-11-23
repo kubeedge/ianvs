@@ -1,3 +1,18 @@
+prettytable~=2.5.0  # BSD
+scikit-learn
+numpy
+pandas
+tqdm
+matplotlib
+onnx
+
+# --- Missing runtime dependencies (imported in code) ---
+retry            # used by APIBasedLLM
+colorlog         # used by core/common/log.py
+
+pyyaml           # used for config parsing
+openai           # APIBasedLLM backend
+groq             # APIBasedLLM backend
 vllm
 transformers
 openai
