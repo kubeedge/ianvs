@@ -58,7 +58,7 @@ class Module:
         self._parse_config(config)
 
     def _check_fields(self):
-        if not self.type and not isinstance(self.type, str):
+        if not self.type or not isinstance(self.type, str):
             raise ValueError(f"module type({self.type}) must be provided and be string type.")
 
         types = [e.value for e in ModuleType.__members__.values()]
@@ -66,7 +66,7 @@ class Module:
             raise ValueError(f"not support module type({self.type}."
                              f"the following paradigms can be selected: {types}")
 
-        if not self.name and not isinstance(self.name, str):
+        if not self.name or not isinstance(self.name, str):
             raise ValueError(f"module name({self.name}) must be provided and be string type.")
 
         if not isinstance(self.url, str):
