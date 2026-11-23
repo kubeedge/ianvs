@@ -1,3 +1,5 @@
+"""Base LLM class definition for query routing and caching."""
+# pylint: disable=line-too-long,attribute-defined-outside-init,too-many-instance-attributes,no-else-return,too-many-arguments,too-many-positional-arguments,C0115,E1121,W0107
 # Copyright 2024 The KubeEdge Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +16,7 @@
 
 import os
 import json
+from core.common.log import LOGGER
 
 def extract_prediction(input_string):
     """Extract the prediction from the completion. This function is used when caching the responses.
@@ -251,6 +254,18 @@ class BaseLLM:
                     if cache["config"] == self.config:
                         self.cache = cache
                         self.cache_hash = {item["query"]:item['response'] for item in cache["result"]}
+                    else:
+                        c_cfg = cache["config"]
+                        all_keys = set(list(c_cfg.keys()) + list(self.config.keys()))
+                        diff_keys = [k for k in all_keys if c_cfg.get(k) != self.config.get(k)]
+                        LOGGER.warning(
+                            "Cache entry found but config mismatch on keys: %s. "
+                            "Cached: %s vs Current: %s. %d cached results skipped.",
+                            diff_keys,
+                            {k: c_cfg.get(k) for k in diff_keys},
+                            {k: self.config.get(k) for k in diff_keys},
+                            len(cache.get("result", []))
+                        )
         self.is_cache_loaded = True
 
     def _try_cache(self, question):
