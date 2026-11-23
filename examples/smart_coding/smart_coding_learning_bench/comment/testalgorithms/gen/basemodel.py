@@ -43,12 +43,13 @@ os.environ['BACKEND_TYPE'] = 'TORCH'
 class BaseModel:
 
     def __init__(self, **kwargs):
+        model_name_or_path = kwargs.get("model_name_or_path", "Qwen/Qwen2.5-Coder-1.5B-Instruct")
         self.model = AutoModelForCausalLM.from_pretrained(
-            "/home/xiebo/model/Qwen2.5-Coder-1.5B-Instruct",
+            model_name_or_path,
             torch_dtype="auto",
             device_map="auto"
         )
-        self.tokenizer = AutoTokenizer.from_pretrained("/home/xiebo/model/Qwen2.5-Coder-1.5B-Instruct")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
 
     def train(self, train_data, valid_data=None, **kwargs):
         LOGGER.info("BaseModel train")
