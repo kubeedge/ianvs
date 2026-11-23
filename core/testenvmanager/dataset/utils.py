@@ -88,7 +88,7 @@ def partition_data(datasets, client_number, data_partition="iid", non_iid_ratio=
             sample_number = int(class_num * non_iid_ratio)
             current_class = random.sample(range(class_num), sample_number)
             LOGGER.info(f"for client{i} the class is {current_class}")
-            indices = np.where(y_data == current_class)[0]
+            indices = np.where(np.isin(y_data, current_class))[0]
             data.append([x_data[indices], y_data[indices]])
     else:
         raise ValueError("paritiion_methods must be 'iid' or 'non-iid'")
