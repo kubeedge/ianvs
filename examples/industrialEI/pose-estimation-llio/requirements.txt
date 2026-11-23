@@ -3,7 +3,6 @@
 
 # IMPORTANT: Run with environment variable to fix protobuf issues:
 # export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-# Or use the provided run_ianvs.sh script
 
 # Ianvs core dependencies
 prettytable~=2.5.0
@@ -19,4 +18,7 @@ scipy
 pyyaml
 
 # Fix protobuf compatibility issues (required for ianvs)
-protobuf<=3.20.3
+# Note: must stay compatible with onnx (installed by core ianvs), which requires
+# protobuf>=4.25.1. The PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python environment
+# variable (see README) addresses the protobuf 4.x descriptor incompatibility.
+protobuf
