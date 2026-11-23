@@ -120,7 +120,7 @@ When `mock_runtime.enabled` is `true`, both `shared_pythonpath` and `example_pyt
 
 Dependency validation checks the declared requirements file independently of environment preparation. It verifies:
 
-- the declared file exists and is not empty;
+- the declared file exists, can be decoded as text, and is not empty;
 - requirement lines are syntactically valid;
 - environment markers allow at least one supported Python version in the
   validator's default `3.8`, `3.9`, and `3.10` matrix;
