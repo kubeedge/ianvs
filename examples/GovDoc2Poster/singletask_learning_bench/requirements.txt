@@ -2,7 +2,6 @@
 # 新版政府代理依赖包
 
 # Core dependencies
-ianvs>=0.1.0
 sedna>=0.1.0
 
 # Document processing (轻量级方案)
