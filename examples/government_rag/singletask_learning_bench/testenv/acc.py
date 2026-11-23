@@ -12,9 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
+import os
+from datetime import datetime
+
 from sedna.common.class_factory import ClassType, ClassFactory
 
 __all__ = ["acc"]
+
+
+def _save_accuracy_results(results, filename):
+    """Save accuracy results to a JSON file inside the eval workspace.
+
+    The output directory is read from the IANVS_EVAL_WORKSPACE environment
+    variable.  If the variable is not set the current working directory is
+    used as a safe fallback.  The directory is created automatically when it
+    does not already exist so that downstream callers never hit a
+    FileNotFoundError.
+    """
+    output_dir = os.environ.get("IANVS_EVAL_WORKSPACE", ".")
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, filename)
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False, indent=4)
+
 
 def get_last_letter(input_string):
     if not input_string or not any(char.isalpha() for char in input_string):
@@ -66,9 +88,6 @@ def acc_model(y_true, y_pred):
         acc = stats["correct"] / stats["total"]
         print(f"{province}: {acc:.4f} ({stats['correct']}/{stats['total']})")
 
-    import json
-    from datetime import datetime
-    
     results = {
         "global_accuracy": global_acc,
         "province_accuracies": {
@@ -81,10 +100,9 @@ def acc_model(y_true, y_pred):
         },
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    
-    with open("accuracy_results_model.json", "w", encoding="utf-8") as f:
-        json.dump(results, f, ensure_ascii=False, indent=4)
-    
+
+    _save_accuracy_results(results, "accuracy_results_model.json")
+
     return global_acc
 
 
@@ -127,9 +145,6 @@ def acc_global(y_true, y_pred):
         acc = stats["correct"] / stats["total"]
         print(f"{province}: {acc:.4f} ({stats['correct']}/{stats['total']})")
 
-    import json
-    from datetime import datetime
-    
     results = {
         "global_accuracy": global_acc,
         "province_accuracies": {
@@ -142,10 +157,9 @@ def acc_global(y_true, y_pred):
         },
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    
-    with open("accuracy_results_global.json", "w", encoding="utf-8") as f:
-        json.dump(results, f, ensure_ascii=False, indent=4)
-    
+
+    _save_accuracy_results(results, "accuracy_results_global.json")
+
     return global_acc
 
 
@@ -188,9 +202,6 @@ def acc_local(y_true, y_pred):
         acc = stats["correct"] / stats["total"]
         print(f"{province}: {acc:.4f} ({stats['correct']}/{stats['total']})")
 
-    import json
-    from datetime import datetime
-    
     results = {
         "global_accuracy": global_acc,
         "province_accuracies": {
@@ -203,10 +214,9 @@ def acc_local(y_true, y_pred):
         },
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    
-    with open("accuracy_results_local.json", "w", encoding="utf-8") as f:
-        json.dump(results, f, ensure_ascii=False, indent=4)
-    
+
+    _save_accuracy_results(results, "accuracy_results_local.json")
+
     return global_acc
 
 
@@ -249,9 +259,6 @@ def acc_other(y_true, y_pred):
         acc = stats["correct"] / stats["total"]
         print(f"{province}: {acc:.4f} ({stats['correct']}/{stats['total']})")
 
-    import json
-    from datetime import datetime
-    
     results = {
         "global_accuracy": global_acc,
         "province_accuracies": {
@@ -264,8 +271,7 @@ def acc_other(y_true, y_pred):
         },
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    
-    with open("accuracy_results_other.json", "w", encoding="utf-8") as f:
-        json.dump(results, f, ensure_ascii=False, indent=4)
-    
+
+    _save_accuracy_results(results, "accuracy_results_other.json")
+
     return global_acc
