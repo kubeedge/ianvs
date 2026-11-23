@@ -75,7 +75,11 @@ class FederatedLearning(ParadigmBase):
         self.aggregate_clients = []
         self.clients_number = kwargs.get("client_number", 1)
         self.mode = kwargs.get("if_mode_llm", False)
-        _, self.aggregator = self.module_instances.get(ModuleType.AGGREGATION.value)
+        agg_val = self.module_instances.get(ModuleType.AGGREGATION.value)
+        if isinstance(agg_val, (list, tuple)) and len(agg_val) == 2:
+            _, self.aggregator = agg_val
+        else:
+            self.aggregator = agg_val
         if self.mode:
             LOGGER.info("Using LLM multi GPU mode for Federated Learning")
             self.gpu_num = kwargs.get("gpu_num", 1)
@@ -250,17 +254,27 @@ class FederatedLearning(ParadigmBase):
             train_datasets (list): train data for each client
         """
         client_threads = []
+        errors = []
         LOGGER.info(f"len(self.clients): {len(self.clients)}")
         for idx in range(self.clients_number):
-            client_thread = Thread(
-                target=self.client_train,
-                args=(idx, train_datasets, None),
-                kwargs=kwargs,
-            )
+            def _worker(client_idx=idx):
+                try:
+                    self.client_train(client_idx, train_datasets, None, **kwargs)
+                except Exception as err:  # pylint: disable=broad-except
+                    with self.lock:
+                        errors.append((client_idx, err))
+
+            client_thread = Thread(target=_worker)
             client_thread.start()
             client_threads.append(client_thread)
         for thread in client_threads:
             thread.join()
+
+        if errors:
+            raise RuntimeError(
+                f"client training failed for client(s): "
+                f"{[(idx, str(err)) for idx, err in errors]}"
+            )
         LOGGER.info("finish training")
 
     # pylint: disable=unused-argument
@@ -309,6 +323,7 @@ class FederatedLearning(ParadigmBase):
         Args:
             global_weights (list): aggregated weights
         """
+        # pylint: disable=E1101
         for client in self.clients:
             client.set_weights(global_weights)
         LOGGER.info("finish send weights to clients")
