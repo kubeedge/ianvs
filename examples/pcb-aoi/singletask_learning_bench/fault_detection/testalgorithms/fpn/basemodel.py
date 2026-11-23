@@ -22,8 +22,37 @@ import cv2
 import logging
 
 import numpy as np
-import tensorflow as tf
-import tensorflow.contrib.slim as slim
+import sys
+import importlib
+import tensorflow as _tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+import tf_slim as slim
+
+_tf.contrib = slim
+_tf.contrib.slim = slim
+_tf.contrib.layers = slim.layers
+
+tf.contrib = slim
+tf.contrib.slim = slim
+tf.contrib.layers = slim.layers
+
+sys.modules['tensorflow.contrib'] = slim
+sys.modules['tensorflow.contrib.slim'] = slim
+sys.modules['tensorflow.contrib.layers'] = slim.layers
+
+try:
+    import tf_keras
+    sys.modules['tf_keras.legacy_tf_layers'] = importlib.import_module('tf_keras.src.legacy_tf_layers')
+except ImportError:
+    pass
+
+for _attr in dir(tf):
+    if not hasattr(_tf, _attr):
+        try:
+            setattr(_tf, _attr, getattr(tf, _attr))
+        except Exception:
+            pass
 from sedna.common.config import Context
 from sedna.common.class_factory import ClassType, ClassFactory
 from FPN_TensorFlow.help_utils.help_utils import draw_box_cv
