@@ -1,0 +1,13 @@
+# Install Ianvs itself from the repository root with:
+#   python -m pip install -e .
+#
+# Install the bundled Sedna wheel with:
+#   pip install resources/third_party/sedna-0.6.0.1-py3-none-any.whl
+#
+# Sedna brings numpy, pandas, fastapi, pydantic, uvicorn and PyYAML.
+
+accelerate>=0.30.1
+openai>=1.30.5,<3
+torch>=2.2.2,<3
+tqdm>=4.66
+transformers>=4.40.2,<5
