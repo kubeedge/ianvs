@@ -26,6 +26,7 @@ import argparse
 import json
 import os
 import sys
+import time
 import traceback
 import uuid
 
@@ -33,6 +34,25 @@ RESULT_FILE = "sandbox_result.json"
 TERMINATION_LOG = "/dev/termination-log"
 # the kubelet keeps at most 4096 bytes of a termination message
 MAX_MESSAGE_BYTES = 4096
+# the file the host writes into the output directory once the pod's network emulation
+# is in place; the runner waits for it, so the test case never runs unshaped
+NETWORK_READY_FILE = ".sandbox-network-ready"
+NETWORK_WAIT_S = 300
+
+
+def wait_for_network(output_dir, timeout=NETWORK_WAIT_S, interval=0.5):
+    """wait until the host has applied the network emulation; True when it has."""
+    marker = os.path.join(output_dir, NETWORK_READY_FILE)
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if os.path.exists(marker):
+            try:
+                os.remove(marker)
+            except OSError:
+                pass
+            return True
+        time.sleep(interval)
+    return False
 
 
 def to_jsonable(value):
@@ -107,11 +127,21 @@ def main(argv=None, termination_log=TERMINATION_LOG):
     parser.add_argument("--testcase-id", required=True)
     parser.add_argument("--workspace", required=True)
     parser.add_argument("--output-dir", default="")
+    parser.add_argument("--wait-network", action="store_true",
+                        help="wait until the host has applied the network emulation")
     args = parser.parse_args(argv)
+
+    if args.wait_network and not wait_for_network(args.output_dir):
+        result = {"testcase_id": args.testcase_id, "status": "EXEC_FAILURE",
+                  "error": "the network emulation was not applied within "
+                           f"{NETWORK_WAIT_S} s; the test case did not run"}
+        _report(result, args.output_dir, termination_log)
+        return 1
 
     # start and end lines in the pod's log (saved as sandbox.log), so a test case that is
     # killed, e.g. for exceeding its memory limit, still shows how far it got
     print(f"testcase(id={args.testcase_id}) of {args.algorithm_name} started", flush=True)
+    start = time.monotonic()
     try:
         result = run(args)
         code = 0
@@ -120,6 +150,8 @@ def main(argv=None, termination_log=TERMINATION_LOG):
         result = {"testcase_id": args.testcase_id, "status": "EXEC_FAILURE",
                   "error": str(err)[-1000:]}
         code = 1
+    # the test case's own wall time, for the system metrics
+    result["wall_time_s"] = round(time.monotonic() - start, 3)
     _report(result, args.output_dir, termination_log)
     print(f"testcase(id={args.testcase_id}) finished: {result['status']}", flush=True)
     return code

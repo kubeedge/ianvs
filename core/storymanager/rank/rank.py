@@ -93,10 +93,12 @@ class Rank:
 
     @classmethod
     def _get_all_metric_names(cls, test_results) -> list:
-        metrics = set()
+        # in first-seen order, so the columns keep the order of the results
+        # (algorithmic metrics, then the sandbox's status and system metrics)
+        metrics = {}
         # pylint: disable=C0103
         for _, v in test_results.items():
-            metrics.update(v[0].keys())
+            metrics.update(dict.fromkeys(v[0].keys()))
         return list(metrics)
 
     @classmethod
@@ -203,6 +205,9 @@ class Rank:
         metric_names = self.selected_dataitem.get("metrics")
         if metric_names == ["all"]:
             metric_names = self._get_all_metric_names(test_results)
+        # sandboxed runs rank failed test cases too; their status is always shown
+        if "status" in self.all_df.columns and "status" not in metric_names:
+            metric_names = ["status", *metric_names]
 
         header = [
             "algorithm",

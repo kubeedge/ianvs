@@ -144,11 +144,14 @@ benchmarkingjob:
     requirements: ["./examples/my-example/requirements.txt"]   # requirement files or local .whl files
     data_paths: ["./dataset/extra"]    # paths the algorithm reads besides those in its configs
     timeout: 3600                      # seconds per test case
+    system_metrics: "all"              # or a list, e.g. ["peak_memory_mb", "wall_time_s"]
 
-  # optional; overrides the paradigm's default limits field by field
+  # optional; overrides the defaults field by field
   device_simulation:
     max_memory_mb: 2048
     max_cpu_cores: 2
+    network_bandwidth_mbps: 50         # default 100
+    network_latency_ms: 20             # added round-trip delay; default 0
 ```
 
 A `sandbox_profile` needs a `simulation` block, and `device_simulation` needs a `sandbox_profile`. Invalid values are rejected when the config is parsed.
@@ -171,11 +174,33 @@ How a test case runs:
    | multiedgeinference | 2048 | 2 |
 
    Swap is turned off for the node's pods, so a test case over its memory limit is OOM-killed instead of swapping.
-5. The pod reports its metrics in its termination message, which the node reports to the API server. Pods on KubeEdge edge nodes cannot reach the API server themselves, so they cannot write the result to a ConfigMap. The test case's output directory is copied back to the host workspace, together with `sandbox_result.json` and the pod's log, `sandbox.log`.
+5. The Job's network is shaped with `tc`/`netem` before the test case starts: `network_bandwidth_mbps` in both directions, and `network_latency_ms` added to every round trip. The defaults are 100 Mbit/s and 0 ms.
+6. While the Job runs, the `System Metrics Profiler` samples the pod's cgroup on its node (memory, CPU, disk I/O), its network traffic and the size of its output directory. Nothing runs inside the test case.
+7. The pod reports its metrics in its termination message, which the node reports to the API server. Pods on KubeEdge edge nodes cannot reach the API server themselves, so they cannot write the result to a ConfigMap. The test case's output directory is copied back to the host workspace, together with `sandbox_result.json` and the pod's log, `sandbox.log`.
 
-A test case that fails in the sandbox fails alone, as on the host. It is reported as `OOM_FAILURE` (it exceeded its memory limit), `EXEC_FAILURE` (it raised an error, with the error in the log) or `TIMEOUT`. The other test cases are still ranked. A failed test case keeps what it wrote before it failed, its `sandbox.log`, and a `sandbox_result.json` with its status and error.
+A test case that fails in the sandbox fails alone, as on the host. It is reported as `OOM_FAILURE` (it exceeded its memory limit), `EXEC_FAILURE` (it raised an error, with the error in the log) or `TIMEOUT`, and it is still ranked: the leaderboard has a `status` column, and a failed test case has a row with its status and the system metrics measured before it failed. A failed test case also keeps what it wrote before it failed, its `sandbox.log`, and a `sandbox_result.json` with its status, error and system metrics.
 
-`network_bandwidth_mbps` and `network_latency_ms` in `device_simulation` are accepted but not applied yet; network emulation and the system metrics profiler come in a later stage.
+### System metrics
+
+The system metrics of each test case are merged into its results, after the test environment's own metrics. `all_rank.csv` has all of them; list the ones you want in `selected_rank.csv` under `rank.selected_dataitem.metrics`, as with any other metric. Do not list them under the test environment's `metrics`.
+
+| Metric | Meaning | Unit |
+|---|---|---|
+| `wall_time_s` | how long the test case ran | seconds |
+| `cpu_utilization_avg` / `cpu_utilization_max` | how busy its CPU quota was, on average and in the busiest sampling interval | fraction 0–1 of `max_cpu_cores` |
+| `cpu_cores_used_avg` | the average number of cores in use | cores |
+| `peak_memory_mb` | the most memory it used at any moment (the kernel's `memory.peak`) | MB |
+| `memory_utilization_avg` | its average memory, as a share of `max_memory_mb` | fraction 0–1 |
+| `oom_failure` | whether it was killed for exceeding its memory limit | true / false |
+| `disk_read_bytes` / `disk_write_bytes` | data read from and written to disk (page-cache hits are not counted) | bytes |
+| `disk_read_mb_s_avg` / `disk_write_mb_s_avg` | average disk read and write speed | MB/s |
+| `disk_usage_peak_mb` | the largest size its output directory reached | MB |
+| `model_artifact_size_mb` | the size of the model files it saved | MB |
+| `network_bandwidth_mbps_avg` / `network_bandwidth_mbps_peak` | traffic into and out of its pod, on average and in the busiest sampling interval | Mbit/s |
+| `network_latency_ms` / `network_profile` | the emulated delay, and a label of the network condition, e.g. `50mbps-20ms` | ms / text |
+| `gpu_*` | GPU utilization, memory, power and energy | `N/A`: the simulation cluster has no GPUs |
+
+MB means 2^20 bytes. Samples are taken every 2 seconds, so the averages of a test case that runs only a few seconds rest on few samples; `peak_memory_mb` comes from the kernel and misses no spike.
 
 ## Troubleshooting
 
@@ -193,3 +218,5 @@ A test case that fails in the sandbox fails alone, as on the host. It is reporte
 | A test case fails with `EXEC_FAILURE` and `No module named ...` | A package the algorithm needs is not in the sandbox image. | List the example's requirements file, or its local wheel, in `sandbox_profile` `requirements`. |
 | A test case fails with `EXEC_FAILURE` and a missing file | The algorithm reads a path that none of its configs reference. | Add the path to `sandbox_profile` `data_paths`. |
 | A test case fails with `TIMEOUT` | It ran longer than `sandbox_profile` `timeout`. | Raise `timeout`. |
+| `EXEC_FAILURE: network emulation could not be applied: ...` | `tc` could not shape the pod's network on its node. | Check that the node image has `tc` (iproute2) and that the node container is privileged, as the Sedna all-in-one nodes are. |
+| `sandbox_profile system_metrics: unknown metrics [...]` | A name in `system_metrics` is not a system metric. | Use `"all"` or names from the System metrics table. |
