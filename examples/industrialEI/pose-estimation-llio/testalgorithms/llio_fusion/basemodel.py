@@ -15,6 +15,7 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+import re
 import sys
 import numpy as np
 import logging
@@ -76,6 +77,30 @@ class BaseModel:
     This implementation integrates LLIO algorithm with the Ianvs framework
     for benchmarking pose estimation performance on KITTI dataset.
     """
+
+    @staticmethod
+    def _extract_sequence_parts(sequence_path):
+        """Extract date and drive from sequence path regardless of OS path separator."""
+        path_parts = re.split(r"[\\/]", str(sequence_path))
+        dataname = None
+        datadrive = None
+
+        for part in path_parts:
+            if part.startswith("2011_") and "_" in part:
+                dataname = part
+                break
+
+        for part in path_parts:
+            if "drive_" in part:
+                try:
+                    drive_part = part.split("drive_")[1].split("_")[0]
+                    if drive_part and drive_part.isdigit():
+                        datadrive = drive_part
+                except Exception:
+                    pass
+                break
+
+        return dataname, datadrive
 
     def __init__(self, **kwargs):
         """
@@ -197,23 +222,7 @@ class BaseModel:
             for seq_path in all_sequences:
                 try:
                     # Extract date and drive from sequence path
-                    path_parts = str(seq_path).split(os.sep)
-                    dataname = None
-                    datadrive = None
-                    
-                    for part in path_parts:
-                        if part.startswith('2011_') and '_' in part:
-                            dataname = part
-                            break
-                    for part in path_parts:
-                        if 'drive_' in part:
-                            try:
-                                drive_part = part.split('drive_')[1].split('_')[0]
-                                datadrive = drive_part
-                            except Exception:
-                                pass
-                            break
-                    
+                    dataname, datadrive = self._extract_sequence_parts(seq_path)
                     if not dataname or not datadrive:
                         continue
                     
@@ -240,20 +249,7 @@ class BaseModel:
                 # print(f"Training on sequence {seq_idx + 1}/{len(all_sequences)}: {sequence_path}")
                 
                 # Extract date and drive from the sequence path
-                path_parts = str(sequence_path).split(os.sep)
-                dataname = None
-                datadrive = None
-                
-                for part in path_parts:
-                    if part.startswith('2011_') and '_' in part:
-                        dataname = part
-                        break
-                
-                for part in path_parts:
-                    if 'drive_' in part:
-                        drive_part = part.split('drive_')[1].split('_')[0]
-                        datadrive = drive_part
-                        break
+                dataname, datadrive = self._extract_sequence_parts(sequence_path)
                 
                 if not dataname or not datadrive:
                     LOGGER.warning(f"Could not extract date/drive from sequence {sequence_path}, skipping")
@@ -572,23 +568,7 @@ class BaseModel:
             for seq_path in all_sequences:
                 try:
                     # Extract date and drive from sequence path
-                    path_parts = str(seq_path).split(os.sep)
-                    dataname = None
-                    datadrive = None
-                    
-                    for part in path_parts:
-                        if part.startswith('2011_') and '_' in part:
-                            dataname = part
-                            break
-                    for part in path_parts:
-                        if 'drive_' in part:
-                            try:
-                                drive_part = part.split('drive_')[1].split('_')[0]
-                                datadrive = drive_part
-                            except Exception:
-                                pass
-                            break
-                    
+                    dataname, datadrive = self._extract_sequence_parts(seq_path)
                     if not dataname or not datadrive:
                         continue
                     
@@ -614,22 +594,7 @@ class BaseModel:
                 # print(f"Processing sequence {seq_idx + 1}/{len(all_sequences)}: {sequence_path}")
                 
                 # Extract date and drive from the sequence path
-                path_parts = str(sequence_path).split(os.sep)
-                dataname = None
-                datadrive = None
-                
-                for part in path_parts:
-                    if part.startswith('2011_') and '_' in part:
-                        dataname = part
-                        break
-                for part in path_parts:
-                    if 'drive_' in part:
-                        try:
-                            drive_part = part.split('drive_')[1].split('_')[0]
-                            datadrive = drive_part
-                        except Exception:
-                            pass
-                        break
+                dataname, datadrive = self._extract_sequence_parts(sequence_path)
                 
                 if not dataname or not datadrive:
                     LOGGER.warning(f"Could not extract date/drive from sequence {sequence_path}, skipping")
