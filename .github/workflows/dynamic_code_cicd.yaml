@@ -106,6 +106,11 @@ jobs:
         with:
           python-version: '3.8'
 
+      # Inventory edits are compared entry by entry, and the no-PyYAML
+      # fallback parser drops nested lists such as prepare_env steps.
+      - name: Install validator dependencies
+        run: python -m pip install -r .github/workflows/validator/requirements.txt
+
       - name: Check changed examples
         id: check_examples
         run: |
