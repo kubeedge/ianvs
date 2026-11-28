@@ -72,7 +72,7 @@ def make_parser():
     parser.add_argument("--dataset_name", default="ImageNet", type=str, help="dataset name")
     parser.add_argument("--data_size", default=1000, type=int, help="data size to inference")
     # remove conflict with ianvs
-    parser.add_argument("-f")
+    parser.add_argument("-f", "--benchmarking_config_file", nargs="?", default=None)
     return parser
 
 
@@ -80,15 +80,100 @@ def make_parser():
 class BaseModel:
 
     def __init__(self, **kwargs) -> None:
-        self.args = make_parser().parse_args()
+        self.args, _ = make_parser().parse_known_args()
+        self.batch_size = 1
+        self._apply_hyperparameters(kwargs)
+        self.model_name = self.args.model_name
+        self.devices_info = self.args.devices_info
         self.model_parallel = self.args.model_parallel
         self.models = []
-        self.devices_info_url = str(Path(Path(__file__).parent.resolve(), self.args.devices_info))
+        self.devices_info_url = self._resolve_config_path(self.args.devices_info)
         self.device_info = self._parse_yaml(self.devices_info_url)
-        self.profiler_info_url = str(Path(Path(__file__).parent.resolve(), self.args.profiler_info))
+        self.profiler_info_url = self._resolve_config_path(self.args.profiler_info)
         self.profiler_info = self._parse_yaml(self.profiler_info_url)
         self.partition_point_list = []
         return
+
+    def _apply_hyperparameters(self, kwargs: dict) -> None:
+        str_keys = ("devices_info", "profiler_info", "split", "model_name", "dataset_name")
+        bool_keys = ("model_parallel", "shuffle")
+        for key in str_keys:
+            if key not in kwargs or kwargs[key] is None:
+                continue
+            value = kwargs[key]
+            if isinstance(value, os.PathLike):
+                value = os.fspath(value)
+            if not isinstance(value, str):
+                raise ValueError(f"Hyperparameter '{key}' must be a string, got {type(value).__name__}")
+            value = value.strip()
+            if value:
+                setattr(self.args, key, value)
+
+        for key in bool_keys:
+            if key not in kwargs or kwargs[key] is None:
+                continue
+            value = kwargs[key]
+            if isinstance(value, bool):
+                setattr(self.args, key, value)
+            elif isinstance(value, str):
+                lowered = value.strip().lower()
+                if not lowered:
+                    continue
+                if lowered in ("true", "1", "yes"):
+                    setattr(self.args, key, True)
+                elif lowered in ("false", "0", "no"):
+                    setattr(self.args, key, False)
+                else:
+                    raise ValueError(f"Hyperparameter '{key}' must be a boolean, got {value!r}")
+            else:
+                raise ValueError(f"Hyperparameter '{key}' must be a boolean, got {type(value).__name__}")
+
+        if "batch_size" in kwargs and kwargs["batch_size"] is not None:
+            value = kwargs["batch_size"]
+            if isinstance(value, (bool, float)):
+                raise ValueError(
+                    f"Hyperparameter 'batch_size' must be an integer, got {type(value).__name__}"
+                )
+            if not (isinstance(value, str) and not value.strip()):
+                try:
+                    parsed = int(value)
+                except (TypeError, ValueError) as exc:
+                    raise ValueError(f"Hyperparameter 'batch_size' must be an integer, got {value!r}") from exc
+                if parsed <= 0:
+                    raise ValueError(f"Hyperparameter 'batch_size' must be positive, got {parsed}")
+                self.batch_size = parsed
+
+        if "data_size" in kwargs and kwargs["data_size"] is not None:
+            value = kwargs["data_size"]
+            if isinstance(value, (bool, float)):
+                raise ValueError(
+                    f"Hyperparameter 'data_size' must be an integer, got {type(value).__name__}"
+                )
+            if not (isinstance(value, str) and not value.strip()):
+                try:
+                    parsed = int(value)
+                except (TypeError, ValueError) as exc:
+                    raise ValueError(f"Hyperparameter 'data_size' must be an integer, got {value!r}") from exc
+                if parsed <= 0:
+                    raise ValueError(f"Hyperparameter 'data_size' must be positive, got {parsed}")
+                setattr(self.args, "data_size", parsed)
+
+        if "indices" in kwargs and kwargs["indices"] is not None:
+            value = kwargs["indices"]
+            if not (isinstance(value, str) and not value.strip()):
+                setattr(self.args, "indices", value)
+
+    @staticmethod
+    def _resolve_config_path(config_path: str) -> str:
+        expanded = os.path.expanduser(config_path)
+        base_dir = Path(__file__).parent.resolve()
+        candidate = base_dir / expanded
+        if candidate.exists():
+            return str(candidate)
+        cwd_candidate = Path(expanded)
+        if cwd_candidate.exists():
+            return str(cwd_candidate.resolve())
+        return str(candidate)
 
     ## auto partition by memory usage
     def partition(self, initial_model):
@@ -226,6 +311,8 @@ class BaseModel:
         if url.endswith('.yaml') or url.endswith('.yml'):
             with open(url, "rb") as file:
                 info_dict = yaml.load(file, Loader=yaml.SafeLoader)
+                if not isinstance(info_dict, dict):
+                    raise RuntimeError(f"config file '{url}' must contain a YAML mapping")
                 return info_dict
         else:
             raise RuntimeError('config file must be the yaml format')
