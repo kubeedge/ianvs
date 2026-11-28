@@ -7,11 +7,14 @@ import torch
 from torchvision.transforms import ToPILImage
 from PIL import Image
 
-from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
-import mmcv
-import pycocotools.mask as maskUtils
-from mmdet.visualization.image import imshow_det_bboxes
 import pickle
+try:
+    from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
+    import mmcv
+    import pycocotools.mask as maskUtils
+    from mmdet.visualization.image import imshow_det_bboxes
+except ImportError:
+    pass  # SAM dependencies only needed for cloud-edge collaboration path
 
 from dataloaders import make_data_loader
 from dataloaders.utils import decode_seg_map_sequence, Colorize
@@ -23,7 +26,10 @@ from models.resnet import resnet_single_scale_single_attention_unseen
 import torch.backends.cudnn as cudnn
 from cityscapes_id2label import CONFIG as CONFIG_CITYSCAPES_ID2LABEL
 import torch.nn.functional as F
-from transformers import SegformerFeatureExtractor, SegformerForSemanticSegmentation
+try:
+    from transformers import SegformerFeatureExtractor, SegformerForSemanticSegmentation
+except ImportError:
+    pass  # ViT/Segformer dependencies only needed for ViT-based path
 
 os.environ["OMP_NUM_THREADS"] = "1" 
 os.environ["MKL_NUM_THREADS"] = "1"
@@ -113,6 +119,8 @@ class Validator(object):
         del semantic_class_names
 
     def draw_picture(self, image_name, semantc_mask, id2label, output_path, suffix):
+        if 'mmcv' not in globals():
+            return
         img = mmcv.imread(image_name)
         sematic_class_in_img = torch.unique(semantc_mask)
         semantic_bitmasks, semantic_class_names = [], []
